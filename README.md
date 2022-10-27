@@ -187,5 +187,5 @@ MarketGo的源码100%开源，遵守GPL-3.0协议。
 
 
 
-<div align=center><img src="https://github.com/kevinwangwn0209/MarketGo/blob/ca0dc8e0fbda8178850189df0bda7804c88e5b68/wechatimag.png" width="1000"  align=center /></div>
+<div align=center><img src="wechatimag.png" width="1000"  align=center /></div>
 
