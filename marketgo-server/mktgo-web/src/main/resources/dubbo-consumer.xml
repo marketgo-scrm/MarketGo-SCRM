@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!--当前项目在整个分布式架构里面的唯一名称，计算依赖关系的标签-->
+    <dubbo:application name="mktgo-web"/>
+    <!--dubbo这个服务所要暴露的服务地址所对应的注册中心-->
+    <!--    <dubbo:registry protocol="zookeeper" address="127.0.0.1:2181"/>-->
+    <dubbo:registry address="zookeeper://zk.dev-marketgo.com:2181"/>
+    <!--当前服务发布所依赖的协议；webserovice、Thrift、Hessain、http-->
+    <dubbo:protocol name="dubbo" port="28090"/>
+
+    <dubbo:reference scope="remote" id="weComMassTaskRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComMassTaskRpcService"/>
+    <dubbo:reference id="weComAgentRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComAgentRpcService"/>
+    <dubbo:reference id="weComMediaRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComMediaRpcService"/>
+    <dubbo:reference id="weComMemberRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComMemberRpcService"/>
+    <dubbo:reference id="weComExternalUserRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComExternalUserRpcService"/>
+    <dubbo:reference id="weComGroupChatsRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComGroupChatsRpcService"/>
+    <dubbo:reference id="weComTagsRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComTagsRpcService"/>
+    <dubbo:reference id="weComContactWayRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComContactWayRpcService"/>
+    <dubbo:reference id="weComWelcomeMsgRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComWelcomeMsgRpcService"/>
+    <dubbo:reference id="weComSendAgentMessageRpcService" check="false"
+                     interface="com.easy.marketgo.api.service.WeComSendAgentMessageRpcService"/>
+</beans>

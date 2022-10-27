@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    stages{
+        stage('Prepare/Checkout'){
+            agent any
+            steps{
+                sh 'echo ${WORKSPACE}'
+                sh 'echo ${mktgoWeb}'
+                sh 'ls -l'
+                deleteDir()
+               git branch: 'develop/0.1', credentialsId: 'gitee-username-pwd', url: 'https://gitee.com/wang_kevin/marketgo.git'
+                sh ' mvn clean install -Dmaven.test.skip=true'
+
+            }
+        }
+
+
+         stage('chmod-sh'){
+            agent any
+            steps{
+                dir("${mktgoWeb}") {
+                 sh "pwd"
+                 sh 'ls -l'
+                 sh 'echo 授权 ${mktgoWeb} 项目执行权限'
+                 sh 'chmod +x spring-boot.sh'
+                }
+            }
+        }
+         stage('start-app'){
+            agent any
+            steps{
+             dir("${mktgoWeb}") {
+             sh 'cp target/${mktgoWeb}-*-*.jar ${mktgoWeb}.jar'
+            sh './spring-boot.sh restart ${mktgoWeb}.jar dev'
+             }
+            }
+        }
+        stage('deploy'){
+            agent any
+            steps{
+                  sh 'echo 构建完成'
+            }
+        }
+    }
+}
+

@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: mktgo-web
+mktgo:
+  jwt:
+    # 加密秘钥
+    secret: d3d3LnZpLjQ3MjYyOTQ3LnNwcmluZyBib290
+    # token有效时长
+    expire: 30
+    apiToken: Header-Api-Token
+    refreshToken: Header-Api-Refresh-Token

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xi="http://www.w3.org/2001/XInclude"
+               status="warn" name="XInclude">
+    <Properties>
+        <Property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%t] %-40.40c{1.} : %m%n"/>
+    </Properties>
+    <Appenders>
+        <!-- 输出到控制台，仅在本地开发环境使用 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${PATTERN}"/>
+        </Console>
+        <!--输出到日志文件，滚动分割日志文件，自动打包gz-->
+        <RollingFile name="File" fileName="../logs/gateway/gateway.log"
+                     filePattern="../logs/gateway/gateway-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${PATTERN}"/>
+            <Policies>
+                <!--默认一天一个文件-->
+                <TimeBasedTriggeringPolicy/>
+                <!--一天内大于size就单独分隔-->
+                <SizeBasedTriggeringPolicy size="1 GB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <!-- 添加你的自定义logger，一般用于区分包名的日志，不同包名不同的级别/appender -->
+        <!-- additivity 意思是，调用完当前appender，是否继续调用parent logger appender，默认true-->
+        <Logger name="your logger/package name" level="debug" additivity="false"/>
+        <!--默认的Root Logger 级别-->
+        <Root level="INFO">
+            <!--这里需要区分下环境（配合maven profile之类的）-->
+            <!-- 开发环境使用Console Appender，生产环境使用File Appender -->
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>

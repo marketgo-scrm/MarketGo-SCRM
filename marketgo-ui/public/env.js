@@ -1,0 +1,1 @@
+window.BASEURL = "http://${IP}/web/"

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!--当前项目在整个分布式架构里面的唯一名称，计算依赖关系的标签-->
+    <dubbo:application name="mktgo-gateway"/>
+    <!--dubbo这个服务所要暴露的服务地址所对应的注册中心-->
+    <dubbo:registry address="zookeeper://${zookeeper.address:zk.dev-marketgo.com}:2181"/>
+
+    <!--当前服务发布所依赖的协议；webserovice、Thrift、Hessain、http-->
+    <dubbo:protocol name="dubbo" port="28090"/>
+
+    <!--服务发布的配置，需要暴露的服务接口-->
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComMassTaskRpcService" ref="weComMassTaskRpcServiceImpl"/>
+
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComAgentRpcService" ref="weComAgentRpcServiceImpl"/>
+
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComMediaRpcService" ref="weComMediaRpcServiceImpl"/>
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComMemberRpcService" ref="weComMemberRpcServiceImpl"/>
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComExternalUserRpcService"
+            ref="weComExternalUserRpcServiceImpl"/>
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComGroupChatsRpcService" ref="weComGroupChatsRpcServiceImpl"/>
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComTagsRpcService" ref="weComTagsRpcServiceImpl"/>
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComContactWayRpcService" ref="weComContactWayRpcServiceImpl"/>
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComWelcomeMsgRpcService" ref="weComWelcomeMsgRpcServiceImpl"/>
+    <dubbo:service
+            interface="com.easy.marketgo.api.service.WeComSendAgentMessageRpcService"
+            ref="weComSendAgentMessageRpcServiceImpl"/>
+    <!--Bean bean定义-->
+    <bean id="weComMassTaskRpcServiceImpl" class="com.easy.marketgo.gateway.rpc.impl.WeComMassTaskRpcServiceImpl"/>
+    <bean id="weComAgentRpcServiceImpl" class="com.easy.marketgo.gateway.rpc.impl.WeComAgentRpcServiceImpl"/>
+    <bean id="weComMediaRpcServiceImpl" class="com.easy.marketgo.gateway.rpc.impl.WeComMediaRpcServiceImpl"/>
+    <bean id="weComMemberRpcServiceImpl" class="com.easy.marketgo.gateway.rpc.impl.WeComMemberRpcServiceImpl"/>
+    <bean id="weComExternalUserRpcServiceImpl"
+          class="com.easy.marketgo.gateway.rpc.impl.WeComExternalUserRpcServiceImpl"/>
+    <bean id="weComGroupChatsRpcServiceImpl" class="com.easy.marketgo.gateway.rpc.impl.WeComGroupChatsRpcServiceImpl"/>
+    <bean id="weComTagsRpcServiceImpl" class="com.easy.marketgo.gateway.rpc.impl.WeComTagsRpcServiceImpl"/>
+    <bean id="weComContactWayRpcServiceImpl" class="com.easy.marketgo.gateway.rpc.impl.WeComContactWayRpcServiceImpl"/>
+    <bean id="weComWelcomeMsgRpcServiceImpl" class="com.easy.marketgo.gateway.rpc.impl.WeComWelcomeMsgRpcServiceImpl"/>
+    <bean id="weComSendAgentMessageRpcServiceImpl" class="com.easy.marketgo.gateway.rpc.impl.WeComSendAgentMessageRpcServiceImpl"/>
+</beans>
