@@ -78,7 +78,8 @@ public class SendMomentMassTaskRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AttachmentsMessage {
-        private String msgtype;
+        @JsonProperty("msgtype")
+        private String msgType;
         private ImageAttachmentsMessage image;
         private LinkAttachmentsMessage link;
         private VideoAttachmentsMessage video;
