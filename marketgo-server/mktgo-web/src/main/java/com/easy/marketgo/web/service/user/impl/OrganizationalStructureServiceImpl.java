@@ -194,7 +194,7 @@ public class OrganizationalStructureServiceImpl implements IOrganizationalStruct
                             member.setAvatar(m.getAvatar());
                             member.setRoleCode(baseRole4Member.getCode());
                             member.setRoleDesc(baseRole4Member.getDesc());
-                            member.setMobile(StringUtils.isNotBlank(m.getMobile()) ? "" : m.getMobile());
+                            member.setMobile(StringUtils.isBlank(m.getMobile()) ? "" : m.getMobile());
                             if (StringUtils.isNotBlank(m.getMobile())) {
                                 member.setAuthStatus(Boolean.TRUE);
                             } else {
