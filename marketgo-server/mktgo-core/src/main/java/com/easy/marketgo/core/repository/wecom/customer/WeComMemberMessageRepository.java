@@ -39,6 +39,12 @@ public interface WeComMemberMessageRepository extends CrudRepository<WeComMember
                              @Param("status") Integer status);
 
     @Modifying
+    @Query("UPDATE wecom_members SET mobile = :mobile WHERE corp_id = :corp_id AND member_id = :member_id")
+    int updateMobileByMemberId(@Param("corp_id") String corpId,
+                             @Param("member_id") String memberId,
+                             @Param("mobile") String mobile);
+
+    @Modifying
     @Query("UPDATE wecom_members SET member_id = :member_id, department = :department WHERE corp_id = :corp_id AND " +
             "member_id = :old_member_id")
     int updateMemberMsgByMemberId(@Param("corp_id") String corpId,

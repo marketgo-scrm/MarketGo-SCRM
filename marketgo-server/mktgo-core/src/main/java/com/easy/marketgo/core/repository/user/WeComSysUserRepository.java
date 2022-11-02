@@ -1,8 +1,12 @@
 package com.easy.marketgo.core.repository.user;
 
 import com.easy.marketgo.core.entity.WeComSysUserEntity;
+import org.springframework.data.jdbc.repository.query.Modifying;
+import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 /**
  * @author : ssk
@@ -14,5 +18,7 @@ public interface WeComSysUserRepository extends CrudRepository<WeComSysUserEntit
 
     WeComSysUserEntity queryByUserName(@Param("userName") String userName);
 
-
+    @Modifying
+    @Query("DELETE FROM wecom_sys_user WHERE user_name=:user_name")
+    int deleteByUserName(@Param("user_name") String userName);
 }
