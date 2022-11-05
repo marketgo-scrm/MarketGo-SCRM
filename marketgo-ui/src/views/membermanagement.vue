@@ -105,7 +105,7 @@
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.authStatus"
-                active-color="#6E94F5"
+                active-color="#6ad9a4"
                 @change="userAuthStatus(scope.row)"
                 inactive-color="#C0C4CC" />
               <span v-if="scope.row.authStatus" class="finish">
