@@ -642,7 +642,7 @@ export default {
         name: "customerdetails",
         query: {
           id: val.externalUserId,
-          memberName: val.memberName,
+          remark: val.remark,
           type: val.type,
         },
       });

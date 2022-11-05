@@ -12,7 +12,7 @@
     <div class="users">
       <img src="../assets/imgs/user.png" alt="" />
       <div class="names">
-        <span>{{this.querys.memberName}}</span>
+        <span>{{this.querys.remark}}</span>
         <span class="wx" v-if='this.querys.type==2'>@微信</span>
       </div>
     </div>
@@ -29,17 +29,17 @@
           :name="item.memberId"
         ></el-tab-pane>
       </el-tabs>
-      <div class="chats">
+      <!-- <div class="chats">
         <div class="name">
           <img :src="chose.avatar?chose.avatar:require('../assets/avter.png')" alt="" />
           <span>{{chose.memberName}}</span>
         </div>
-        <!-- <div>
+        <div>
           最近沟通时间：
           <span>2022-07-28 09:27:54</span>
         </div>
-        <div>聊天记录</div> -->
-      </div>
+        <div>聊天记录</div>
+      </div> -->
       <div class='remaname'>{{chose.memberName}}给TA的备注</div>
       <el-descriptions
         title=""
