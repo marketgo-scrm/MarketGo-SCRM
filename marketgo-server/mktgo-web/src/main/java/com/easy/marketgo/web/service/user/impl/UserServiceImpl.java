@@ -116,11 +116,27 @@ public class UserServiceImpl implements IUserService {
             }
 
             String mobile = entity.getMobile();
-            if (StringUtils.isNotBlank(mobile) && checkSysUer(mobile)) {
+            if (StringUtils.isNotBlank(mobile)) {
                 sysUserRepository.deleteByUserName(mobile);
             }
             weComMemberMessageRepository.updateMobileByMemberId(corpId, systemUserMessageRequest.getMemberId(),
                     systemUserMessageRequest.getMobile());
+            register(systemUserMessageRequest.getMobile(), "123456");
+        } else {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
+        }
+        return BaseResponse.builder().code(ErrorCodeEnum.OK.getCode()).message(ErrorCodeEnum.OK.getMessage()).build();
+    }
+
+    @Override
+    public BaseResponse updateSystemUserAuthStatus(String projectId, String corpId,
+                                                   SystemUserMessageRequest systemUserMessageRequest) {
+        if (systemUserMessageRequest != null && StringUtils.isNotBlank(systemUserMessageRequest.getMobile())) {
+            sysUserRepository.updateAuthStatusByUserName(systemUserMessageRequest.getMobile(),
+                    systemUserMessageRequest.getAuthStatus());
+
+        } else {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
         }
         return BaseResponse.builder().code(ErrorCodeEnum.OK.getCode()).message(ErrorCodeEnum.OK.getMessage()).build();
     }
@@ -139,7 +155,7 @@ public class UserServiceImpl implements IUserService {
         log.info("check to whether there is a user in system user");
         if (!checkSysUer(request.getUserName())) {
             log.info("not exist in system user. start register user to system user. request={}", request);
-            register(request);
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_REQUEST_USER_COMP_IS_EMPTY);
         }
         if (!validUser(request.getUserName(), request.getPassWord())) {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_REQUEST_USER_PASS_IS_VALID);
@@ -155,8 +171,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     private boolean checkSysUer(String userName) {
-
-        return Objects.nonNull(sysUserRepository.queryByUserName(userName));
+        WeComSysUserEntity entity = sysUserRepository.queryByUserName(userName);
+        if (Objects.nonNull(entity) && entity.getAuthStatus()) {
+            return true;
+        }
+        return false;
     }
 
     private boolean checkWeComUser(String userName) {
@@ -182,7 +201,7 @@ public class UserServiceImpl implements IUserService {
         return PasswordHelper.validPassword(user, password);
     }
 
-    private void register(LoginUserRequest request) {
+    private void register(String userName, String password) {
 
         TenantConfigEntity tenantConfigEntity = tenantConfigRepository.findAll().iterator().next();
         if (Objects.isNull(tenantConfigEntity)) {
@@ -191,8 +210,8 @@ public class UserServiceImpl implements IUserService {
 
 
         UserInfo user = UserInfo.builder()
-                .userName(request.getUserName())
-                .password(request.getPassWord())
+                .userName(userName)
+                .password(password)
                 .salt("")
                 .build();
         PasswordHelper.encryptPassword(user);
@@ -200,8 +219,7 @@ public class UserServiceImpl implements IUserService {
         entity.setUserName(user.getUserName());
         entity.setPassword(user.getPassword());
         entity.setSalt(user.getSalt());
-        entity.setCreateTime(new Date());
-        entity.setUpdateTime(new Date());
+        entity.setAuthStatus(Boolean.TRUE);
         entity.setUuid(UuidUtils.generateUuid());
         WeComSysUserEntity userEntity = sysUserRepository.save(entity);
 
@@ -210,8 +228,5 @@ public class UserServiceImpl implements IUserService {
         userTenantLink.setUserUuid(userEntity.getUuid());
         userTenantLink.setTenantUuid(tenantConfigEntity.getUuid());
         userTenantLinkRepository.save(userTenantLink);
-
-
     }
-
 }

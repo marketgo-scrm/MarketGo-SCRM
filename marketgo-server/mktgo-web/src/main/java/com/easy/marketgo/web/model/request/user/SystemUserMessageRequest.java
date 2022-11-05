@@ -10,4 +10,5 @@ public class SystemUserMessageRequest {
 
     private String mobile = null;
 
+    private Boolean authStatus;
 }

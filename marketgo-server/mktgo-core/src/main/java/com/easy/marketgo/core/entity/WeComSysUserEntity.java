@@ -23,7 +23,8 @@ public class WeComSysUserEntity extends UuidBaseEntity {
     private String userName;
     private String password;
     private String salt;
-
+    @Column("auth_status")
+    private Boolean authStatus;
 
 
 }

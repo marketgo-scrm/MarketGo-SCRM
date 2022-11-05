@@ -21,4 +21,8 @@ public interface WeComSysUserRepository extends CrudRepository<WeComSysUserEntit
     @Modifying
     @Query("DELETE FROM wecom_sys_user WHERE user_name=:user_name")
     int deleteByUserName(@Param("user_name") String userName);
+
+    @Modifying
+    @Query("UPDATE wecom_sys_user SET auth_status=:auth_status WHERE user_name=:user_name")
+    int updateAuthStatusByUserName(@Param("user_name") String userName, @Param("auth_status") Boolean authStatus);
 }

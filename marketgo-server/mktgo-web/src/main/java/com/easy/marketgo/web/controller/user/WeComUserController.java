@@ -185,6 +185,20 @@ public class WeComUserController {
                 systemUserMessageRequest));
     }
 
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = WeComGroupChatsResponse.class)
+    })
+    @ApiOperation(value = "修改授权状态", nickname = "updateSystemUserAuthStatus", notes = "", response =
+            BaseResponse.class)
+    @RequestMapping(value = {"/auth_status"}, produces = {"application/json"}, method = RequestMethod.POST)
+    public ResponseEntity updateSystemUserAuthStatus(@NotNull @Valid @RequestParam(value = "project_id", required =
+            true) String projectId, @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value =
+            "corp_id", required = true) String corpId,
+                                                   @ApiParam(value = "系统用户信息", required = true) @RequestBody @Valid SystemUserMessageRequest systemUserMessageRequest) {
+        return ResponseEntity.ok(userLoginService.updateSystemUserAuthStatus(projectId, corpId,
+                systemUserMessageRequest));
+    }
+
     @ApiOperation(value = "获取当前项目下当前企业登录用户角色信息", nickname = "userRoleInfo", notes = "", response =
             BaseResponse.class)
     @PostMapping(value = {"/role/info"}, produces = {"application/json"})

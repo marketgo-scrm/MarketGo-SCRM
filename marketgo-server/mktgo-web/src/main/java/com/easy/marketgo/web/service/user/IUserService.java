@@ -33,4 +33,7 @@ public interface IUserService {
 
     BaseResponse updateOrInsertUserMobile(String projectId, String corpId,
                                           SystemUserMessageRequest systemUserMessageRequest);
+
+    BaseResponse updateSystemUserAuthStatus(String projectId, String corpId,
+                                          SystemUserMessageRequest systemUserMessageRequest);
 }
