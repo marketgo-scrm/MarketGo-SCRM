@@ -603,6 +603,7 @@ export default {
 
           if (this.baseForm.radioXz == 2) {
             this.postDataBase.weComUserGroupRule.externalUsers.isAll = false
+            this.postDataBase.weComUserGroupRule.members.isAll = false
             this.postDataBase.weComUserGroupRule.externalUsers.corpTagSwitch = true
             this.postDataBase.weComUserGroupRule.externalUsers.corpTags.tags = []
             for (let i = 0; i < this.formData.tags.length; i++) {
@@ -618,6 +619,7 @@ export default {
             this.postDataBase.weComUserGroupRule.members.users = this.formData.members.users
           } else {
             this.postDataBase.weComUserGroupRule.externalUsers.isAll = true
+            this.postDataBase.weComUserGroupRule.members.isAll = true
             this.postDataBase.weComUserGroupRule.externalUsers.corpTagSwitch = false
             this.postDataBase.weComUserGroupRule.externalUsers.corpTags.tags = []
             this.postDataBase.weComUserGroupRule.members.departments = []
