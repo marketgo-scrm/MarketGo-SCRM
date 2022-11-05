@@ -670,3 +670,4 @@ set @@global.sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_
 -- version 0.0.2
 
 ALTER TABLE wecom_sys_user ADD auth_status tinyint(1) DEFAULT NULL COMMENT '授权状态，0:关闭授权，1:打开授权';
+UPDATE wecom_sys_user SET auth_status=1;
