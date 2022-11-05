@@ -211,6 +211,9 @@ export default {
   height: calc(100vh - 50px);
   background: #364066;
 }
+.el-drawer__wrapper{
+  left: 206px;
+}
 .menuout {
   width: 100%;
   height: calc(100vh - 130px);
@@ -258,10 +261,6 @@ export default {
 ::v-deep(.el-menu-item:hover),
 ::v-deep(.el-submenu__title:hover) {
   background: #4f618c !important;
-}
-::v-deep(.el-drawer.ltr),
-.el-drawer.rtl {
-  left: 206px;
 }
 ::v-deep(.el-drawer__header) {
   font-size: 14px;

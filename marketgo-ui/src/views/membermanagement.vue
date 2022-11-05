@@ -101,22 +101,29 @@
               {{ scope.row.roleDescs ? scope.row.roleDescs.join(",") : "-" }}
             </template> -->
           </el-table-column>
-          <el-table-column prop="address" label="授权状态">
+          <el-table-column prop="address" label="授权状态" width="230">
             <template slot-scope="scope">
-              <span v-if="scope.row.authorizationStatus" class="finish">
-                <i class="el-icon-success"></i>
+              <el-switch
+                v-model="scope.row.authStatus"
+                active-color="#6E94F5"
+                @change="userAuthStatus(scope.row)"
+                inactive-color="#C0C4CC" />
+              <span v-if="scope.row.authStatus" class="finish">
                 已授权
               </span>
               <span v-else class="errors">
-                <i class="el-icon-warning"></i>
-                未配置
+                未授权（请配置手机号）
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="action" label="操作" width="120px">
+          <el-table-column fixed="right" prop="action" label="操作" width="180">
             <template slot-scope="scope">
               <el-button size="small" type="text" @click="setpower(scope.row)"
                 >管理权限</el-button
+              >
+              <el-divider direction="vertical"></el-divider>
+              <el-button size="small" type="text" @click="mobileOpen(scope.row)"
+                >设置手机号</el-button
               >
             </template>
           </el-table-column>
@@ -152,6 +159,27 @@
         >
       </div>
     </el-drawer>
+    <el-dialog :close-on-click-modal='false'  :close-on-press-escape='false' 
+      title="设置手机号"
+      @close="mobileCancel"
+      :visible.sync="mobileVisible"
+      width="358px"
+      append-to-body
+       :modal='false' ref=""
+    >
+    <el-input size="small" v-model="systemUserMessageRequest.mobile" placeholder="填写手机号"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="mobileCancel"  class='btns' round size="small">取 消</el-button>
+         <el-button
+          type="primary"
+          size="small"
+          round
+          class='btns'
+          @click="userSave"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
     <el-dialog :close-on-click-modal='false'  :close-on-press-escape='false' 
       title="权限设置"
       @close="cancel"
@@ -225,7 +253,13 @@ export default {
           { required: true, message: "请选择角色", trigger: "change" },
         ]
       },
-      memberId:''
+      memberId:'',
+      // 设置手机号
+      mobileVisible: false,
+      systemUserMessageRequest: {
+        memberId:"",
+        mobile: ""
+      }
     };
   },
   async created() {
@@ -328,6 +362,69 @@ export default {
       this.chosenode = val;
       this.getList();
     },
+    // 设置手机号
+    mobileOpen(item) {
+      this.mobileVisible = true
+      this.systemUserMessageRequest = {
+        memberId:item.memberId,
+        mobile: item.mobile
+      }
+    },
+    mobileCancel() {
+      this.mobileVisible = false
+      this.systemUserMessageRequest = {
+        memberId: "",
+        mobile: ""
+      }
+    },
+    userSave() {
+      if (!this.systemUserMessageRequest.mobile || this.systemUserMessageRequest.mobile === '') {
+        this.$message.info('请填写手机号')
+        return
+      }
+      this.$api
+        .userSave(this.systemUserMessageRequest)
+        .then((res) => {
+          console.log(res);
+          if (res.code === 0) {
+            this.$message.success('设置成功')
+            this.mobileCancel()
+            this.getList()
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    // 修改授权状态
+    userAuthStatus(item) {
+      if (!item.mobile || item.mobile === '') {
+        this.mobileOpen(item)
+        item.authStatus = !item.authStatus
+        console.log(item)
+        return
+      }
+      this.$api
+        .userAuthStatus({
+          authStatus: item.authStatus,
+          memberId: item.memberId,
+          mobile: item.mobile
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.code === 0) {
+            this.$message.success('设置成功')
+            this.mobileCancel()
+            this.getList()
+          } else {
+            item.authStatus = !item.authStatus
+          }
+        })
+        .catch((err) => {
+          item.authStatus = !item.authStatus
+          console.log(err);
+        });
+    }
   },
 };
 </script>
