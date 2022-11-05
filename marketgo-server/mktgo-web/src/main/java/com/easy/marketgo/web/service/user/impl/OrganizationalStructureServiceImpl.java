@@ -1,10 +1,12 @@
 package com.easy.marketgo.web.service.user.impl;
 
 import cn.hutool.core.util.ArrayUtil;
+import com.easy.marketgo.core.entity.WeComSysUserEntity;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.WeComSysBaseRoleEntity;
 import com.easy.marketgo.core.entity.WeComSysCorpUserRoleLinkEntity;
+import com.easy.marketgo.core.repository.user.WeComSysUserRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.WeComSysBaseRoleRepository;
 import com.easy.marketgo.core.repository.wecom.WeComSysCropUserRoleLinkRepository;
@@ -49,6 +51,8 @@ public class OrganizationalStructureServiceImpl implements IOrganizationalStruct
     private WeComSysBaseRoleRepository baseRoleRepository;
     @Autowired
     private WeComRelationMemberExternalUserRepository relationMemberExternalUserRepository;
+    @Autowired
+    private WeComSysUserRepository sysUserRepository;
 
     @Override
     public OrganizationalStructureResponse fetchStructures(OrganizationalStructureRequest request) {
@@ -195,8 +199,9 @@ public class OrganizationalStructureServiceImpl implements IOrganizationalStruct
                             member.setRoleCode(baseRole4Member.getCode());
                             member.setRoleDesc(baseRole4Member.getDesc());
                             member.setMobile(StringUtils.isBlank(m.getMobile()) ? "" : m.getMobile());
-                            if (StringUtils.isNotBlank(m.getMobile())) {
-                                member.setAuthStatus(Boolean.TRUE);
+                            WeComSysUserEntity entity = sysUserRepository.queryByUserName(m.getMobile());
+                            if (entity != null) {
+                                member.setAuthStatus(entity.getAuthStatus());
                             } else {
                                 member.setAuthStatus(Boolean.FALSE);
                             }
