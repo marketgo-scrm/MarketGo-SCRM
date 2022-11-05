@@ -116,6 +116,8 @@
               </span>
             </template>
           </el-table-column>
+          <el-table-column prop="mobile" label="手机号" width="140">
+          </el-table-column>
           <el-table-column fixed="right" prop="action" label="操作" width="180">
             <template slot-scope="scope">
               <el-button size="small" type="text" @click="setpower(scope.row)"
