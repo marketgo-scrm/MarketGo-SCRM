@@ -30,9 +30,9 @@ public class Constants {
     public final String AGENT_KEY_FOR_EXTERNALUSER = "externaluser";
 
 
-    public final String WECOM_CALLBACK_CONSTACTS = "https://{域名}/mktgo/api/wecom/callback/contacts?corp_id=";
+    public final String WECOM_CALLBACK_CONSTACTS = "/mktgo/api/wecom/callback/contacts?corp_id=";
 
-    public final String WECOM_CALLBACK_CUSTOMER = "https://{域名}/mktgo/api/wecom/callback/customer?corp_id=";
+    public final String WECOM_CALLBACK_CUSTOMER = "/mktgo/api/wecom/callback/customer?corp_id=";
 
 
     public final String WECOM_CALLBACK_MESSAGE_TYPE_CREATE_USER = "create_user";
