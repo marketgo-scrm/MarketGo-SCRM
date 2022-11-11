@@ -645,14 +645,14 @@ export default {
               this.needReBase = true
               return false
             }
-            if (!this.formData.tags.length) {
-              this.$message({
-                message: '请选择客户标签',
-                type: 'warning'
-              });
-              this.needReBase = true
-              return false
-            }
+            // if (!this.formData.tags.length) {
+            //   this.$message({
+            //     message: '请选择客户标签',
+            //     type: 'warning'
+            //   });
+            //   this.needReBase = true
+            //   return false
+            // }
 
             this.postDataBase.weComUserGroupRule.members.departments = this.formData.members.departments
             this.postDataBase.weComUserGroupRule.members.users = this.formData.members.users
