@@ -6,7 +6,7 @@
       <el-form :model="baseForm" :rules="baseRules" ref="baseForm" label-width="100px" class="demo-baseForm">
         <el-form-item label="任务名称：" prop="name">
           <el-input v-model="baseForm.name"
-                    maxlength="15"
+                    maxlength="20"
                     show-word-limit
                     style="width: 550px"
                     @blur="checkName()"
@@ -327,7 +327,7 @@ export default {
       baseRules: {
         name: [
           { required: true, message: '请输入任务名称', trigger: 'blur' },
-          { min: 1, max: 15, message: '长度在 1 到 15 个字符', trigger: 'blur' }
+          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
         ],
         members: [
           { required: true, message: '请选择群发员工', trigger: 'change' }
@@ -478,7 +478,29 @@ export default {
       set_userGroupUuid: '',
 
       EnclosureListIn:[],
-      fjList: []
+      fjList: [],
+
+      needcxjs: true,
+    }
+  },
+  watch: {
+    'baseForm.radioXz': {
+      deep: true,
+      handler() {
+        this.needcxjs = true
+      }
+    },
+    'formData.tags': {
+      deep: true,
+      handler() {
+        this.needcxjs = true
+      }
+    },
+    'formData.members': {
+      deep: true,
+      handler() {
+        this.needcxjs = true
+      }
     }
   },
   methods: {
@@ -615,6 +637,23 @@ export default {
                 "order": this.formData.tags[i].order
               })
             }
+            if (!this.formData.members.departments.length && !this.formData.members.users.length) {
+              this.$message({
+                message: '请选择添加员工',
+                type: 'warning'
+              });
+              this.needReBase = true
+              return false
+            }
+            if (!this.formData.tags.length) {
+              this.$message({
+                message: '请选择客户标签',
+                type: 'warning'
+              });
+              this.needReBase = true
+              return false
+            }
+
             this.postDataBase.weComUserGroupRule.members.departments = this.formData.members.departments
             this.postDataBase.weComUserGroupRule.members.users = this.formData.members.users
           } else {
@@ -637,6 +676,7 @@ export default {
               params);
           console.log(data)
 
+          this.needcxjs = false
           if (data.data) {
             if (data.data.status == "COMPUTING") {
               this.needReBase = false
@@ -681,6 +721,10 @@ export default {
       }
       if (!this.set_userGroupUuid || !this.resDataBase.externalUserCount) {
         this.$message.error('请选择有效的人群');
+        return false
+      }
+      if (this.needcxjs) {
+        this.$message.error('人群条件已修改，请选重新计算人群');
         return false
       }
       await this.$refs['baseForm'].validate((valid) => {
