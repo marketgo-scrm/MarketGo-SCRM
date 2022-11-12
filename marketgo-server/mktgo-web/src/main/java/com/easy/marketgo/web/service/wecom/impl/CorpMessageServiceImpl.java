@@ -14,9 +14,14 @@ import com.easy.marketgo.biz.service.XxlJobManualTriggerService;
 import com.easy.marketgo.common.constants.Constants;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.WeComCorpConfigStepEnum;
+import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.RandomUtils;
+import com.easy.marketgo.core.entity.ProjectConfigEntity;
+import com.easy.marketgo.core.entity.TenantConfigEntity;
 import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.WeComCorpMessageEntity;
+import com.easy.marketgo.core.repository.wecom.ProjectConfigRepository;
+import com.easy.marketgo.core.repository.wecom.TenantConfigRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.WeComCorpMessageRepository;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
@@ -47,8 +52,11 @@ public class CorpMessageServiceImpl implements CorpMessageService {
     @Resource
     private WeComAgentRpcService weComAgentRpcService;
 
-    @Resource
-    private WeComMemberRpcService weComMemberRpcService;
+    @Autowired
+    private TenantConfigRepository tenantConfigRepository;
+
+    @Autowired
+    private ProjectConfigRepository projectConfigRepository;
 
     @Resource
     private WeComExternalUserRpcService weComExternalUserRpcService;
@@ -192,11 +200,22 @@ public class CorpMessageServiceImpl implements CorpMessageService {
                 agentConfig.setSecret(agentEntity.getSecret());
                 config.setAgent(agentConfig);
             }
+
+            ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);
+            if (projectConfigEntity == null) {
+                throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
+            }
+
+            TenantConfigEntity tenantConfigEntity = tenantConfigRepository.findByUuid(projectConfigEntity.getTenantUuid());
+            if (tenantConfigEntity == null) {
+                throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
+            }
+
             if (StringUtils.isNotEmpty(item.getContactsSecret())) {
                 WeComCorpConfigResponse.ContactsConfig contactsConfig = new WeComCorpConfigResponse.ContactsConfig();
                 contactsConfig.setEncodingAesKey(item.getContactsEncodingAesKey());
                 contactsConfig.setToken(item.getContactsToken());
-                contactsConfig.setUrl(Constants.WECOM_CALLBACK_CONSTACTS + item.getCorpId());
+                contactsConfig.setUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CONSTACTS + item.getCorpId());
                 contactsConfig.setSecret(item.getContactsSecret());
                 config.setContacts(contactsConfig);
             }
@@ -205,7 +224,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
                         new WeComCorpConfigResponse.ContactsConfig();
                 externalUserConfig.setEncodingAesKey(item.getExternalUserEncodingAesKey());
                 externalUserConfig.setToken(item.getExternalUserToken());
-                externalUserConfig.setUrl(Constants.WECOM_CALLBACK_CUSTOMER + item.getCorpId());
+                externalUserConfig.setUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CUSTOMER + item.getCorpId());
                 externalUserConfig.setSecret(item.getExternalUserSecret());
                 config.setExternalUser(externalUserConfig);
             }
@@ -219,18 +238,26 @@ public class CorpMessageServiceImpl implements CorpMessageService {
     public WeComCorpCallbackResponse getCallbackConfig(String projectId, String corpId, String configType) {
 
         WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorpId(corpId);
+        ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);
+        if (projectConfigEntity == null) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
+        }
 
+        TenantConfigEntity tenantConfigEntity = tenantConfigRepository.findByUuid(projectConfigEntity.getTenantUuid());
+        if (tenantConfigEntity == null) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
+        }
         WeComCorpCallbackResponse response = new WeComCorpCallbackResponse();
         if (configType.equals(WeComCorpConfigStepEnum.CONTACTS_MSG.getValue())) {
             response.setToken(entity.getContactsToken());
             response.setEncodingAesKey(entity.getContactsEncodingAesKey());
             //TUDO 添加配置
-            response.setCallbackUrl(Constants.WECOM_CALLBACK_CONSTACTS + corpId);
+            response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CONSTACTS + corpId);
         } else if (configType.equals(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
             response.setToken(entity.getExternalUserToken());
             response.setEncodingAesKey(entity.getExternalUserEncodingAesKey());
             //TUDO 添加配置
-            response.setCallbackUrl(Constants.WECOM_CALLBACK_CUSTOMER + corpId);
+            response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CUSTOMER + corpId);
         }
         return response;
     }

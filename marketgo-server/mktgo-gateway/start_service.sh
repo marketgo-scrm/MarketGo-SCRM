@@ -71,7 +71,7 @@ function pre_start() {
 function start() {
   pre_start
   blue "启动进程......"
-  java $java_opts -jar $app
+  nohup java $java_opts -jar $app &
 }
 function stop() {
   green "开始 停止 gateway 服务"

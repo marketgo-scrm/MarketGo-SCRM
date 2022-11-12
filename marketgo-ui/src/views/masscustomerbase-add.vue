@@ -411,7 +411,17 @@ export default {
       set_userGroupUuid: '',
 
       EnclosureListIn:[],
-      fjList: []
+      fjList: [],
+
+      needcxjs: true,
+    }
+  },
+  watch: {
+    'formData.members': {
+      deep: true,
+      handler() {
+        this.needcxjs = true
+      }
     }
   },
   methods: {
@@ -549,6 +559,7 @@ export default {
               params);
           console.log(data)
 
+          this.needcxjs = false
           if (data.data) {
             if (data.data.status == "COMPUTING") {
               this.needReBase = false
@@ -593,6 +604,10 @@ export default {
       }
       if (!this.set_userGroupUuid || !this.resDataBase.externalUserCount) {
         this.$message.error('请选择有效的人群');
+        return false
+      }
+      if (this.needcxjs) {
+        this.$message.error('人群条件已修改，请选重新计算人群');
         return false
       }
       await this.$refs['baseForm'].validate((valid) => {

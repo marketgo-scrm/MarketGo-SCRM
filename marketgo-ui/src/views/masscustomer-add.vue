@@ -467,11 +467,18 @@ export default {
           }
         }*/
       ],
-      fjList: []
+      fjList: [],
+
+      needcxjs: true,
+      conditionStr: '',
+      conditionPcStr: '',
+      conditionStr1: '',
+      conditionPcStr1: '',
     }
   },
   watch: {
     'baseForm.radioXz': function (n) {
+      this.needcxjs = true
       if (n == 2) {
         if (!this.$refs.condition.checked1 && !this.$refs.condition.checked2 && !this.$refs.condition.checked3 && !this.$refs.condition.checked4) {
           this.$refs.condition.checked1 = true
@@ -479,10 +486,17 @@ export default {
       }
     },
     'baseForm.radioPc': function (n) {
+      this.needcxjs = true
       if (n == 2) {
         if (!this.$refs.conditionPc.checked1 && !this.$refs.conditionPc.checked2 && !this.$refs.conditionPc.checked3 && !this.$refs.conditionPc.checked4) {
           this.$refs.conditionPc.checked1 = true
         }
+      }
+    },
+    'formData.members': {
+      deep: true,
+      handler() {
+        this.needcxjs = true
       }
     }
   },
@@ -611,6 +625,7 @@ export default {
             this.$refs.condition.externalUsers.isAll = true
           }
           this.postDataBase.weComUserGroupRule.externalUsers = this.$refs.condition.getData()
+          this.conditionStr = JSON.stringify(this.postDataBase.weComUserGroupRule.externalUsers)
 
           if (this.baseForm.radioPc == 1) {
             this.postDataBase.weComUserGroupRule.excludeSwitch = false
@@ -618,6 +633,7 @@ export default {
           } else {
             this.postDataBase.weComUserGroupRule.excludeSwitch = true
             this.postDataBase.weComUserGroupRule.excludeExternalUsers = this.$refs.conditionPc.getData()
+            this.conditionPcStr = JSON.stringify(this.postDataBase.weComUserGroupRule.excludeExternalUsers)
           }
 
           this.postDataBase.weComUserGroupRule.members.departments = this.formData.members.departments
@@ -634,6 +650,7 @@ export default {
               params);
           console.log(data)
 
+          this.needcxjs = false
           if (data.data) {
             if (data.data.status == "COMPUTING") {
               this.needReBase = false
@@ -678,6 +695,30 @@ export default {
       }
       if (!this.set_userGroupUuid || !this.resDataBase.externalUserCount) {
         this.$message.error('请选择有效的人群');
+        return false
+      }
+      this.conditionStr1 = JSON.stringify(this.$refs.condition.getData())
+      this.conditionPcStr1 = JSON.stringify(this.$refs.conditionPc.getData())
+      if (this.baseForm.radioXz != 1) {
+        if (this.conditionStr1 != this.conditionStr) {
+          this.needcxjs = true
+        }
+      }
+      if (this.baseForm.radioPc != 1) {
+        if (this.conditionPcStr1 != this.conditionPcStr) {
+          this.needcxjs = true
+        }
+      }
+      /*if (this.conditionStr1 != this.conditionStr || this.conditionPcStr1 != this.conditionPcStr) {
+        this.needcxjs = true
+      }*/
+      /*console.log('conditionStr1'+this.conditionStr1)
+      console.log('conditionStr'+this.conditionStr)
+      console.log('conditionPcStr1'+this.conditionPcStr1)
+      console.log('conditionPcStr'+this.conditionPcStr)*/
+
+      if (this.needcxjs) {
+        this.$message.error('人群条件已修改，请选重新计算人群');
         return false
       }
       await this.$refs['baseForm'].validate((valid) => {
