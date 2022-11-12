@@ -112,7 +112,8 @@
                 已授权
               </span>
               <span v-else class="errors">
-                未授权（请配置手机号）
+                未授权
+                <template v-if="!scope.row.mobile">（请配置手机号）</template>
               </span>
             </template>
           </el-table-column>
