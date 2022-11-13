@@ -40,4 +40,8 @@ export const contactsStatisticDetail = data => server.get(`mktgo/wecom/contacts/
 export const contactsStatistic = () => server.get(`mktgo/wecom/contacts/statistic?${qs.stringify(store.getters?.parseId)}`)
 // 客户列表
 export const externalUserList = data => server.get(`mktgo/wecom/contacts/external_user/list?${qs.stringify({...store.getters?.parseId,...data})}`)
+// 添加或者更新员工手机号
+export const userSave = data => server.post(`mktgo/wecom/user/save?${qs.stringify(store.getters?.parseId)}`, qs.parse(data))
+// 修改授权状态
+export const userAuthStatus = data => server.post(`mktgo/wecom/user/auth_status?${qs.stringify(store.getters?.parseId)}`, qs.parse(data))
 

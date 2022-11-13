@@ -1,7 +1,9 @@
 package com.easy.marketgo.web.service.user;
 
 import com.easy.marketgo.web.model.request.user.LoginUserRequest;
+import com.easy.marketgo.web.model.request.user.SystemUserMessageRequest;
 import com.easy.marketgo.web.model.request.user.UserChangePasswordRequest;
+import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.user.LoginUserResponse;
 import com.easy.marketgo.web.model.response.user.LogoutUserResponse;
 
@@ -14,22 +16,24 @@ import com.easy.marketgo.web.model.response.user.LogoutUserResponse;
 public interface IUserService {
 
     /**
-     *
      * @param user
      * @return
      */
     LoginUserResponse login(LoginUserRequest user);
 
     /**
-     *
      * @return
      */
     LogoutUserResponse logout();
 
     /**
-     *
      * @param request
      */
     void changePassWord(UserChangePasswordRequest request);
 
+    BaseResponse updateOrInsertUserMobile(String projectId, String corpId,
+                                          SystemUserMessageRequest systemUserMessageRequest);
+
+    BaseResponse updateSystemUserAuthStatus(String projectId, String corpId,
+                                          SystemUserMessageRequest systemUserMessageRequest);
 }

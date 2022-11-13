@@ -14,12 +14,34 @@
     <div class="content">
       <!--图片 朋友圈     -->
       <div v-show="radioFj == 1 && isPyq" class="pyqBox" style="padding-top: 11px;margin-left: 11px">
+        <ul class="el-upload-list el-upload-list--picture-card">
+          <draggable v-if="typeImg.fileList.length" v-model="typeImg.fileList">
+            <li v-for="(item, index) in typeImg.fileList" :key="index" class="el-upload-list__item is-success animated">
+              <img :src="item.url" alt="" class="el-upload-list__item-thumbnail ">
+              <i class="el-icon-close"></i>
+              <span class="el-upload-list__item-actions">
+                    <!-- 预览 -->
+                    <span class="el-upload-list__item-preview" @click="typeImghandlePictureCardPreview(item)">
+                      <i class="el-icon-zoom-in"></i>
+                    </span>
+                <!-- 删除 -->
+                    <span class="el-upload-list__item-delete" @click="typeImghandleRemove(item,index)">
+                      <i class="el-icon-delete"></i>
+                    </span>
+                  </span>
+            </li>
+          </draggable>
+        </ul>
+
+
+
         <el-upload
             :action="post"
             list-type="picture-card"
             :multiple="false"
             :limit="9"
             :file-list="typeImg.fileList"
+            :show-file-list="false"
             :on-change="typeImgchange"
             :on-success="typeImgSec"
             :auto-upload="true"
@@ -27,6 +49,7 @@
               'header-api-token': token
             }"
             :class="typeImg.iconHide  ? 'imgUpBox-icon-noshow' : ''"
+            style="width: 64px;display: inline-block"
         >
           <i slot="default" class="el-icon-plus"></i>
           <div slot="file" slot-scope="{file}">
@@ -287,8 +310,10 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable'
 export default {
   name: "Enclosure",
+  components: {draggable},
   props:{
     index: Number,
     dataIn: Object,
@@ -396,11 +421,24 @@ export default {
         },this.index)
       }
     },
-    'typeImg': {
+    'typeImg.fileList': {
       deep: true,
-      handler(n) {
+      handler(newData) {
+        let n = this.typeImg
         if (this.radioFj == 1) {
           console.log('typeImg')
+          let objList = n.objList
+          let tmpList = []
+          let fileList = newData
+          for (let i = 0; i < fileList.length; i++) {
+            for (let o = 0; o < objList.length; o++) {
+              if (fileList[i].mediaUuid == objList[o].mediaUuid) {
+                tmpList.push(objList[o])
+              }
+            }
+          }
+          n.objList = tmpList
+
           this.callback({
             typeImg: n
           },this.index)
@@ -461,7 +499,7 @@ export default {
         }
       }, 100)*/
     },
-    typeImghandleRemove(file) {
+    typeImghandleRemove(file,index) {
       let _this = this
       console.log(file);
       console.log(this.typeImg.fileList)
@@ -475,11 +513,11 @@ export default {
         }
       } else {
         console.log(473,file.index)
-        _this.$http.get(`mktgo/wecom/media/delete?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&media_uuid=${this.typeImg.objList[file.index].mediaUuid}`,
+        _this.$http.get(`mktgo/wecom/media/delete?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&media_uuid=${this.typeImg.objList[/*file.*/index].mediaUuid}`,
             {});
-        /*_this.typeImg.fileList = */_this.typeImg.fileList.splice(file.index,1)
+        /*_this.typeImg.fileList = */_this.typeImg.fileList.splice(/*file.*/index,1)
         console.log(473,_this.typeImg.fileList)
-        /*_this.typeImg.objList = */_this.typeImg.objList.splice(file.index,1)
+        /*_this.typeImg.objList = */_this.typeImg.objList.splice(/*file.*/index,1)
       }
 
       setTimeout(function () {
@@ -513,6 +551,7 @@ export default {
         let fileObj = file
         let i = this.typeImg.fileList.length
         fileObj['index'] = i
+        fileObj['mediaUuid'] = response.data.mediaUuid
         this.typeImg.fileList.push(fileObj)
         if (this.isPyq) {
           this.typeImg.objList.push(response.data)

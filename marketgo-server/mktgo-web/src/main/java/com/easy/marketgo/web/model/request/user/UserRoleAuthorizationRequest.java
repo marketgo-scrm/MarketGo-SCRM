@@ -42,6 +42,4 @@ public class UserRoleAuthorizationRequest {
         @ApiModelProperty(name = "memberId", notes = "memberId 企业成员id", dataType = "",example = "shangshikun" ,required = true)
         private String memberId;
     }
-
-
 }

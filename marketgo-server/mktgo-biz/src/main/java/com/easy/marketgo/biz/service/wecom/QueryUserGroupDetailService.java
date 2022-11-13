@@ -17,6 +17,7 @@ import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.bo.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
+import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
@@ -56,6 +57,9 @@ public class QueryUserGroupDetailService {
 
     @Autowired
     private WeComMemberMessageRepository weComMemberMessageRepository;
+
+    @Autowired
+    private WeComGroupChatsRepository weComGroupChatsRepository;
 
     @Autowired
     private WeComMassTaskSendQueueRepository weComMassTaskSendQueueRepository;
@@ -197,6 +201,8 @@ public class QueryUserGroupDetailService {
                     });
                 }
             }
+        } else {
+
         }
         return memberList.stream().distinct().collect(Collectors.toList());
     }
@@ -281,7 +287,12 @@ public class QueryUserGroupDetailService {
 
     private void queryMomentMassTaskUserGroup(String corpId, String taskUuid,
                                               WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
-        List<String> memberList = getMemberList(corpId, weComUserGroupAudienceRule);
+        List<String> memberList = new ArrayList<>();
+        if (!weComUserGroupAudienceRule.getMembers().getIsAll()) {
+            memberList = getMemberList(corpId, weComUserGroupAudienceRule);
+        } else {
+            memberList = weComGroupChatsRepository.queryOwnersByCorpId(corpId);
+        }
         WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity = new WeComMassTaskSendQueueEntity();
         if (CollectionUtils.isNotEmpty(memberList)) {
             String members = memberList.stream().collect(Collectors.joining(","));

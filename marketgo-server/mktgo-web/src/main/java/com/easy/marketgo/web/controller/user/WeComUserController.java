@@ -1,19 +1,11 @@
 package com.easy.marketgo.web.controller.user;
 
 import com.easy.marketgo.web.annotation.TokenIgnore;
-import com.easy.marketgo.web.model.request.user.LoginUserRequest;
-import com.easy.marketgo.web.model.request.user.OrganizationalStructureQueryRequest;
-import com.easy.marketgo.web.model.request.user.OrganizationalStructureRequest;
-import com.easy.marketgo.web.model.request.user.RolePermissionsAuthorizationRequest;
-import com.easy.marketgo.web.model.request.user.UserChangePasswordRequest;
-import com.easy.marketgo.web.model.request.user.UserRoleAddRequest;
-import com.easy.marketgo.web.model.request.user.UserRoleAuthorizationRequest;
-import com.easy.marketgo.web.model.request.user.UserRoleInfoRequest;
-import com.easy.marketgo.web.model.request.user.UserRoleListQueryRequest;
-import com.easy.marketgo.web.model.request.user.UserRoleListRequest;
-import com.easy.marketgo.web.model.request.user.RolePermissionsRequest;
+import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
+import com.easy.marketgo.web.model.request.user.*;
 import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.ProjectFetchResponse;
+import com.easy.marketgo.web.model.response.customer.WeComGroupChatsResponse;
 import com.easy.marketgo.web.model.response.user.LoginUserResponse;
 import com.easy.marketgo.web.model.response.user.LogoutUserResponse;
 import com.easy.marketgo.web.model.response.user.OrganizationalStructureQueryResponse;
@@ -26,16 +18,14 @@ import com.easy.marketgo.web.service.user.IOrganizationalStructureService;
 import com.easy.marketgo.web.service.user.IUserService;
 import com.easy.marketgo.web.service.user.IUserPermissionsService;
 import com.easy.marketgo.web.service.user.IUserRoleService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
@@ -78,6 +68,7 @@ public class WeComUserController {
 
         }).body(BaseResponse.success(response));
     }
+
     @ApiOperation(value = "用户登出", nickname = "logout", notes = "", response =
             BaseResponse.class)
     @PostMapping(value = {"/logout"}, produces = {"application/json"})
@@ -93,11 +84,10 @@ public class WeComUserController {
     @PostMapping(value = {"/changePassWord"}, produces = {"application/json"})
     public ResponseEntity<BaseResponse<Void>> changePassWord(@RequestBody @Validated UserChangePasswordRequest request) {
 
-         userLoginService.changePassWord(request);
+        userLoginService.changePassWord(request);
 
         return ResponseEntity.ok().body(BaseResponse.success());
     }
-
 
 
     @ApiOperation(value = "角色列表", nickname = "userRoleList", notes = "", response =
@@ -181,6 +171,33 @@ public class WeComUserController {
         return ResponseEntity.ok(BaseResponse.success(responses));
     }
 
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = WeComGroupChatsResponse.class)
+    })
+    @ApiOperation(value = "添加或者更新员工手机号", nickname = "updateOrInsertUserMobile", notes = "", response =
+            BaseResponse.class)
+    @RequestMapping(value = {"/save"}, produces = {"application/json"}, method = RequestMethod.POST)
+    public ResponseEntity updateOrInsertUserMobile(@NotNull @Valid @RequestParam(value = "project_id", required =
+            true) String projectId, @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value =
+            "corp_id", required = true) String corpId,
+                                                   @ApiParam(value = "系统用户信息", required = true) @RequestBody @Valid SystemUserMessageRequest systemUserMessageRequest) {
+        return ResponseEntity.ok(userLoginService.updateOrInsertUserMobile(projectId, corpId,
+                systemUserMessageRequest));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = WeComGroupChatsResponse.class)
+    })
+    @ApiOperation(value = "修改授权状态", nickname = "updateSystemUserAuthStatus", notes = "", response =
+            BaseResponse.class)
+    @RequestMapping(value = {"/auth_status"}, produces = {"application/json"}, method = RequestMethod.POST)
+    public ResponseEntity updateSystemUserAuthStatus(@NotNull @Valid @RequestParam(value = "project_id", required =
+            true) String projectId, @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value =
+            "corp_id", required = true) String corpId,
+                                                   @ApiParam(value = "系统用户信息", required = true) @RequestBody @Valid SystemUserMessageRequest systemUserMessageRequest) {
+        return ResponseEntity.ok(userLoginService.updateSystemUserAuthStatus(projectId, corpId,
+                systemUserMessageRequest));
+    }
 
     @ApiOperation(value = "获取当前项目下当前企业登录用户角色信息", nickname = "userRoleInfo", notes = "", response =
             BaseResponse.class)

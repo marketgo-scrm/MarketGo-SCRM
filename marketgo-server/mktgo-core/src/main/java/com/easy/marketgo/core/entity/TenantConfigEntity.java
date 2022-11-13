@@ -14,4 +14,5 @@ public class TenantConfigEntity extends UuidBaseEntity{
     private String name;
     private String mediaStorageType;
     private String status;
+    private String serverAddress;
 }

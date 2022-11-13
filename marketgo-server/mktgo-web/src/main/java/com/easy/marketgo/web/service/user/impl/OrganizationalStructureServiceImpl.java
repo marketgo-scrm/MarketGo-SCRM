@@ -1,10 +1,12 @@
 package com.easy.marketgo.web.service.user.impl;
 
 import cn.hutool.core.util.ArrayUtil;
+import com.easy.marketgo.core.entity.WeComSysUserEntity;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.WeComSysBaseRoleEntity;
 import com.easy.marketgo.core.entity.WeComSysCorpUserRoleLinkEntity;
+import com.easy.marketgo.core.repository.user.WeComSysUserRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.WeComSysBaseRoleRepository;
 import com.easy.marketgo.core.repository.wecom.WeComSysCropUserRoleLinkRepository;
@@ -49,6 +51,8 @@ public class OrganizationalStructureServiceImpl implements IOrganizationalStruct
     private WeComSysBaseRoleRepository baseRoleRepository;
     @Autowired
     private WeComRelationMemberExternalUserRepository relationMemberExternalUserRepository;
+    @Autowired
+    private WeComSysUserRepository sysUserRepository;
 
     @Override
     public OrganizationalStructureResponse fetchStructures(OrganizationalStructureRequest request) {
@@ -61,12 +65,12 @@ public class OrganizationalStructureServiceImpl implements IOrganizationalStruct
         }
         List<OrganizationalStructureResponse.StructureInfo> structureInfoList =
                 departmentEntities.stream()
-                                  .map(d -> OrganizationalStructureResponse.
-                                          StructureInfo.builder()
-                                                       .parentDepartmentId(d.getParentId() + "")
-                                                       .name(d.getDepartmentName())
-                                                       .id(d.getDepartmentId() + "")
-                                                       .build()).collect(Collectors.toList());
+                        .map(d -> OrganizationalStructureResponse.
+                                StructureInfo.builder()
+                                .parentDepartmentId(d.getParentId() + "")
+                                .name(d.getDepartmentName())
+                                .id(d.getDepartmentId() + "")
+                                .build()).collect(Collectors.toList());
 
         StructureInfoTree structureInfoTree = new StructureInfoTree(structureInfoList);
         response.setStructures(structureInfoTree.buildTree("0"));
@@ -92,28 +96,31 @@ public class OrganizationalStructureServiceImpl implements IOrganizationalStruct
 
         List<OrganizationalStructureResponse.StructureInfo> structureInfoList =
                 departmentEntities.stream()
-                                  .map(d -> OrganizationalStructureResponse.
-                                          StructureInfo.builder()
-                                                       .parentDepartmentId(d.getParentId() + "")
-                                                       .name(d.getDepartmentName())
-                                                       .id(d.getDepartmentId() + "")
-                                                       .build()).collect(Collectors.toList());
+                        .map(d -> OrganizationalStructureResponse.
+                                StructureInfo.builder()
+                                .parentDepartmentId(d.getParentId() + "")
+                                .name(d.getDepartmentName())
+                                .id(d.getDepartmentId() + "")
+                                .build()).collect(Collectors.toList());
         StructureInfoTree structureInfoTree = new StructureInfoTree(structureInfoList);
-        List<OrganizationalStructureResponse.StructureInfo> structureInfoListTree = structureInfoTree.buildTree(request.getDepartmentId());
-        List<OrganizationalStructureResponse.StructureInfo> structureInfos = structureInfoTree.getAllNode(structureInfoListTree,
-                request.getDepartmentId());
+        List<OrganizationalStructureResponse.StructureInfo> structureInfoListTree =
+                structureInfoTree.buildTree(request.getDepartmentId());
+        List<OrganizationalStructureResponse.StructureInfo> structureInfos =
+                structureInfoTree.getAllNode(structureInfoListTree,
+                        request.getDepartmentId());
         if (CollectionUtils.isEmpty(structureInfos)) {
             return response;
         }
         List<String> searchDepartmentIds =
                 structureInfos.stream().map(OrganizationalStructureResponse.StructureInfo::getId)
-                              .collect(Collectors.toList());
+                        .collect(Collectors.toList());
 
 
         List<WeComMemberMessageEntity> members =
                 StringUtils.isEmpty(request.getSearchMemberName()) ?
                         memberMessageRepository.findByCorpId(request.getCorpId())
-                        : memberMessageRepository.findByCorpIdAndMemberNameLike(request.getCorpId(), request.getSearchMemberName());
+                        : memberMessageRepository.findByCorpIdAndMemberNameLike(request.getCorpId(),
+                        request.getSearchMemberName());
 
         members = members.stream().filter(m -> {
             String[] split = StringUtils.split(m.getDepartment(), ",");
@@ -127,7 +134,8 @@ public class OrganizationalStructureServiceImpl implements IOrganizationalStruct
                         members.stream().map(WeComMemberMessageEntity::getMemberId).collect(Collectors.toList());
 
         List<WeComSysCorpUserRoleLinkEntity> linkEntities =
-                userRoleLinkRepository.findByCorpIdAndProjectUuidAndMemberIdIn(request.getCorpId(), request.getProjectUuid(), memberIds);
+                userRoleLinkRepository.findByCorpIdAndProjectUuidAndMemberIdIn(request.getCorpId(),
+                        request.getProjectUuid(), memberIds);
         List<WeComSysBaseRoleEntity> baseRoleEntities = baseRoleRepository.findByProjectUuid(request.getProjectUuid());
 
         Map<String, WeComSysBaseRoleEntity> baseRoleEntityMap =
@@ -155,47 +163,57 @@ public class OrganizationalStructureServiceImpl implements IOrganizationalStruct
 
         List<OrganizationalStructureQueryResponse.OrganizationalStructureMember> structureMemberList =
                 members.stream()
-                       .map(m -> {
-                           String roleUuid = memberRoleMap
-                                   .getOrDefault(m.getMemberId(), new WeComSysCorpUserRoleLinkEntity()).getRoleUuid();
-                           WeComSysBaseRoleEntity baseRole4Member = baseRoleEntityMap.getOrDefault(roleUuid, new WeComSysBaseRoleEntity());
-                           String[] split = StringUtils.split(m.getDepartment(), ",");
-                           OrganizationalStructureQueryResponse.OrganizationalStructureMember member =
-                                   new OrganizationalStructureQueryResponse.OrganizationalStructureMember();
-                           member.setMemberId(m.getMemberId());
-                           member.setMemberName(m.getMemberName());
-                           member.setCorpId(m.getCorpId());
-                           member.setDepartmentId(m.getDepartment());
-                           member.setDepartmentName(Arrays
-                                   .stream(split)
-                                   .map(departmentId -> departmentMap.getOrDefault(departmentId, new WeComDepartmentEntity()).getDepartmentName())
-                                   .filter(StringUtils::isNotEmpty)
-                                   .collect(Collectors.joining(",")));
+                        .map(m -> {
+                            String roleUuid = memberRoleMap
+                                    .getOrDefault(m.getMemberId(), new WeComSysCorpUserRoleLinkEntity()).getRoleUuid();
+                            WeComSysBaseRoleEntity baseRole4Member = baseRoleEntityMap.getOrDefault(roleUuid,
+                                    new WeComSysBaseRoleEntity());
+                            String[] split = StringUtils.split(m.getDepartment(), ",");
+                            OrganizationalStructureQueryResponse.OrganizationalStructureMember member =
+                                    new OrganizationalStructureQueryResponse.OrganizationalStructureMember();
+                            member.setMemberId(m.getMemberId());
+                            member.setMemberName(m.getMemberName());
+                            member.setCorpId(m.getCorpId());
+                            member.setDepartmentId(m.getDepartment());
+                            member.setDepartmentName(Arrays
+                                    .stream(split)
+                                    .map(departmentId -> departmentMap.getOrDefault(departmentId,
+                                            new WeComDepartmentEntity()).getDepartmentName())
+                                    .filter(StringUtils::isNotEmpty)
+                                    .collect(Collectors.joining(",")));
 
 
-                           member.setLeaderDepartmentId(
-                                   leaderDepartmentMap.getOrDefault(m.getMemberId(), Lists.newArrayList()).stream()
-                                                      .map(department -> department.getDepartmentId() + "")
-                                                      .filter(StringUtils::isNotEmpty)
-                                                      .collect(Collectors.joining(","))
-                           );
-                           member.setLeaderDepartmentName(
-                                   leaderDepartmentMap.getOrDefault(m.getMemberId(), Lists.newArrayList()).stream()
-                                                      .map(department -> department.getDepartmentName() + "")
-                                                      .filter(StringUtils::isNotEmpty)
-                                                      .collect(Collectors.joining(",")));
-                           member.setThumbAvatar(m.getThumbAvatar());
-                           member.setAvatar(m.getAvatar());
-                           member.setRoleCode(baseRole4Member.getCode());
-                           member.setRoleDesc(baseRole4Member.getDesc());
+                            member.setLeaderDepartmentId(
+                                    leaderDepartmentMap.getOrDefault(m.getMemberId(), Lists.newArrayList()).stream()
+                                            .map(department -> department.getDepartmentId() + "")
+                                            .filter(StringUtils::isNotEmpty)
+                                            .collect(Collectors.joining(","))
+                            );
+                            member.setLeaderDepartmentName(
+                                    leaderDepartmentMap.getOrDefault(m.getMemberId(), Lists.newArrayList()).stream()
+                                            .map(department -> department.getDepartmentName() + "")
+                                            .filter(StringUtils::isNotEmpty)
+                                            .collect(Collectors.joining(",")));
+                            member.setThumbAvatar(m.getThumbAvatar());
+                            member.setAvatar(m.getAvatar());
+                            member.setRoleCode(baseRole4Member.getCode());
+                            member.setRoleDesc(baseRole4Member.getDesc());
+                            member.setMobile(StringUtils.isBlank(m.getMobile()) ? "" : m.getMobile());
+                            WeComSysUserEntity entity = sysUserRepository.queryByUserName(m.getMobile());
+                            if (entity != null) {
+                                member.setAuthStatus(entity.getAuthStatus());
+                            } else {
+                                member.setAuthStatus(Boolean.FALSE);
+                            }
+                            int count =
+                                    relationMemberExternalUserRepository.countByCorpIdAndMemberId(request.getCorpId()
+                                            , m.getMemberId());
+                            member.setExternalUserCount(count + "");
+                            member.setAuthorizationStatus(StringUtils.isNotEmpty(member.getRoleCode()));
+                            member.setRoleUuid(baseRole4Member.getUuid());
+                            return member;
 
-                           int count = relationMemberExternalUserRepository.countByCorpIdAndMemberId(request.getCorpId(), m.getMemberId());
-                           member.setExternalUserCount(count + "");
-                           member.setAuthorizationStatus(StringUtils.isNotEmpty(member.getRoleCode()));
-                           member.setRoleUuid(baseRole4Member.getUuid());
-                           return member;
-
-                       }).collect(Collectors.toList());
+                        }).collect(Collectors.toList());
 
 
         response.setMembers(structureMemberList);
@@ -220,7 +238,8 @@ public class OrganizationalStructureServiceImpl implements IOrganizationalStruct
             return structureInfoList;
         }
 
-        private void recursiveGetNodes(List<OrganizationalStructureResponse.StructureInfo> infos, List<OrganizationalStructureResponse.StructureInfo> structureInfoListTree
+        private void recursiveGetNodes(List<OrganizationalStructureResponse.StructureInfo> infos,
+                                       List<OrganizationalStructureResponse.StructureInfo> structureInfoListTree
                 , String parentDepartmentId) {
 
             for (OrganizationalStructureResponse.StructureInfo structureInfo : structureInfoListTree) {

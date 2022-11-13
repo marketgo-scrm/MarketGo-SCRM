@@ -47,7 +47,10 @@ public class OrganizationalStructureQueryResponse {
         private String roleCode;
         @ApiModelProperty(name = "roleDesc", notes = "角色名称", example = "管理员")
         private String roleDesc;
-
+        @ApiModelProperty(name = "mobile", notes = "手机号")
+        private String mobile;
+        @ApiModelProperty(name = "authStatus", notes = "授权状态")
+        private Boolean authStatus;
         @ApiModelProperty(name = "externalUserCount", notes = "客户数", example = "2")
         private String externalUserCount;
         @ApiModelProperty(name = "authorizationStatus",notes = "授权状态")

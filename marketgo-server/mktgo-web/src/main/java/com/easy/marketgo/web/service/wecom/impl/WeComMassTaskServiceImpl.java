@@ -301,32 +301,13 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
             detail.setScheduleTime(DateUtil.formatDateTime(entity.getScheduleTime()));
             detail.setTaskStatus(WeComMassTaskStatus.fromValue(entity.getTaskStatus()));
             detail.setScheduleType(WeComMassTaskScheduleType.fromValue(entity.getScheduleType()));
-
-            Integer nonSendCount = 0;
-            Integer sendCount = 0;
-            Integer sendFailedCount = 0;
-            for (WeComMassTaskMemberStatusEnum value : WeComMassTaskMemberStatusEnum.values()) {
-                int countValue = weComMassTaskMemberStatisticRepository.countByTaskUuidAAndStatus(entity.getUuid(),
-                        value.getValue());
-                if (value == WeComMassTaskMemberStatusEnum.UNSENT) {
-                    nonSendCount = countValue;
-                } else if (value == WeComMassTaskMemberStatusEnum.SENT) {
-                    sendCount = countValue;
-                } else if (value == WeComMassTaskMemberStatusEnum.SENT_FAIL) {
-                    sendFailedCount = countValue;
-                }
-            }
-            NumberFormat numberFormat = NumberFormat.getInstance();
-            numberFormat.setMaximumFractionDigits(2);
-            log.info("complete mass task rate. sendCount={}, nonSendCount={}, sendFailedCount={}", sendCount,
-                    nonSendCount, sendFailedCount);
-            detail.setCompleteRate("0%");
-            if (nonSendCount != 0 || sendCount != 0 || sendFailedCount != 0) {
-                String result =
-                        numberFormat.format((float) sendCount / (float) (nonSendCount + sendCount + sendFailedCount) * 100);
-                detail.setCompleteRate(result + "%");
-            }
             detail.setCanRemind(canRemind(entity));
+            String result = completeRateResult(entity);
+            detail.setCompleteRate(result);
+            if (result.equals("100%")) {
+                detail.setCanRemind(Boolean.FALSE);
+            }
+
             massTasks.add(detail);
         });
         response.setTotalCount(count);
@@ -377,6 +358,10 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
             return BaseResponse.failure(ERROR_WEB_MASS_TASK_IS_EMPTY);
         }
         response.setCanRemind(canRemind(entity));
+        String result = completeRateResult(entity);
+        if (result.equals("100%")) {
+            response.setCanRemind(Boolean.FALSE);
+        }
         response.setMembers(memberDetails);
         log.info("query mass task statistic for member response. corpId={}, response={}", corpId,
                 JsonUtils.toJSONString(response));
@@ -427,11 +412,41 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
         return BaseResponse.success(response);
     }
 
+    private String completeRateResult(WeComMassTaskEntity entity) {
+        String result = "0%";
+        Integer nonSendCount = 0;
+        Integer sendCount = 0;
+        Integer sendFailedCount = 0;
+        for (WeComMassTaskMemberStatusEnum value : WeComMassTaskMemberStatusEnum.values()) {
+            int countValue = weComMassTaskMemberStatisticRepository.countByTaskUuidAAndStatus(entity.getUuid(),
+                    value.getValue());
+            if (value == WeComMassTaskMemberStatusEnum.UNSENT) {
+                nonSendCount = countValue;
+            } else if (value == WeComMassTaskMemberStatusEnum.SENT) {
+                sendCount = countValue;
+            } else if (value == WeComMassTaskMemberStatusEnum.SENT_FAIL) {
+                sendFailedCount = countValue;
+            }
+        }
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        numberFormat.setMaximumFractionDigits(2);
+        log.info("complete mass task rate. sendCount={}, nonSendCount={}, sendFailedCount={}", sendCount,
+                nonSendCount, sendFailedCount);
+        if (nonSendCount != 0 || sendCount != 0 || sendFailedCount != 0) {
+            result =
+                    numberFormat.format((float) sendCount / (float) (nonSendCount + sendCount + sendFailedCount) * 100);
+            result += "%";
+
+        }
+        return result;
+    }
+
     private Boolean canRemind(WeComMassTaskEntity entity) {
         if (entity.getTaskStatus().equals(WeComMassTaskStatus.FINISHED.getValue()) ||
                 entity.getTaskStatus().equals(WeComMassTaskStatus.UNSTART.getValue())) {
             return Boolean.FALSE;
         }
+
 //        String today = DateUtil.today();
 //        if (entity.getRemindTime() != null && DateUtil.formatDate(entity.getRemindTime()).equals(today)) {
 //            return Boolean.FALSE;

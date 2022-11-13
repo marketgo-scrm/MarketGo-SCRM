@@ -665,3 +665,13 @@ set session sql_mode= 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FO
 
 
 set @@global.sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+
+
+-- version 0.0.2
+
+ALTER TABLE wecom_sys_user ADD auth_status tinyint(1) DEFAULT NULL COMMENT '授权状态，0:关闭授权，1:打开授权';
+UPDATE wecom_sys_user SET auth_status=1;
+
+
+ALTER TABLE tenant_config ADD server_address varchar(1024) DEFAULT NULL COMMENT '服务器地址信息';
+UPDATE tenant_config SET server_address='${域名地址}';

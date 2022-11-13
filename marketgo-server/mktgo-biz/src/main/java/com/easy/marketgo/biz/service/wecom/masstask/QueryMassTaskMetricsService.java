@@ -655,6 +655,7 @@ public class QueryMassTaskMetricsService {
         weComMassTaskForMomentPublishResultRequest.setCorpId(corpId);
         weComMassTaskForMomentPublishResultRequest.setMomentId(momentId);
         weComMassTaskForMomentPublishResultRequest.setCursor(cursor);
+        weComMassTaskForMomentPublishResultRequest.setLimit(1000);
         RpcResponse<WeComMomentMassTaskPublishResultClientResponse> response =
                 weComMassTaskRpcService.queryMomentMassTaskForPublishResult(weComMassTaskForMomentPublishResultRequest);
         log.info("query mass task from moment publish result. momentId={}, response={}", momentId, response);
