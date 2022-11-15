@@ -182,6 +182,16 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
         return BaseResponse.success(userGroupMessageResponse);
     }
 
+    @Override
+    public BaseResponse offlineUserGroup(String projectId, String corpId, String groupUuid) {
+        return null;
+    }
+
+    @Override
+    public BaseResponse getExcelTemplate(String projectId, String corpId) {
+        return null;
+    }
+
     public class WeComUserGroupEstimate implements Runnable {
         private WeComUserGroupRule rule;
         private String corpId;

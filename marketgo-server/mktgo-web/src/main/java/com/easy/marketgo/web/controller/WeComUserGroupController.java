@@ -64,4 +64,36 @@ class WeComUserGroupController {
 
         return ResponseEntity.ok(weComUserGroupService.queryUserGroup(projectId, corpId, taskType, groupUuid));
     }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = UserGroupEstimateResponse.class)
+    })
+    @ApiOperation(value = "上传离线人群", nickname = "uploadOfflineUserGroup", notes = "", response =
+            UserGroupAudienceRules.class)
+    @RequestMapping(value = {"/upload"}, produces = {"application/json"}, method = RequestMethod.GET)
+    public ResponseEntity uploadOfflineUserGroup(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
+            "project_id", required = true) @NotBlank @Valid String projectId,
+                                                 @ApiParam(value = "人群的uuid", required = true) @RequestParam(value =
+                                                         "group_uuid", required = true) @NotBlank @Valid String groupUuid,
+                                                 @ApiParam(value = "企业id", required = true) @RequestParam(value =
+                                                         "corp_id",
+                                                         required = true) @NotBlank @Valid String corpId) {
+
+        return ResponseEntity.ok(weComUserGroupService.offlineUserGroup(projectId, corpId, groupUuid));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = UserGroupEstimateResponse.class)
+    })
+    @ApiOperation(value = "下载excel格式", nickname = "downloadExcelTemplate", notes = "", response =
+            UserGroupAudienceRules.class)
+    @RequestMapping(value = {"/download/template"}, produces = {"application/json"}, method = RequestMethod.GET)
+    public ResponseEntity downloadExcelTemplate(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
+            "project_id", required = true) @NotBlank @Valid String projectId,
+                                                @ApiParam(value = "企业id", required = true) @RequestParam(value =
+                                                        "corp_id",
+                                                        required = true) @NotBlank @Valid String corpId) {
+
+        return ResponseEntity.ok(weComUserGroupService.getExcelTemplate(projectId, corpId));
+    }
 }

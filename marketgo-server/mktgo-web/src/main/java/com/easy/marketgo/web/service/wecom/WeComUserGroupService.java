@@ -16,4 +16,8 @@ public interface WeComUserGroupService {
                           String corpId, String taskType);
 
     BaseResponse queryUserGroup(String projectId, String corpId, String taskType, String groupUuid);
+
+    BaseResponse offlineUserGroup(String projectId, String corpId, String groupUuid);
+
+    BaseResponse getExcelTemplate(String projectId, String corpId);
 }
