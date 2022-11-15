@@ -5,6 +5,7 @@ spring:
   ​    multipart:
   ​      max-request-size: 100MB
   ​      max-file-size: 100MB
+        enabled: true
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
