@@ -148,7 +148,11 @@
             <version>3.3.3</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>3.1.2</version>
+        </dependency>
     </dependencies>
 
     <build>
