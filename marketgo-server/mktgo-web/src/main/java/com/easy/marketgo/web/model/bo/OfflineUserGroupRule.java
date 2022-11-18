@@ -1,8 +1,8 @@
 package com.easy.marketgo.web.model.bo;
 
-import com.alibaba.excel.annotation.ExcelProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * @author : kevinwang
@@ -11,10 +11,8 @@ import lombok.EqualsAndHashCode;
  * Describe:
  */
 @Data
-@EqualsAndHashCode
+@ApiModel(description = "离线人群计算的条件详情")
 public class OfflineUserGroupRule {
-        @ExcelProperty("external_user_id")
-        private String externalUserId;
-        @ExcelProperty("member_id")
-        private String memberId;
+    @ApiModelProperty(value = "人群条件uuid")
+    private String userGroupUuid;
 }

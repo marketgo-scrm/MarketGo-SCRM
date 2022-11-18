@@ -1,6 +1,5 @@
 package com.easy.marketgo.core.repository.usergroup;
 
-import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
 import com.easy.marketgo.core.entity.usergroup.UserGroupOfflineEntity;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -23,11 +22,11 @@ public interface UserGroupOfflineRepository extends CrudRepository<UserGroupOffl
                                 @Param("status") String status);
 
 
-    @Query("SELECT * FROM user_group__offline WHERE project_uuid = :projectUuid AND request_id = :requestId")
-    WeComUserGroupAudienceEntity queryWeComUserGroupAudienceEntityByRequestId(String projectUuid, String requestId);
+    @Query("SELECT COUNT(DISTINCT(external_user_id)) FROM user_group_offline WHERE corp_id = :corpId AND uuid = :uuid")
+    Integer queryExternalUserCountByUuid(String corpId, String uuid);
 
-    @Query("SELECT * FROM user_group__offline WHERE uuid = :uuid")
-    WeComUserGroupAudienceEntity queryWeComUserGroupAudienceEntityByUuid(String uuid);
+    @Query("SELECT COUNT(DISTINCT(member_id)) FROM user_group_offline WHERE corp_id = :corpId AND uuid = :uuid")
+    Integer queryMemberCountByUuid(String corpId, String uuid);
 
     @Modifying
     @Query("UPDATE user_group__offline SET status = :status WHERE uuid = :uuid AND project_uuid = :project_uuid")
