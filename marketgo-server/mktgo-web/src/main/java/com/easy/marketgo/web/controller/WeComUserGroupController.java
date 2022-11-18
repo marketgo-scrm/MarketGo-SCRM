@@ -74,7 +74,7 @@ class WeComUserGroupController {
     })
     @ApiOperation(value = "上传离线人群", nickname = "uploadOfflineUserGroup", notes = "", response =
             UserGroupAudienceRules.class)
-    @RequestMapping(value = {"/upload"}, produces = {"application/json"}, method = RequestMethod.GET)
+    @PostMapping("/upload")
     public ResponseEntity uploadOfflineUserGroup(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
             "project_id", required = true) @NotBlank @Valid String projectId,
                                                  @ApiParam(value = "人群的uuid", required = true) @RequestParam(value =
