@@ -1,6 +1,8 @@
 package com.easy.marketgo.web.model.bo;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author : kevinwang
@@ -9,5 +11,10 @@ import lombok.Data;
  * Describe:
  */
 @Data
+@EqualsAndHashCode
 public class OfflineUserGroupRule {
+        @ExcelProperty("external_user_id")
+        private String externalUserId;
+        @ExcelProperty("member_id")
+        private String memberId;
 }

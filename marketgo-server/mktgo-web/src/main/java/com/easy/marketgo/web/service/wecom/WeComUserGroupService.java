@@ -2,6 +2,9 @@ package com.easy.marketgo.web.service.wecom;
 
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author : kevinwang
@@ -17,7 +20,8 @@ public interface WeComUserGroupService {
 
     BaseResponse queryUserGroup(String projectId, String corpId, String taskType, String groupUuid);
 
-    BaseResponse offlineUserGroup(String projectId, String corpId, String groupUuid);
+    BaseResponse offlineUserGroup(String projectId, String corpId, String groupUuid, String fileType,
+                                  MultipartFile multipartFile);
 
-    BaseResponse getExcelTemplate(String projectId, String corpId);
+    BaseResponse getExcelTemplate(String projectId, String corpId, HttpServletResponse httpServletResponse);
 }

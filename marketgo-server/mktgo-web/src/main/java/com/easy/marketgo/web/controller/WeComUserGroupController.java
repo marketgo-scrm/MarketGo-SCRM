@@ -1,5 +1,6 @@
 package com.easy.marketgo.web.controller;
 
+import com.easy.marketgo.web.annotation.TokenIgnore;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
@@ -7,8 +8,11 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -76,10 +80,13 @@ class WeComUserGroupController {
                                                  @ApiParam(value = "人群的uuid", required = true) @RequestParam(value =
                                                          "group_uuid", required = true) @NotBlank @Valid String groupUuid,
                                                  @ApiParam(value = "企业id", required = true) @RequestParam(value =
-                                                         "corp_id",
-                                                         required = true) @NotBlank @Valid String corpId) {
+                                                         "corp_id", required = true) @NotBlank @Valid String corpId,
+                                                 @ApiParam(value = "人群数据", required = true) @RequestParam("file") @NotNull @Valid MultipartFile multipartFile,
+                                                 @ApiParam(value = "文件类型", required = true) @NotNull @Valid @RequestParam(value = "file_type",
+                                                         required = true, defaultValue = "csv") String fileType) {
 
-        return ResponseEntity.ok(weComUserGroupService.offlineUserGroup(projectId, corpId, groupUuid));
+        return ResponseEntity.ok(weComUserGroupService.offlineUserGroup(projectId, corpId, groupUuid, fileType,
+                multipartFile));
     }
 
     @ApiResponses({
@@ -88,12 +95,13 @@ class WeComUserGroupController {
     @ApiOperation(value = "下载excel格式", nickname = "downloadExcelTemplate", notes = "", response =
             UserGroupAudienceRules.class)
     @RequestMapping(value = {"/download/template"}, produces = {"application/json"}, method = RequestMethod.GET)
+    @TokenIgnore
     public ResponseEntity downloadExcelTemplate(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
             "project_id", required = true) @NotBlank @Valid String projectId,
                                                 @ApiParam(value = "企业id", required = true) @RequestParam(value =
-                                                        "corp_id",
-                                                        required = true) @NotBlank @Valid String corpId) {
+                                                        "corp_id", required = true) @NotBlank @Valid String corpId,
+                                                HttpServletResponse httpServletResponse) {
 
-        return ResponseEntity.ok(weComUserGroupService.getExcelTemplate(projectId, corpId));
+        return ResponseEntity.ok(weComUserGroupService.getExcelTemplate(projectId, corpId, httpServletResponse));
     }
 }

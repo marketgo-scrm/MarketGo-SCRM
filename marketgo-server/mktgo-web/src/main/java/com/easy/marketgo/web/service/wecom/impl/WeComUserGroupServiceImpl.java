@@ -1,5 +1,8 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
+import cn.hutool.core.text.csv.CsvReader;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.util.ListUtils;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.enums.UserGroupAudienceTypeEnum;
@@ -19,6 +22,7 @@ import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepositor
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.service.WeComUserGroupFactoryService;
+import com.easy.marketgo.web.model.bo.OfflineUserGroupRule;
 import com.easy.marketgo.web.model.bo.WeComUserGroupRule;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
@@ -32,8 +36,13 @@ import org.apache.dubbo.common.utils.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -183,13 +192,42 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
     }
 
     @Override
-    public BaseResponse offlineUserGroup(String projectId, String corpId, String groupUuid) {
+    public BaseResponse offlineUserGroup(String projectId, String corpId, String groupUuid, String fileType,
+                                         MultipartFile multipartFile) {
+        CsvReader r = null;
         return null;
     }
 
     @Override
-    public BaseResponse getExcelTemplate(String projectId, String corpId) {
+    public BaseResponse getExcelTemplate(String projectId, String corpId, HttpServletResponse httpServletResponse) {
+        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
+        httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        httpServletResponse.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        String fileName = null;
+        try {
+            fileName = URLEncoder.encode("template", "UTF-8").replaceAll("\\+", "%20");
+
+            httpServletResponse.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".csv");
+
+            EasyExcel.write(httpServletResponse.getOutputStream(), OfflineUserGroupRule.class).sheet("template").doWrite(templeteData());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
+    }
+
+    private List<OfflineUserGroupRule> templeteData() {
+        List<OfflineUserGroupRule> list = ListUtils.newArrayList();
+        for (int i = 0; i < 10; i++) {
+            OfflineUserGroupRule data = new OfflineUserGroupRule();
+            data.setExternalUserId("wmqPhANwAADkwwqT4B2as3tN4E6-6suA");
+            data.setMemberId("WangWanZheng");
+            list.add(data);
+        }
+        return list;
     }
 
     public class WeComUserGroupEstimate implements Runnable {
