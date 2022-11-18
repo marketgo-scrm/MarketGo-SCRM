@@ -34,6 +34,7 @@ import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.model.response.UserGroupMessageResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.sun.xml.internal.ws.api.model.ExceptionType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.common.utils.CollectionUtils;
@@ -201,6 +202,17 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
     @Override
     public BaseResponse offlineUserGroup(String projectId, String corpId, String groupUuid, String fileType,
                                          MultipartFile multipartFile) {
+
+        String fileName = multipartFile.getOriginalFilename();
+        log.error("upload csv file. fileName={}, fileSize={}, type={}", fileName, multipartFile.getSize(),
+                multipartFile.getContentType());
+        if (StringUtils.isBlank(fileName)) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_NAME_EMPTY);
+        }
+        if (multipartFile.getSize() <= 0) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY);
+        }
+
         try {
             EasyExcel.read(multipartFile.getInputStream(), OfflineUserGroupRule.class,
                     new UploadOfflineDataListener(projectId, corpId, groupUuid)).sheet().doRead();
@@ -260,7 +272,7 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
 
         @Override
         public void invoke(OfflineUserGroupRule offlineUserGroupRule, AnalysisContext analysisContext) {
-
+            log.info("read csv data. offlineUserGroupRul={}", offlineUserGroupRule);
             UserGroupOfflineEntity entity = new UserGroupOfflineEntity();
             entity.setCorpId(corpId);
             entity.setExternalUserId(offlineUserGroupRule.getExternalUserId());
