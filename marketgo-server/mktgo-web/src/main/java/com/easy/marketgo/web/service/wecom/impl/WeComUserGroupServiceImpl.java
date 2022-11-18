@@ -2,6 +2,8 @@ package com.easy.marketgo.web.service.wecom.impl;
 
 import cn.hutool.core.text.csv.CsvReader;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
@@ -13,9 +15,11 @@ import com.easy.marketgo.common.utils.UuidUtils;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
+import com.easy.marketgo.core.entity.usergroup.UserGroupOfflineEntity;
 import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.bo.UserGroupEstimateResultBO;
+import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
@@ -77,6 +81,9 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
 
     @Autowired
     private WeComGroupChatsRepository weComGroupChatsRepository;
+
+    @Autowired
+    private UserGroupOfflineRepository userGroupOfflineRepository;
 
     private ExecutorService executorService;
 
@@ -194,13 +201,17 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
     @Override
     public BaseResponse offlineUserGroup(String projectId, String corpId, String groupUuid, String fileType,
                                          MultipartFile multipartFile) {
-        CsvReader r = null;
-        return null;
+        try {
+            EasyExcel.read(multipartFile.getInputStream(), OfflineUserGroupRule.class,
+                    new UploadOfflineDataListener(projectId, corpId, groupUuid)).sheet().doRead();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return BaseResponse.success();
     }
 
     @Override
     public BaseResponse getExcelTemplate(String projectId, String corpId, HttpServletResponse httpServletResponse) {
-        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
         httpServletResponse.setContentType("application/csv;charset=gb18030");
         httpServletResponse.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
@@ -210,7 +221,7 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
 
             httpServletResponse.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".csv");
 
-            EasyExcel.write(httpServletResponse.getOutputStream(), OfflineUserGroupRule.class).sheet("template").doWrite(templeteData());
+            EasyExcel.write(httpServletResponse.getOutputStream(), OfflineUserGroupRule.class).sheet("template").doWrite(templateData());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -219,13 +230,55 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
         return null;
     }
 
-    private List<OfflineUserGroupRule> templeteData() {
+    private List<OfflineUserGroupRule> templateData() {
         List<OfflineUserGroupRule> list = ListUtils.newArrayList();
         OfflineUserGroupRule data = new OfflineUserGroupRule();
         data.setExternalUserId("wmqPhANwAADkwwqT4B2as3tN4E6-6suA");
         data.setMemberId("WangWanZheng");
         list.add(data);
         return list;
+    }
+
+    private void saveOfflineUserGroup(List<UserGroupOfflineEntity> entities) {
+        userGroupOfflineRepository.saveAll(entities);
+    }
+
+    public class UploadOfflineDataListener implements ReadListener<OfflineUserGroupRule> {
+
+        private static final int BATCH_COUNT = 100;
+        private List<UserGroupOfflineEntity> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+
+        private String projectId;
+        private String corpId;
+        private String groupUuid;
+
+        public UploadOfflineDataListener(String projectId, String corpId, String groupUuid) {
+            this.projectId = projectId;
+            this.corpId = corpId;
+            this.groupUuid = groupUuid;
+        }
+
+        @Override
+        public void invoke(OfflineUserGroupRule offlineUserGroupRule, AnalysisContext analysisContext) {
+
+            UserGroupOfflineEntity entity = new UserGroupOfflineEntity();
+            entity.setCorpId(corpId);
+            entity.setExternalUserId(offlineUserGroupRule.getExternalUserId());
+            entity.setMemberId(offlineUserGroupRule.getMemberId());
+            entity.setUuid(groupUuid);
+            cachedDataList.add(entity);
+            // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
+            if (cachedDataList.size() >= BATCH_COUNT) {
+                saveOfflineUserGroup(cachedDataList);
+                // 存储完成清理 list
+                cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+            }
+        }
+
+        @Override
+        public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+            saveOfflineUserGroup(cachedDataList);
+        }
     }
 
     public class WeComUserGroupEstimate implements Runnable {
