@@ -1,6 +1,5 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
-import cn.hutool.core.text.csv.CsvReader;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
@@ -34,7 +33,6 @@ import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.model.response.UserGroupMessageResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.sun.xml.internal.ws.api.model.ExceptionType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.common.utils.CollectionUtils;
