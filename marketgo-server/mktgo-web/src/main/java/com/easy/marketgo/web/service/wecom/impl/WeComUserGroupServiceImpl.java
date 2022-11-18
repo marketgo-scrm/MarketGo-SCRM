@@ -201,7 +201,7 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
     @Override
     public BaseResponse getExcelTemplate(String projectId, String corpId, HttpServletResponse httpServletResponse) {
         // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
-        httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        httpServletResponse.setContentType("application/csv;charset=gb18030");
         httpServletResponse.setCharacterEncoding("utf-8");
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
         String fileName = null;
@@ -221,12 +221,10 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
 
     private List<OfflineUserGroupRule> templeteData() {
         List<OfflineUserGroupRule> list = ListUtils.newArrayList();
-        for (int i = 0; i < 10; i++) {
-            OfflineUserGroupRule data = new OfflineUserGroupRule();
-            data.setExternalUserId("wmqPhANwAADkwwqT4B2as3tN4E6-6suA");
-            data.setMemberId("WangWanZheng");
-            list.add(data);
-        }
+        OfflineUserGroupRule data = new OfflineUserGroupRule();
+        data.setExternalUserId("wmqPhANwAADkwwqT4B2as3tN4E6-6suA");
+        data.setMemberId("WangWanZheng");
+        list.add(data);
         return list;
     }
 
