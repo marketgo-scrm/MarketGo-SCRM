@@ -682,8 +682,8 @@ UPDATE tenant_config SET server_address='${域名地址}';
 -- ----------------------------
 -- Table structure for user_group__offline
 -- ----------------------------
-DROP TABLE IF EXISTS `user_group__offline`;
-CREATE TABLE `user_group__offline` (
+DROP TABLE IF EXISTS `user_group_offline`;
+CREATE TABLE `user_group_offline` (
    `id` bigint(20) NOT NULL AUTO_INCREMENT,
    `uuid`  VARCHAR(64)  NOT NULL COMMENT '人群的UUID',
    `corp_id` varchar(32) DEFAULT NULL,

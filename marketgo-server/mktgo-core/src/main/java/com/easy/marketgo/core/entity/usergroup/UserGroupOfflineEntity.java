@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
  */
 @Data
 @Accessors(chain = true)
-    @Table("user_group__offline")
+@Table("user_group_offline")
 public class UserGroupOfflineEntity extends UuidBaseEntity {
     private String corpId;
     private String externalUserId;
