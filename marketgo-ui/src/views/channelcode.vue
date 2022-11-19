@@ -53,8 +53,8 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="添加客户数" prop="addExtCount" />
-        <el-table-column width="280" label="客户标签">
+        <el-table-column label="添加客户数" prop="addExtCount" width="120" />
+        <el-table-column label="客户标签">
           <template #default="{ row }">
             <div class="add-custom-tag">
               <CustomStretch :height="28" :standard="row?.tags?.length > 3">
@@ -140,7 +140,6 @@
         <el-table-column label="创建时间" prop="createTime" width="180" />
         <el-table-column
           label="操作"
-          fixed="right"
           width="210"
           prop="addExtCount"
           align="right"
