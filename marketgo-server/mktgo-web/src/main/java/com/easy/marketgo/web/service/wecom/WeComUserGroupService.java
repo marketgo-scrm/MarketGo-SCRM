@@ -24,4 +24,6 @@ public interface WeComUserGroupService {
                                   MultipartFile multipartFile);
 
     BaseResponse getExcelTemplate(String projectId, String corpId, HttpServletResponse httpServletResponse);
+
+    BaseResponse deleteOfflineUserGroup(String corpId, String groupUuid);
 }

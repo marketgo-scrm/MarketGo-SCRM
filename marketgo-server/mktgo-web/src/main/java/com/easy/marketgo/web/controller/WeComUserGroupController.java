@@ -2,6 +2,7 @@ package com.easy.marketgo.web.controller;
 
 import com.easy.marketgo.web.annotation.TokenIgnore;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
+import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
 import io.swagger.annotations.*;
@@ -78,7 +79,7 @@ class WeComUserGroupController {
     public ResponseEntity uploadOfflineUserGroup(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
             "project_id", required = true) @NotBlank @Valid String projectId,
                                                  @ApiParam(value = "人群的uuid", required = true) @RequestParam(value =
-                                                         "group_uuid", required = true) @NotBlank @Valid String groupUuid,
+                                                         "user_group_uuid", required = true) @NotBlank @Valid String groupUuid,
                                                  @ApiParam(value = "企业id", required = true) @RequestParam(value =
                                                          "corp_id", required = true) @NotBlank @Valid String corpId,
                                                  @ApiParam(value = "人群数据", required = true) @RequestParam("file") @NotNull @Valid MultipartFile multipartFile,
@@ -103,5 +104,18 @@ class WeComUserGroupController {
                                                 HttpServletResponse httpServletResponse) {
 
         return ResponseEntity.ok(weComUserGroupService.getExcelTemplate(projectId, corpId, httpServletResponse));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
+    })
+    @ApiOperation(value = "删除离线人群", nickname = "deleteOfflineUserGroup", notes = "", response = BaseResponse.class)
+    @RequestMapping(value = {"/delete"}, produces = {"application/json"}, method = RequestMethod.POST)
+    public ResponseEntity deleteMassTask(
+            @ApiParam(value = "企微项目uuid", required = true) @NotNull @Valid @RequestParam(value = "project_id",
+                    required = true) String projectId,
+            @ApiParam(value = "企业id", required = true) @RequestParam(value = "corp_id", required = true) @NotBlank @Valid String corpId,
+            @ApiParam(value = "人群的uuid", required = true) @RequestParam("user_group_uuid") String groupUuid) {
+        return ResponseEntity.ok(weComUserGroupService.deleteOfflineUserGroup(corpId, groupUuid));
     }
 }

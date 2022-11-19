@@ -256,6 +256,12 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
         return null;
     }
 
+    @Override
+    public BaseResponse deleteOfflineUserGroup(String corpId, String groupUuid) {
+        userGroupOfflineRepository.deleteByUuid(corpId, groupUuid);
+        return BaseResponse.success();
+    }
+
     private List<OfflineUserGroupMessage> templateData() {
         List<OfflineUserGroupMessage> list = ListUtils.newArrayList();
         OfflineUserGroupMessage data = new OfflineUserGroupMessage();

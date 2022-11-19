@@ -1,6 +1,7 @@
 package com.easy.marketgo.core.repository.usergroup;
 
 import com.easy.marketgo.core.entity.usergroup.UserGroupOfflineEntity;
+import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -25,4 +26,8 @@ public interface UserGroupOfflineRepository extends CrudRepository<UserGroupOffl
     @Query("SELECT DISTINCT(external_user_id) FROM user_group_offline WHERE corp_id = :corpId AND uuid = :uuid AND " +
             "member_id=:memberId")
     List<String> queryExternalUsersByUuidAndMemberId(String corpId, String uuid, String memberId);
+
+    @Modifying
+    @Query("DELETE FROM user_group_offline WHERE corp_id = :corpId AND uuid = :uuid")
+    int deleteByUuid(String corpId, String uuid);
 }
