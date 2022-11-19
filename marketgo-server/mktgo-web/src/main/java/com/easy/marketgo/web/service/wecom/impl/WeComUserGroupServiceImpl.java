@@ -1,5 +1,9 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.util.ListUtils;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.enums.UserGroupAudienceTypeEnum;
@@ -10,15 +14,19 @@ import com.easy.marketgo.common.utils.UuidUtils;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
+import com.easy.marketgo.core.entity.usergroup.UserGroupOfflineEntity;
 import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.bo.UserGroupEstimateResultBO;
+import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.service.WeComUserGroupFactoryService;
+import com.easy.marketgo.web.model.bo.OfflineUserGroupMessage;
+import com.easy.marketgo.web.model.bo.OfflineUserGroupRule;
 import com.easy.marketgo.web.model.bo.WeComUserGroupRule;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
@@ -32,8 +40,13 @@ import org.apache.dubbo.common.utils.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -69,6 +82,9 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
     @Autowired
     private WeComGroupChatsRepository weComGroupChatsRepository;
 
+    @Autowired
+    private UserGroupOfflineRepository userGroupOfflineRepository;
+
     private ExecutorService executorService;
 
     private static final Integer CAPACITY_ONE = 10;
@@ -102,6 +118,13 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
             log.error("member message is empty for user group estimate.");
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
         }
+
+        if (audienceRules.getUserGroupType().equals(UserGroupAudienceTypeEnum.OFFLIEN_USER_GROUP.getValue()) &&
+                (audienceRules.getOfflineUserGroupRule() == null || StringUtils.isBlank(audienceRules.getOfflineUserGroupRule().getUserGroupUuid()))) {
+            log.error("offline message is empty for user group estimate.");
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
+        }
+
         if (taskType.equals(WeComMassTaskTypeEnum.SINGLE.name()) && audienceRules.getWeComUserGroupRule().getExternalUsers() == null) {
             log.error("external user message is empty for user group estimate.");
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_MASS_TASK_USER_GROUP_EXTERNAL_USER_IS_EMPTY);
@@ -118,14 +141,22 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
             weComUserGroupAudienceEntity.setUserGroupType(audienceRules.getUserGroupType());
             if (audienceRules.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.WECOM_USER_GROUP.getValue())) {
                 weComUserGroupAudienceEntity.setWecomConditions(JsonUtils.toJSONString(audienceRules.getWeComUserGroupRule()));
+            } else if (audienceRules.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.OFFLIEN_USER_GROUP.getValue())) {
+                weComUserGroupAudienceEntity.setOfflineConditions(JsonUtils.toJSONString(audienceRules.getOfflineUserGroupRule()));
             }
             weComUserGroupAudienceEntity.setConditionsRelation(audienceRules.getRelation());
             weComUserGroupAudienceEntity.setStatus(UserGroupAudienceStatusEnum.COMPUTING.getValue());
             weComUserGroupAudienceRepository.save(weComUserGroupAudienceEntity);
-
-            Runnable task =
-                    new WeComUserGroupEstimate(projectId, corpId, taskType, requestId,
-                            audienceRules.getWeComUserGroupRule());
+            Runnable task = null;
+            if (audienceRules.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.OFFLIEN_USER_GROUP.getValue())) {
+                task =
+                        new OfflineUserGroupEstimate(projectId, corpId, taskType, requestId,
+                                audienceRules.getOfflineUserGroupRule());
+            } else {
+                task =
+                        new WeComUserGroupEstimate(projectId, corpId, taskType, requestId,
+                                audienceRules.getWeComUserGroupRule());
+            }
             try {
                 executorService.submit(task);
             } catch (Exception e) {
@@ -180,6 +211,100 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
         log.info("query user group message response. groupUuid={}, audienceRules={}", groupUuid,
                 JsonUtils.toJSONString(userGroupMessageResponse));
         return BaseResponse.success(userGroupMessageResponse);
+    }
+
+    @Override
+    public BaseResponse offlineUserGroup(String projectId, String corpId, String groupUuid, String fileType,
+                                         MultipartFile multipartFile) {
+
+        String fileName = multipartFile.getOriginalFilename();
+        log.error("upload csv file. fileName={}, fileSize={}, type={}", fileName, multipartFile.getSize(),
+                multipartFile.getContentType());
+        if (StringUtils.isBlank(fileName)) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_NAME_EMPTY);
+        }
+        if (multipartFile.getSize() <= 0) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY);
+        }
+
+        try {
+            EasyExcel.read(multipartFile.getInputStream(), OfflineUserGroupMessage.class,
+                    new UploadOfflineDataListener(projectId, corpId, groupUuid)).sheet().doRead();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return BaseResponse.success();
+    }
+
+    @Override
+    public BaseResponse getExcelTemplate(String projectId, String corpId, HttpServletResponse httpServletResponse) {
+        httpServletResponse.setContentType("application/csv;charset=gb18030");
+        httpServletResponse.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        String fileName = null;
+        try {
+            fileName = URLEncoder.encode("template", "UTF-8").replaceAll("\\+", "%20");
+
+            httpServletResponse.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".csv");
+
+            EasyExcel.write(httpServletResponse.getOutputStream(), OfflineUserGroupMessage.class).sheet("template").doWrite(templateData());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private List<OfflineUserGroupMessage> templateData() {
+        List<OfflineUserGroupMessage> list = ListUtils.newArrayList();
+        OfflineUserGroupMessage data = new OfflineUserGroupMessage();
+        data.setExternalUserId("wmqPhANwAADkwwqT4B2as3tN4E6-6suA");
+        data.setMemberId("WangWanZheng");
+        list.add(data);
+        return list;
+    }
+
+    private void saveOfflineUserGroup(List<UserGroupOfflineEntity> entities) {
+        userGroupOfflineRepository.saveAll(entities);
+    }
+
+    public class UploadOfflineDataListener implements ReadListener<OfflineUserGroupMessage> {
+
+        private static final int BATCH_COUNT = 100;
+        private List<UserGroupOfflineEntity> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+
+        private String projectId;
+        private String corpId;
+        private String groupUuid;
+
+        public UploadOfflineDataListener(String projectId, String corpId, String groupUuid) {
+            this.projectId = projectId;
+            this.corpId = corpId;
+            this.groupUuid = groupUuid;
+        }
+
+        @Override
+        public void invoke(OfflineUserGroupMessage offlineUserGroupMessage, AnalysisContext analysisContext) {
+            log.info("read csv data. offlineUserGroupRul={}", offlineUserGroupMessage);
+            UserGroupOfflineEntity entity = new UserGroupOfflineEntity();
+            entity.setCorpId(corpId);
+            entity.setExternalUserId(offlineUserGroupMessage.getExternalUserId());
+            entity.setMemberId(offlineUserGroupMessage.getMemberId());
+            entity.setUuid(groupUuid);
+            cachedDataList.add(entity);
+            // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
+            if (cachedDataList.size() >= BATCH_COUNT) {
+                saveOfflineUserGroup(cachedDataList);
+                // 存储完成清理 list
+                cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+            }
+        }
+
+        @Override
+        public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+            saveOfflineUserGroup(cachedDataList);
+        }
     }
 
     public class WeComUserGroupEstimate implements Runnable {
@@ -335,6 +460,44 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
                     log.info("user group for external user estimate result. externalUserCount={}", externalUserCount);
 
                 }
+            } catch (Exception e) {
+                log.error("failed to user group for external user estimate result. requestId={}", requestId, e);
+            }
+            UserGroupEstimateResultBO userGroupEstimateResultBO = new UserGroupEstimateResultBO();
+            userGroupEstimateResultBO.setExternalUserCount(externalUserCount);
+            userGroupEstimateResultBO.setMemberCount(memberCount);
+
+            weComUserGroupAudienceRepository.updateResultByRequestId(requestId, projectId,
+                    JsonUtils.toJSONString(userGroupEstimateResultBO),
+                    UserGroupAudienceStatusEnum.SUCCEED.getValue());
+        }
+    }
+
+    public class OfflineUserGroupEstimate implements Runnable {
+        private OfflineUserGroupRule rule;
+        private String corpId;
+        private String requestId;
+        private String projectId;
+        private String taskType;
+
+        public OfflineUserGroupEstimate(String projectId, String corpId, String taskType, String requestId,
+                                        OfflineUserGroupRule rule) {
+            this.rule = rule;
+            this.corpId = corpId;
+            this.taskType = taskType;
+            this.requestId = requestId;
+            this.projectId = projectId;
+        }
+
+        @Override
+        public void run() {
+            Integer memberCount = 0;
+            Integer externalUserCount = 0;
+            try {
+                externalUserCount = userGroupOfflineRepository.queryExternalUserCountByUuid(corpId,
+                        rule.getUserGroupUuid());
+                memberCount = userGroupOfflineRepository.queryMemberCountByUuid(corpId,
+                        rule.getUserGroupUuid());
             } catch (Exception e) {
                 log.error("failed to user group for external user estimate result. requestId={}", requestId, e);
             }

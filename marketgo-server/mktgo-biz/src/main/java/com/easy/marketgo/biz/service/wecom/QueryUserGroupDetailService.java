@@ -13,9 +13,11 @@ import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEnt
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
+import com.easy.marketgo.core.model.bo.OfflineUserGroupAudienceRule;
 import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.bo.WeComUserGroupAudienceRule;
+import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
@@ -64,6 +66,9 @@ public class QueryUserGroupDetailService {
     @Autowired
     private WeComMassTaskSendQueueRepository weComMassTaskSendQueueRepository;
 
+    @Autowired
+    private UserGroupOfflineRepository userGroupOfflineRepository;
+
     public void queryWeComMassTaskUserGroup(String taskType) {
 //        Date date = DateUtil.date();
 //        Date newDate = DateUtil.offset(date, DateField.MINUTE, 2);
@@ -87,77 +92,134 @@ public class QueryUserGroupDetailService {
             }
             weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
                     WeComMassTaskStatus.COMPUTING.getValue());
+
+
             WeComUserGroupAudienceEntity weComUserGroupAudienceEntity =
                     weComUserGroupAudienceRepository.queryWeComUserGroupAudienceEntityByUuid(entity.getUserGroupUuid());
             if (weComUserGroupAudienceEntity == null) {
                 log.info("failed to query user group audience. userGroupUuid={}", entity.getUserGroupUuid());
+                weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                        WeComMassTaskStatus.COMPUTE_FAILED.getValue());
                 continue;
             }
 
-            if (!weComUserGroupAudienceEntity.getUserGroupType().equals(UserGroupAudienceTypeEnum.WECOM_USER_GROUP.getValue())) {
-                log.info("query user group not audience. weComUserGroupAudienceEntity={}",
-                        weComUserGroupAudienceEntity);
-                continue;
-            }
-
-            String conditions = weComUserGroupAudienceEntity.getWecomConditions();
-            if (StringUtils.isBlank(conditions)) {
-                log.error("query user group conditions is empty. weComUserGroupAudienceEntity={}",
-                        weComUserGroupAudienceEntity);
-                continue;
-            }
-
-            WeComUserGroupAudienceRule weComUserGroupAudienceRule = JsonUtils.toObject(conditions,
-                    WeComUserGroupAudienceRule.class);
-            log.info("query user group for mass task. weComUserGroupAudienceRule={}", weComUserGroupAudienceRule);
-            try {
-                if (entity.getTaskType().equals(WeComMassTaskTypeEnum.GROUP.name())) {
-                    queryGroupMassTaskUserGroup(entity.getCorpId(), entity.getUuid(), weComUserGroupAudienceRule);
-                } else if (entity.getTaskType().equals(WeComMassTaskTypeEnum.MOMENT.name())) {
-                    queryMomentMassTaskUserGroup(entity.getCorpId(), entity.getUuid(), weComUserGroupAudienceRule);
-                } else {
-                    List<String> memberList = getMemberList(entity.getCorpId(), weComUserGroupAudienceRule);
-                    log.info("query user group for member. memberList={}", memberList);
-                    memberList = memberList.stream().distinct().collect(Collectors.toList());
-                    log.info("query user group for member remove duplicate. memberList={}", memberList);
-                    for (String member : memberList) {
-                        List<WeComRelationMemberExternalUserEntity> externalUserEntities =
-                                getExternalUsers(entity.getCorpId(), Arrays.asList(member), weComUserGroupAudienceRule);
-                        log.info("user group for external user estimate total result. externalUserCount={}",
-                                externalUserEntities.size());
-
-                        Map<String, List<String>> memberRelationExternalUsers =
-                                externalUserEntities.stream().collect(Collectors.groupingBy(WeComRelationMemberExternalUserEntity::getMemberId,
-                                        Collectors.mapping(WeComRelationMemberExternalUserEntity::getExternalUserId,
-                                                Collectors.toList())));
-                        log.info("memberRelationExternalUsers result. memberRelationExternalUsers={}",
-                                memberRelationExternalUsers.size());
-                        List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities = new ArrayList<>();
-                        Iterator<Map.Entry<String, List<String>>> iterator =
-                                memberRelationExternalUsers.entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity =
-                                    new WeComMassTaskSendQueueEntity();
-                            Map.Entry<String, List<String>> item = iterator.next();
-                            weComMassTaskSendQueueEntity.setMemberId(item.getKey());
-                            weComMassTaskSendQueueEntity.setUuid(UuidUtils.generateUuid());
-                            weComMassTaskSendQueueEntity.setMemberMd5(SecureUtil.md5(item.getKey()));
-                            weComMassTaskSendQueueEntity.setTaskUuid(entity.getUuid());
-                            weComMassTaskSendQueueEntity.setExternalUserIds(item.getValue().stream().collect(Collectors.joining(",")));
-                            weComMassTaskSendQueueEntity.setStatus(WeComMassTaskSendStatusEnum.UNSEND.name());
-                            log.info("save mass task send queue. weComMassTaskSendQueueEntity={}",
-                                    weComMassTaskSendQueueEntity);
-                            weComMassTaskSendQueueEntities.add(weComMassTaskSendQueueEntity);
-                        }
-
-                        weComMassTaskSendQueueRepository.saveAll(weComMassTaskSendQueueEntities);
-                    }
+            if (weComUserGroupAudienceEntity.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.OFFLIEN_USER_GROUP.getValue())) {
+                String offlineConditions = weComUserGroupAudienceEntity.getOfflineConditions();
+                if (StringUtils.isBlank(offlineConditions)) {
+                    log.error("query offline user group conditions is empty. weComUserGroupAudienceEntity={}",
+                            weComUserGroupAudienceEntity);
+                    weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                            WeComMassTaskStatus.COMPUTE_FAILED.getValue());
+                    continue;
                 }
+                OfflineUserGroupAudienceRule offlineUserGroupAudienceRule = JsonUtils.toObject(offlineConditions,
+                        OfflineUserGroupAudienceRule.class);
+                queryOfflineUserGroup(entity.getCorpId(), offlineUserGroupAudienceRule.getUserGroupUuid(),
+                        entity.getUuid());
                 weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
                         WeComMassTaskStatus.COMPUTED.getValue());
-            } catch (Exception e) {
-                log.info("failed to save mass task send queue. entity={}", entity, e);
+            } else {
+
+                String conditions = weComUserGroupAudienceEntity.getWecomConditions();
+                if (StringUtils.isBlank(conditions)) {
+                    log.error("query user group conditions is empty. weComUserGroupAudienceEntity={}",
+                            weComUserGroupAudienceEntity);
+                    weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                            WeComMassTaskStatus.COMPUTE_FAILED.getValue());
+                    continue;
+                }
+
+                WeComUserGroupAudienceRule weComUserGroupAudienceRule = JsonUtils.toObject(conditions,
+                        WeComUserGroupAudienceRule.class);
+                log.info("query user group for mass task. weComUserGroupAudienceRule={}", weComUserGroupAudienceRule);
+                try {
+                    if (entity.getTaskType().equals(WeComMassTaskTypeEnum.GROUP.name())) {
+                        queryGroupMassTaskUserGroup(entity.getCorpId(), entity.getUuid(), weComUserGroupAudienceRule);
+                    } else if (entity.getTaskType().equals(WeComMassTaskTypeEnum.MOMENT.name())) {
+                        queryMomentMassTaskUserGroup(entity.getCorpId(), entity.getUuid(), weComUserGroupAudienceRule);
+                    } else {
+                        List<String> memberList = getMemberList(entity.getCorpId(), weComUserGroupAudienceRule);
+                        log.info("query user group for member. memberList={}", memberList);
+                        memberList = memberList.stream().distinct().collect(Collectors.toList());
+                        log.info("query user group for member remove duplicate. memberList={}", memberList);
+                        for (String member : memberList) {
+                            List<WeComRelationMemberExternalUserEntity> externalUserEntities =
+                                    getExternalUsers(entity.getCorpId(), Arrays.asList(member),
+                                            weComUserGroupAudienceRule);
+                            log.info("user group for external user estimate total result. externalUserCount={}",
+                                    externalUserEntities.size());
+
+                            Map<String, List<String>> memberRelationExternalUsers =
+                                    externalUserEntities.stream().collect(Collectors.groupingBy(WeComRelationMemberExternalUserEntity::getMemberId,
+                                            Collectors.mapping(WeComRelationMemberExternalUserEntity::getExternalUserId,
+                                                    Collectors.toList())));
+                            log.info("memberRelationExternalUsers result. memberRelationExternalUsers={}",
+                                    memberRelationExternalUsers.size());
+                            List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities = new ArrayList<>();
+                            Iterator<Map.Entry<String, List<String>>> iterator =
+                                    memberRelationExternalUsers.entrySet().iterator();
+                            while (iterator.hasNext()) {
+                                WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity =
+                                        new WeComMassTaskSendQueueEntity();
+                                Map.Entry<String, List<String>> item = iterator.next();
+                                weComMassTaskSendQueueEntity.setMemberId(item.getKey());
+                                weComMassTaskSendQueueEntity.setUuid(UuidUtils.generateUuid());
+                                weComMassTaskSendQueueEntity.setMemberMd5(SecureUtil.md5(item.getKey()));
+                                weComMassTaskSendQueueEntity.setTaskUuid(entity.getUuid());
+                                weComMassTaskSendQueueEntity.setExternalUserIds(item.getValue().stream().collect(Collectors.joining(",")));
+                                weComMassTaskSendQueueEntity.setStatus(WeComMassTaskSendStatusEnum.UNSEND.name());
+                                log.info("save mass task send queue. weComMassTaskSendQueueEntity={}",
+                                        weComMassTaskSendQueueEntity);
+                                weComMassTaskSendQueueEntities.add(weComMassTaskSendQueueEntity);
+                            }
+
+                            weComMassTaskSendQueueRepository.saveAll(weComMassTaskSendQueueEntities);
+                        }
+                    }
+                    weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                            WeComMassTaskStatus.COMPUTED.getValue());
+                } catch (Exception e) {
+                    log.info("failed to save mass task send queue. entity={}", entity, e);
+                }
             }
+        }
+    }
+
+    private void queryOfflineUserGroup(String corpId, String userGroupUuid, String taskUuid) {
+        try {
+            List<String> memberIds = userGroupOfflineRepository.queryMemberByUuid(corpId, userGroupUuid);
+            if (CollectionUtils.isEmpty(memberIds)) {
+                log.info("query offline user group memberId is empty. corpId={}, uuid={}", corpId, userGroupUuid);
+                weComMassTaskRepository.updateTaskStatusByUUID(taskUuid, WeComMassTaskStatus.COMPUTE_FAILED.getValue());
+                return;
+            }
+            log.info("query offline user group memberId count={}, corpId={}, uuid={}", memberIds.size(), corpId,
+                    userGroupUuid);
+            for (String memberId : memberIds) {
+                List<String> externalUsers = userGroupOfflineRepository.queryExternalUsersByUuidAndMemberId(corpId,
+                        userGroupUuid, memberId);
+                if (CollectionUtils.isEmpty(externalUsers)) {
+                    log.info("query offline user group externalUser is empty. corpId={}, uuid={},  memberId={}", corpId,
+                            userGroupUuid, memberId);
+                    weComMassTaskRepository.updateTaskStatusByUUID(taskUuid,
+                            WeComMassTaskStatus.COMPUTE_FAILED.getValue());
+                    return;
+                }
+                log.info("query offline user group externalUser count={}, corpId={}, uuid={}, memberId={}",
+                        externalUsers.size(), corpId, userGroupUuid, memberId);
+
+                WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity = new WeComMassTaskSendQueueEntity();
+                weComMassTaskSendQueueEntity.setMemberId(memberId);
+                weComMassTaskSendQueueEntity.setUuid(UuidUtils.generateUuid());
+                weComMassTaskSendQueueEntity.setMemberMd5(SecureUtil.md5(memberId));
+                weComMassTaskSendQueueEntity.setTaskUuid(taskUuid);
+                weComMassTaskSendQueueEntity.setExternalUserIds(externalUsers.stream().collect(Collectors.joining(",")));
+                weComMassTaskSendQueueEntity.setStatus(WeComMassTaskSendStatusEnum.UNSEND.name());
+                log.info("save mass task send queue. weComMassTaskSendQueueEntity={}", weComMassTaskSendQueueEntity);
+                weComMassTaskSendQueueRepository.save(weComMassTaskSendQueueEntity);
+            }
+        } catch (Exception e) {
+            log.error("failed to save send offline user group. error={}", e);
         }
     }
 

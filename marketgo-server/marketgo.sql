@@ -675,3 +675,24 @@ UPDATE wecom_sys_user SET auth_status=1;
 
 ALTER TABLE tenant_config ADD server_address varchar(1024) DEFAULT NULL COMMENT '服务器地址信息';
 UPDATE tenant_config SET server_address='${域名地址}';
+
+
+-- version 0.0.3
+
+-- ----------------------------
+-- Table structure for user_group_offline
+-- ----------------------------
+DROP TABLE IF EXISTS `user_group_offline`;
+CREATE TABLE `user_group_offline` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `uuid`  VARCHAR(64)  NOT NULL COMMENT '人群的UUID',
+   `corp_id` varchar(32) DEFAULT NULL,
+   `external_user_id`   varchar(255) NOT NULL  COMMENT '客户ID',
+   `member_id` varchar(32) NOT NULL  COMMENT '员工ID',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE wecom_mass_task_send_queue MODIFY external_user_ids MEDIUMTEXT DEFAULT NULL COMMENT '发送的客户id列表';
+ALTER TABLE `wecom_mass_task` MODIFY content MEDIUMTEXT DEFAULT NULL COMMENT '推送消息内容';

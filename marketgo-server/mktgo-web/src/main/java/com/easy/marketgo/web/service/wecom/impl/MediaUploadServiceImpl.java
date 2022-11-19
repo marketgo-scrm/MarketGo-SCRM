@@ -67,6 +67,7 @@ public class MediaUploadServiceImpl implements MediaUploadService {
 
     @Override
     public BaseResponse uploadMedia(String projectId, String corpId, MediaUploadRequest request) {
+        log.info("start to upload media file.");
         MultipartFile multipartFile = request.getMultipartFile();
         String mediaType = request.getMediaType();
         String taskType = request.getTaskType();
