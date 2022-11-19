@@ -680,7 +680,7 @@ UPDATE tenant_config SET server_address='${域名地址}';
 -- version 0.0.3
 
 -- ----------------------------
--- Table structure for user_group__offline
+-- Table structure for user_group_offline
 -- ----------------------------
 DROP TABLE IF EXISTS `user_group_offline`;
 CREATE TABLE `user_group_offline` (
@@ -693,3 +693,6 @@ CREATE TABLE `user_group_offline` (
   `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE wecom_mass_task_send_queue MODIFY external_user_ids MEDIUMTEXT DEFAULT NULL COMMENT '发送的客户id列表';
+ALTER TABLE `wecom_mass_task` MODIFY content MEDIUMTEXT DEFAULT NULL COMMENT '推送消息内容';
