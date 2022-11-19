@@ -53,7 +53,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="添加客户数" prop="addExtCount" width="120" />
+        <el-table-column label="添加客户数" prop="addExtCount" />
         <el-table-column width="280" label="客户标签">
           <template #default="{ row }">
             <div class="add-custom-tag">
