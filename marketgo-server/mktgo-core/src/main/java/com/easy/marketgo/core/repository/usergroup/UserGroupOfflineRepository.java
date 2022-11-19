@@ -13,7 +13,7 @@ import java.util.List;
  * Describe:
  */
 public interface UserGroupOfflineRepository extends CrudRepository<UserGroupOfflineEntity, Long> {
-    @Query("SELECT DISTINCT(external_user_id) FROM user_group_offline WHERE corp_id = :corpId AND uuid = :uuid")
+    @Query("SELECT DISTINCT(member_id) FROM user_group_offline WHERE corp_id = :corpId AND uuid = :uuid")
     List<String> queryMemberByUuid(String corpId, String uuid);
 
     @Query("SELECT COUNT(DISTINCT(external_user_id)) FROM user_group_offline WHERE corp_id = :corpId AND uuid = :uuid")

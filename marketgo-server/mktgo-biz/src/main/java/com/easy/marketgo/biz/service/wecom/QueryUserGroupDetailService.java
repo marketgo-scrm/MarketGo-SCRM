@@ -196,8 +196,7 @@ public class QueryUserGroupDetailService {
                 userGroupUuid);
         for (String memberId : memberIds) {
             List<String> externalUsers = userGroupOfflineRepository.queryExternalUsersByUuidAndMemberId(corpId,
-                    userGroupUuid,
-                    memberId);
+                    userGroupUuid, memberId);
             if (CollectionUtils.isEmpty(externalUsers)) {
                 log.info("query offline user group externalUser is empty. corpId={}, uuid={},  memberId={}", corpId,
                         userGroupUuid, memberId);
