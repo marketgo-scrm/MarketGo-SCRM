@@ -11,6 +11,7 @@ import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.UuidUtils;
+import com.easy.marketgo.core.entity.CdpConfigEntity;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
@@ -18,6 +19,7 @@ import com.easy.marketgo.core.entity.usergroup.UserGroupOfflineEntity;
 import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.bo.UserGroupEstimateResultBO;
+import com.easy.marketgo.core.repository.CdpConfigRepository;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
@@ -65,7 +67,7 @@ import static com.google.common.util.concurrent.MoreExecutors.getExitingExecutor
 public class WeComUserGroupServiceImpl implements WeComUserGroupService {
 
     @Autowired
-    private WeComUserGroupFactoryService weComUserGroupFactoryService;
+    private CdpConfigRepository cdpConfigRepository;
 
     @Autowired
     private WeComDepartmentRepository weComDepartmentRepository;
@@ -259,6 +261,22 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
     @Override
     public BaseResponse deleteOfflineUserGroup(String corpId, String groupUuid) {
         userGroupOfflineRepository.deleteByUuid(corpId, groupUuid);
+        return BaseResponse.success();
+    }
+
+    @Override
+    public BaseResponse queryCrowdList(String projectId, String corpId) {
+        List<CdpConfigEntity> entities = cdpConfigRepository.getCdpConfigByCorpId(projectId, corpId);
+        if (CollectionUtils.isEmpty(entities)) {
+            return BaseResponse.success();
+        }
+        CdpConfigEntity entity = entities.get(0);
+        String cdpType = entity.getCdpType();
+        if (StringUtils.isNotBlank(cdpType)) {
+
+        } else {
+            log.info("cdp type is empty. entity={}", entity);
+        }
         return BaseResponse.success();
     }
 

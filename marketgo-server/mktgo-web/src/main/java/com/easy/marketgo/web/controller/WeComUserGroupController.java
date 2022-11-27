@@ -3,6 +3,7 @@ package com.easy.marketgo.web.controller;
 import com.easy.marketgo.web.annotation.TokenIgnore;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.web.model.response.CdpCrowdListResponse;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
 import io.swagger.annotations.*;
@@ -117,5 +118,19 @@ class WeComUserGroupController {
             @ApiParam(value = "企业id", required = true) @RequestParam(value = "corp_id", required = true) @NotBlank @Valid String corpId,
             @ApiParam(value = "人群的uuid", required = true) @RequestParam("user_group_uuid") String groupUuid) {
         return ResponseEntity.ok(weComUserGroupService.deleteOfflineUserGroup(corpId, groupUuid));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = CdpCrowdListResponse.class)
+    })
+    @ApiOperation(value = "获取CDP人群信息", nickname = "cdpCrowdList", notes = "", response =
+            UserGroupAudienceRules.class)
+    @RequestMapping(value = {"/crowd"}, produces = {"application/json"}, method = RequestMethod.GET)
+    public ResponseEntity queryCdpCrowdList(
+            @ApiParam(value = "企微项目id", required = true) @RequestParam(value = "project_id", required = true) @NotBlank @Valid String projectId,
+            @ApiParam(value = "企业id", required = true) @RequestParam(value = "corp_id",
+                    required = true) @NotBlank @Valid String corpId) {
+
+        return ResponseEntity.ok(weComUserGroupService.queryCrowdList(projectId, corpId));
     }
 }

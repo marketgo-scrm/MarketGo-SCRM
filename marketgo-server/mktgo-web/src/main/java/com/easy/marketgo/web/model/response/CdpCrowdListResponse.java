@@ -1,31 +1,25 @@
-package com.easy.marketgo.web.model.bo;
+package com.easy.marketgo.web.model.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.Data;
 
 import java.util.List;
 
 /**
  * @author : kevinwang
  * @version : 1.0
- * @data : 6/21/22 7:49 PM
+ * @data : 11/21/22 3:03 PM
  * Describe:
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@ApiModel(description = "CDP的人群信息")
-public class CdpUserGroupRule {
+@Data
+@ApiModel(description = "CDP人群List结果response")
+public class CdpCrowdListResponse {
 
     @ApiModelProperty(value = "分群的list")
     private List<CrowdMessage> crowds;
 
-    @ApiModelProperty(value = "CDP厂商类型 SENSORS 神策, ANALYSYS 易观, LINKFLOW " +
-            "LinkFlow, CONVERTLAB ConvertLab, HYPERS hypers, GROWINGIO " +
-            "GrowingIO, ALICLOUD 阿里云, TENCENTCLOUD 腾讯云 ")
+    @ApiModelProperty(value = "cdp的类型")
     private String cdpType;
 
     @Data

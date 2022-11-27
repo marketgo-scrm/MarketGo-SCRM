@@ -696,3 +696,28 @@ CREATE TABLE `user_group_offline` (
 
 ALTER TABLE wecom_mass_task_send_queue MODIFY external_user_ids MEDIUMTEXT DEFAULT NULL COMMENT '发送的客户id列表';
 ALTER TABLE `wecom_mass_task` MODIFY content MEDIUMTEXT DEFAULT NULL COMMENT '推送消息内容';
+
+
+
+
+-- version 0.0.5
+-- ----------------------------
+-- Table structure for cdp_config
+-- ----------------------------
+DROP TABLE IF EXISTS `cdp_config`;
+CREATE TABLE `cdp_config` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `project_uuid` varchar(64) NOT NULL COMMENT '关联项目ID',
+   `corp_id` varchar(32) DEFAULT NULL,
+   `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
+    `api_url` varchar(1024) NOT NULL  COMMENT 'cdp的API请求的url',
+   `data_url` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据上报的url',
+   `app_key` varchar(255) DEFAULT NULL  COMMENT 'cdp的AppKey',
+   `api_secret` varchar(255) DEFAULT NULL  COMMENT 'cdp的API_ACCESSKEY',
+   `project_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据的项目名称',
+   `status`     TINYINT(1) DEFAULT NULL COMMENT '是否开启类型 ,0 未开启 1 开启',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `idx_uniq_corp_id_cdp_type` (`corp_id`,`cdp_type`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;

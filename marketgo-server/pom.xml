@@ -28,6 +28,7 @@
         <module>mktgo-biz</module>
         <module>mktgo-react</module>
         <module>mktgo-test</module>
+        <module>mktgo-cdp</module>
     </modules>
 
     <!--声明全局依赖（子项目需要显示的引用才会继承依赖）-->
