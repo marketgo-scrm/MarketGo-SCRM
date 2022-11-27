@@ -481,7 +481,7 @@ CREATE TABLE `wecom_sys_base_role` (
    `uuid`  VARCHAR(64)  NOT NULL COMMENT '业务主键',
     `code` varchar(32) DEFAULT NULL COMMENT '角色编码',
     `desc` varchar(255) DEFAULT NULL COMMENT '角色描述',
-    `corp_id` varchar(64) DEFAULT NULL,
+    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
     `project_uuid` varchar(64) DEFAULT NULL,
     `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
     `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
@@ -494,7 +494,7 @@ CREATE TABLE `wecom_sys_base_role` (
 DROP TABLE IF EXISTS `wecom_sys_corp_role_permissions_link`;
 CREATE TABLE `wecom_sys_corp_role_permissions_link` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `corp_id` varchar(64) CHARACTER SET utf8mb4 DEFAULT NULL,
+    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
     `role_uuid` varchar(64) CHARACTER SET utf8mb4 DEFAULT NULL,
     `permissions_uuid` varchar(64) CHARACTER SET utf8mb4 DEFAULT NULL,
     `status` varchar(32) DEFAULT NULL,
@@ -509,7 +509,7 @@ CREATE TABLE `wecom_sys_corp_role_permissions_link` (
 DROP TABLE IF EXISTS `wecom_sys_corp_user_role_link`;
 CREATE TABLE `wecom_sys_corp_user_role_link` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `corp_id` varchar(64) DEFAULT NULL,
+    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
     `role_uuid` varchar(64) DEFAULT NULL,
     `member_id` varchar(64) DEFAULT NULL,
     `project_uuid` varchar(64) DEFAULT NULL,
@@ -565,7 +565,7 @@ CREATE TABLE `wecom_channel_live_code` (
     `uuid`  VARCHAR(64)  NOT NULL COMMENT '业务主键',
     `project_uuid` varchar(64) NOT NULL COMMENT '关联项目ID',
     `agent_id` varchar(32) NOT NULL COMMENT 'agent_id',
-    `corp_id` varchar(100) NOT NULL COMMENT '企业corpId',
+    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
     `name` varchar(512) NOT NULL COMMENT '活码名称',
     `skip_verify` tinyint(1) NOT NULL COMMENT '是否跳过验证 1：自动通过 0：手动验证',
     `state` varchar(32) NOT NULL COMMENT '活码状态，1:草稿，2：已发布',
@@ -613,7 +613,7 @@ CREATE TABLE `wecom_channel_live_code_members` (
 DROP TABLE IF EXISTS `wecom_channel_live_code_statistic`;
 CREATE TABLE `wecom_channel_live_code_statistic` (
    `id` bigint(20) NOT NULL AUTO_INCREMENT,
-   `corp_id` varchar(32) DEFAULT NULL,
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
    `channel_live_code_uuid` varchar(64) DEFAULT NULL,
    `member_id` varchar(32) DEFAULT NULL,
    `member_name` varchar(64) DEFAULT NULL COMMENT '成员名称',
@@ -686,7 +686,7 @@ DROP TABLE IF EXISTS `user_group_offline`;
 CREATE TABLE `user_group_offline` (
    `id` bigint(20) NOT NULL AUTO_INCREMENT,
    `uuid`  VARCHAR(64)  NOT NULL COMMENT '人群的UUID',
-   `corp_id` varchar(32) DEFAULT NULL,
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
    `external_user_id`   varchar(255) NOT NULL  COMMENT '客户ID',
    `member_id` varchar(32) NOT NULL  COMMENT '员工ID',
   `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
@@ -708,7 +708,7 @@ DROP TABLE IF EXISTS `cdp_config`;
 CREATE TABLE `cdp_config` (
    `id` bigint(20) NOT NULL AUTO_INCREMENT,
    `project_uuid` varchar(64) NOT NULL COMMENT '关联项目ID',
-   `corp_id` varchar(32) DEFAULT NULL,
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
    `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
     `api_url` varchar(1024) NOT NULL  COMMENT 'cdp的API请求的url',
    `data_url` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据上报的url',
