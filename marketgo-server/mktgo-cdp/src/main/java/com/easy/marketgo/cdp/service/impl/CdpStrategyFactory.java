@@ -1,5 +1,6 @@
-package com.easy.marketgo.cdp.service;
+package com.easy.marketgo.cdp.service.impl;
 
+import com.easy.marketgo.cdp.service.CdpCrowdService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

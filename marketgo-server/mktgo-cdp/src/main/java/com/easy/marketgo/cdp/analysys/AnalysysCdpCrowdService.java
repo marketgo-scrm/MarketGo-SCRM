@@ -4,7 +4,7 @@ import com.easy.marketgo.cdp.analysys.response.CrowdMessageResponse;
 import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
 import com.easy.marketgo.cdp.model.CrowdBaseRequest;
 import com.easy.marketgo.cdp.service.CdpCrowdService;
-import com.easy.marketgo.common.enums.CdpManufacturerTypeEnum;
+import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.util.OkHttpUtils;
 import com.google.common.collect.Maps;
@@ -29,6 +29,8 @@ import java.util.Map;
 public class AnalysysCdpCrowdService implements CdpCrowdService {
 
     private static final String URL_QUERY_CROWD_USERS = "/uba/api/cohort/users";
+
+    private static final String URL_QUERY_CROWD_USERS_EXPORT = "/uba/api/cohort/users/export";
 
     //获取分群计算状态是成功的返回分群的详细信息
     private static final String URL_QUERY_CROWD_LIST = "/uba/api/cohort?needMore=true&status=success";
@@ -76,4 +78,10 @@ public class AnalysysCdpCrowdService implements CdpCrowdService {
         log.info("return to query analySys crowd list.request={}", request);
         return message;
     }
+
+    @Override
+    public void queryCrowdUsers() {
+
+    }
+
 }

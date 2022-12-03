@@ -707,6 +707,7 @@ ALTER TABLE `wecom_mass_task` MODIFY content MEDIUMTEXT DEFAULT NULL COMMENT '�
 DROP TABLE IF EXISTS `cdp_config`;
 CREATE TABLE `cdp_config` (
    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `uuid` varchar(64) NOT NULL COMMENT 'UUID',
    `project_uuid` varchar(64) NOT NULL COMMENT '关联项目ID',
    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
    `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
@@ -720,4 +721,47 @@ CREATE TABLE `cdp_config` (
   `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
    PRIMARY KEY (`id`),
    UNIQUE KEY `idx_uniq_corp_id_cdp_type` (`corp_id`,`cdp_type`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+
+
+-- ----------------------------
+-- Table structure for cdp_crowd_users_sync
+-- ----------------------------
+DROP TABLE IF EXISTS `cdp_crowd_users_sync`;
+CREATE TABLE `cdp_crowd_users_sync` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `project_uuid` varchar(64) NOT NULL COMMENT '关联项目ID',
+   `task_uuid` varchar(64) NOT NULL COMMENT '任务的UUID',
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+   `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
+   `project_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据的项目名称',
+   `crowd_code` varchar(1024) NOT NULL  COMMENT 'cdp的人群的code',
+   `crowd_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的人群的名字',
+   `user_count`      bigint(20) DEFAULT NULL  COMMENT '人群的数量',
+   `sync_user_count` bigint(20) DEFAULT NULL  COMMENT '同步的人群数量',
+   `sync_status`  varchar(24) DEFAULT NULL COMMENT  '同步状态 ,UNSTART, SYNCING, FAILED, FINISH',
+   `sync_failed_desc`  varchar(1024) DEFAULT NULL COMMENT  '同步状态失败后,记录错误信息',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `idx_uniq_task_uuid_cdp_type_crowd_code` (`task_uuid`,`cdp_type`,`crowd_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for user_group_cdp
+-- ----------------------------
+DROP TABLE IF EXISTS `user_group_cdp`;
+CREATE TABLE `user_group_cdp` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `cdp_uuid` varchar(64) NOT NULL COMMENT 'cdp的UUID',
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+   `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
+   `project_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据的项目名称',
+   `crowd_code` varchar(1024) NOT NULL  COMMENT 'cdp的人群的code',
+   `external_user_id`   varchar(255) NOT NULL  COMMENT '客户ID',
+   `member_id` varchar(32) NOT NULL  COMMENT '员工ID',
+   `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+   `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `idx_uniq_cdp_uuid_cdp_type_crowd_code` (`cdp_uuid`,`cdp_type`,`crowd_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;

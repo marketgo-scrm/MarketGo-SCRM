@@ -4,6 +4,8 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
+import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
+import com.easy.marketgo.cdp.service.CdpManagerService;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.enums.UserGroupAudienceTypeEnum;
@@ -11,7 +13,7 @@ import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.UuidUtils;
-import com.easy.marketgo.core.entity.CdpConfigEntity;
+import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
@@ -19,14 +21,14 @@ import com.easy.marketgo.core.entity.usergroup.UserGroupOfflineEntity;
 import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.bo.UserGroupEstimateResultBO;
-import com.easy.marketgo.core.repository.CdpConfigRepository;
+import com.easy.marketgo.core.repository.cdp.CdpConfigRepository;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
-import com.easy.marketgo.core.service.WeComUserGroupFactoryService;
+import com.easy.marketgo.web.model.bo.CdpUserGroupRule;
 import com.easy.marketgo.web.model.bo.OfflineUserGroupMessage;
 import com.easy.marketgo.web.model.bo.OfflineUserGroupRule;
 import com.easy.marketgo.web.model.bo.WeComUserGroupRule;
@@ -34,6 +36,7 @@ import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.model.response.UserGroupMessageResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpCrowdListResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -86,6 +89,9 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
 
     @Autowired
     private UserGroupOfflineRepository userGroupOfflineRepository;
+
+    @Autowired
+    private CdpManagerService cdpManagerService;
 
     private ExecutorService executorService;
 
@@ -145,6 +151,8 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
                 weComUserGroupAudienceEntity.setWecomConditions(JsonUtils.toJSONString(audienceRules.getWeComUserGroupRule()));
             } else if (audienceRules.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.OFFLIEN_USER_GROUP.getValue())) {
                 weComUserGroupAudienceEntity.setOfflineConditions(JsonUtils.toJSONString(audienceRules.getOfflineUserGroupRule()));
+            } else if (audienceRules.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.CDP_USER_GROUP.getValue())) {
+                weComUserGroupAudienceEntity.setCdpConditions(JsonUtils.toJSONString(audienceRules.getCdpUserGroupRule()));
             }
             weComUserGroupAudienceEntity.setConditionsRelation(audienceRules.getRelation());
             weComUserGroupAudienceEntity.setStatus(UserGroupAudienceStatusEnum.COMPUTING.getValue());
@@ -154,6 +162,10 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
                 task =
                         new OfflineUserGroupEstimate(projectId, corpId, taskType, requestId,
                                 audienceRules.getOfflineUserGroupRule());
+            } else if (audienceRules.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.CDP_USER_GROUP.getValue())) {
+                task =
+                        new CdpUserGroupEstimate(projectId, corpId, taskType, requestId,
+                                audienceRules.getCdpUserGroupRule());
             } else {
                 task =
                         new WeComUserGroupEstimate(projectId, corpId, taskType, requestId,
@@ -270,14 +282,25 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
         if (CollectionUtils.isEmpty(entities)) {
             return BaseResponse.success();
         }
+        CdpCrowdListResponse response = new CdpCrowdListResponse();
         CdpConfigEntity entity = entities.get(0);
         String cdpType = entity.getCdpType();
         if (StringUtils.isNotBlank(cdpType)) {
-
+            CdpCrowdListMessage message = cdpManagerService.queryCrowdList(projectId, corpId);
+            if (message != null && CollectionUtils.isNotEmpty(message.getCrowds())) {
+                response.setCdpType(message.getCdpType());
+                List<CdpCrowdListResponse.CrowdMessage> crowdMessageList = new ArrayList<>();
+                for (CdpCrowdListMessage.CrowdMessage item : message.getCrowds()) {
+                    CdpCrowdListResponse.CrowdMessage crowdMessage = new CdpCrowdListResponse.CrowdMessage();
+                    BeanUtils.copyProperties(item, crowdMessage);
+                    crowdMessageList.add(crowdMessage);
+                }
+                response.setCrowds(crowdMessageList);
+            }
         } else {
             log.info("cdp type is empty. entity={}", entity);
         }
-        return BaseResponse.success();
+        return BaseResponse.success(response);
     }
 
     private List<OfflineUserGroupMessage> templateData() {
@@ -522,6 +545,46 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
                         rule.getUserGroupUuid());
                 memberCount = userGroupOfflineRepository.queryMemberCountByUuid(corpId,
                         rule.getUserGroupUuid());
+            } catch (Exception e) {
+                log.error("failed to user group for external user estimate result. requestId={}", requestId, e);
+            }
+            UserGroupEstimateResultBO userGroupEstimateResultBO = new UserGroupEstimateResultBO();
+            userGroupEstimateResultBO.setExternalUserCount(externalUserCount);
+            userGroupEstimateResultBO.setMemberCount(memberCount);
+
+            weComUserGroupAudienceRepository.updateResultByRequestId(requestId, projectId,
+                    JsonUtils.toJSONString(userGroupEstimateResultBO),
+                    UserGroupAudienceStatusEnum.SUCCEED.getValue());
+        }
+    }
+
+    public class CdpUserGroupEstimate implements Runnable {
+        private CdpUserGroupRule rule;
+        private String corpId;
+        private String requestId;
+        private String projectId;
+        private String taskType;
+
+        public CdpUserGroupEstimate(String projectId, String corpId, String taskType, String requestId,
+                                    CdpUserGroupRule rule) {
+            this.rule = rule;
+            this.corpId = corpId;
+            this.taskType = taskType;
+            this.requestId = requestId;
+            this.projectId = projectId;
+        }
+
+        @Override
+        public void run() {
+            Integer memberCount = 0;
+            Integer externalUserCount = 0;
+            try {
+                if (CollectionUtils.isNotEmpty(rule.getCrowds())) {
+                    for (CdpUserGroupRule.CrowdMessage message : rule.getCrowds()) {
+                        memberCount += message.getUserCount();
+                        externalUserCount += message.getUserCount();
+                    }
+                }
             } catch (Exception e) {
                 log.error("failed to user group for external user estimate result. requestId={}", requestId, e);
             }

@@ -1,4 +1,4 @@
-package com.easy.marketgo.common.enums;
+package com.easy.marketgo.common.enums.cdp;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.collect.ImmutableList;

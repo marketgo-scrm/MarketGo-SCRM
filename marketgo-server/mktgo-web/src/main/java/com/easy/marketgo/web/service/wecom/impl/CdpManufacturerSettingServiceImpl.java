@@ -1,13 +1,13 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
-import com.easy.marketgo.common.enums.CdpManufacturerTypeEnum;
+import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
-import com.easy.marketgo.core.entity.CdpConfigEntity;
-import com.easy.marketgo.core.repository.CdpConfigRepository;
+import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
+import com.easy.marketgo.core.repository.cdp.CdpConfigRepository;
 import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
-import com.easy.marketgo.web.model.response.CdpManufactureListResponse;
-import com.easy.marketgo.web.model.response.CdpManufacturerMessageResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpManufactureListResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpManufacturerMessageResponse;
 import com.easy.marketgo.web.service.wecom.CdpManufacturerSettingService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

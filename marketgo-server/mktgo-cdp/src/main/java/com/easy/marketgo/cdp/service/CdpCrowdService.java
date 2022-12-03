@@ -11,4 +11,6 @@ import com.easy.marketgo.cdp.model.CrowdBaseRequest;
  */
 public interface CdpCrowdService {
     CdpCrowdListMessage queryCrowdList(CrowdBaseRequest request);
+
+    void queryCrowdUsers();
 }

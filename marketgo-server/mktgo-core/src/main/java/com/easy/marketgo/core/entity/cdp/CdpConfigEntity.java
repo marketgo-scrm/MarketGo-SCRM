@@ -1,17 +1,18 @@
-package com.easy.marketgo.core.entity;
+package com.easy.marketgo.core.entity.cdp;
 
+import com.easy.marketgo.core.entity.UuidBaseEntity;
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.Table;
 
 /**
- * @author : ssk
- * @version : v1.0
- * @date :  2022-07-16 08:19:05
- * @description : WeComUserTenantLinkEntity.java
+ * @author : kevinwang
+ * @version : 1.0
+ * @data : 11/24/22 3:18 PM
+ * Describe:
  */
 @Data
 @Table("cdp_config")
-public class CdpConfigEntity extends BaseEntity {
+public class CdpConfigEntity extends UuidBaseEntity {
     private String projectUuid;
     private String cdpType;
     private String apiUrl;

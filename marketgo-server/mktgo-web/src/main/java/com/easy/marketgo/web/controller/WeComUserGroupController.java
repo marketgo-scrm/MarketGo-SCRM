@@ -3,7 +3,7 @@ package com.easy.marketgo.web.controller;
 import com.easy.marketgo.web.annotation.TokenIgnore;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
-import com.easy.marketgo.web.model.response.CdpCrowdListResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpCrowdListResponse;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
 import io.swagger.annotations.*;
@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
