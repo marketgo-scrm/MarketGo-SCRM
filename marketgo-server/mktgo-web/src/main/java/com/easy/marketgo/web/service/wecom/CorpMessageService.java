@@ -2,6 +2,7 @@ package com.easy.marketgo.web.service.wecom;
 
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
+import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
 
@@ -25,4 +26,8 @@ public interface CorpMessageService {
     BaseResponse getCorpConfig(String projectId);
 
     void getExternalUserDetail(String corpId, String externalUserId);
+
+    BaseResponse updateOrInsertForwardServer(String projectId, String corpId, WeComForwardServerMessageRequest request);
+
+    BaseResponse getForwardServer(String projectId, String corpId);
 }

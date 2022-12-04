@@ -15,6 +15,7 @@ import com.easy.marketgo.common.constants.Constants;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.WeComCorpConfigStepEnum;
 import com.easy.marketgo.common.exception.CommonException;
+import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.RandomUtils;
 import com.easy.marketgo.core.entity.ProjectConfigEntity;
 import com.easy.marketgo.core.entity.TenantConfigEntity;
@@ -26,7 +27,9 @@ import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.WeComCorpMessageRepository;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
+import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.web.model.response.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
@@ -206,7 +209,8 @@ public class CorpMessageServiceImpl implements CorpMessageService {
                 throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
             }
 
-            TenantConfigEntity tenantConfigEntity = tenantConfigRepository.findByUuid(projectConfigEntity.getTenantUuid());
+            TenantConfigEntity tenantConfigEntity =
+                    tenantConfigRepository.findByUuid(projectConfigEntity.getTenantUuid());
             if (tenantConfigEntity == null) {
                 throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
             }
@@ -271,6 +275,30 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         RpcResponse<WeComQueryExternalUserDetailClientResponse> responseRpcResponse =
                 weComExternalUserRpcService.queryExternalUserDetail(request);
         System.out.println("responseRpcResponse= " + responseRpcResponse);
+    }
+
+    @Override
+    public BaseResponse updateOrInsertForwardServer(String projectId, String corpId,
+                                                    WeComForwardServerMessageRequest request) {
+        log.info("start to save corp forward server message. corpId={}, request={}", corpId, request);
+        if (request == null || CollectionUtils.isEmpty(request.getForwardServer())) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
+        }
+        String message = JsonUtils.toJSONString(request.getForwardServer());
+        weComCorpMessageRepository.updateForwardAddressByCorpId(projectId, corpId, message);
+        return BaseResponse.success();
+    }
+
+    @Override
+    public BaseResponse getForwardServer(String projectId, String corpId) {
+        log.info("start to get corp forward server message. corpId={}", corpId);
+        WeComForwardServerMessageResponse response = new WeComForwardServerMessageResponse();
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorp(projectId, corpId);
+        if (entity != null && StringUtils.isBlank(entity.getForwardAddress())) {
+            response.setForwardServer(JsonUtils.toArray(entity.getForwardAddress(), String.class));
+        }
+        log.info("get corp forward server message. response={}", response);
+        return BaseResponse.success(response);
     }
 
 }

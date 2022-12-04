@@ -765,3 +765,8 @@ CREATE TABLE `user_group_cdp` (
    PRIMARY KEY (`id`),
    UNIQUE KEY `idx_uniq_cdp_uuid_cdp_type_crowd_code` (`cdp_uuid`,`cdp_type`,`crowd_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+
+
+-- version 0.0.7
+
+ALTER TABLE wecom_corp_config ADD forward_address TEXT DEFAULT NULL COMMENT '回调转发服务器地址信息';
