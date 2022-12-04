@@ -71,10 +71,10 @@ class WeComUserGroupController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = UserGroupEstimateResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
     @ApiOperation(value = "上传离线人群", nickname = "uploadOfflineUserGroup", notes = "", response =
-            UserGroupAudienceRules.class)
+            BaseResponse.class)
     @PostMapping("/upload")
     public ResponseEntity uploadOfflineUserGroup(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
             "project_id", required = true) @NotBlank @Valid String projectId,
@@ -91,10 +91,10 @@ class WeComUserGroupController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = UserGroupEstimateResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
     @ApiOperation(value = "下载excel格式", nickname = "downloadExcelTemplate", notes = "", response =
-            UserGroupAudienceRules.class)
+            BaseResponse.class)
     @RequestMapping(value = {"/download/template"}, produces = {"application/json"}, method = RequestMethod.GET)
     @TokenIgnore
     public ResponseEntity downloadExcelTemplate(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =

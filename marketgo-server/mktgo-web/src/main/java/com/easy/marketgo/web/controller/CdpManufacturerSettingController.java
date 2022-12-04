@@ -3,8 +3,11 @@ package com.easy.marketgo.web.controller;
 import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpCrowdListResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpManufacturerMessageResponse;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpSettingTestStatusResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpSwitchStatusResponse;
 import com.easy.marketgo.web.service.wecom.CdpManufacturerSettingService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,10 +121,10 @@ class CdpManufacturerSettingController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = CdpSettingTestStatusResponse.class)
     })
     @ApiOperation(value = "测试CDP信息", nickname = "CdpSettingTest", notes = "", response =
-            UserGroupAudienceRules.class)
+            CdpSettingTestStatusResponse.class)
     @RequestMapping(value = {"/test"}, produces = {"application/json"}, method = RequestMethod.POST)
     public ResponseEntity CdpSettingTest(
             @ApiParam(value = "企微项目id", required = true) @RequestParam(value = "project_id", required = true) @NotBlank @Valid String projectId,
@@ -130,7 +133,21 @@ class CdpManufacturerSettingController {
             @ApiParam(value = "CDP厂商类型 SENSORS 神策, ANALYSYS 易观, LINKFLOW LinkFlow, CONVERTLAB ConvertLab, HYPERS " +
                     "hypers, GROWINGIO GrowingIO, ALICLOUD 阿里云, TENCENTCLOUD 腾讯云 ", required = true) @RequestParam(value = "cdp_type", required = true) @NotBlank @Valid String cdpType) {
 
-        return ResponseEntity.ok(cdpManufacturerSettingService.CdpSettingTest(projectId, corpId, cdpType,
+        return ResponseEntity.ok(cdpManufacturerSettingService.cdpSettingTest(projectId, corpId, cdpType,
                 request));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = CdpSwitchStatusResponse.class)
+    })
+    @ApiOperation(value = "获取CDP设置是否开启的状态", nickname = "queryCdpCrowdStatus", notes = "", response =
+            CdpSwitchStatusResponse.class)
+    @RequestMapping(value = {"/switch/status"}, produces = {"application/json"}, method = RequestMethod.GET)
+    public ResponseEntity queryCdpCrowdStatus(
+            @ApiParam(value = "企微项目id", required = true) @RequestParam(value = "project_id", required = true) @NotBlank @Valid String projectId,
+            @ApiParam(value = "企业id", required = true) @RequestParam(value = "corp_id",
+                    required = true) @NotBlank @Valid String corpId) {
+
+        return ResponseEntity.ok(cdpManufacturerSettingService.cdpSettingStatus(projectId, corpId));
     }
 }

@@ -1,14 +1,10 @@
 package com.easy.marketgo.biz.service.cdp;
 
 import cn.hutool.crypto.SecureUtil;
-import com.easy.marketgo.api.model.response.masstask.WeComMomentMassTaskPublishResultClientResponse;
-import com.easy.marketgo.api.model.response.masstask.WeComQueryMemberResultClientResponse;
 import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
 import com.easy.marketgo.cdp.service.CdpManagerService;
-import com.easy.marketgo.common.enums.WeComMassTaskSendIdType;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
-import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.enums.cdp.CdpSyncCrowdUsersStatusEnum;
 import com.easy.marketgo.common.utils.UuidUtils;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
@@ -22,7 +18,6 @@ import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRe
 import com.google.common.util.concurrent.RateLimiter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -239,7 +234,7 @@ public class CdpCrowdUserSyncService {
         private String cdpType;
         private String crowdCode;
         private String projectName;
-        private String getProjectUuid;
+        private String projectUuid;
 
         public QueryCdpCrowdUsers(String taskUuid, String cdpUuid, String cdpType, String crowdCode,
                                   String projectName, String corpId) {
@@ -258,7 +253,7 @@ public class CdpCrowdUserSyncService {
             CrowdUsersBaseRequest request = new CrowdUsersBaseRequest();
             cdpManagerService.queryCrowdUsers(request);
 
-            cdpCrowdUsersSyncRepository.updateSyncStatusByCrowd(getProjectUuid,
+            cdpCrowdUsersSyncRepository.updateSyncStatusByCrowd(projectUuid,
                     corpId, cdpType, crowdCode, CdpSyncCrowdUsersStatusEnum.SYNCING.getValue());
         }
     }

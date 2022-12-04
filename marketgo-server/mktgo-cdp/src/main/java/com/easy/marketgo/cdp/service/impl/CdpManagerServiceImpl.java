@@ -1,10 +1,9 @@
 package com.easy.marketgo.cdp.service.impl;
 
-import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
-import com.easy.marketgo.cdp.model.CrowdBaseRequest;
-import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
+import com.easy.marketgo.cdp.model.*;
 import com.easy.marketgo.cdp.service.CdpCrowdService;
 import com.easy.marketgo.cdp.service.CdpManagerService;
+import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
 import com.easy.marketgo.core.entity.cdp.CdpCrowdUsersSyncEntity;
 import com.easy.marketgo.core.repository.cdp.CdpConfigRepository;
@@ -36,6 +35,24 @@ public class CdpManagerServiceImpl implements CdpManagerService {
 
     @Autowired
     private CdpCrowdUsersSyncRepository cdpCrowdUsersSyncRepository;
+
+    @Override
+    public CdpTestSettingResponse testCdpSetting(String corpId, String cdpType, CdpTestSettingRequest request) {
+        CdpTestSettingResponse response = new CdpTestSettingResponse();
+
+        CdpCrowdService cdpCrowdService = cdpStrategyFactory.getCdpCrowdService(cdpType);
+
+        CrowdBaseRequest crowdBaseRequest = new CrowdBaseRequest();
+        BeanUtils.copyProperties(request, crowdBaseRequest);
+        crowdBaseRequest.setCorpId(corpId);
+        CdpCrowdListMessage cdpCrowdListMessage = cdpCrowdService.queryCrowdList(crowdBaseRequest);
+        if (cdpCrowdListMessage.getCode().equals(ErrorCodeEnum.OK.getCode())) {
+            response.setCode(cdpCrowdListMessage.getCode());
+            response.setMessage(cdpCrowdListMessage.getMessage());
+        }
+
+        return response;
+    }
 
     @Override
     public CdpCrowdListMessage queryCrowdList(String projectId, String corpId) {

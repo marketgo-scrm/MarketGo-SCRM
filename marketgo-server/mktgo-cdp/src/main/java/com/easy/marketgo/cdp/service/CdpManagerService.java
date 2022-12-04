@@ -1,6 +1,8 @@
 package com.easy.marketgo.cdp.service;
 
 import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
+import com.easy.marketgo.cdp.model.CdpTestSettingRequest;
+import com.easy.marketgo.cdp.model.CdpTestSettingResponse;
 import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
 
 /**
@@ -10,6 +12,14 @@ import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
  * Describe:
  */
 public interface CdpManagerService {
+
+    /**
+     * 获取CDP的分群列表，分群的信息必须包含：分群的code【用于获取分群的用户列表】，分群的人群数量，分群的name；
+     *
+     * @param request
+     * @return
+     */
+    CdpTestSettingResponse testCdpSetting(String corpId, String cdpType, CdpTestSettingRequest request);
 
     /**
      * 获取CDP的分群列表，分群的信息必须包含：分群的code【用于获取分群的用户列表】，分群的人群数量，分群的name；

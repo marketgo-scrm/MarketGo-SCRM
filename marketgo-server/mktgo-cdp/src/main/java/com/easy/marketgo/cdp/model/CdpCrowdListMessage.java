@@ -13,6 +13,9 @@ import java.util.List;
 @Data
 public class CdpCrowdListMessage {
 
+    private Integer code;
+    private String message;
+
     private List<CrowdMessage> crowds;
 
     private String cdpType;

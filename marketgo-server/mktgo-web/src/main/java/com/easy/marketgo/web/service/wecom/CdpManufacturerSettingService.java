@@ -27,6 +27,8 @@ public interface CdpManufacturerSettingService {
 
     BaseResponse deleteCdpMessage(String projectId, String corpId, String cdpType);
 
-    BaseResponse CdpSettingTest(String projectId, String corpId, String cdpType,
+    BaseResponse cdpSettingTest(String projectId, String corpId, String cdpType,
                                 CdpManufacturerMessageRequest request);
+
+    BaseResponse cdpSettingStatus(String projectId, String corpId);
 }

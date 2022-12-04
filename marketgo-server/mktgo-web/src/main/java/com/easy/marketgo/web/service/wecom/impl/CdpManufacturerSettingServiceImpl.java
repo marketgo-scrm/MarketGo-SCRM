@@ -1,5 +1,7 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
+import com.easy.marketgo.cdp.model.CdpTestSettingRequest;
+import com.easy.marketgo.cdp.service.CdpManagerService;
 import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
@@ -8,10 +10,13 @@ import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpManufactureListResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpManufacturerMessageResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpSwitchStatusResponse;
 import com.easy.marketgo.web.service.wecom.CdpManufacturerSettingService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.common.utils.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,6 +36,9 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
 
     @Resource
     private CdpConfigRepository cdpConfigRepository;
+
+    @Autowired
+    private CdpManagerService cdpManagerService;
 
     @Override
     public BaseResponse queryCdpList(String projectId, String corpId) {
@@ -134,8 +142,22 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
     }
 
     @Override
-    public BaseResponse CdpSettingTest(String projectId, String corpId, String cdpType,
+    public BaseResponse cdpSettingTest(String projectId, String corpId, String cdpType,
                                        CdpManufacturerMessageRequest request) {
-        return null;
+        CdpTestSettingRequest cdpTestSettingRequest = new CdpTestSettingRequest();
+        cdpManagerService.testCdpSetting(corpId, cdpType, cdpTestSettingRequest);
+        return BaseResponse.success();
+    }
+
+    @Override
+    public BaseResponse cdpSettingStatus(String projectId, String corpId) {
+        CdpSwitchStatusResponse response = new CdpSwitchStatusResponse();
+        List<CdpConfigEntity> entities = cdpConfigRepository.getCdpConfigByCorpId(projectId, corpId);
+        if (CollectionUtils.isNotEmpty(entities)) {
+            response.setSwitchStatus(Boolean.TRUE);
+        } else {
+            response.setSwitchStatus(Boolean.FALSE);
+        }
+        return BaseResponse.success(response);
     }
 }
