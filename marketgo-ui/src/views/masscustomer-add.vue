@@ -30,10 +30,48 @@
         <template v-if="baseForm.checkType == 2">
           <el-form-item label="">
             <div class="offLineBox">
-              <div class="title">导入分群前请先下载模板编辑后上传</div>
-              <div class="btn">导入CSV文件</div>
+              <div class="title">{{fileName}}
+              <i class="el-icon-error"
+              style="position: absolute;right: 8px;cursor: pointer;top: 9px"
+                 v-show="fileName!='导入分群前请先下载模板编辑后上传'"
+                 @click="delFile()"
+              ></i>
+              </div>
+              <div class="btn" @click="uploadClick()">导入CSV文件</div>
+
+              <el-upload
+                  class="upload-demo"
+                  :action="uploadUrl"
+                  ref="upload"
+                  :on-change="csvFileChange"
+                  :file-list="fileList"
+                  :headers="{
+                    'header-api-token': token
+                  }"
+                  :auto-upload="false"
+                  :on-success="uploadSec"
+                  style="display: none"
+              >
+                <el-button size="small" type="primary" id="csvFile">点击上传</el-button>
+              </el-upload>
+
+
+<!--              <form name="fileForm" id="fileForm">
+                <input type="file" id="csvFile" accept="text/csv" @change="csvFileChange()"/>
+              </form>-->
+
+
               <div class="down" @click="download()">下载模板</div>
-              <div class="tip"></div>
+
+              <el-popover
+                  placement="top-start"
+                  width="200"
+                  trigger="hover"
+                  content="下载人群CSV文件模板"
+              >
+<!--                <i class="el-icon-question" slot="reference"></i>-->
+                <div class="tip" slot="reference"></div>
+              </el-popover>
 
             </div>
           </el-form-item>
@@ -269,7 +307,14 @@ export default {
   name: "masscustomer-add",
   components: {EnclosureList,condition,SelectStaff,CustomMessageInput,PreviewPhone},
   data() {
+    window.user_group_uuid_tmp = (Date.parse(new Date())).toString()
+    window.uploadUrl_tmp = `${this.$global.BASEURL}mktgo/wecom/user_group/upload?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&file_type=csv&user_group_uuid=`
+
     return {
+      token: localStorage.getItem('token'),
+      uploadUrl:window.uploadUrl_tmp + window.user_group_uuid_tmp,
+      fileName:'导入分群前请先下载模板编辑后上传',
+      fileList: [],
       checkAll: false,
       formData: {
         welcomeContent: [
@@ -310,7 +355,6 @@ export default {
           ],
         },
       },
-
       first: true,
       baseForm: {
         name: '',
@@ -364,7 +408,7 @@ export default {
             "corpTags": {
               "relation": "OR",
               "tags": [
-                {
+                /*{
                   "cname": "核心",
                   "createTime": "string",
                   "deleted": true,
@@ -377,7 +421,7 @@ export default {
                   "deleted": true,
                   "id": "etqPhANwAA3Tver5WZTwPR7Vjbwkn2Yw",
                   "order": 0
-                }
+                }*/
               ]
             },
             "endTime": null,
@@ -535,6 +579,25 @@ export default {
     }
   },
   methods: {
+    delFile() {
+      this.fileName='导入分群前请先下载模板编辑后上传'
+      this.$http.post(`mktgo/wecom/user_group/delete?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&user_group_uuid=${window.user_group_uuid_tmp}`,{})
+    },
+    submitUpload() {
+      this.$refs.upload.submit();
+    },
+    uploadClick() {
+      window.user_group_uuid_tmp = (Date.parse(new Date())).toString()
+      this.uploadUrl = window.uploadUrl_tmp + window.user_group_uuid_tmp
+      document.getElementById('csvFile').click()
+    },
+    csvFileChange() {
+      this.submitUpload()
+    },
+    uploadSec(response,file) {
+      console.log(response,file,window.user_group_uuid_tmp)
+      this.fileName = file.name
+    },
     download() {
       // this.$http.get(`/mktgo/wecom/user_group/download/template?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`,{});
       const href = `${this.$global.BASEURL}mktgo/wecom/user_group/download/template?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`;
@@ -658,30 +721,46 @@ export default {
       if (this.needReBase) {
         this.base_request_id = (Date.parse(new Date())).toString()
       }
+      if (this.baseForm.checkType == 2 && this.fileName == '导入分群前请先下载模板编辑后上传') {
+        this.$message({
+          message: '请上传人群CSV文件',
+          type: 'warning'
+        });
+        return false
+      }
       this.needReBase = false
+
       this.$refs['baseForm'].validate(async (valid) => {
         if (valid || !valid) {
           // alert('submit!');
           this.first = false
 
-          if (this.baseForm.radioXz == 1) {
-            this.$refs.condition.checked1 = false
-            this.$refs.condition.externalUsers.isAll = true
-          }
-          this.postDataBase.weComUserGroupRule.externalUsers = this.$refs.condition.getData()
-          this.conditionStr = JSON.stringify(this.postDataBase.weComUserGroupRule.externalUsers)
+          if(this.baseForm.checkType == 1) {
+            this.postDataBase.userGroupType = 'WECOM'
+            if (this.baseForm.radioXz == 1) {
+              this.$refs.condition.checked1 = false
+              this.$refs.condition.externalUsers.isAll = true
+            }
+            this.postDataBase.weComUserGroupRule.externalUsers = this.$refs.condition.getData()
+            this.conditionStr = JSON.stringify(this.postDataBase.weComUserGroupRule.externalUsers)
 
-          if (this.baseForm.radioPc == 1) {
-            this.postDataBase.weComUserGroupRule.excludeSwitch = false
-            this.postDataBase.weComUserGroupRule.excludeExternalUsers = null
-          } else {
-            this.postDataBase.weComUserGroupRule.excludeSwitch = true
-            this.postDataBase.weComUserGroupRule.excludeExternalUsers = this.$refs.conditionPc.getData()
-            this.conditionPcStr = JSON.stringify(this.postDataBase.weComUserGroupRule.excludeExternalUsers)
-          }
+            if (this.baseForm.radioPc == 1) {
+              this.postDataBase.weComUserGroupRule.excludeSwitch = false
+              this.postDataBase.weComUserGroupRule.excludeExternalUsers = null
+            } else {
+              this.postDataBase.weComUserGroupRule.excludeSwitch = true
+              this.postDataBase.weComUserGroupRule.excludeExternalUsers = this.$refs.conditionPc.getData()
+              this.conditionPcStr = JSON.stringify(this.postDataBase.weComUserGroupRule.excludeExternalUsers)
+            }
 
-          this.postDataBase.weComUserGroupRule.members.departments = this.formData.members.departments
-          this.postDataBase.weComUserGroupRule.members.users = this.formData.members.users
+            this.postDataBase.weComUserGroupRule.members.departments = this.formData.members.departments
+            this.postDataBase.weComUserGroupRule.members.users = this.formData.members.users
+          } else if(this.baseForm.checkType == 2) {
+            this.postDataBase.userGroupType = 'OFFLINE'
+            this.postDataBase.offlineUserGroupRule = {
+              userGroupUuid: window.user_group_uuid_tmp
+            }
+          }
 
           let params = /*{
             corp_id: this.$store.state.corpId,//企业的企微ID
@@ -862,6 +941,7 @@ export default {
     border: 1px solid #DEDEDE;
     color: #999999;
     border-radius: 2px;
+    position: relative;
   }
   .btn {
     width: auto;
