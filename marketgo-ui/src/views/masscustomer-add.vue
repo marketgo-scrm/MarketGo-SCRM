@@ -14,104 +14,133 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="群发员工：" prop="members">
-<!--          <i class="el-icon-circle-plus-outline"></i>-->
-          <div style="width: 606px">
-            <div class="add-custom">
-              <div class="add-custom-btn">
-                <el-button
-                    @click="
+        <el-form-item label="筛选方式：" prop="checkType">
+          <div class="style-tab-radio">
+            <div class="style-item">
+              <el-radio v-model="baseForm.checkType" label="1">标准筛选</el-radio>
+            </div>
+            <div class="style-item">
+              <el-radio v-model="baseForm.checkType" label="2">离线导入</el-radio>
+            </div>
+            <div class="style-item">
+              <el-radio v-model="baseForm.checkType" disabled="" label="3">第三方CDP人群包</el-radio>
+            </div>
+          </div>
+        </el-form-item>
+        <template v-if="baseForm.checkType == 2">
+          <el-form-item label="">
+            <div class="offLineBox">
+              <div class="title">导入分群前请先下载模板编辑后上传</div>
+              <div class="btn">导入CSV文件</div>
+              <div class="down" @click="download()">下载模板</div>
+              <div class="tip"></div>
+
+            </div>
+          </el-form-item>
+
+        </template>
+
+        <template v-if="baseForm.checkType == 1">
+          <el-form-item label="群发员工：" prop="members">
+            <!--          <i class="el-icon-circle-plus-outline"></i>-->
+            <div style="width: 606px">
+              <div class="add-custom">
+                <div class="add-custom-btn">
+                  <el-button
+                      @click="
                       $refs.selectstaffRef.open(
                         formData?.members?.departments,
                         formData?.members?.users
                       )
                     "
-                    size="mini"
-                    icon="el-icon-plus"
-                    circle
-                ></el-button>
-              </div>
-              <div class="add-custom-tag">
-                <CustomStretch
-                    :height="28"
-                    :standard="
+                      size="mini"
+                      icon="el-icon-plus"
+                      circle
+                  ></el-button>
+                </div>
+                <div class="add-custom-tag">
+                  <CustomStretch
+                      :height="28"
+                      :standard="
                       formData?.members?.departments.length +
                         formData?.members?.users.length >
                       3
                     "
-                >
-                  <el-tag
-                      type="info"
-                      effect="plain"
-                      size="small"
-                      closable
-                      :disable-transitions="false"
-                      @close="deleteDepartments(index)"
-                      v-for="(tag, index) in formData?.members?.departments"
-                      :key="tag.id"
                   >
-                    <img
-                        class="add-custom-tag-img"
-                        src="@/assets/avter.png"
-                    />
-                    <span class="add-custom-tag-txt">{{ tag.name }}</span>
-                  </el-tag>
-                  <el-tag
-                      type="info"
-                      effect="plain"
-                      size="small"
-                      closable
-                      :disable-transitions="false"
-                      @close="deleteUsers(index)"
-                      v-for="(tag, index) in formData?.members?.users"
-                      :key="tag.memberId"
-                  >
-                    <img
-                        class="add-custom-tag-img"
-                        src="@/assets/avter.png"
-                    />
-                    <span class="add-custom-tag-txt">{{
-                        tag.memberName
-                      }}</span>
-                  </el-tag>
-                </CustomStretch>
+                    <el-tag
+                        type="info"
+                        effect="plain"
+                        size="small"
+                        closable
+                        :disable-transitions="false"
+                        @close="deleteDepartments(index)"
+                        v-for="(tag, index) in formData?.members?.departments"
+                        :key="tag.id"
+                    >
+                      <img
+                          class="add-custom-tag-img"
+                          src="@/assets/avter.png"
+                      />
+                      <span class="add-custom-tag-txt">{{ tag.name }}</span>
+                    </el-tag>
+                    <el-tag
+                        type="info"
+                        effect="plain"
+                        size="small"
+                        closable
+                        :disable-transitions="false"
+                        @close="deleteUsers(index)"
+                        v-for="(tag, index) in formData?.members?.users"
+                        :key="tag.memberId"
+                    >
+                      <img
+                          class="add-custom-tag-img"
+                          src="@/assets/avter.png"
+                      />
+                      <span class="add-custom-tag-txt">{{
+                          tag.memberName
+                        }}</span>
+                    </el-tag>
+                  </CustomStretch>
+                </div>
               </div>
             </div>
-          </div>
 
 
-<!--          <el-button
-              size="mini"
-              icon="el-icon-plus"
-              circle
-              @click="showFdata()"
-          ></el-button>-->
-        </el-form-item>
-        <el-form-item label="选择客户：" prop="radioXz">
-          <div class="style-tab-radio">
-            <div class="style-item">
-              <el-radio v-model="baseForm.radioXz" label="1">全部客户</el-radio>
+            <!--          <el-button
+                          size="mini"
+                          icon="el-icon-plus"
+                          circle
+                          @click="showFdata()"
+                      ></el-button>-->
+          </el-form-item>
+          <el-form-item label="选择客户：" prop="radioXz">
+            <div class="style-tab-radio">
+              <div class="style-item">
+                <el-radio v-model="baseForm.radioXz" label="1">全部客户</el-radio>
+              </div>
+              <div class="style-item">
+                <el-radio v-model="baseForm.radioXz" label="2">指定客户</el-radio>
+              </div>
             </div>
-            <div class="style-item">
-              <el-radio v-model="baseForm.radioXz" label="2">指定客户</el-radio>
+            <condition ref="condition" v-show="baseForm.radioXz == 2"></condition>
+            <!--          <div @click="$refs.condition.getData()">huoqu</div>-->
+          </el-form-item>
+          <el-form-item label="排除客户：" prop="radioPc">
+            <!--          <el-radio disabled v-model="baseForm.radioPc" label="1">否</el-radio>
+                      <el-radio disabled v-model="baseForm.radioPc" label="2">是</el-radio>-->
+            <div class="style-tab-radio">
+              <div class="style-item">
+                <el-radio v-model="baseForm.radioPc" label="1">否</el-radio>
+              </div>
+              <div class="style-item">
+                <el-radio v-model="baseForm.radioPc" label="2">是</el-radio>
+              </div>
             </div>
-          </div>
-          <condition ref="condition" v-show="baseForm.radioXz == 2"></condition>
-<!--          <div @click="$refs.condition.getData()">huoqu</div>-->
-        </el-form-item>
-        <el-form-item label="排除客户：" prop="radioPc">
-<!--          <el-radio disabled v-model="baseForm.radioPc" label="1">否</el-radio>
-          <el-radio disabled v-model="baseForm.radioPc" label="2">是</el-radio>-->
-          <div class="style-tab-radio">
-            <div class="style-item">
-              <el-radio v-model="baseForm.radioPc" label="1">否</el-radio>
-            </div>
-            <div class="style-item">
-              <el-radio v-model="baseForm.radioPc" label="2">是</el-radio>
-            </div>
-          </div>
-          <condition ref="conditionPc" v-show="baseForm.radioPc == 2"></condition>
-        </el-form-item>
+            <condition ref="conditionPc" v-show="baseForm.radioPc == 2"></condition>
+          </el-form-item>
+        </template>
+
 
         <el-form-item>
           <div>
@@ -234,6 +263,7 @@ import EnclosureList from "@/components/EnclosureList.vue";
 import condition from "@/components/condition.vue";
 import SelectStaff from "@/components/SelectStaff.vue";
 import PreviewPhone from "@/components/PreviewPhone.vue";
+// import qs from "qs";
 
 export default {
   name: "masscustomer-add",
@@ -285,6 +315,7 @@ export default {
       baseForm: {
         name: '',
         members: '',
+        checkType: '1',
         radioXz: '1',
         radioPc: '1',
       },
@@ -295,6 +326,9 @@ export default {
         ],
         members: [
           { required: true, message: '请选择群发员工', trigger: 'change' }
+        ],
+        checkType: [
+          { required: true, message: '请选择筛选方式', trigger: 'change' }
         ],
         radioXz: [
           { required: true, message: '请选择客户', trigger: 'change' }
@@ -501,7 +535,17 @@ export default {
     }
   },
   methods: {
-
+    download() {
+      // this.$http.get(`/mktgo/wecom/user_group/download/template?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`,{});
+      const href = `${this.$global.BASEURL}mktgo/wecom/user_group/download/template?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`;
+      console.log(href);
+      const a = document.createElement("a");
+      a.href = href;
+      a.target = "_blank";
+      a.download = '模板';
+      a.click();
+      a.remove();
+    },
     // 同步欢迎语
     descChange(e) {
       // this.$set(this.formData, "desc", e);
@@ -804,7 +848,52 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.offLineBox {
+  font-size: 12px;
+  line-height: 30px;
+  margin-top: -10px;
+  div {
+    display: inline-block;
+  }
+  .title {
+    width: 440px;
+    height: 30px;
+    padding-left: 10px;
+    border: 1px solid #DEDEDE;
+    color: #999999;
+    border-radius: 2px;
+  }
+  .btn {
+    width: auto;
+    height: 30px;
+    border: 1px solid #D5D5D5;
+    border-radius: 4px;
+    padding-left: 31px;
+    padding-right: 9px;
+    margin-left: 9px;
+    cursor: pointer;
+    background: url("../assets/imgs/masscustomer/download.png") no-repeat left;
+    background-position: 9px 5px;
+    color: #444444;
+  }
+  .btn:hover {
+    border-color: #679BFF;
+  }
+  .down {
+    margin-left: 10px;
+    height: 30px;
+    color: #688FF4;
+    cursor: pointer;
+  }
+  .tip {
+    width: 24px;
+    cursor: pointer;
+    height: 30px;
+    vertical-align: top;
+    background: url("../assets/imgs/masscustomer/tip.png") no-repeat center;
+    background-size: 12px;
+  }
+}
 .add-custom {
   display: flex;
   align-items: baseline;
