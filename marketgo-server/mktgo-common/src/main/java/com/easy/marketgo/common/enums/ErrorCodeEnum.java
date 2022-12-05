@@ -38,7 +38,8 @@ public enum ErrorCodeEnum {
     ERROR_WEB_DATE_TIME_PARAM(1110, "时间参数错误，请确认时间区间是否正确"),
     ERROR_WEB_BASE64_IMAGE_DATA(1111, "计算缩略图失败，请联系管理员解决问题"),
     ERROR_WEB_QUERY_USER_GROUP_MESSAGE_IS_EMPTY(1112, "查询人群信息失败，人群信息不存在"),
-
+    ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_NAME_EMPTY(1113, "上传的文件名称是空"),
+    ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY(1114, "上传的文件中没有数据"),
     ERROR_WEB_INTERNAL_SERVICE(1151, "服务内部出现异常，请检查相关服务是否运行正常"),
     ERROR_WEB_REQUEST_USER_GROUP_IS_EMPTY(1152, "数据库中没有查询到人群信息的记录"),
     ERROR_WEB_REQUEST_USER_COMP_IS_EMPTY(1153, "数据库中没有查询到员工信息的记录"),

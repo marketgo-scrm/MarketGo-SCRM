@@ -1,5 +1,7 @@
 package com.easy.marketgo.web.model.bo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -9,5 +11,8 @@ import lombok.Data;
  * Describe:
  */
 @Data
+@ApiModel(description = "离线人群计算的条件详情")
 public class OfflineUserGroupRule {
+    @ApiModelProperty(value = "人群条件uuid")
+    private String userGroupUuid;
 }
