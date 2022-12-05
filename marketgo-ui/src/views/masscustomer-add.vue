@@ -22,9 +22,9 @@
             <div class="style-item">
               <el-radio v-model="baseForm.checkType" label="2">离线导入</el-radio>
             </div>
-            <div class="style-item">
+<!--            <div class="style-item">
               <el-radio v-model="baseForm.checkType" disabled="" label="3">第三方CDP人群包</el-radio>
-            </div>
+            </div>-->
           </div>
         </el-form-item>
         <template v-if="baseForm.checkType == 2">
@@ -816,36 +816,46 @@ export default {
       if (hasName.code == '1004') {
         return false
       }
-      if (!this.set_userGroupUuid || !this.resDataBase.externalUserCount) {
-        this.$message.error('请选择有效的人群');
-        return false
-      }
-      this.conditionStr1 = JSON.stringify(this.$refs.condition.getData())
-      this.conditionPcStr1 = JSON.stringify(this.$refs.conditionPc.getData())
-      if (this.baseForm.radioXz != 1) {
-        if (this.conditionStr1 != this.conditionStr) {
+      if (this.baseForm.checkType == 1) {
+        if (!this.set_userGroupUuid || !this.resDataBase.externalUserCount) {
+          this.$message.error('请选择有效的人群');
+          return false
+        }
+        this.conditionStr1 = JSON.stringify(this.$refs.condition.getData())
+        this.conditionPcStr1 = JSON.stringify(this.$refs.conditionPc.getData())
+        if (this.baseForm.radioXz != 1) {
+          if (this.conditionStr1 != this.conditionStr) {
+            this.needcxjs = true
+          }
+        }
+        if (this.baseForm.radioPc != 1) {
+          if (this.conditionPcStr1 != this.conditionPcStr) {
+            this.needcxjs = true
+          }
+        }
+        /*if (this.conditionStr1 != this.conditionStr || this.conditionPcStr1 != this.conditionPcStr) {
           this.needcxjs = true
+        }*/
+        /*console.log('conditionStr1'+this.conditionStr1)
+        console.log('conditionStr'+this.conditionStr)
+        console.log('conditionPcStr1'+this.conditionPcStr1)
+        console.log('conditionPcStr'+this.conditionPcStr)*/
+      } else if (this.baseForm.checkType == 2) {
+        if (this.baseForm.checkType == 2 && this.fileName == '导入分群前请先下载模板编辑后上传') {
+          this.$message({
+            message: '请上传人群CSV文件',
+            type: 'warning'
+          });
+          return false
         }
       }
-      if (this.baseForm.radioPc != 1) {
-        if (this.conditionPcStr1 != this.conditionPcStr) {
-          this.needcxjs = true
-        }
-      }
-      /*if (this.conditionStr1 != this.conditionStr || this.conditionPcStr1 != this.conditionPcStr) {
-        this.needcxjs = true
-      }*/
-      /*console.log('conditionStr1'+this.conditionStr1)
-      console.log('conditionStr'+this.conditionStr)
-      console.log('conditionPcStr1'+this.conditionPcStr1)
-      console.log('conditionPcStr'+this.conditionPcStr)*/
 
       if (this.needcxjs) {
         this.$message.error('人群条件已修改，请选重新计算人群');
         return false
       }
       await this.$refs['baseForm'].validate((valid) => {
-        if (valid) {
+        if (valid || !valid) {
           // alert('submit!');
 
           this.$refs['setForm'].validate(async (valid) => {
