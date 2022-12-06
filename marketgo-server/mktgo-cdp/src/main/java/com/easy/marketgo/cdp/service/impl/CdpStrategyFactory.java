@@ -19,9 +19,11 @@ import java.util.Map;
 public class CdpStrategyFactory {
 
     @Autowired
-    private Map<String, CdpCrowdService> CdpCrowdServiceMap;
+    private Map<String, CdpCrowdService> cdpCrowdServiceMap;
 
     public CdpCrowdService getCdpCrowdService(String cdpType) {
-        return CdpCrowdServiceMap.get(CdpManufacturerTypeEnum.fromValue(cdpType).getService());
+        String service = CdpManufacturerTypeEnum.fromValue(cdpType).getService();
+        log.info("query open cdp service name. service={}", service);
+        return cdpCrowdServiceMap.get(service);
     }
 }
