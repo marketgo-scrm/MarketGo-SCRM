@@ -22,6 +22,9 @@ public interface CdpConfigRepository extends CrudRepository<CdpConfigEntity, Lon
     @Query("SELECT * FROM cdp_config WHERE project_uuid = :projectId AND corp_id = :corpId AND cdp_type = :cdpType")
     CdpConfigEntity getCdpConfigByCorpIdAndCdpType(String projectId, String corpId, String cdpType);
 
+    @Query("SELECT * FROM cdp_config WHERE id = :id")
+    CdpConfigEntity getCdpConfigById(Integer id);
+
     @Query("SELECT * FROM cdp_config WHERE project_uuid = :projectId AND corp_id = :corpId AND status = 1")
     List<CdpConfigEntity> getCdpConfigByCorpId(String projectId, String corpId);
 

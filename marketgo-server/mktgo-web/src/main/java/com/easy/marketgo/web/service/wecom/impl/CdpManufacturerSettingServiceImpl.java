@@ -76,7 +76,7 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
                 cdpType, request);
         CdpConfigEntity entity = new CdpConfigEntity();
         if (request.getId() != null) {
-            entity.setId(request.getId());
+            entity = cdpConfigRepository.getCdpConfigById(request.getId());
         } else {
             entity.setUuid(IdUtil.simpleUUID());
             entity.setStatus(Boolean.FALSE);
