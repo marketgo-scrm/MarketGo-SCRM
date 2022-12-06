@@ -4,6 +4,7 @@ import com.easy.marketgo.cdp.analysys.response.CrowdMessageResponse;
 import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
 import com.easy.marketgo.cdp.model.CrowdBaseRequest;
 import com.easy.marketgo.cdp.service.CdpCrowdService;
+import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.util.OkHttpUtils;
@@ -43,7 +44,30 @@ public class SensorsCdpCrowdService implements CdpCrowdService {
     public CdpCrowdListMessage queryCrowdList(CrowdBaseRequest request) {
         String requestUrl = request.getApiUrl() + URL_QUERY_CROWD_LIST;
 
-        Map<String, String> params = Maps.newHashMap();
+        CdpCrowdListMessage message = new CdpCrowdListMessage();
+        message.setCode(ErrorCodeEnum.OK.getCode());
+        message.setMessage(ErrorCodeEnum.OK.getMessage());
+
+        List<CdpCrowdListMessage.CrowdMessage> messageList = new ArrayList<>();
+
+        CdpCrowdListMessage.CrowdMessage message1 = new CdpCrowdListMessage.CrowdMessage();
+        message1.setCode("fsdafsdf");
+        message1.setName("新访用户");
+        message1.setUserCount("1000");
+        messageList.add(message1);
+
+        CdpCrowdListMessage.CrowdMessage message2 = new CdpCrowdListMessage.CrowdMessage();
+        message2.setCode("fsdafsdfvip");
+        message2.setName("VIP用户");
+        message2.setUserCount("200000");
+        messageList.add(message2);
+
+        CdpCrowdListMessage.CrowdMessage message3 = new CdpCrowdListMessage.CrowdMessage();
+        message3.setCode("fsdafsdfvvip");
+        message3.setName("VVIP用户");
+        message3.setUserCount("10000");
+        messageList.add(message3);
+       /* Map<String, String> params = Maps.newHashMap();
         if (StringUtils.isNotBlank(request.getAppKey())) {
             params.put(HTTP_PARAMS_KEY_PROJECT, request.getAppKey());
         }
@@ -56,16 +80,18 @@ public class SensorsCdpCrowdService implements CdpCrowdService {
         }
         if (StringUtils.isBlank(response)) {
             log.info("failed to query sensors crowd list.request={}", request);
-            return null;
+            message.setCode(ErrorCodeEnum.ERROR_CDP_RESPONSE_IS_EMPTY.getCode());
+            message.setMessage(ErrorCodeEnum.ERROR_CDP_RESPONSE_IS_EMPTY.getMessage());
+            return message;
         }
 
         List<CrowdMessageResponse> crowdList = JsonUtils.toArray(response, CrowdMessageResponse.class);
         if (CollectionUtils.isEmpty(crowdList)) {
             log.info("failed to parser sensors crowd list.request={}", request);
-            return null;
+            message.setCode(ErrorCodeEnum.ERROR_CDP_CROWD_LIST_IS_EMPTY.getCode());
+            message.setMessage(ErrorCodeEnum.ERROR_CDP_CROWD_LIST_IS_EMPTY.getMessage());
+            return message;
         }
-
-        CdpCrowdListMessage message = new CdpCrowdListMessage();
 
         List<CdpCrowdListMessage.CrowdMessage> messageList = new ArrayList<>();
 
@@ -74,7 +100,7 @@ public class SensorsCdpCrowdService implements CdpCrowdService {
 
             BeanUtils.copyProperties(msg, crowdMessage);
             messageList.add(crowdMessage);
-        }
+        }*/
         message.setCrowds(messageList);
         message.setCdpType(CdpManufacturerTypeEnum.SENSORS.getValue());
         log.info("return to query sensors crowd list.request={}", request);

@@ -1,6 +1,7 @@
 package com.easy.marketgo.cdp.service.impl;
 
 import com.easy.marketgo.cdp.service.CdpCrowdService;
+import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,12 +18,12 @@ import java.util.Map;
 @Slf4j
 public class CdpStrategyFactory {
 
-    private static final String QUERY_STRING_SUFFIX = "CdpCrowdService";
-
     @Autowired
-    private Map<String, CdpCrowdService> CdpCrowdServiceMap;
+    private Map<String, CdpCrowdService> cdpCrowdServiceMap;
 
     public CdpCrowdService getCdpCrowdService(String cdpType) {
-        return CdpCrowdServiceMap.get(cdpType + CdpCrowdServiceMap);
+        String service = CdpManufacturerTypeEnum.fromValue(cdpType).getService();
+        log.info("query open cdp service name. service={}", service);
+        return cdpCrowdServiceMap.get(service);
     }
 }

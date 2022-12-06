@@ -1,5 +1,6 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.easy.marketgo.cdp.model.CdpTestSettingRequest;
 import com.easy.marketgo.cdp.service.CdpManagerService;
 import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
@@ -47,7 +48,7 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
 
         List<CdpManufactureListResponse.CdpManufactureMessage> manufactureMessages = new ArrayList<>();
 
-        for (CdpManufacturerTypeEnum item : CdpManufacturerTypeEnum.list()) {
+        for (CdpManufacturerTypeEnum item : CdpManufacturerTypeEnum.listAll()) {
             CdpManufactureListResponse.CdpManufactureMessage message =
                     new CdpManufactureListResponse.CdpManufactureMessage();
             message.setCdpName(item.getName());
@@ -75,12 +76,14 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
                 cdpType, request);
         CdpConfigEntity entity = new CdpConfigEntity();
         if (request.getId() != null) {
-            entity.setId(request.getId());
+            entity = cdpConfigRepository.getCdpConfigById(request.getId());
         } else {
+            entity.setUuid(IdUtil.simpleUUID());
             entity.setStatus(Boolean.FALSE);
         }
         entity.setProjectUuid(projectId);
         entity.setCdpType(cdpType);
+        entity.setCorpId(corpId);
         entity.setApiUrl(request.getApiUrl());
         if (StringUtils.isNotBlank(request.getApiSecret())) {
             entity.setApiSecret(request.getApiSecret());
@@ -153,11 +156,7 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
     public BaseResponse cdpSettingStatus(String projectId, String corpId) {
         CdpSwitchStatusResponse response = new CdpSwitchStatusResponse();
         List<CdpConfigEntity> entities = cdpConfigRepository.getCdpConfigByCorpId(projectId, corpId);
-        if (CollectionUtils.isNotEmpty(entities)) {
-            response.setSwitchStatus(Boolean.TRUE);
-        } else {
-            response.setSwitchStatus(Boolean.FALSE);
-        }
+        response.setSwitchStatus((CollectionUtils.isNotEmpty(entities) ? Boolean.TRUE : Boolean.FALSE));
         return BaseResponse.success(response);
     }
 }

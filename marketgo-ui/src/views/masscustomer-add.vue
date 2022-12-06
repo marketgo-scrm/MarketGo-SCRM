@@ -14,104 +14,171 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="群发员工：" prop="members">
-<!--          <i class="el-icon-circle-plus-outline"></i>-->
-          <div style="width: 606px">
-            <div class="add-custom">
-              <div class="add-custom-btn">
-                <el-button
-                    @click="
+        <el-form-item label="筛选方式：" prop="checkType">
+          <div class="style-tab-radio">
+            <div class="style-item">
+              <el-radio v-model="baseForm.checkType" label="1">标准筛选</el-radio>
+            </div>
+            <div class="style-item">
+              <el-radio v-model="baseForm.checkType" label="2">离线导入</el-radio>
+            </div>
+<!--            <div class="style-item">
+              <el-radio v-model="baseForm.checkType" disabled="" label="3">第三方CDP人群包</el-radio>
+            </div>-->
+          </div>
+        </el-form-item>
+        <template v-if="baseForm.checkType == 2">
+          <el-form-item label="">
+            <div class="offLineBox">
+              <div class="title">{{fileName}}
+              <i class="el-icon-error"
+              style="position: absolute;right: 8px;cursor: pointer;top: 9px"
+                 v-show="fileName!='导入分群前请先下载模板编辑后上传'"
+                 @click="delFile()"
+              ></i>
+              </div>
+              <div class="btn" @click="uploadClick()">导入CSV文件</div>
+
+              <el-upload
+                  class="upload-demo"
+                  :action="uploadUrl"
+                  ref="upload"
+                  :on-change="csvFileChange"
+                  :file-list="fileList"
+                  :headers="{
+                    'header-api-token': token
+                  }"
+                  :auto-upload="false"
+                  :on-success="uploadSec"
+                  style="display: none"
+              >
+                <el-button size="small" type="primary" id="csvFile">点击上传</el-button>
+              </el-upload>
+
+
+<!--              <form name="fileForm" id="fileForm">
+                <input type="file" id="csvFile" accept="text/csv" @change="csvFileChange()"/>
+              </form>-->
+
+
+              <div class="down" @click="download()">下载模板</div>
+
+              <el-popover
+                  placement="top-start"
+                  width="200"
+                  trigger="hover"
+                  content="下载人群CSV文件模板"
+              >
+<!--                <i class="el-icon-question" slot="reference"></i>-->
+                <div class="tip" slot="reference"></div>
+              </el-popover>
+
+            </div>
+          </el-form-item>
+
+        </template>
+
+        <template v-if="baseForm.checkType == 1">
+          <el-form-item label="群发员工：" prop="members">
+            <!--          <i class="el-icon-circle-plus-outline"></i>-->
+            <div style="width: 606px">
+              <div class="add-custom">
+                <div class="add-custom-btn">
+                  <el-button
+                      @click="
                       $refs.selectstaffRef.open(
                         formData?.members?.departments,
                         formData?.members?.users
                       )
                     "
-                    size="mini"
-                    icon="el-icon-plus"
-                    circle
-                ></el-button>
-              </div>
-              <div class="add-custom-tag">
-                <CustomStretch
-                    :height="28"
-                    :standard="
+                      size="mini"
+                      icon="el-icon-plus"
+                      circle
+                  ></el-button>
+                </div>
+                <div class="add-custom-tag">
+                  <CustomStretch
+                      :height="28"
+                      :standard="
                       formData?.members?.departments.length +
                         formData?.members?.users.length >
                       3
                     "
-                >
-                  <el-tag
-                      type="info"
-                      effect="plain"
-                      size="small"
-                      closable
-                      :disable-transitions="false"
-                      @close="deleteDepartments(index)"
-                      v-for="(tag, index) in formData?.members?.departments"
-                      :key="tag.id"
                   >
-                    <img
-                        class="add-custom-tag-img"
-                        src="@/assets/avter.png"
-                    />
-                    <span class="add-custom-tag-txt">{{ tag.name }}</span>
-                  </el-tag>
-                  <el-tag
-                      type="info"
-                      effect="plain"
-                      size="small"
-                      closable
-                      :disable-transitions="false"
-                      @close="deleteUsers(index)"
-                      v-for="(tag, index) in formData?.members?.users"
-                      :key="tag.memberId"
-                  >
-                    <img
-                        class="add-custom-tag-img"
-                        src="@/assets/avter.png"
-                    />
-                    <span class="add-custom-tag-txt">{{
-                        tag.memberName
-                      }}</span>
-                  </el-tag>
-                </CustomStretch>
+                    <el-tag
+                        type="info"
+                        effect="plain"
+                        size="small"
+                        closable
+                        :disable-transitions="false"
+                        @close="deleteDepartments(index)"
+                        v-for="(tag, index) in formData?.members?.departments"
+                        :key="tag.id"
+                    >
+                      <img
+                          class="add-custom-tag-img"
+                          src="@/assets/avter.png"
+                      />
+                      <span class="add-custom-tag-txt">{{ tag.name }}</span>
+                    </el-tag>
+                    <el-tag
+                        type="info"
+                        effect="plain"
+                        size="small"
+                        closable
+                        :disable-transitions="false"
+                        @close="deleteUsers(index)"
+                        v-for="(tag, index) in formData?.members?.users"
+                        :key="tag.memberId"
+                    >
+                      <img
+                          class="add-custom-tag-img"
+                          src="@/assets/avter.png"
+                      />
+                      <span class="add-custom-tag-txt">{{
+                          tag.memberName
+                        }}</span>
+                    </el-tag>
+                  </CustomStretch>
+                </div>
               </div>
             </div>
-          </div>
 
 
-<!--          <el-button
-              size="mini"
-              icon="el-icon-plus"
-              circle
-              @click="showFdata()"
-          ></el-button>-->
-        </el-form-item>
-        <el-form-item label="选择客户：" prop="radioXz">
-          <div class="style-tab-radio">
-            <div class="style-item">
-              <el-radio v-model="baseForm.radioXz" label="1">全部客户</el-radio>
+            <!--          <el-button
+                          size="mini"
+                          icon="el-icon-plus"
+                          circle
+                          @click="showFdata()"
+                      ></el-button>-->
+          </el-form-item>
+          <el-form-item label="选择客户：" prop="radioXz">
+            <div class="style-tab-radio">
+              <div class="style-item">
+                <el-radio v-model="baseForm.radioXz" label="1">全部客户</el-radio>
+              </div>
+              <div class="style-item">
+                <el-radio v-model="baseForm.radioXz" label="2">指定客户</el-radio>
+              </div>
             </div>
-            <div class="style-item">
-              <el-radio v-model="baseForm.radioXz" label="2">指定客户</el-radio>
+            <condition ref="condition" v-show="baseForm.radioXz == 2"></condition>
+            <!--          <div @click="$refs.condition.getData()">huoqu</div>-->
+          </el-form-item>
+          <el-form-item label="排除客户：" prop="radioPc">
+            <!--          <el-radio disabled v-model="baseForm.radioPc" label="1">否</el-radio>
+                      <el-radio disabled v-model="baseForm.radioPc" label="2">是</el-radio>-->
+            <div class="style-tab-radio">
+              <div class="style-item">
+                <el-radio v-model="baseForm.radioPc" label="1">否</el-radio>
+              </div>
+              <div class="style-item">
+                <el-radio v-model="baseForm.radioPc" label="2">是</el-radio>
+              </div>
             </div>
-          </div>
-          <condition ref="condition" v-show="baseForm.radioXz == 2"></condition>
-<!--          <div @click="$refs.condition.getData()">huoqu</div>-->
-        </el-form-item>
-        <el-form-item label="排除客户：" prop="radioPc">
-<!--          <el-radio disabled v-model="baseForm.radioPc" label="1">否</el-radio>
-          <el-radio disabled v-model="baseForm.radioPc" label="2">是</el-radio>-->
-          <div class="style-tab-radio">
-            <div class="style-item">
-              <el-radio v-model="baseForm.radioPc" label="1">否</el-radio>
-            </div>
-            <div class="style-item">
-              <el-radio v-model="baseForm.radioPc" label="2">是</el-radio>
-            </div>
-          </div>
-          <condition ref="conditionPc" v-show="baseForm.radioPc == 2"></condition>
-        </el-form-item>
+            <condition ref="conditionPc" v-show="baseForm.radioPc == 2"></condition>
+          </el-form-item>
+        </template>
+
 
         <el-form-item>
           <div>
@@ -234,12 +301,20 @@ import EnclosureList from "@/components/EnclosureList.vue";
 import condition from "@/components/condition.vue";
 import SelectStaff from "@/components/SelectStaff.vue";
 import PreviewPhone from "@/components/PreviewPhone.vue";
+// import qs from "qs";
 
 export default {
   name: "masscustomer-add",
   components: {EnclosureList,condition,SelectStaff,CustomMessageInput,PreviewPhone},
   data() {
+    window.user_group_uuid_tmp = (Date.parse(new Date())).toString()
+    window.uploadUrl_tmp = `${this.$global.BASEURL}mktgo/wecom/user_group/upload?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&file_type=csv&user_group_uuid=`
+
     return {
+      token: localStorage.getItem('token'),
+      uploadUrl:window.uploadUrl_tmp + window.user_group_uuid_tmp,
+      fileName:'导入分群前请先下载模板编辑后上传',
+      fileList: [],
       checkAll: false,
       formData: {
         welcomeContent: [
@@ -280,11 +355,11 @@ export default {
           ],
         },
       },
-
       first: true,
       baseForm: {
         name: '',
         members: '',
+        checkType: '1',
         radioXz: '1',
         radioPc: '1',
       },
@@ -295,6 +370,9 @@ export default {
         ],
         members: [
           { required: true, message: '请选择群发员工', trigger: 'change' }
+        ],
+        checkType: [
+          { required: true, message: '请选择筛选方式', trigger: 'change' }
         ],
         radioXz: [
           { required: true, message: '请选择客户', trigger: 'change' }
@@ -330,7 +408,7 @@ export default {
             "corpTags": {
               "relation": "OR",
               "tags": [
-                {
+                /*{
                   "cname": "核心",
                   "createTime": "string",
                   "deleted": true,
@@ -343,7 +421,7 @@ export default {
                   "deleted": true,
                   "id": "etqPhANwAA3Tver5WZTwPR7Vjbwkn2Yw",
                   "order": 0
-                }
+                }*/
               ]
             },
             "endTime": null,
@@ -501,7 +579,36 @@ export default {
     }
   },
   methods: {
-
+    delFile() {
+      this.fileName='导入分群前请先下载模板编辑后上传'
+      this.$http.post(`mktgo/wecom/user_group/delete?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&user_group_uuid=${window.user_group_uuid_tmp}`,{})
+    },
+    submitUpload() {
+      this.$refs.upload.submit();
+    },
+    uploadClick() {
+      window.user_group_uuid_tmp = (Date.parse(new Date())).toString()
+      this.uploadUrl = window.uploadUrl_tmp + window.user_group_uuid_tmp
+      document.getElementById('csvFile').click()
+    },
+    csvFileChange() {
+      this.submitUpload()
+    },
+    uploadSec(response,file) {
+      console.log(response,file,window.user_group_uuid_tmp)
+      this.fileName = file.name
+    },
+    download() {
+      // this.$http.get(`/mktgo/wecom/user_group/download/template?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`,{});
+      const href = `${this.$global.BASEURL}mktgo/wecom/user_group/download/template?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`;
+      console.log(href);
+      const a = document.createElement("a");
+      a.href = href;
+      a.target = "_blank";
+      a.download = '模板';
+      a.click();
+      a.remove();
+    },
     // 同步欢迎语
     descChange(e) {
       // this.$set(this.formData, "desc", e);
@@ -614,30 +721,46 @@ export default {
       if (this.needReBase) {
         this.base_request_id = (Date.parse(new Date())).toString()
       }
+      if (this.baseForm.checkType == 2 && this.fileName == '导入分群前请先下载模板编辑后上传') {
+        this.$message({
+          message: '请上传人群CSV文件',
+          type: 'warning'
+        });
+        return false
+      }
       this.needReBase = false
+
       this.$refs['baseForm'].validate(async (valid) => {
         if (valid || !valid) {
           // alert('submit!');
           this.first = false
 
-          if (this.baseForm.radioXz == 1) {
-            this.$refs.condition.checked1 = false
-            this.$refs.condition.externalUsers.isAll = true
-          }
-          this.postDataBase.weComUserGroupRule.externalUsers = this.$refs.condition.getData()
-          this.conditionStr = JSON.stringify(this.postDataBase.weComUserGroupRule.externalUsers)
+          if(this.baseForm.checkType == 1) {
+            this.postDataBase.userGroupType = 'WECOM'
+            if (this.baseForm.radioXz == 1) {
+              this.$refs.condition.checked1 = false
+              this.$refs.condition.externalUsers.isAll = true
+            }
+            this.postDataBase.weComUserGroupRule.externalUsers = this.$refs.condition.getData()
+            this.conditionStr = JSON.stringify(this.postDataBase.weComUserGroupRule.externalUsers)
 
-          if (this.baseForm.radioPc == 1) {
-            this.postDataBase.weComUserGroupRule.excludeSwitch = false
-            this.postDataBase.weComUserGroupRule.excludeExternalUsers = null
-          } else {
-            this.postDataBase.weComUserGroupRule.excludeSwitch = true
-            this.postDataBase.weComUserGroupRule.excludeExternalUsers = this.$refs.conditionPc.getData()
-            this.conditionPcStr = JSON.stringify(this.postDataBase.weComUserGroupRule.excludeExternalUsers)
-          }
+            if (this.baseForm.radioPc == 1) {
+              this.postDataBase.weComUserGroupRule.excludeSwitch = false
+              this.postDataBase.weComUserGroupRule.excludeExternalUsers = null
+            } else {
+              this.postDataBase.weComUserGroupRule.excludeSwitch = true
+              this.postDataBase.weComUserGroupRule.excludeExternalUsers = this.$refs.conditionPc.getData()
+              this.conditionPcStr = JSON.stringify(this.postDataBase.weComUserGroupRule.excludeExternalUsers)
+            }
 
-          this.postDataBase.weComUserGroupRule.members.departments = this.formData.members.departments
-          this.postDataBase.weComUserGroupRule.members.users = this.formData.members.users
+            this.postDataBase.weComUserGroupRule.members.departments = this.formData.members.departments
+            this.postDataBase.weComUserGroupRule.members.users = this.formData.members.users
+          } else if(this.baseForm.checkType == 2) {
+            this.postDataBase.userGroupType = 'OFFLINE'
+            this.postDataBase.offlineUserGroupRule = {
+              userGroupUuid: window.user_group_uuid_tmp
+            }
+          }
 
           let params = /*{
             corp_id: this.$store.state.corpId,//企业的企微ID
@@ -693,36 +816,46 @@ export default {
       if (hasName.code == '1004') {
         return false
       }
-      if (!this.set_userGroupUuid || !this.resDataBase.externalUserCount) {
-        this.$message.error('请选择有效的人群');
-        return false
-      }
-      this.conditionStr1 = JSON.stringify(this.$refs.condition.getData())
-      this.conditionPcStr1 = JSON.stringify(this.$refs.conditionPc.getData())
-      if (this.baseForm.radioXz != 1) {
-        if (this.conditionStr1 != this.conditionStr) {
+      if (this.baseForm.checkType == 1) {
+        if (!this.set_userGroupUuid || !this.resDataBase.externalUserCount) {
+          this.$message.error('请选择有效的人群');
+          return false
+        }
+        this.conditionStr1 = JSON.stringify(this.$refs.condition.getData())
+        this.conditionPcStr1 = JSON.stringify(this.$refs.conditionPc.getData())
+        if (this.baseForm.radioXz != 1) {
+          if (this.conditionStr1 != this.conditionStr) {
+            this.needcxjs = true
+          }
+        }
+        if (this.baseForm.radioPc != 1) {
+          if (this.conditionPcStr1 != this.conditionPcStr) {
+            this.needcxjs = true
+          }
+        }
+        /*if (this.conditionStr1 != this.conditionStr || this.conditionPcStr1 != this.conditionPcStr) {
           this.needcxjs = true
+        }*/
+        /*console.log('conditionStr1'+this.conditionStr1)
+        console.log('conditionStr'+this.conditionStr)
+        console.log('conditionPcStr1'+this.conditionPcStr1)
+        console.log('conditionPcStr'+this.conditionPcStr)*/
+      } else if (this.baseForm.checkType == 2) {
+        if (this.baseForm.checkType == 2 && this.fileName == '导入分群前请先下载模板编辑后上传') {
+          this.$message({
+            message: '请上传人群CSV文件',
+            type: 'warning'
+          });
+          return false
         }
       }
-      if (this.baseForm.radioPc != 1) {
-        if (this.conditionPcStr1 != this.conditionPcStr) {
-          this.needcxjs = true
-        }
-      }
-      /*if (this.conditionStr1 != this.conditionStr || this.conditionPcStr1 != this.conditionPcStr) {
-        this.needcxjs = true
-      }*/
-      /*console.log('conditionStr1'+this.conditionStr1)
-      console.log('conditionStr'+this.conditionStr)
-      console.log('conditionPcStr1'+this.conditionPcStr1)
-      console.log('conditionPcStr'+this.conditionPcStr)*/
 
       if (this.needcxjs) {
         this.$message.error('人群条件已修改，请选重新计算人群');
         return false
       }
       await this.$refs['baseForm'].validate((valid) => {
-        if (valid) {
+        if (valid || !valid) {
           // alert('submit!');
 
           this.$refs['setForm'].validate(async (valid) => {
@@ -804,7 +937,53 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.offLineBox {
+  font-size: 12px;
+  line-height: 30px;
+  margin-top: -10px;
+  div {
+    display: inline-block;
+  }
+  .title {
+    width: 440px;
+    height: 30px;
+    padding-left: 10px;
+    border: 1px solid #DEDEDE;
+    color: #999999;
+    border-radius: 2px;
+    position: relative;
+  }
+  .btn {
+    width: auto;
+    height: 30px;
+    border: 1px solid #D5D5D5;
+    border-radius: 4px;
+    padding-left: 31px;
+    padding-right: 9px;
+    margin-left: 9px;
+    cursor: pointer;
+    background: url("../assets/imgs/masscustomer/download.png") no-repeat left;
+    background-position: 9px 5px;
+    color: #444444;
+  }
+  .btn:hover {
+    border-color: #679BFF;
+  }
+  .down {
+    margin-left: 10px;
+    height: 30px;
+    color: #688FF4;
+    cursor: pointer;
+  }
+  .tip {
+    width: 24px;
+    cursor: pointer;
+    height: 30px;
+    vertical-align: top;
+    background: url("../assets/imgs/masscustomer/tip.png") no-repeat center;
+    background-size: 12px;
+  }
+}
 .add-custom {
   display: flex;
   align-items: baseline;

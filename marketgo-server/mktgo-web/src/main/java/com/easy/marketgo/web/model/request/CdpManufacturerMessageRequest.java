@@ -17,7 +17,7 @@ import lombok.*;
 @ToString
 @ApiModel(description = "CDP信息request")
 public class CdpManufacturerMessageRequest {
-    @ApiModelProperty(value = "活码id")
+    @ApiModelProperty(value = "CDP的id")
     private Integer id;
     /**
      * 企微 wecom

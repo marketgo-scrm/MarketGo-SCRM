@@ -64,9 +64,9 @@ public class CdpManagerServiceImpl implements CdpManagerService {
         }
         CdpConfigEntity entity = entities.get(0);
         String cdpType = entity.getCdpType();
-
+        log.info("query open cdp config. entity={}", entity);
         CdpCrowdService cdpCrowdService = cdpStrategyFactory.getCdpCrowdService(cdpType);
-
+        log.info("get open cdp service. cdpCrowdService={}", cdpCrowdService);
         CrowdBaseRequest request = new CrowdBaseRequest();
         BeanUtils.copyProperties(entity, request);
         request.setCorpId(corpId);

@@ -127,8 +127,9 @@ class WeComUserGroupController {
     @RequestMapping(value = {"/crowd"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity queryCdpCrowdList(
             @ApiParam(value = "企微项目id", required = true) @RequestParam(value = "project_id", required = true) @NotBlank @Valid String projectId,
-            @ApiParam(value = "企业id", required = true) @RequestParam(value = "corp_id",
-                    required = true) @NotBlank @Valid String corpId) {
+            @ApiParam(value = "企业id", required = true) @RequestParam(value = "corp_id", required = true) @NotBlank @Valid String corpId,
+            @ApiParam(value = "分群刷选状态", required = true) @RequestParam(value = "refresh", required = true,
+                    defaultValue = "0") @NotBlank @Valid Boolean refresh) {
 
         return ResponseEntity.ok(weComUserGroupService.queryCrowdList(projectId, corpId));
     }
