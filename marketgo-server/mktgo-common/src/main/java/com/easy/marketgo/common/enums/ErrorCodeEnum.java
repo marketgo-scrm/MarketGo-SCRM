@@ -63,7 +63,6 @@ public enum ErrorCodeEnum {
      */
 
 
-
     /**
      * 内部错误码定义
      * 模块-gateway
@@ -75,6 +74,15 @@ public enum ErrorCodeEnum {
     ERROR_GATEWAY_PARAM_IS_EMPTY(5002, "请求参数异常"),
     ERROR_GATEWAY_INTERNAL_SERVICE(5003, "服务内部出现异常，请检查相关服务是否运行正常"),
     ERROR_GATEWAY_NOT_SUPPORT_AGENT_MESSAGE_TYPE(5004, "不支持的应用消息类型，请重新确认消息的类型"),
+
+    /**
+     * 内部错误码定义
+     * 模块-cdp
+     * 命名方式 ERROR_CDP_错误描述
+     * 错误码范围6000-7999
+     */
+    ERROR_CDP_RESPONSE_IS_EMPTY(6000, "请求CDP的接口返回的response是空"),
+    ERROR_CDP_CROWD_LIST_IS_EMPTY(6001, "请求CDP的分群列表接口返回的列表为空"),
     /**
      * 企微的错误码定义
      * 模块-WECOM
