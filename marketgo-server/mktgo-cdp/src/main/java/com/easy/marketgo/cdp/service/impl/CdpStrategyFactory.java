@@ -1,6 +1,7 @@
 package com.easy.marketgo.cdp.service.impl;
 
 import com.easy.marketgo.cdp.service.CdpCrowdService;
+import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,6 @@ public class CdpStrategyFactory {
     private Map<String, CdpCrowdService> CdpCrowdServiceMap;
 
     public CdpCrowdService getCdpCrowdService(String cdpType) {
-        return CdpCrowdServiceMap.get(cdpType + CdpCrowdServiceMap);
+        return CdpCrowdServiceMap.get(CdpManufacturerTypeEnum.fromValue(cdpType).getService());
     }
 }

@@ -19,21 +19,22 @@ public enum CdpManufacturerTypeEnum {
     /**
      *
      */
-    SENSORS("SENSORS", "神策"),
+    SENSORS("SENSORS", "神策", "SensorsCdpCrowdService"),
 
-    ANALYSYS("ANALYSYS", "易观"),
+    ANALYSYS("ANALYSYS", "易观", "AnalysysCdpCrowdService"),
 
-    LINKFLOW("LINKFLOW", "LinkFlow"),
+    LINKFLOW("LINKFLOW", "LinkFlow", "AnalysysCdpCrowdService"),
 
-    CONVERTLAB("CONVERTLAB", "ConvertLab"),
+    CONVERTLAB("CONVERTLAB", "ConvertLab", "AnalysysCdpCrowdService"),
 
-    HYPERS("HYPERS", "hypers"),
+    HYPERS("HYPERS", "hypers", "AnalysysCdpCrowdService"),
 
-    GROWINGIO("GROWINGIO", "GrowingIO"),
+    GROWINGIO("GROWINGIO", "GrowingIO", "AnalysysCdpCrowdService"),
 
-    ALIYUN("ALICLOUD", "阿里云"),
+    ALIYUN("ALICLOUD", "阿里云", "AnalysysCdpCrowdService"),
 
-    TENCENTCLOUD("TENCENTCLOUD", "腾讯云"),;
+    TENCENTCLOUD("TENCENTCLOUD", "腾讯云", "AnalysysCdpCrowdService"),
+    ;
 
     private static final Object _LOCK = new Object();
 
@@ -65,10 +66,13 @@ public enum CdpManufacturerTypeEnum {
 
     private String name;
 
-    CdpManufacturerTypeEnum(String value, String name) {
+    private String service;
+
+    CdpManufacturerTypeEnum(String value, String name, String service) {
 
         this.value = value;
         this.name = name;
+        this.service = service;
     }
 
     public static CdpManufacturerTypeEnum get(int value) {
@@ -110,6 +114,17 @@ public enum CdpManufacturerTypeEnum {
 
         this.value = value;
     }
+
+    public String getService() {
+
+        return this.service;
+    }
+
+    public void setService(String service) {
+
+        this.service = service;
+    }
+
     @JsonCreator
     public static CdpManufacturerTypeEnum fromValue(String text) {
 
