@@ -21,7 +21,7 @@ public enum CdpManufacturerTypeEnum {
      */
     SENSORS("SENSORS", "神策", "sensorsCdpCrowdService"),
 
-    ANALYSYS("ANALYSYS", "易观", "AnalysysCdpCrowdService"),
+    ANALYSYS("ANALYSYS", "易观", "analysysCdpCrowdService"),
 
     LINKFLOW("LINKFLOW", "LinkFlow", "AnalysysCdpCrowdService"),
 
