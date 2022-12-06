@@ -83,6 +83,7 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
         }
         entity.setProjectUuid(projectId);
         entity.setCdpType(cdpType);
+        entity.setCorpId(corpId);
         entity.setApiUrl(request.getApiUrl());
         if (StringUtils.isNotBlank(request.getApiSecret())) {
             entity.setApiSecret(request.getApiSecret());

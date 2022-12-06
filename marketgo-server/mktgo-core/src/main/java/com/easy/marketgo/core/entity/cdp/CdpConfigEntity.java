@@ -14,6 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table("cdp_config")
 public class CdpConfigEntity extends UuidBaseEntity {
     private String projectUuid;
+    private String corpId;
     private String cdpType;
     private String apiUrl;
     private String dataUrl;
