@@ -18,8 +18,6 @@ import java.util.Map;
 @Slf4j
 public class CdpStrategyFactory {
 
-    private static final String QUERY_STRING_SUFFIX = "CdpCrowdService";
-
     @Autowired
     private Map<String, CdpCrowdService> CdpCrowdServiceMap;
 
