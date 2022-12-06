@@ -1,5 +1,6 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.easy.marketgo.cdp.model.CdpTestSettingRequest;
 import com.easy.marketgo.cdp.service.CdpManagerService;
 import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
@@ -77,6 +78,7 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
         if (request.getId() != null) {
             entity.setId(request.getId());
         } else {
+            entity.setUuid(IdUtil.simpleUUID());
             entity.setStatus(Boolean.FALSE);
         }
         entity.setProjectUuid(projectId);
