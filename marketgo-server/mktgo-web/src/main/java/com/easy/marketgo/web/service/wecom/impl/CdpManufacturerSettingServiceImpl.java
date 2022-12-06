@@ -156,11 +156,7 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
     public BaseResponse cdpSettingStatus(String projectId, String corpId) {
         CdpSwitchStatusResponse response = new CdpSwitchStatusResponse();
         List<CdpConfigEntity> entities = cdpConfigRepository.getCdpConfigByCorpId(projectId, corpId);
-        if (CollectionUtils.isNotEmpty(entities)) {
-            response.setSwitchStatus(Boolean.TRUE);
-        } else {
-            response.setSwitchStatus(Boolean.FALSE);
-        }
+        response.setSwitchStatus((CollectionUtils.isNotEmpty(entities) ? Boolean.TRUE : Boolean.FALSE));
         return BaseResponse.success(response);
     }
 }

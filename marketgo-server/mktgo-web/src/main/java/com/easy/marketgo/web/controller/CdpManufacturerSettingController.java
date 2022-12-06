@@ -34,7 +34,7 @@ class CdpManufacturerSettingController {
             @ApiResponse(code = 0, message = "ok", response = CdpManufactureListResponse.class)
     })
     @ApiOperation(value = "获取cdp列表信息", nickname = "queryCdpList", notes = "", response =
-            UserGroupAudienceRules.class)
+            CdpManufactureListResponse.class)
     @RequestMapping(value = {"/list"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity queryCdpList(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
             "project_id", required = true) @NotBlank @Valid String projectId,
@@ -48,7 +48,7 @@ class CdpManufacturerSettingController {
             @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
     @ApiOperation(value = "保存和修改cdp信息", nickname = "saveOrUpdateCdpMessage", notes = "", response =
-            UserGroupEstimateResponse.class)
+            BaseResponse.class)
     @RequestMapping(value = {"/save"}, produces = {"application/json"}, method = RequestMethod.POST)
     public ResponseEntity saveOrUpdateCdpMessage(
             @ApiParam(value = "企微项目id", required = true) @RequestParam(value = "project_id", required = true) @NotBlank @Valid String projectId,
@@ -65,7 +65,7 @@ class CdpManufacturerSettingController {
             @ApiResponse(code = 0, message = "ok", response = CdpManufacturerMessageResponse.class)
     })
     @ApiOperation(value = "获取cdp信息", nickname = "queryCdpMessage", notes = "", response =
-            UserGroupAudienceRules.class)
+            CdpManufacturerMessageResponse.class)
     @RequestMapping(value = {"/query"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity queryCdpMessage(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
             "project_id", required = true) @NotBlank @Valid String projectId,
@@ -84,7 +84,7 @@ class CdpManufacturerSettingController {
             @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
     @ApiOperation(value = "修改cdp的状态", nickname = "changeCdpStatus", notes = "", response =
-            UserGroupAudienceRules.class)
+            BaseResponse.class)
     @PostMapping("/status")
     public ResponseEntity changeCdpStatus(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
             "project_id", required = true) @NotBlank @Valid String projectId,
