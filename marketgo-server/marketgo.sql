@@ -701,6 +701,9 @@ ALTER TABLE `wecom_mass_task` MODIFY content MEDIUMTEXT DEFAULT NULL COMMENT '�
 
 
 -- version 0.0.5
+
+INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`, `parent_name`, `title`, `parent_title`, `project_uuid`) VALUES  (MD5(uuid()) ,  'cdpsettings', 'settings', 'cdpsettings', 'settings', '数据接入', '系统设置', (SELECT uuid FROM project_config));
+
 -- ----------------------------
 -- Table structure for cdp_config
 -- ----------------------------
@@ -735,7 +738,7 @@ CREATE TABLE `cdp_crowd_users_sync` (
    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
    `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
    `project_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据的项目名称',
-   `crowd_code` varchar(1024) NOT NULL  COMMENT 'cdp的人群的code',
+   `crowd_code` varchar(512) NOT NULL  COMMENT 'cdp的人群的code',
    `crowd_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的人群的名字',
    `user_count`      bigint(20) DEFAULT NULL  COMMENT '人群的数量',
    `sync_user_count` bigint(20) DEFAULT NULL  COMMENT '同步的人群数量',
@@ -757,7 +760,7 @@ CREATE TABLE `user_group_cdp` (
    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
    `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
    `project_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据的项目名称',
-   `crowd_code` varchar(1024) NOT NULL  COMMENT 'cdp的人群的code',
+   `crowd_code` varchar(512) NOT NULL  COMMENT 'cdp的人群的code',
    `external_user_id`   varchar(255) NOT NULL  COMMENT '客户ID',
    `member_id` varchar(32) NOT NULL  COMMENT '员工ID',
    `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',

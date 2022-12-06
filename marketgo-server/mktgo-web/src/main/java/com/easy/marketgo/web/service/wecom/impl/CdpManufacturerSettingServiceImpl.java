@@ -47,7 +47,7 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
 
         List<CdpManufactureListResponse.CdpManufactureMessage> manufactureMessages = new ArrayList<>();
 
-        for (CdpManufacturerTypeEnum item : CdpManufacturerTypeEnum.list()) {
+        for (CdpManufacturerTypeEnum item : CdpManufacturerTypeEnum.listAll()) {
             CdpManufactureListResponse.CdpManufactureMessage message =
                     new CdpManufactureListResponse.CdpManufactureMessage();
             message.setCdpName(item.getName());

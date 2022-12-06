@@ -3,11 +3,8 @@ package com.easy.marketgo.web.controller;
 import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
-import com.easy.marketgo.web.model.response.cdp.CdpCrowdListResponse;
-import com.easy.marketgo.web.model.response.cdp.CdpManufacturerMessageResponse;
+import com.easy.marketgo.web.model.response.cdp.*;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
-import com.easy.marketgo.web.model.response.cdp.CdpSettingTestStatusResponse;
-import com.easy.marketgo.web.model.response.cdp.CdpSwitchStatusResponse;
 import com.easy.marketgo.web.service.wecom.CdpManufacturerSettingService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +31,7 @@ class CdpManufacturerSettingController {
 
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = CdpManufacturerMessageResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = CdpManufactureListResponse.class)
     })
     @ApiOperation(value = "获取cdp列表信息", nickname = "queryCdpList", notes = "", response =
             UserGroupAudienceRules.class)
