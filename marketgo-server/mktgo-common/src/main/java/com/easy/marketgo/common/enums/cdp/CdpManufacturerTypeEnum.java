@@ -19,7 +19,7 @@ public enum CdpManufacturerTypeEnum {
     /**
      *
      */
-    SENSORS("SENSORS", "神策", "SensorsCdpCrowdService"),
+    SENSORS("SENSORS", "神策", "sensorsCdpCrowdService"),
 
     ANALYSYS("ANALYSYS", "易观", "AnalysysCdpCrowdService"),
 
