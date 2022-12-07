@@ -294,7 +294,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         log.info("start to get corp forward server message. corpId={}", corpId);
         WeComForwardServerMessageResponse response = new WeComForwardServerMessageResponse();
         WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorp(projectId, corpId);
-        if (entity != null && StringUtils.isBlank(entity.getForwardAddress())) {
+        if (entity != null && StringUtils.isNotEmpty(entity.getForwardAddress())) {
             response.setForwardServer(JsonUtils.toArray(entity.getForwardAddress(), String.class));
         }
         log.info("get corp forward server message. response={}", response);

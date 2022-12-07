@@ -4,6 +4,7 @@ import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.web.model.response.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
 import com.easy.marketgo.web.model.response.customer.WeComGroupChatsResponse;
@@ -87,10 +88,10 @@ public class WeComCorpMessageController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = WeComGroupChatsResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
     @ApiOperation(value = "企业微信添加转发服务", nickname = "updateOrInsertForwardServer", notes = "", response =
-            WeComCorpCallbackResponse.class)
+            BaseResponse.class)
     @RequestMapping(value = {"/forward/save"}, produces = {"application/json"}, method = RequestMethod.POST)
     public ResponseEntity updateOrInsertForwardServer(
             @NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
@@ -100,10 +101,10 @@ public class WeComCorpMessageController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = WeComCorpConfigResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = WeComForwardServerMessageResponse.class)
     })
     @ApiOperation(value = "获取企业微信转发服务配置信息", nickname = "getForwardServer", notes = "", response =
-            WeComCorpConfigResponse.class)
+            WeComForwardServerMessageResponse.class)
     @RequestMapping(value = {"/forward/config"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getForwardServer(@NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
                                            @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId) {
