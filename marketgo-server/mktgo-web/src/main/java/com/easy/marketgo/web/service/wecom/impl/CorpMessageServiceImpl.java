@@ -287,6 +287,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
         }
         String message = request.getForwardServer().stream().collect(Collectors.joining(","));
+        log.info("save corp forward server message. corpId={}, request={}, message={}", corpId, request, message);
         weComCorpMessageRepository.updateForwardAddressByCorpId(projectId, corpId, message);
         return BaseResponse.success();
     }
