@@ -41,7 +41,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author : kevinwang
@@ -284,7 +286,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         if (request == null || CollectionUtils.isEmpty(request.getForwardServer())) {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
         }
-        String message = JsonUtils.toJSONString(request.getForwardServer());
+        String message = request.getForwardServer().stream().collect(Collectors.joining(","));
         weComCorpMessageRepository.updateForwardAddressByCorpId(projectId, corpId, message);
         return BaseResponse.success();
     }
@@ -295,7 +297,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         WeComForwardServerMessageResponse response = new WeComForwardServerMessageResponse();
         WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorp(projectId, corpId);
         if (entity != null && StringUtils.isNotEmpty(entity.getForwardAddress())) {
-            response.setForwardServer(JsonUtils.toArray(entity.getForwardAddress(), String.class));
+            response.setForwardServer(Arrays.asList(entity.getForwardAddress().split(",")));
         }
         log.info("get corp forward server message. response={}", response);
         return BaseResponse.success(response);
