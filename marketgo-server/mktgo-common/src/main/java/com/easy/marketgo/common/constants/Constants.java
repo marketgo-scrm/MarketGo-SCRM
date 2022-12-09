@@ -61,4 +61,6 @@ public class Constants {
     public final String WECOM_CALLBACK_MESSAGE_TYPE_UPDATE_CORP_TAG = "update";
     public final String WECOM_CALLBACK_MESSAGE_TYPE_DELETE_CORP_TAG = "delete";
     public final String WECOM_CALLBACK_MESSAGE_TYPE_SHUFFLE_CORP_TAG = "shuffle";
+
+    public final String WECOM_CALLBACK_FORWARD_URL="wecom_callback_forward_url_%s";
 }

@@ -56,6 +56,7 @@ public class UserServiceImpl implements IUserService {
     private JwtUtils jwtUtils;
     @Autowired
     private RedisService redisService;
+
     private static final String USER_TOKEN_KEY = "marketgo_user_token_%s";
 
     @Override

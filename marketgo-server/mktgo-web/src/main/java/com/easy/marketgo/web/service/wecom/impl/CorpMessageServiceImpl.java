@@ -21,6 +21,7 @@ import com.easy.marketgo.core.entity.ProjectConfigEntity;
 import com.easy.marketgo.core.entity.TenantConfigEntity;
 import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.WeComCorpMessageEntity;
+import com.easy.marketgo.core.redis.RedisService;
 import com.easy.marketgo.core.repository.wecom.ProjectConfigRepository;
 import com.easy.marketgo.core.repository.wecom.TenantConfigRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
@@ -74,6 +75,9 @@ public class CorpMessageServiceImpl implements CorpMessageService {
 
     @Autowired
     private XxlJobManualTriggerService xxlJobManualTriggerService;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public BaseResponse checkAgentParams(String projectId, String corpId, String agentId, String secret) {
@@ -283,13 +287,19 @@ public class CorpMessageServiceImpl implements CorpMessageService {
     public BaseResponse updateOrInsertForwardServer(String projectId, String corpId,
                                                     WeComForwardServerMessageRequest request) {
         log.info("start to save corp forward server message. corpId={}, request={}", corpId, request);
-        if (request == null || CollectionUtils.isEmpty(request.getForwardServer())) {
-            throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
+        try {
+            if (request == null || CollectionUtils.isEmpty(request.getForwardServer())) {
+                throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
+            }
+            String message = request.getForwardServer().stream().collect(Collectors.joining(","));
+            log.info("save corp forward server message. corpId={}, request={}, message={}", corpId, request, message);
+            weComCorpMessageRepository.updateForwardAddressByCorpId(projectId, corpId, message);
+            redisService.set(String.format(Constants.WECOM_CALLBACK_FORWARD_URL, corpId), message, 0L);
+            return BaseResponse.success();
+        } catch (Exception e) {
+            log.error("failed to save corp forward server message. corpId={}, request={}", corpId, request, e);
         }
-        String message = request.getForwardServer().stream().collect(Collectors.joining(","));
-        log.info("save corp forward server message. corpId={}, request={}, message={}", corpId, request, message);
-        weComCorpMessageRepository.updateForwardAddressByCorpId(projectId, corpId, message);
-        return BaseResponse.success();
+        return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_CDP_FORWARD_SETTING);
     }
 
     @Override
