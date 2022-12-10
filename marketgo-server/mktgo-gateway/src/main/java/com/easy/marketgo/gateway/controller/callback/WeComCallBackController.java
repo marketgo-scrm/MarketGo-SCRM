@@ -3,6 +3,7 @@ package com.easy.marketgo.gateway.controller.callback;
 import com.easy.marketgo.common.utils.CoreXmlUtils;
 import com.easy.marketgo.gateway.controller.BaseController;
 import com.easy.marketgo.react.bean.WeChatCropEventCallBack;
+import com.easy.marketgo.react.service.callback.CallbackForwardService;
 import com.easy.marketgo.react.service.callback.CallbackParserMessageService;
 import lombok.extern.log4j.Log4j2;
 import lombok.var;
@@ -21,6 +22,9 @@ public class WeComCallBackController extends BaseController {
 
     @Autowired
     private CallbackParserMessageService callbackParserMessageService;
+
+    @Autowired
+    private CallbackForwardService callbackForwardService;
 
     @RequestMapping(produces = "text/plain;charset=utf-8", value = "/verify/{corpId}")
     @ResponseBody
@@ -244,10 +248,13 @@ public class WeComCallBackController extends BaseController {
         log.info(
                 "acceptContactsAuthForUrl, msgSignature={}, timestamp={}, nonce={}, echostr={}, corpId={}",
                 msgSignature, timestamp, nonce, echostr, corpId);
-        return callbackParserMessageService.acceptContactsCallbackAuthUrl(msgSignature, timestamp, nonce, echostr, corpId);
+        callbackForwardService.acceptContactsCallbackAuthUrl(msgSignature, timestamp, nonce, echostr, corpId);
+        return callbackParserMessageService.acceptContactsCallbackAuthUrl(msgSignature, timestamp, nonce, echostr,
+                corpId);
     }
 
-    @PostMapping(value = "/contacts", consumes = {"application/xml; charset=UTF-8"}, produces = {"application/xml; charset=UTF-8"})
+    @PostMapping(value = "/contacts", consumes = {"application/xml; charset=UTF-8"}, produces = {"application/xml; " +
+            "charset=UTF-8"})
     public String acceptContactsAuthEvent(@RequestParam("msg_signature") String msgSignature,
                                           @RequestParam String timestamp,
                                           @RequestParam String nonce,
@@ -256,6 +263,7 @@ public class WeComCallBackController extends BaseController {
         log.info(
                 "acceptContactsAuthEvent, msgSignature={}, timestamp={}, nonce={}, msgEvent={}",
                 msgSignature, timestamp, nonce, msgEvent);
+        callbackForwardService.acceptContactsCallbackEvent(msgSignature, timestamp, nonce, msgEvent, corpId);
         callbackParserMessageService.acceptContactsCallbackEvent(msgSignature, timestamp, nonce, msgEvent, corpId);
         return "success";
     }
@@ -269,10 +277,14 @@ public class WeComCallBackController extends BaseController {
         log.info("acceptCustomerAuthForUrl, msgSignature={}, timestamp={}, nonce={}, echostr={}, " +
                         "corpId={}",
                 msgSignature, timestamp, nonce, echostr, corpId);
-        return callbackParserMessageService.acceptCustomerCallbackAuthUrl(msgSignature, timestamp, nonce, echostr, corpId);
+        callbackForwardService.acceptCustomerCallbackAuthUrl(msgSignature, timestamp, nonce, echostr,
+                corpId);
+        return callbackParserMessageService.acceptCustomerCallbackAuthUrl(msgSignature, timestamp, nonce, echostr,
+                corpId);
     }
 
-    @PostMapping(value = "/customer", consumes = {"application/xml; charset=UTF-8"}, produces = {"application/xml; charset=UTF-8"})
+    @PostMapping(value = "/customer", consumes = {"application/xml; charset=UTF-8"}, produces = {"application/xml; " +
+            "charset=UTF-8"})
     public String acceptCustomerAuthEvent(@RequestParam("msg_signature") String msgSignature,
                                           @RequestParam String timestamp,
                                           @RequestParam String nonce,
@@ -280,6 +292,7 @@ public class WeComCallBackController extends BaseController {
                                           @RequestBody String msgEvent) {
         log.info("acceptCustomerAuthEvent, msgSignature={}, timestamp={}, nonce={}, msgEvent={}, corpId={}",
                 msgSignature, timestamp, nonce, msgEvent, corpId);
+        callbackForwardService.acceptCustomerCallbackEvent(msgSignature, timestamp, nonce, msgEvent, corpId);
         callbackParserMessageService.acceptCustomerCallbackEvent(msgSignature, timestamp, nonce, msgEvent, corpId);
         return "success";
     }
