@@ -75,6 +75,7 @@ public enum CdpManufacturerTypeEnum {
         this.value = value;
         this.name = name;
         this.service = service;
+        this.desc = desc;
     }
 
     public static CdpManufacturerTypeEnum get(int value) {
@@ -122,7 +123,7 @@ public enum CdpManufacturerTypeEnum {
         return this.service;
     }
 
-    public void setService(String desc) {
+    public void setService(String service) {
 
         this.service = service;
     }
