@@ -62,7 +62,7 @@ public class CdpManufacturerSettingServiceImpl implements CdpManufacturerSetting
                 message.setConfigStatus(Boolean.TRUE);
                 message.setSwitchStatus(entity.getStatus());
             }
-
+            message.setDesc(item.getDesc());
             manufactureMessages.add(message);
         }
         response.setCdpList(manufactureMessages);

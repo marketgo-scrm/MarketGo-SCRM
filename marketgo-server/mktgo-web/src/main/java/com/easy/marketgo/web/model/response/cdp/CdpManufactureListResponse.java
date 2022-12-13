@@ -37,5 +37,8 @@ public class CdpManufactureListResponse {
 
         @ApiModelProperty(value = "开启的状态")
         private Boolean switchStatus;
+
+        @ApiModelProperty(value = "CDP的描述信息")
+        private String desc;
     }
 }
