@@ -773,3 +773,38 @@ CREATE TABLE `user_group_cdp` (
 -- version 0.0.7
 
 ALTER TABLE wecom_corp_config ADD forward_address TEXT DEFAULT NULL COMMENT '回调转发服务器地址信息';
+
+
+-- version 0.0.9
+
+-- ----------------------------
+-- Table structure for wecom_task_center
+-- ----------------------------
+DROP TABLE IF EXISTS `wecom_task_center`;
+CREATE TABLE `wecom_task_center`
+(
+  `id`                       INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid`                     VARCHAR(64) NOT NULL COMMENT '业务主键',
+  `project_uuid`             VARCHAR(128) NOT NULL COMMENT '项目ID',
+  `corp_id`                  VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+  `name`                     VARCHAR(256)  DEFAULT NULL COMMENT '任务名称',
+  `task_type`                VARCHAR(50)   DEFAULT NULL COMMENT '任务类型:群发好友 SINGLE/群发客户群 GROUP/群发朋友圈 MOMENT',
+  `schedule_type`            VARCHAR(50)   DEFAULT NULL COMMENT '发送类型:立即发送 IMMEDIATE/定时发送 FIXED_TIME/周期发送 REPEAT_TIME',
+  `repeat_type`              VARCHAR(50)   DEFAULT NULL COMMENT '重复类型:每天 DAY/每周 WEEK/每月 MONTH',
+  `schedule_time`            datetime     DEFAULT NULL  COMMENT '计划发送时间',
+  `repeat_start_time`        datetime     DEFAULT NULL  COMMENT '重复执行的开始时间',
+  `repeat_end_time`          datetime     DEFAULT NULL  COMMENT '重复执行的结束时间',
+  `user_group_uuid`          VARCHAR(64)   DEFAULT NULL COMMENT '关联人群预估UUID',
+  `content`                  TEXT          DEFAULT NULL COMMENT '推送消息内容',
+  `task_status`           VARCHAR(50)   DEFAULT NULL COMMENT '任务状态:未开始 UNSTART; 人群计算中 COMPUTING; 计算完成 COMPUTED; 计算失败 COMPUTE_FAILED; 进行中 SENDING; 已结束 FINISHED; 执行失败 FAILED',
+  `creator_id`               VARCHAR(64) NOT NULL COMMENT '创建人ID',
+  `creator_name`            VARCHAR(50)   DEFAULT NULL COMMENT '创建人姓名',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+  `remind_time`              datetime  DEFAULT NULL COMMENT '提醒时间',
+  `finish_time`              datetime  DEFAULT NULL COMMENT '任务完成时间',
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_uniq_uuid` (`uuid`),
+  UNIQUE KEY `idx_uniq_project_uuid_corp_id_type_name` (`project_uuid`,`corp_id`, `task_type`,`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微的员工任务';

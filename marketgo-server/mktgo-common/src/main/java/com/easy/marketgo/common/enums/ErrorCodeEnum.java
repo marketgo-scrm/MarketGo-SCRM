@@ -25,6 +25,7 @@ public enum ErrorCodeEnum {
 
 
     ERROR_WEB_WECOM_MASS_TASK_NOT_SUPPORT_CHANGE(1010, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),
+    ERROR_WEB_WECOM_TASK_CENTER_NOT_SUPPORT_CHANGE(1011, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),
 
     ERROR_WEB_MEDIA_UNSUPPORTED_FILE_TYPE(1100, "不支持的文件类型"),
     ERROR_WEB_MEDIA_UPLOAD_FAILED(1101, "企业微信素材文件上传失败。"),

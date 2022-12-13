@@ -1,4 +1,4 @@
-package com.easy.marketgo.common.enums;
+package com.easy.marketgo.common.enums.taskcenter;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -9,16 +9,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @data : 6/22/22 3:49 PM
  * Describe:
  */
-public enum WeComMassTaskScheduleType {
-    IMMEDIATE("IMMEDIATE"),
+public enum WeComTaskCenterRepeatType {
+    REPEAT_TYPE_DAY("DAY"),
 
-    FIXED_TIME("FIXED_TIME"),
+    REPEAT_TYPE_WEEK("WEEK"),
 
-    REPEAT_TIME("REPEAT_TIME");
+    REPEAT_TYPE_MONTH("MONTH");
 
     private String value;
 
-    WeComMassTaskScheduleType(String value) {
+    WeComTaskCenterRepeatType(String value) {
         this.value = value;
     }
 
@@ -33,8 +33,8 @@ public enum WeComMassTaskScheduleType {
     }
 
     @JsonCreator
-    public static WeComMassTaskScheduleType fromValue(String text) {
-        for (WeComMassTaskScheduleType b : WeComMassTaskScheduleType.values()) {
+    public static WeComTaskCenterRepeatType fromValue(String text) {
+        for (WeComTaskCenterRepeatType b : WeComTaskCenterRepeatType.values()) {
             if (String.valueOf(b.value).equals(text)) {
                 return b;
             }
