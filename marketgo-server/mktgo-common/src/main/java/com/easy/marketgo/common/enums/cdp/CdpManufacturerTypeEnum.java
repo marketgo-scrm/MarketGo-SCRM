@@ -19,21 +19,21 @@ public enum CdpManufacturerTypeEnum {
     /**
      *
      */
-    SENSORS("SENSORS", "神策", "sensorsCdpCrowdService"),
+    SENSORS("SENSORS", "神策", "sensorsCdpCrowdService", "支持神策CDP接入和使用"),
 
-    ANALYSYS("ANALYSYS", "易观", "analysysCdpCrowdService"),
+    ANALYSYS("ANALYSYS", "易观", "analysysCdpCrowdService", "支持易观CDP接入和使用"),
 
-    LINKFLOW("LINKFLOW", "LinkFlow", "AnalysysCdpCrowdService"),
+    LINKFLOW("LINKFLOW", "LinkFlow", "AnalysysCdpCrowdService", "支持LinkFlow CDP接入和使用"),
 
-    CONVERTLAB("CONVERTLAB", "ConvertLab", "AnalysysCdpCrowdService"),
+    CONVERTLAB("CONVERTLAB", "ConvertLab", "AnalysysCdpCrowdService", "支持ConvertLab CDP接入和使用"),
 
-    HYPERS("HYPERS", "hypers", "AnalysysCdpCrowdService"),
+    HYPERS("HYPERS", "hypers", "AnalysysCdpCrowdService", "支持hypers CDP接入和使用"),
 
-    GROWINGIO("GROWINGIO", "GrowingIO", "AnalysysCdpCrowdService"),
+    GROWINGIO("GROWINGIO", "GrowingIO", "AnalysysCdpCrowdService", "支持GrowingIO CDP接入和使用"),
 
-    ALIYUN("ALICLOUD", "阿里云", "AnalysysCdpCrowdService"),
+    ALIYUN("ALICLOUD", "阿里云", "AnalysysCdpCrowdService", "支持阿里云CDP接入和使用"),
 
-    TENCENTCLOUD("TENCENTCLOUD", "腾讯云", "AnalysysCdpCrowdService"),
+    TENCENTCLOUD("TENCENTCLOUD", "腾讯云", "AnalysysCdpCrowdService", "支持腾讯云CDP接入和使用"),
     ;
 
     private static final Object _LOCK = new Object();
@@ -68,7 +68,9 @@ public enum CdpManufacturerTypeEnum {
 
     private String service;
 
-    CdpManufacturerTypeEnum(String value, String name, String service) {
+    private String desc;
+
+    CdpManufacturerTypeEnum(String value, String name, String service, String desc) {
 
         this.value = value;
         this.name = name;
@@ -120,9 +122,19 @@ public enum CdpManufacturerTypeEnum {
         return this.service;
     }
 
-    public void setService(String service) {
+    public void setService(String desc) {
 
         this.service = service;
+    }
+
+    public String getDesc() {
+
+        return this.desc;
+    }
+
+    public void setDesc(String desc) {
+
+        this.desc = desc;
     }
 
     @JsonCreator
