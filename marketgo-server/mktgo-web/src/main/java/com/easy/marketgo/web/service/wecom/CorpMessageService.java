@@ -21,7 +21,7 @@ public interface CorpMessageService {
 
     BaseResponse updateOrInsertAgentMessage(String projectId, WeComAgentMessageRequest agentMessageRequest);
 
-    WeComCorpCallbackResponse getCallbackConfig(String projectId, String corpId, String configType);
+    BaseResponse getCallbackConfig(String projectId, String corpId, String configType);
 
     BaseResponse getCorpConfig(String projectId);
 

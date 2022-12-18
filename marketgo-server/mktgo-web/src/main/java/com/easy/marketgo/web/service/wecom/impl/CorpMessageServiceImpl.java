@@ -245,7 +245,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
     }
 
     @Override
-    public WeComCorpCallbackResponse getCallbackConfig(String projectId, String corpId, String configType) {
+    public BaseResponse getCallbackConfig(String projectId, String corpId, String configType) {
 
         WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorpId(corpId);
         ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);
@@ -261,15 +261,13 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         if (configType.equals(WeComCorpConfigStepEnum.CONTACTS_MSG.getValue())) {
             response.setToken(entity.getContactsToken());
             response.setEncodingAesKey(entity.getContactsEncodingAesKey());
-            //TUDO 添加配置
             response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CONSTACTS + corpId);
         } else if (configType.equals(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
             response.setToken(entity.getExternalUserToken());
             response.setEncodingAesKey(entity.getExternalUserEncodingAesKey());
-            //TUDO 添加配置
             response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CUSTOMER + corpId);
         }
-        return response;
+        return BaseResponse.success(response);
     }
 
     @Override

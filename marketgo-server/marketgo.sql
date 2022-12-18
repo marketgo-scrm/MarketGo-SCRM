@@ -773,3 +773,5 @@ CREATE TABLE `user_group_cdp` (
 -- version 0.0.7
 
 ALTER TABLE wecom_corp_config ADD forward_address TEXT DEFAULT NULL COMMENT '回调转发服务器地址信息';
+
+INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`, `parent_name`, `title`,`parent_title`, `project_uuid`) VALUES  (MD5(uuid()) ,  'callbacksettings', 'settings', 'callbacksettings', 'settings', '回调配置','系统设置', (SELECT uuid FROM project_config));

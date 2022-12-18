@@ -66,7 +66,7 @@ public class WeComCorpMessageController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = WeComGroupChatsResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = WeComCorpCallbackResponse.class)
     })
     @ApiOperation(value = "获取callback配置信息", nickname = "checkAgentMessage", notes = "", response =
             WeComCorpCallbackResponse.class)
