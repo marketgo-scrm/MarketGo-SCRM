@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -70,10 +71,12 @@ public class WeComCorpMessageController {
     })
     @ApiOperation(value = "获取callback配置信息", nickname = "checkAgentMessage", notes = "", response =
             WeComCorpCallbackResponse.class)
-    @RequestMapping(value = {"/get_config"}, produces = {"application/json"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/callback/config"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getCallbackConfig(@NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
                                             @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
-                                            @NotNull @Valid @RequestParam(value = "config_type", required = true) String configType) {
+                                            @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
+                                                    required = true, allowableValues =
+                                                    "CONTACTS, EXTERNAL_USER") @RequestParam("config_type") @NotBlank @Valid String configType) {
         return ResponseEntity.ok(corpMessageService.getCallbackConfig(projectId, configType, corpId));
     }
 

@@ -262,7 +262,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
             response.setToken(entity.getContactsToken());
             response.setEncodingAesKey(entity.getContactsEncodingAesKey());
             response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CONSTACTS + corpId);
-        } else if (configType.equals(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
+        } else {
             response.setToken(entity.getExternalUserToken());
             response.setEncodingAesKey(entity.getExternalUserEncodingAesKey());
             response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CUSTOMER + corpId);
