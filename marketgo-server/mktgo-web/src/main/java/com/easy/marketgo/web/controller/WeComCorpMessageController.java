@@ -77,7 +77,7 @@ public class WeComCorpMessageController {
                                             @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
                                                     required = true, allowableValues =
                                                     "CONTACTS, EXTERNAL_USER") @RequestParam("config_type") @NotBlank @Valid String configType) {
-        return ResponseEntity.ok(corpMessageService.getCallbackConfig(projectId, configType, corpId));
+        return ResponseEntity.ok(corpMessageService.getCallbackConfig(projectId, corpId, configType));
     }
 
     @ApiResponses({
