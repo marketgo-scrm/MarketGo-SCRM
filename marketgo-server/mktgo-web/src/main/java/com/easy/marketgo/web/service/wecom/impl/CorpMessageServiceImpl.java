@@ -246,8 +246,6 @@ public class CorpMessageServiceImpl implements CorpMessageService {
 
     @Override
     public BaseResponse getCallbackConfig(String projectId, String corpId, String configType) {
-
-        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorpId(corpId);
         ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);
         if (projectConfigEntity == null) {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
@@ -257,6 +255,8 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         if (tenantConfigEntity == null) {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
         }
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorp(projectId, corpId);
+        log.info("start to query corp message. corpId={}, entity={}", corpId, entity);
         WeComCorpCallbackResponse response = new WeComCorpCallbackResponse();
         if (configType.equals(WeComCorpConfigStepEnum.CONTACTS_MSG.getValue())) {
             response.setToken(entity.getContactsToken());
