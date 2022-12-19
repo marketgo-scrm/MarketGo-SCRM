@@ -155,6 +155,12 @@ export const constantRoutes = [
                 name: 'permissionmanagement',
                 title: '权限管理',
                 component: (resolve) => require(['@/views/permissionmanagement'], resolve),
+            },
+            {
+                path: 'callbacksettings',
+                name: 'callbacksettings',
+                title: '回调配置',
+                component: (resolve) => require(['@/views/callback'], resolve),
             }
         ]
     },
