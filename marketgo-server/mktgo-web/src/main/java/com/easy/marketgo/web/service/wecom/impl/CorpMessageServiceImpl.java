@@ -245,9 +245,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
     }
 
     @Override
-    public WeComCorpCallbackResponse getCallbackConfig(String projectId, String corpId, String configType) {
-
-        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorpId(corpId);
+    public BaseResponse getCallbackConfig(String projectId, String corpId, String configType) {
         ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);
         if (projectConfigEntity == null) {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
@@ -257,19 +255,19 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         if (tenantConfigEntity == null) {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
         }
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorp(projectId, corpId);
+        log.info("start to query corp message. corpId={}, entity={}", corpId, entity);
         WeComCorpCallbackResponse response = new WeComCorpCallbackResponse();
         if (configType.equals(WeComCorpConfigStepEnum.CONTACTS_MSG.getValue())) {
             response.setToken(entity.getContactsToken());
             response.setEncodingAesKey(entity.getContactsEncodingAesKey());
-            //TUDO 添加配置
             response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CONSTACTS + corpId);
-        } else if (configType.equals(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
+        } else {
             response.setToken(entity.getExternalUserToken());
             response.setEncodingAesKey(entity.getExternalUserEncodingAesKey());
-            //TUDO 添加配置
             response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CUSTOMER + corpId);
         }
-        return response;
+        return BaseResponse.success(response);
     }
 
     @Override
