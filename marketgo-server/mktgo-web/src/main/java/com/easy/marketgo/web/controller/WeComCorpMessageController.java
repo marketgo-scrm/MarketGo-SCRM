@@ -99,8 +99,12 @@ public class WeComCorpMessageController {
     public ResponseEntity updateOrInsertForwardServer(
             @NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
             @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
+            @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
+                    required = true, allowableValues =
+                    "CONTACTS, EXTERNAL_USER") @RequestParam("config_type") @NotBlank @Valid String configType,
             @ApiParam(value = "企微配置转发服务信息", required = true) @RequestBody @Valid WeComForwardServerMessageRequest request) {
-        return ResponseEntity.ok(corpMessageService.updateOrInsertForwardServer(projectId, corpId, request));
+        return ResponseEntity.ok(corpMessageService.updateOrInsertForwardServer(projectId, corpId, configType,
+                request));
     }
 
     @ApiResponses({
@@ -110,8 +114,11 @@ public class WeComCorpMessageController {
             WeComForwardServerMessageResponse.class)
     @RequestMapping(value = {"/forward/config"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getForwardServer(@NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
-                                           @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId) {
-        return ResponseEntity.ok(corpMessageService.getForwardServer(projectId, corpId));
+                                           @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
+                                           @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
+                                                   required = true, allowableValues =
+                                                   "CONTACTS, EXTERNAL_USER") @RequestParam("config_type") @NotBlank @Valid String configType) {
+        return ResponseEntity.ok(corpMessageService.getForwardServer(projectId, corpId, configType));
     }
 
 }

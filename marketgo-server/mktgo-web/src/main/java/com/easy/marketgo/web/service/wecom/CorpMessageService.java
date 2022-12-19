@@ -27,7 +27,7 @@ public interface CorpMessageService {
 
     void getExternalUserDetail(String corpId, String externalUserId);
 
-    BaseResponse updateOrInsertForwardServer(String projectId, String corpId, WeComForwardServerMessageRequest request);
+    BaseResponse updateOrInsertForwardServer(String projectId, String corpId, String configType, WeComForwardServerMessageRequest request);
 
-    BaseResponse getForwardServer(String projectId, String corpId);
+    BaseResponse getForwardServer(String projectId, String corpId, String configType);
 }
