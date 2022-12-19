@@ -774,6 +774,8 @@ CREATE TABLE `user_group_cdp` (
 
 ALTER TABLE wecom_corp_config ADD forward_address TEXT DEFAULT NULL COMMENT '回调转发服务器地址信息';
 
+ALTER TABLE wecom_corp_config ADD forward_customer_address TEXT DEFAULT NULL COMMENT '客户回调转发服务器地址信息';
+
 INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`, `parent_name`, `title`,`parent_title`, `project_uuid`) VALUES  (MD5(uuid()) ,  'callbacksettings', 'settings', 'callbacksettings', 'settings', '回调配置','系统设置', (SELECT uuid FROM project_config));
 
 -- version 0.0.9
@@ -809,3 +811,4 @@ CREATE TABLE `wecom_task_center`
   UNIQUE KEY `idx_uniq_uuid` (`uuid`),
   UNIQUE KEY `idx_uniq_project_uuid_corp_id_type_name` (`project_uuid`,`corp_id`, `task_type`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微的员工任务';
+

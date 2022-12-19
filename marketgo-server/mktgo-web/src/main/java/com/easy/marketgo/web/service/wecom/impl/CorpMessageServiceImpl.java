@@ -282,7 +282,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
     }
 
     @Override
-    public BaseResponse updateOrInsertForwardServer(String projectId, String corpId,
+    public BaseResponse updateOrInsertForwardServer(String projectId, String corpId, String configType,
                                                     WeComForwardServerMessageRequest request) {
         log.info("start to save corp forward server message. corpId={}, request={}", corpId, request);
         try {
@@ -291,8 +291,13 @@ public class CorpMessageServiceImpl implements CorpMessageService {
             }
             String message = request.getForwardServer().stream().collect(Collectors.joining(","));
             log.info("save corp forward server message. corpId={}, request={}, message={}", corpId, request, message);
-            weComCorpMessageRepository.updateForwardAddressByCorpId(projectId, corpId, message);
-            redisService.set(String.format(Constants.WECOM_CALLBACK_FORWARD_URL, corpId), message, 0L);
+            if (configType.equals(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
+                weComCorpMessageRepository.updateForwardCustomerAddressByCorpId(projectId, corpId, message);
+                redisService.set(String.format(Constants.WECOM_CALLBACK_CUSTOMER_FORWARD_URL, corpId), message, 0L);
+            } else {
+                weComCorpMessageRepository.updateForwardAddressByCorpId(projectId, corpId, message);
+                redisService.set(String.format(Constants.WECOM_CALLBACK_FORWARD_URL, corpId), message, 0L);
+            }
             return BaseResponse.success();
         } catch (Exception e) {
             log.error("failed to save corp forward server message. corpId={}, request={}", corpId, request, e);
@@ -301,12 +306,16 @@ public class CorpMessageServiceImpl implements CorpMessageService {
     }
 
     @Override
-    public BaseResponse getForwardServer(String projectId, String corpId) {
+    public BaseResponse getForwardServer(String projectId, String corpId, String configType) {
         log.info("start to get corp forward server message. corpId={}", corpId);
         WeComForwardServerMessageResponse response = new WeComForwardServerMessageResponse();
         WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorp(projectId, corpId);
         if (entity != null && StringUtils.isNotEmpty(entity.getForwardAddress())) {
-            response.setForwardServer(Arrays.asList(entity.getForwardAddress().split(",")));
+            if (configType.equals(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
+                response.setForwardServer(Arrays.asList(entity.getForwardCustomerAddress().split(",")));
+            } else {
+                response.setForwardServer(Arrays.asList(entity.getForwardAddress().split(",")));
+            }
         }
         log.info("get corp forward server message. response={}", response);
         return BaseResponse.success(response);
