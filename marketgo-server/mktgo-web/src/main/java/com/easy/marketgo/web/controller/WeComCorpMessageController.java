@@ -101,7 +101,7 @@ public class WeComCorpMessageController {
             @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
             @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
                     required = true, allowableValues =
-                    "CONTACTS, EXTERNAL_USER") @RequestParam("config_type") @NotBlank @Valid String configType,
+                    "CONTACTS, EXTERNAL_USER") @RequestParam(value ="config_type", defaultValue = "CONTACTS") @NotBlank @Valid String configType,
             @ApiParam(value = "企微配置转发服务信息", required = true) @RequestBody @Valid WeComForwardServerMessageRequest request) {
         return ResponseEntity.ok(corpMessageService.updateOrInsertForwardServer(projectId, corpId, configType,
                 request));
@@ -117,7 +117,7 @@ public class WeComCorpMessageController {
                                            @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
                                            @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
                                                    required = true, allowableValues =
-                                                   "CONTACTS, EXTERNAL_USER") @RequestParam("config_type") @NotBlank @Valid String configType) {
+                                                   "CONTACTS, EXTERNAL_USER") @RequestParam(value ="config_type", defaultValue = "CONTACTS") @NotBlank @Valid String configType) {
         return ResponseEntity.ok(corpMessageService.getForwardServer(projectId, corpId, configType));
     }
 
