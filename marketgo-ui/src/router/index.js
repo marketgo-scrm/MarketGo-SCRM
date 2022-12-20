@@ -157,6 +157,18 @@ export const constantRoutes = [
                 component: (resolve) => require(['@/views/permissionmanagement'], resolve),
             },
             {
+                path: 'cdpsettings',
+                name: 'cdpsettings',
+                title: '数据接入',
+                component: (resolve) => require(['@/views/cbd/list'], resolve),
+            },
+            {
+                path: 'cdpsettings-set',
+                name: 'cdpsettings-set',
+                title: '数据接入配置',
+                component: (resolve) => require(['@/views/cbd/setting'], resolve),
+            },
+            {
                 path: 'callbacksettings',
                 name: 'callbacksettings',
                 title: '回调配置',
