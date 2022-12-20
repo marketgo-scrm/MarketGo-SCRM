@@ -34,4 +34,6 @@ public class WeComCorpMessageEntity extends BaseEntity {
     private String externalUserEncodingAesKey;
 
     private String forwardAddress;
+
+    private String forwardCustomerAddress;
 }

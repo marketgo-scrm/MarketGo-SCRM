@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -66,15 +67,17 @@ public class WeComCorpMessageController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = WeComGroupChatsResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = WeComCorpCallbackResponse.class)
     })
     @ApiOperation(value = "获取callback配置信息", nickname = "checkAgentMessage", notes = "", response =
             WeComCorpCallbackResponse.class)
-    @RequestMapping(value = {"/get_config"}, produces = {"application/json"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/callback/config"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getCallbackConfig(@NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
                                             @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
-                                            @NotNull @Valid @RequestParam(value = "config_type", required = true) String configType) {
-        return ResponseEntity.ok(corpMessageService.getCallbackConfig(projectId, configType, corpId));
+                                            @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
+                                                    required = true, allowableValues =
+                                                    "CONTACTS, EXTERNAL_USER") @RequestParam("config_type") @NotBlank @Valid String configType) {
+        return ResponseEntity.ok(corpMessageService.getCallbackConfig(projectId, corpId, configType));
     }
 
     @ApiResponses({
@@ -96,8 +99,12 @@ public class WeComCorpMessageController {
     public ResponseEntity updateOrInsertForwardServer(
             @NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
             @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
+            @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
+                    required = true, allowableValues =
+                    "CONTACTS, EXTERNAL_USER") @RequestParam(value ="config_type", defaultValue = "CONTACTS") @NotBlank @Valid String configType,
             @ApiParam(value = "企微配置转发服务信息", required = true) @RequestBody @Valid WeComForwardServerMessageRequest request) {
-        return ResponseEntity.ok(corpMessageService.updateOrInsertForwardServer(projectId, corpId, request));
+        return ResponseEntity.ok(corpMessageService.updateOrInsertForwardServer(projectId, corpId, configType,
+                request));
     }
 
     @ApiResponses({
@@ -107,8 +114,11 @@ public class WeComCorpMessageController {
             WeComForwardServerMessageResponse.class)
     @RequestMapping(value = {"/forward/config"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getForwardServer(@NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
-                                           @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId) {
-        return ResponseEntity.ok(corpMessageService.getForwardServer(projectId, corpId));
+                                           @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
+                                           @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
+                                                   required = true, allowableValues =
+                                                   "CONTACTS, EXTERNAL_USER") @RequestParam(value ="config_type", defaultValue = "CONTACTS") @NotBlank @Valid String configType) {
+        return ResponseEntity.ok(corpMessageService.getForwardServer(projectId, corpId, configType));
     }
 
 }

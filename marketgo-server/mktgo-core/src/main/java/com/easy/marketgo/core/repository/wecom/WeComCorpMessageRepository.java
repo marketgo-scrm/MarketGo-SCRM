@@ -52,4 +52,9 @@ public interface WeComCorpMessageRepository extends CrudRepository<WeComCorpMess
     @Query("UPDATE wecom_corp_config SET forward_address = :forwardAddress WHERE " +
             "corp_id = :corpId AND project_uuid = :projectUuid")
     int updateForwardAddressByCorpId(String projectUuid, String corpId, String forwardAddress);
+
+    @Modifying
+    @Query("UPDATE wecom_corp_config SET forward_customer_address = :forwardAddress WHERE " +
+            "corp_id = :corpId AND project_uuid = :projectUuid")
+    int updateForwardCustomerAddressByCorpId(String projectUuid, String corpId, String forwardAddress);
 }
