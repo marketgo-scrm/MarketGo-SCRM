@@ -10,7 +10,12 @@
       </el-tabs>
       <div class="title">回调地址</div>
       <div class="section-one">
-        <el-form :model="callbackConfig" ref="ruleForm" label-width="120px">
+        <el-form
+          :model="callbackConfig"
+          ref="ruleForm"
+          label-width="120px"
+          label-position="left"
+        >
           <el-form-item label="URL" :required="true">
             <el-input readonly v-model="callbackConfig.callbackUrl"></el-input>
             <el-button
@@ -81,7 +86,7 @@
                 round
                 @click="edit(idx)"
                 >编辑</el-button
-              >|
+              ><span style="color: #999">|</span>
               <el-button
                 style="margin-left: 0px"
                 type="text"
@@ -255,8 +260,8 @@ export default {
     }
     .section-one {
       width: 720px;
-      padding: 30px 0 15px 0;
-      background-color: #e6e6e6;
+      padding: 30px 0 15px 25px;
+      background-color: #f6f6f8;
       ::v-deep(.el-input) {
         width: 430px;
       }
