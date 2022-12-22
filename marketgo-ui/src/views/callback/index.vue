@@ -86,7 +86,7 @@
                 round
                 @click="edit(idx)"
                 >编辑</el-button
-              ><span style="color: #999">|</span>
+              ><span style="color:#999999">|</span>
               <el-button
                 style="margin-left: 0px"
                 type="text"
