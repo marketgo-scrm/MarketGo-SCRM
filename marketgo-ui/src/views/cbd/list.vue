@@ -168,6 +168,7 @@ export default {
           align-items: center;
           img {
             width: 100%;
+            max-height: 100%;
           }
         }
         .info {
