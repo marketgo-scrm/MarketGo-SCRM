@@ -1,6 +1,5 @@
 package com.easy.marketgo.web.model.response.user;
 
-import com.easy.marketgo.common.enums.PermissionsEnum;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

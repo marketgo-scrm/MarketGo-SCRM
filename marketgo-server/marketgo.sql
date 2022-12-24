@@ -780,6 +780,31 @@ INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`
 
 -- version 0.0.9
 
+INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`, `parent_name`, `title`,`parent_title`, `project_uuid`) VALUES  (MD5(uuid()) ,  'taskcenter', '', 'taskcenter', '', '任务中心', '', (SELECT uuid FROM project_config));
+
+ALTER TABLE wecom_sys_base_permissions ADD sort_order bigint(20) DEFAULT NULL COMMENT '菜单的排序id';
+
+UPDATE wecom_sys_base_permissions SET sort_order=100 WHERE code='home';
+UPDATE wecom_sys_base_permissions SET sort_order=200 WHERE code='channelcode';
+UPDATE wecom_sys_base_permissions SET sort_order=300 WHERE code='management';
+UPDATE wecom_sys_base_permissions SET sort_order=400 WHERE code='taskcenter';
+UPDATE wecom_sys_base_permissions SET sort_order=500 WHERE code='marketingplan';
+UPDATE wecom_sys_base_permissions SET sort_order=600 WHERE code='settings';
+
+UPDATE wecom_sys_base_permissions SET sort_order=610 WHERE code='membermanagement';
+UPDATE wecom_sys_base_permissions SET sort_order=620 WHERE code='permissionmanagement';
+UPDATE wecom_sys_base_permissions SET sort_order=630 WHERE code='callbacksettings';
+UPDATE wecom_sys_base_permissions SET sort_order=640 WHERE code='cdpsettings';
+
+
+UPDATE wecom_sys_base_permissions SET sort_order=510 WHERE code='masscustomer';
+UPDATE wecom_sys_base_permissions SET sort_order=520 WHERE code='masscustomerbase';
+UPDATE wecom_sys_base_permissions SET sort_order=530 WHERE code='sendgroupfriends';
+
+
+UPDATE wecom_sys_base_permissions SET sort_order=330 WHERE code='customerlist';
+UPDATE wecom_sys_base_permissions SET sort_order=340 WHERE code='customergrouplist';
+
 -- ----------------------------
 -- Table structure for wecom_task_center
 -- ----------------------------
