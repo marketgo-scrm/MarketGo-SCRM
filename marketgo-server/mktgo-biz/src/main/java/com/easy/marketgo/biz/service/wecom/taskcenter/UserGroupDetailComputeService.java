@@ -46,6 +46,9 @@ import java.util.stream.Collectors;
 public class UserGroupDetailComputeService {
 
     private static final Integer QUERY_USER_GROUP_TIME_BEFORE = 10;
+
+    private static final Integer QUERY_USER_GROUP_TIME_BEFORE_REPEAT_TIME = 2;
+
     @Autowired
     private WeComTaskCenterRepository weComTaskCenterRepository;
 
@@ -208,7 +211,7 @@ public class UserGroupDetailComputeService {
                     weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
                             WeComMassTaskStatus.COMPUTED.getValue());
                 } catch (Exception e) {
-                    log.info("failed to save mass task send queue. entity={}", entity, e);
+                    log.error("failed to save mass task send queue. entity={}", entity, e);
                 }
             }
         }
@@ -217,20 +220,25 @@ public class UserGroupDetailComputeService {
     private void checkRepeatTaskCenter(String taskType) {
         log.info("start query user group send task center for repeat task. taskType={}", taskType);
         List<WeComTaskCenterEntity> entities =
-                weComTaskCenterRepository.getWeComMassTaskByScheduleType(taskType,
-                        Arrays.asList(WeComMassTaskScheduleType.REPEAT_TIME.getValue()));
+                weComTaskCenterRepository.getWeComMassTaskByScheduleType(QUERY_USER_GROUP_TIME_BEFORE_REPEAT_TIME,
+                        taskType, Arrays.asList(WeComMassTaskScheduleType.REPEAT_TIME.getValue()));
         log.info("query send task center. entities={}", entities);
         if (CollectionUtils.isEmpty(entities)) {
             log.info("query task center is empty. taskType={}", taskType);
             return;
         }
-                String today = DateUtil.today();
-//        if (entity.getRemindTime() != null && DateUtil.formatDate(entity.getRemindTime()).equals(today)) {
-//            return Boolean.FALSE;
-//        }
+
         for (WeComTaskCenterEntity entity : entities) {
-            entity.getRepeatEndTime();
-            entity.getRepeatStartTime();
+            long startOfDay = DateUtil.endOfDay(entity.getRepeatStartTime()).getTime();
+            long endOfDay = DateUtil.endOfDay(entity.getRepeatEndTime()).getTime();
+            long currentTime = System.currentTimeMillis();
+
+            if(currentTime > endOfDay  || currentTime < startOfDay) {
+                log.info("query task center is not start or finish. entity={}", entity);
+                continue;
+            }
+
+//            entity.getRepeatType()
         }
     }
 
