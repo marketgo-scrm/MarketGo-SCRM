@@ -37,7 +37,7 @@ public class WeComTaskCenterScheduleHandler {
     @Autowired
     private SendMomentMassTaskProducer sendMomentMassTaskProducer;
 
-    @XxlJob(value = "computeUserGroupDetail")
+    @XxlJob(value = "taskCenterComputeUserGroupDetail")
     public ReturnT<String> computeUserGroupDetail() throws Exception {
 
         queryUserGroupDetailService.queryWeComMassTaskUserGroup(WeComMassTaskTypeEnum.SINGLE.name());
