@@ -112,7 +112,7 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
             entity.setRepeatType(weComTaskCenterRequest.getRepeatType().getValue());
             entity.setRepeatDay(weComTaskCenterRequest.getRepeatDay());
             entity.setRepeatStartTime(DateUtil.parse(weComTaskCenterRequest.getRepeatStartTime()));
-            entity.setRepeatStartTime(DateUtil.parse(weComTaskCenterRequest.getRepeatEndTime()));
+            entity.setRepeatEndTime(DateUtil.parse(weComTaskCenterRequest.getRepeatEndTime()));
         }
         entity.setContent(JsonUtils.toJSONString(weComTaskCenterRequest.getContent()));
 
