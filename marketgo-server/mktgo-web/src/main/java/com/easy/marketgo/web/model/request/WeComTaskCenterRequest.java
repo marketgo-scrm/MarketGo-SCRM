@@ -51,6 +51,10 @@ public class WeComTaskCenterRequest {
     @ApiModelProperty(value = "任务的执行状态 【UNSTART】未开始 【COMPUTING】人群计算中 【COMPUTE_FAILED】人群获取失败 【SENDING】发送中 " +
             "【SEND_FAILED】发送失败 【FINISHED】执行完成")
     private WeComMassTaskStatus taskStatus;
-    @ApiModelProperty(value = "今天是否提醒发送")
-    private Boolean canRemind;
+    @ApiModelProperty(value = "消息类型：【SEND_MESSAGE】发送内容 【ASSIGN_TASK】指派任务 ")
+    private String messageType;
+    @ApiModelProperty(value = "目标类型:天 DAY/小时 HOUR/分钟 MINUTE")
+    private String targetType;
+    @ApiModelProperty(value = "目标的时间设置")
+    private String targetTime;
 }

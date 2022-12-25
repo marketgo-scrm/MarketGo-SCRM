@@ -88,8 +88,11 @@ public class WeComTaskCenterEntity extends UuidBaseEntity {
      */
     private String creatorName;
 
+    private String targetType;
 
-    private Date remindTime;
+    private String targetTime;
+
+    private Date executeTime;
 
     private Date finishTime;
 }

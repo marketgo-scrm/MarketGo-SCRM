@@ -27,10 +27,15 @@ public interface WeComTaskCenterRepository extends CrudRepository<WeComTaskCente
     WeComTaskCenterEntity queryById(@Param("id") Integer id);
 
     @Query("SELECT * FROM wecom_task_center WHERE DATE_ADD(NOW(), INTERVAL :minute MINUTE) > schedule_time AND " +
-            "task_type = :task_type AND task_status = :task_status")
+            "task_type = :task_type AND task_status = :task_status AND schedule_type IN (:task_status)")
     List<WeComTaskCenterEntity> getWeComMassTaskByScheduleTime(@Param("minute") int minute,
                                                              @Param("task_type") String taskType,
-                                                             @Param("task_status") String taskStatus);
+                                                             @Param("task_status") String taskStatus,
+                                                               @Param("schedule_type") List<String> scheduleType);
+
+    @Query("SELECT * FROM wecom_task_center WHERE task_type = :task_type AND schedule_type IN (:task_status)")
+    List<WeComTaskCenterEntity> getWeComMassTaskByScheduleType(@Param("task_type") String taskType,
+                                                               @Param("schedule_type") List<String> scheduleType);
 
     @Query("SELECT * FROM wecom_task_center WHERE id = :id AND project_uuid = :project_uuid AND task_type = :task_type")
     WeComTaskCenterEntity getByProjectIdTypeAndId(@Param("project_uuid") String projectUuid,

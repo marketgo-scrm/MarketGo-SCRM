@@ -212,7 +212,7 @@ public class QueryUserGroupDetailService {
         }
     }
 
-    private void queryOfflineUserGroup(String corpId, String userGroupUuid, String taskUuid) {
+    public void queryOfflineUserGroup(String corpId, String userGroupUuid, String taskUuid) {
         try {
             List<String> memberIds = userGroupOfflineRepository.queryMemberByUuid(corpId, userGroupUuid);
             if (CollectionUtils.isEmpty(memberIds)) {
@@ -250,7 +250,7 @@ public class QueryUserGroupDetailService {
         }
     }
 
-    private List<String> getMemberList(String corpId, WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
+    public List<String> getMemberList(String corpId, WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
         List<Long> departmentList = new ArrayList<>();
         List<String> memberList = new ArrayList<>();
         if (!weComUserGroupAudienceRule.getMembers().getIsAll()) {
@@ -296,7 +296,7 @@ public class QueryUserGroupDetailService {
         return memberList.stream().distinct().collect(Collectors.toList());
     }
 
-    private List<WeComRelationMemberExternalUserEntity> getExternalUsers(String corpId, List<String> memberList,
+    public List<WeComRelationMemberExternalUserEntity> getExternalUsers(String corpId, List<String> memberList,
                                                                          WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
         int offset = 0;
         int limitSize = 20000;
@@ -356,7 +356,7 @@ public class QueryUserGroupDetailService {
         return entities;
     }
 
-    private void queryGroupMassTaskUserGroup(String corpId, String taskUuid,
+    public void queryGroupMassTaskUserGroup(String corpId, String taskUuid,
                                              WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
         List<String> memberList = getMemberList(corpId, weComUserGroupAudienceRule);
         memberList = memberList.stream().distinct().collect(Collectors.toList());
@@ -374,7 +374,7 @@ public class QueryUserGroupDetailService {
         weComMassTaskSendQueueRepository.saveAll(weComMassTaskSendQueueEntities);
     }
 
-    private void queryMomentMassTaskUserGroup(String corpId, String taskUuid,
+    public void queryMomentMassTaskUserGroup(String corpId, String taskUuid,
                                               WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
         List<String> memberList = new ArrayList<>();
         if (!weComUserGroupAudienceRule.getMembers().getIsAll()) {
