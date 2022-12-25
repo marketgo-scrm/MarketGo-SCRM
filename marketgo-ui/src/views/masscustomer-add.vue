@@ -597,6 +597,7 @@ export default {
       conditionStr1: '',
       conditionPcStr1: '',
 
+      cdpType: "SENSORS",
       cdpBoxShow: false,
       cdpSearchText: '',
       cdpGeting: false,
@@ -724,7 +725,9 @@ export default {
         console.log(99,res)
         _this.cdpGeting = false
         if (res.data.crowds) {
+          _this.cdpType = res.cdpType
           _this.getCdpList = res.data.crowds
+          _this.showCdpList = res.data.crowds
         }
       })
     },
@@ -919,7 +922,7 @@ export default {
           } else if(this.baseForm.checkType == 3) {
             this.postDataBase.userGroupType = 'CDP'
             this.postDataBase.cdpUserGroupRule = {
-              cdpType: 'ANALYSYS',
+              cdpType: this.cdpType,
               crowds: this.checkListCdpShow,
             }
           }
