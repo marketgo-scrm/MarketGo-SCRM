@@ -1297,6 +1297,7 @@ export default {
             line-height: 30px;
             /* identical to box height */
             color: #999999;
+            background-color: rgba(0,0,0,0);
             border: none;
             left: 35px;
           }
