@@ -1,5 +1,5 @@
 <template>
-  <div class="masscustomer-add">
+  <div class="masscustomer-add" @click="cdpBoxShow = false">
     <main-head title="新建群发客户" :back="true"></main-head>
     <div class="base-content">
       <div class="content-title">基础信息</div>
@@ -22,11 +22,55 @@
             <div class="style-item">
               <el-radio v-model="baseForm.checkType" label="2">离线导入</el-radio>
             </div>
-<!--            <div class="style-item">
-              <el-radio v-model="baseForm.checkType" disabled="" label="3">第三方CDP人群包</el-radio>
-            </div>-->
+            <div class="style-item">
+              <el-radio v-model="baseForm.checkType" label="3">第三方CDP人群包</el-radio>
+            </div>
           </div>
         </el-form-item>
+
+        <template v-if="baseForm.checkType == 3">
+          <el-form-item label="">
+            <div class="inputBox" @click.stop="cdpBoxShow = !cdpBoxShow">
+              <div class="content">
+                <span v-if="checkListCdpShow.length == 0">请选择人群</span>
+                <template v-if="checkListCdpShow.length != 0">
+                  <span  v-for="(v,k) in checkListCdpShow" :key="k">{{(k!=0?',':'')+v.name}}</span>
+                </template>
+              </div>
+              <i class="el-icon-arrow-down" style="float: right"></i>
+<!--              <div class="checkListCdpShowBox">
+                <div class="item" v-for="(v,k) in checkListCdpShow" :key="k">{{v.name}}</div>
+              </div>-->
+              <div class="cdpBox" v-show="cdpBoxShow" @click.stop="cdpBoxShow = true">
+                <div class="searchBox">
+                  <i class="el-icon-search"></i>
+                  <input type="text" v-model="cdpSearchText" placeholder="请输入关键字" @change="cdpSearchTextChange()" @keyup="cdpSearchTextChange()">
+                </div>
+                <div class="listBox">
+                  <el-checkbox-group v-model="checkListCdp">
+                    <el-checkbox v-for="(v,k) in showCdpList" :key="k" :label="v.code">{{ v.name }}</el-checkbox>
+<!--                    <el-checkbox label="B"></el-checkbox>
+                    <el-checkbox label="C"></el-checkbox>
+                    <el-checkbox label="复选框 A"></el-checkbox>
+                    <el-checkbox label="复选框 B"></el-checkbox>
+                    <el-checkbox label="复选框 C"></el-checkbox>
+                    <el-checkbox label="复选框 A"></el-checkbox>
+                    <el-checkbox label="复选框 B"></el-checkbox>
+                    <el-checkbox label="复选框 C"></el-checkbox>-->
+                  </el-checkbox-group>
+                </div>
+                <div class="refBox" :class="cdpGeting?'geting':''" @click="cdpRef()">
+                  <i class="el-icon-refresh"></i>
+                  刷新
+                </div>
+
+              </div>
+            </div>
+
+          </el-form-item>
+        </template>
+
+
         <template v-if="baseForm.checkType == 2">
           <el-form-item label="">
             <div class="offLineBox">
@@ -552,6 +596,64 @@ export default {
       conditionPcStr: '',
       conditionStr1: '',
       conditionPcStr1: '',
+
+      cdpBoxShow: false,
+      cdpSearchText: '',
+      cdpGeting: false,
+      getCdpList: [
+        /*{
+          "code": "1",
+          "dynamic": "string",
+          "name": "111",
+          "userCount": "string"
+        },
+        {
+          "code": "2",
+          "dynamic": "string",
+          "name": "222",
+          "userCount": "string"
+        },
+        {
+          "code": "3",
+          "dynamic": "string",
+          "name": "333",
+          "userCount": "string"
+        },
+        {
+          "code": "12",
+          "dynamic": "string",
+          "name": "1212",
+          "userCount": "string"
+        },*/
+      ],
+      showCdpList: [
+        /*{
+          "code": "1",
+          "dynamic": "string",
+          "name": "111",
+          "userCount": "string"
+        },
+        {
+          "code": "2",
+          "dynamic": "string",
+          "name": "222",
+          "userCount": "string"
+        },
+        {
+          "code": "3",
+          "dynamic": "string",
+          "name": "333",
+          "userCount": "string"
+        },
+        {
+          "code": "12",
+          "dynamic": "string",
+          "name": "1212",
+          "userCount": "string"
+        },*/
+      ],
+      checkListCdp: [],
+      checkListCdpShow: [],
     }
   },
   watch: {
@@ -576,9 +678,56 @@ export default {
       handler() {
         this.needcxjs = true
       }
+    },
+    'cdpSearchText': function () {
+      this.cdpSearchTextChange()
+    },
+    'checkListCdp': function (n) {
+      let tmp = []
+      for (let i = 0; i < n.length; i++) {
+        for (let p = 0; p < this.getCdpList.length; p++) {
+          if (n[i] == this.getCdpList[p].code) {
+            tmp.push(this.getCdpList[p])
+          }
+        }
+      }
+      this.checkListCdpShow = tmp
+      // console.log(n)
+      // console.log(this.checkListCdpShow)
     }
   },
+  mounted() {
+    this.getCDP()
+  },
   methods: {
+    cdpSearchTextChange() {
+      if (this.cdpSearchText == '') {
+        this.showCdpList = this.getCdpList
+      } else {
+        let tmp = []
+        for (let i = 0; i < this.getCdpList.length; i++) {
+          if (this.getCdpList[i].name.indexOf(this.cdpSearchText) > -1) {
+            tmp.push(this.getCdpList[i])
+          }
+        }
+        this.showCdpList = tmp
+      }
+    },
+    cdpRef() {
+      !this.cdpGeting?this.getCDP():''
+      this.cdpSearchText = ''
+    },
+    getCDP() {
+      this.cdpGeting = true
+      let _this = this
+      this.$http.get(`mktgo/wecom/user_group/crowd?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&refresh=${0}`,{}).then(function (res) {
+        console.log(99,res)
+        _this.cdpGeting = false
+        if (res.data.crowds) {
+          _this.getCdpList = res.data.crowds
+        }
+      })
+    },
     delFile() {
       this.fileName='导入分群前请先下载模板编辑后上传'
       this.$http.post(`mktgo/wecom/user_group/delete?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&user_group_uuid=${window.user_group_uuid_tmp}`,{})
@@ -728,6 +877,13 @@ export default {
         });
         return false
       }
+      if (this.baseForm.checkType == 3 && this.checkListCdpShow.length == 0) {
+        this.$message({
+          message: '请选择第三方CDP人群包',
+          type: 'warning'
+        });
+        return false
+      }
       this.needReBase = false
 
       this.$refs['baseForm'].validate(async (valid) => {
@@ -759,6 +915,12 @@ export default {
             this.postDataBase.userGroupType = 'OFFLINE'
             this.postDataBase.offlineUserGroupRule = {
               userGroupUuid: window.user_group_uuid_tmp
+            }
+          } else if(this.baseForm.checkType == 3) {
+            this.postDataBase.userGroupType = 'CDP'
+            this.postDataBase.cdpUserGroupRule = {
+              cdpType: 'ANALYSYS',
+              crowds: this.checkListCdpShow,
             }
           }
 
@@ -848,6 +1010,12 @@ export default {
           });
           return false
         }
+      } else if (this.baseForm.checkType == 3 && this.checkListCdpShow.length == 0) {
+        this.$message({
+          message: '请选择第三方CDP人群包',
+          type: 'warning'
+        });
+        return false
       }
 
       if (this.needcxjs) {
@@ -1035,6 +1203,160 @@ export default {
     padding: 24px 12px;
     background-color: white;
     border-radius: 8px;
+
+    .inputBox {
+      box-sizing: border-box;
+      margin-top: -20px;
+      padding: 0 15px;
+      width: 505px;
+      height: 32px;
+      position: relative;
+      background: #FFFFFF;
+      border: 1px solid #E0E0E0;
+      border-radius: 2px;
+
+      font-family: 'PingFang SC';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 32px;
+      /* identical to box height */
+      color: #999999;
+      .content {
+        width: 90%;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        height: 32px;
+
+      }
+      .el-icon-arrow-down {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+      }
+      .checkListCdpShowBox {
+        width: 450px;
+        position: absolute;
+        top: 0;
+        div {
+          display: inline-block;
+          box-sizing: border-box;
+          width: auto;
+          height: 24px;
+          line-height: 22px;
+          padding: 0 8px;
+          margin-right: 6px;
+          margin-top: 8px;
+          background: #FFFFFF;
+          mix-blend-mode: normal;
+          border: 1px solid #E4E4E4;
+          border-radius: 43px;
+          font-family: 'PingFang SC';
+          font-style: normal;
+          font-weight: 400;
+          font-size: 12px;
+          color: #333333;
+        }
+      }
+      .cdpBox {
+        position: absolute;
+        width: 504px;
+        height: 266px;
+        z-index: 999;
+        left: 0;
+        background: #FFFFFF;
+        box-shadow: 0px 3px 9px rgba(0, 0, 0, 0.26);
+        border-radius: 4px;
+        .searchBox {
+          box-sizing: border-box;
+          position: absolute;
+          width: 475px;
+          height: 32px;
+          background: #FFFFFF;
+          border: 1px solid #E0E0E0;
+          border-radius: 18px;
+          top: 9px;
+          left: 16px;
+          .el-icon-search {
+            position: absolute;
+            top: 9px;
+            left: 13px;
+          }
+          input {
+            position: absolute;
+            width: 80%;
+            height: 30px;
+            font-family: 'PingFang SC';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 30px;
+            /* identical to box height */
+            color: #999999;
+            border: none;
+            left: 35px;
+          }
+          //input :focus{outline:0px solid #123456;}
+          input :focus-visible{outline:none}
+          input:focus{outline:none;}
+        }
+        .listBox {
+          top:50px;
+          width: 504px;
+          height: 190px;
+          position: absolute;
+          overflow-y: scroll;
+          overflow-x: hidden;
+          .el-checkbox {
+            width: 100%;
+            padding-left: 15px;
+            vertical-align: top;
+            &.is-checked {
+              background-color: #EFF3FD;
+            }
+          }
+        }
+        .refBox {
+          position: absolute;
+          width: 100%;
+          height: 27px;
+          line-height: 27px;
+          text-align: center;
+          bottom: 0;
+          color: #6E94F5;
+          cursor: pointer;
+          border-top: 1px solid #EAEAEA;
+          &.geting {
+            color: #999999;
+            cursor: none;
+          }
+        }
+      }
+    }
+    .checkListCdpShowBox {
+      width: 505px;
+      div {
+        display: inline-block;
+        box-sizing: border-box;
+        width: auto;
+        height: 24px;
+        line-height: 22px;
+        padding: 0 8px;
+        margin-right: 6px;
+        margin-top: 8px;
+        background: #FFFFFF;
+        mix-blend-mode: normal;
+        border: 1px solid #E4E4E4;
+        border-radius: 43px;
+        font-family: 'PingFang SC';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        color: #333333;
+      }
+    }
+
     .num-text {
       margin-right: 10px;
     }
