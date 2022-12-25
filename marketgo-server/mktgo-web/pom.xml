@@ -52,6 +52,10 @@
             <artifactId>mktgo-biz</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.easy.marketgo</groupId>
+            <artifactId>mktgo-cdp</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
         </dependency>

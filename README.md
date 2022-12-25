@@ -11,11 +11,13 @@
 
 &emsp;
 
-**新发布release 0.0.3的版本，说明如下：**
+**新发布release 0.0.5的版本，说明如下：**
 
 新增功能：
 
-`1、群发客户支持离线人群上传。`
+`1、系统支持接入CDP系统，群发客户可以选择CDP系统中的人群包。`
+
+
 
 
 
@@ -174,6 +176,13 @@
 需要基于MarketGo做定制业务需求，请将需求整理成文档和联系方式，发给邮箱：[kevinwangwn0209@gmail.com](kevinwangwn0209@gmail.com)
 
 如果需要技术支持的，请支持299元，并附上你的微信号，按照捐赠的方式支付，我们会联系您并提供项目和安装的相关技术支持。
+
+也可以添加如下微信好友
+
+<center class="half">
+    <img src="WechatIMG1067AddFriend2.png" width="300"/>
+    <img src="WechatIMG15AddFriend1.jpeg" width="300"/>
+</center>
 
 ## 7、开源说明
 

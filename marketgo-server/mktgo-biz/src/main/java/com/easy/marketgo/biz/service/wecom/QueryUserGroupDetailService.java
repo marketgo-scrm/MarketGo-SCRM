@@ -1,6 +1,9 @@
 package com.easy.marketgo.biz.service.wecom;
 
 import cn.hutool.crypto.SecureUtil;
+import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
+import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
+import com.easy.marketgo.cdp.service.CdpManagerService;
 import com.easy.marketgo.common.enums.UserGroupAudienceTypeEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
@@ -13,10 +16,7 @@ import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEnt
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
-import com.easy.marketgo.core.model.bo.OfflineUserGroupAudienceRule;
-import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
-import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
-import com.easy.marketgo.core.model.bo.WeComUserGroupAudienceRule;
+import com.easy.marketgo.core.model.bo.*;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
@@ -28,6 +28,7 @@ import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +69,9 @@ public class QueryUserGroupDetailService {
 
     @Autowired
     private UserGroupOfflineRepository userGroupOfflineRepository;
+
+    @Autowired
+    private CdpManagerService cdpManagerService;
 
     public void queryWeComMassTaskUserGroup(String taskType) {
 //        Date date = DateUtil.date();
@@ -118,6 +122,29 @@ public class QueryUserGroupDetailService {
                         entity.getUuid());
                 weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
                         WeComMassTaskStatus.COMPUTED.getValue());
+            } else if (weComUserGroupAudienceEntity.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.CDP_USER_GROUP.getValue())) {
+                String cdpConditions = weComUserGroupAudienceEntity.getCdpConditions();
+                if (StringUtils.isBlank(cdpConditions)) {
+                    log.error("query cdp user group conditions is empty. weComUserGroupAudienceEntity={}",
+                            weComUserGroupAudienceEntity);
+                    weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                            WeComMassTaskStatus.COMPUTE_FAILED.getValue());
+                    continue;
+                }
+
+                CdpUserGroupAudienceRule cdpUserGroupAudienceRule = JsonUtils.toObject(cdpConditions,
+                        CdpUserGroupAudienceRule.class);
+                CrowdUsersBaseRequest request = new CrowdUsersBaseRequest();
+                request.setProjectUuid(weComUserGroupAudienceEntity.getProjectUuid());
+                request.setCdpType(cdpUserGroupAudienceRule.getCdpType());
+                request.setCorpId(entity.getCorpId());
+                List<CrowdUsersBaseRequest.CrowdMessage> crowList = new ArrayList<>();
+                for (CdpUserGroupAudienceRule.CrowdMessage message : cdpUserGroupAudienceRule.getCrowds()) {
+                    CrowdUsersBaseRequest.CrowdMessage crowdMessage = new CrowdUsersBaseRequest.CrowdMessage();
+                    BeanUtils.copyProperties(message, crowdMessage);
+                    crowList.add(crowdMessage);
+                }
+                cdpManagerService.queryCrowdUsers(request);
             } else {
 
                 String conditions = weComUserGroupAudienceEntity.getWecomConditions();

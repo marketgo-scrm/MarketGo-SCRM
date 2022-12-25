@@ -3,6 +3,7 @@ package com.easy.marketgo.web.controller;
 import com.easy.marketgo.web.annotation.TokenIgnore;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpCrowdListResponse;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
 import io.swagger.annotations.*;
@@ -13,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -71,10 +71,10 @@ class WeComUserGroupController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = UserGroupEstimateResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
     @ApiOperation(value = "上传离线人群", nickname = "uploadOfflineUserGroup", notes = "", response =
-            UserGroupAudienceRules.class)
+            BaseResponse.class)
     @PostMapping("/upload")
     public ResponseEntity uploadOfflineUserGroup(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
             "project_id", required = true) @NotBlank @Valid String projectId,
@@ -91,10 +91,10 @@ class WeComUserGroupController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = UserGroupEstimateResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
     @ApiOperation(value = "下载excel格式", nickname = "downloadExcelTemplate", notes = "", response =
-            UserGroupAudienceRules.class)
+            BaseResponse.class)
     @RequestMapping(value = {"/download/template"}, produces = {"application/json"}, method = RequestMethod.GET)
     @TokenIgnore
     public ResponseEntity downloadExcelTemplate(@ApiParam(value = "企微项目id", required = true) @RequestParam(value =
@@ -117,5 +117,20 @@ class WeComUserGroupController {
             @ApiParam(value = "企业id", required = true) @RequestParam(value = "corp_id", required = true) @NotBlank @Valid String corpId,
             @ApiParam(value = "人群的uuid", required = true) @RequestParam("user_group_uuid") String groupUuid) {
         return ResponseEntity.ok(weComUserGroupService.deleteOfflineUserGroup(corpId, groupUuid));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = CdpCrowdListResponse.class)
+    })
+    @ApiOperation(value = "获取CDP人群信息", nickname = "cdpCrowdList", notes = "", response =
+            UserGroupAudienceRules.class)
+    @RequestMapping(value = {"/crowd"}, produces = {"application/json"}, method = RequestMethod.GET)
+    public ResponseEntity queryCdpCrowdList(
+            @ApiParam(value = "企微项目id", required = true) @RequestParam(value = "project_id", required = true) @NotBlank @Valid String projectId,
+            @ApiParam(value = "企业id", required = true) @RequestParam(value = "corp_id", required = true) @NotBlank @Valid String corpId,
+            @ApiParam(value = "分群刷选状态", required = true) @RequestParam(value = "refresh", required = true,
+                    defaultValue = "0") @NotBlank @Valid Boolean refresh) {
+
+        return ResponseEntity.ok(weComUserGroupService.queryCrowdList(projectId, corpId));
     }
 }

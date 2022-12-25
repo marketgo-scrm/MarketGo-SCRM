@@ -25,6 +25,7 @@
         <module>mktgo-api</module>
         <module>mktgo-common</module>
         <module>mktgo-core</module>
+        <module>mktgo-cdp</module>
         <module>mktgo-biz</module>
         <module>mktgo-react</module>
         <module>mktgo-test</module>
@@ -56,6 +57,11 @@
             <dependency>
                 <groupId>com.easy.marketgo</groupId>
                 <artifactId>mktgo-react</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.easy.marketgo</groupId>
+                <artifactId>mktgo-cdp</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

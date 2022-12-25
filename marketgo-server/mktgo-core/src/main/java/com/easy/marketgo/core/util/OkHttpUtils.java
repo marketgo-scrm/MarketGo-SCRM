@@ -92,6 +92,47 @@ public class OkHttpUtils {
                 urlBuilder.addQueryParameter(entry.getKey(), entry.getValue());
             }
         }
+
+        Request request = builder.get().url(urlBuilder.build()).build();
+        //2 将Request封装为Call
+        Call call = getOkHttpClient().newCall(request);
+        //3 执行Call，得到response
+        Response response = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new IOException("Unexpected code " + response);
+        }
+    }
+
+    /**
+     * get请求，同步方式，获取网络数据，是在主线程中执行的，需要新起线程，将其放到子线程中执行
+     *
+     * @param url
+     * @return
+     */
+    public String getData(String url, Map<String, String> params, Map<String, String> header) throws Exception {
+        //1 构造Request
+        Request.Builder builder = new Request.Builder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+        if (!CollectionUtils.isEmpty(params)) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                urlBuilder.addQueryParameter(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(header)) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                builder.addHeader(entry.getKey(), entry.getValue());
+            }
+        }
+
         Request request = builder.get().url(urlBuilder.build()).build();
         //2 将Request封装为Call
         Call call = getOkHttpClient().newCall(request);
@@ -302,7 +343,8 @@ public class OkHttpUtils {
      */
     public String PostFileDataSync(String url, Map<String, String> paramsHeader, String fileName, byte[] fileData) throws Exception {
         MultipartBody.Builder builder1 = new MultipartBody.Builder().setType(MultipartBody.FORM);
-        builder1.addFormDataPart("files", fileName, RequestBody.create(MediaType.parse("application/octet-stream"), fileData));
+        builder1.addFormDataPart("files", fileName, RequestBody.create(MediaType.parse("application/octet-stream"),
+                fileData));
         RequestBody body = builder1.build();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
         Request.Builder requestBuilder = new Request.Builder();

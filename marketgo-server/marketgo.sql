@@ -481,7 +481,7 @@ CREATE TABLE `wecom_sys_base_role` (
    `uuid`  VARCHAR(64)  NOT NULL COMMENT '业务主键',
     `code` varchar(32) DEFAULT NULL COMMENT '角色编码',
     `desc` varchar(255) DEFAULT NULL COMMENT '角色描述',
-    `corp_id` varchar(64) DEFAULT NULL,
+    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
     `project_uuid` varchar(64) DEFAULT NULL,
     `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
     `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
@@ -494,7 +494,7 @@ CREATE TABLE `wecom_sys_base_role` (
 DROP TABLE IF EXISTS `wecom_sys_corp_role_permissions_link`;
 CREATE TABLE `wecom_sys_corp_role_permissions_link` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `corp_id` varchar(64) CHARACTER SET utf8mb4 DEFAULT NULL,
+    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
     `role_uuid` varchar(64) CHARACTER SET utf8mb4 DEFAULT NULL,
     `permissions_uuid` varchar(64) CHARACTER SET utf8mb4 DEFAULT NULL,
     `status` varchar(32) DEFAULT NULL,
@@ -509,7 +509,7 @@ CREATE TABLE `wecom_sys_corp_role_permissions_link` (
 DROP TABLE IF EXISTS `wecom_sys_corp_user_role_link`;
 CREATE TABLE `wecom_sys_corp_user_role_link` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `corp_id` varchar(64) DEFAULT NULL,
+    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
     `role_uuid` varchar(64) DEFAULT NULL,
     `member_id` varchar(64) DEFAULT NULL,
     `project_uuid` varchar(64) DEFAULT NULL,
@@ -565,7 +565,7 @@ CREATE TABLE `wecom_channel_live_code` (
     `uuid`  VARCHAR(64)  NOT NULL COMMENT '业务主键',
     `project_uuid` varchar(64) NOT NULL COMMENT '关联项目ID',
     `agent_id` varchar(32) NOT NULL COMMENT 'agent_id',
-    `corp_id` varchar(100) NOT NULL COMMENT '企业corpId',
+    `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
     `name` varchar(512) NOT NULL COMMENT '活码名称',
     `skip_verify` tinyint(1) NOT NULL COMMENT '是否跳过验证 1：自动通过 0：手动验证',
     `state` varchar(32) NOT NULL COMMENT '活码状态，1:草稿，2：已发布',
@@ -613,7 +613,7 @@ CREATE TABLE `wecom_channel_live_code_members` (
 DROP TABLE IF EXISTS `wecom_channel_live_code_statistic`;
 CREATE TABLE `wecom_channel_live_code_statistic` (
    `id` bigint(20) NOT NULL AUTO_INCREMENT,
-   `corp_id` varchar(32) DEFAULT NULL,
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
    `channel_live_code_uuid` varchar(64) DEFAULT NULL,
    `member_id` varchar(32) DEFAULT NULL,
    `member_name` varchar(64) DEFAULT NULL COMMENT '成员名称',
@@ -686,7 +686,7 @@ DROP TABLE IF EXISTS `user_group_offline`;
 CREATE TABLE `user_group_offline` (
    `id` bigint(20) NOT NULL AUTO_INCREMENT,
    `uuid`  VARCHAR(64)  NOT NULL COMMENT '人群的UUID',
-   `corp_id` varchar(32) DEFAULT NULL,
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
    `external_user_id`   varchar(255) NOT NULL  COMMENT '客户ID',
    `member_id` varchar(32) NOT NULL  COMMENT '员工ID',
   `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
@@ -696,3 +696,75 @@ CREATE TABLE `user_group_offline` (
 
 ALTER TABLE wecom_mass_task_send_queue MODIFY external_user_ids MEDIUMTEXT DEFAULT NULL COMMENT '发送的客户id列表';
 ALTER TABLE `wecom_mass_task` MODIFY content MEDIUMTEXT DEFAULT NULL COMMENT '推送消息内容';
+
+
+
+
+-- version 0.0.5
+
+INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`, `parent_name`, `title`, `parent_title`, `project_uuid`) VALUES  (MD5(uuid()) ,  'cdpsettings', 'settings', 'cdpsettings', 'settings', '数据接入', '系统设置', (SELECT uuid FROM project_config));
+
+-- ----------------------------
+-- Table structure for cdp_config
+-- ----------------------------
+DROP TABLE IF EXISTS `cdp_config`;
+CREATE TABLE `cdp_config` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `uuid` varchar(64) NOT NULL COMMENT 'UUID',
+   `project_uuid` varchar(64) NOT NULL COMMENT '关联项目ID',
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+   `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
+    `api_url` varchar(1024) NOT NULL  COMMENT 'cdp的API请求的url',
+   `data_url` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据上报的url',
+   `app_key` varchar(255) DEFAULT NULL  COMMENT 'cdp的AppKey',
+   `api_secret` varchar(255) DEFAULT NULL  COMMENT 'cdp的API_ACCESSKEY',
+   `project_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据的项目名称',
+   `status`     TINYINT(1) DEFAULT NULL COMMENT '是否开启类型 ,0 未开启 1 开启',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `idx_uniq_corp_id_cdp_type` (`corp_id`,`cdp_type`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+
+
+-- ----------------------------
+-- Table structure for cdp_crowd_users_sync
+-- ----------------------------
+DROP TABLE IF EXISTS `cdp_crowd_users_sync`;
+CREATE TABLE `cdp_crowd_users_sync` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `project_uuid` varchar(64) NOT NULL COMMENT '关联项目ID',
+   `task_uuid` varchar(64) NOT NULL COMMENT '任务的UUID',
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+   `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
+   `project_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据的项目名称',
+   `crowd_code` varchar(512) NOT NULL  COMMENT 'cdp的人群的code',
+   `crowd_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的人群的名字',
+   `user_count`      bigint(20) DEFAULT NULL  COMMENT '人群的数量',
+   `sync_user_count` bigint(20) DEFAULT NULL  COMMENT '同步的人群数量',
+   `sync_status`  varchar(24) DEFAULT NULL COMMENT  '同步状态 ,UNSTART, SYNCING, FAILED, FINISH',
+   `sync_failed_desc`  varchar(1024) DEFAULT NULL COMMENT  '同步状态失败后,记录错误信息',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `idx_uniq_task_uuid_cdp_type_crowd_code` (`task_uuid`,`cdp_type`,`crowd_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for user_group_cdp
+-- ----------------------------
+DROP TABLE IF EXISTS `user_group_cdp`;
+CREATE TABLE `user_group_cdp` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `cdp_uuid` varchar(64) NOT NULL COMMENT 'cdp的UUID',
+   `corp_id`   VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+   `cdp_type`   varchar(64) NOT NULL  COMMENT 'cdp的类型',
+   `project_name` varchar(1024) DEFAULT NULL  COMMENT 'cdp的数据的项目名称',
+   `crowd_code` varchar(512) NOT NULL  COMMENT 'cdp的人群的code',
+   `external_user_id`   varchar(255) NOT NULL  COMMENT '客户ID',
+   `member_id` varchar(32) NOT NULL  COMMENT '员工ID',
+   `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+   `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `idx_uniq_cdp_uuid_cdp_type_crowd_code` (`cdp_uuid`,`cdp_type`,`crowd_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
