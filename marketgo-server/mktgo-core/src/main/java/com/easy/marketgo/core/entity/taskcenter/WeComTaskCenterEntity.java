@@ -45,6 +45,12 @@ public class WeComTaskCenterEntity extends UuidBaseEntity {
      * 重复类型:每天 DAY/每周 WEEK/每月 MONTH
      */
     private String repeatType;
+
+    /**
+     * 周期活动执行的日期，每天 0/每周 1-7/每月 1-31
+     */
+    private String repeatDay;
+
     /**
      * 计划发送时间
      */

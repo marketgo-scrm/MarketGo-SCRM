@@ -8,10 +8,12 @@ import com.easy.marketgo.biz.service.XxlJobManualTriggerService;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
+import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
+import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
@@ -22,17 +24,24 @@ import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatist
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterExternalUserStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterRepository;
+import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.web.model.response.masstask.WeComMassTaskCreatorsResponse;
+import com.easy.marketgo.web.model.response.masstask.WeComMassTaskDetailResponse;
 import com.easy.marketgo.web.service.wecom.WeComTaskCenterService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.easy.marketgo.common.enums.ErrorCodeEnum.ERROR_WEB_MASS_TASK_IS_EMPTY;
 
 /**
  * @author : kevinwang
@@ -101,6 +110,7 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
             }
 
             entity.setRepeatType(weComTaskCenterRequest.getRepeatType().getValue());
+            entity.setRepeatDay(weComTaskCenterRequest.getRepeatDay());
             entity.setRepeatStartTime(DateUtil.parse(weComTaskCenterRequest.getRepeatStartTime()));
             entity.setRepeatStartTime(DateUtil.parse(weComTaskCenterRequest.getRepeatEndTime()));
         }
@@ -141,7 +151,21 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
     @Override
     public BaseResponse getTaskCenterDetails(String projectUuid, Integer taskId) {
-        return null;
+        WeComMassTaskDetailResponse response = new WeComMassTaskDetailResponse();
+
+        WeComTaskCenterEntity entity = weComTaskCenterRepository.queryById(taskId);
+        if (entity == null) {
+            return BaseResponse.failure(ERROR_WEB_MASS_TASK_IS_EMPTY);
+        }
+        BeanUtils.copyProperties(entity, response);
+        response.setScheduleTime(DateUtil.formatDateTime(entity.getScheduleTime()));
+        response.setCreateTime(DateUtil.formatDateTime(entity.getCreateTime()));
+        List<WeComMassTaskSendMsg> list = JsonUtils.toArray(entity.getContent(), WeComMassTaskSendMsg.class);
+        response.setMsgContent(list);
+        log.info("finish to query task center detail response. projectUuid = {}, taskId={}, response={}", projectUuid,
+                taskId,
+                JsonUtils.toJSONString(response));
+        return BaseResponse.success(response);
     }
 
     @Override
@@ -151,16 +175,85 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
     @Override
     public BaseResponse getTaskCenterCreators(String projectUuid, String corpId, String taskType) {
-        return null;
+        log.info("start to query weCom task center creator list, projectUuid={}, taskType={}, corpId={}",
+                projectUuid, taskType, corpId);
+        WeComMassTaskCreatorsResponse response = new WeComMassTaskCreatorsResponse();
+        List<WeComMassTaskCreatorsResponse.CreatorMessage> creatorList = new ArrayList<>();
+        List<WeComMassTaskCreators> creators = weComTaskCenterRepository.listCreatorsByTaskType(projectUuid, corpId,
+                taskType);
+        log.info("query weCom task center creator list. creators={}", creators);
+        if (CollectionUtils.isNotEmpty(creators)) {
+            creators.forEach(creator -> {
+                WeComMassTaskCreatorsResponse.CreatorMessage message =
+                        new WeComMassTaskCreatorsResponse.CreatorMessage();
+                message.setCreatorId(creator.getCreatorId());
+                message.setCreatorName(creator.getCreatorName());
+                creatorList.add(message);
+            });
+        }
+        response.setCreators(creatorList);
+        log.info("query task center creator list response. response={}", JsonUtils.toJSONString(response));
+        return BaseResponse.success(response);
     }
 
     @Override
     public BaseResponse deleteTaskCenter(String taskType, String taskUuid) {
-        return null;
+        WeComTaskCenterEntity entity = weComTaskCenterRepository.getByTaskUUID(taskUuid);
+        if (entity == null) {
+            return BaseResponse.success();
+        }
+        String content = entity.getContent();
+        if (StringUtils.isNotEmpty(content)) {
+            List<WeComMassTaskSendMsg> contentList = JsonUtils.toArray(content, WeComMassTaskSendMsg.class);
+            if (CollectionUtils.isNotEmpty(contentList)) {
+                List<String> mediaUuidList = new ArrayList<>();
+                contentList.forEach(item -> {
+                    if (item.getType() == WeComMassTaskSendMsg.TypeEnum.VIDEO) {
+                        mediaUuidList.add(item.getVideo().getMediaUuid());
+                    } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.IMAGE) {
+                        mediaUuidList.add(item.getImage().getMediaUuid());
+                    } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.FILE) {
+                        mediaUuidList.add(item.getFile().getMediaUuid());
+                    } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.MINIPROGRAM) {
+                        mediaUuidList.add(item.getMiniProgram().getMediaUuid());
+                    } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.LINK) {
+                        mediaUuidList.add(item.getLink().getMediaUuid());
+                    }
+                });
+                weComMediaResourceRepository.deleteByUuids(mediaUuidList);
+            }
+        }
+        weComTaskCenterRepository.deleteByIdAndTaskType(entity.getId(), taskType);
+        /**
+         * 删除缓存？？？？
+         */
+        return BaseResponse.success();
     }
 
     @Override
     public BaseResponse checkTaskCenterName(String projectId, String taskType, Integer taskId, String name) {
-        return null;
+        try {
+            log.info("begin to check weCom task center cname, projectUuid={}, taskType={}, taskId={}, taskCname={}.",
+                    projectId, taskType, taskId, name);
+            if (!WeComMassTaskTypeEnum.isSupported(taskType)) {
+                log.error("Unsupported wecom task center type, taskType={}.", taskType);
+                return BaseResponse.builder().code(ErrorCodeEnum.ERROR_NOT_SUPPORT_MASS_TASK.getCode()).message(ErrorCodeEnum.ERROR_NOT_SUPPORT_MASS_TASK.getMessage()).build();
+            }
+            WeComTaskCenterEntity weComTaskCenterEntity = weComTaskCenterRepository.getTaskCenterByName(projectId,
+                    name);
+            // 仅当「非同一个计划且同名」的情况，认为重名
+            if (weComTaskCenterEntity != null && !weComTaskCenterEntity.getId().equals(taskId)) {
+                log.info("failed to check weCom task center name, projectUuid={}, taskType={}, taskId={}, name={}, " +
+                        "weComTaskCenterEntity={}.", projectId, taskType, taskId, name, weComTaskCenterEntity);
+                return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME.getCode()).message(ErrorCodeEnum.ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME.getMessage()).build();
+            }
+            log.info("succeed to check weCom task center name, projectUuid={}, taskType={}, taskId={}, taskCname={}, " +
+                    "weComTaskCenterEntity={}.", projectId, taskType, taskId, name, weComTaskCenterEntity);
+            return BaseResponse.builder().code(ErrorCodeEnum.OK.getCode()).message(ErrorCodeEnum.OK.getMessage()).build();
+        } catch (Exception e) {
+            log.error("failed to check weCom task center name, projectUuid={}, taskType={}, taskId={}, name={}.",
+                    projectId, taskType, taskId, name, e);
+        }
+        return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getCode()).message(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getMessage()).build();
     }
 }

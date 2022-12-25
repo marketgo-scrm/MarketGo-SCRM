@@ -19,10 +19,8 @@ import java.util.List;
 public interface WeComTaskCenterRepository extends CrudRepository<WeComTaskCenterEntity, Long>,
         WeComTaskCenterCustomizedRepository {
 
-    @Query("SELECT * FROM wecom_task_center WHERE project_uuid = :project_uuid AND task_type = :task_type AND name = " +
-            ":name")
-    WeComTaskCenterEntity getMassTaskByMassTaskTypeAndName(@Param("project_uuid") String projectUuid,
-                                                         @Param("task_type") String taskType,
+    @Query("SELECT * FROM wecom_task_center WHERE project_uuid = :project_uuid AND name = :name")
+    WeComTaskCenterEntity getTaskCenterByName(@Param("project_uuid") String projectUuid,
                                                          @Param("name") String name);
 
     @Query("SELECT * FROM wecom_task_center WHERE id = :id")

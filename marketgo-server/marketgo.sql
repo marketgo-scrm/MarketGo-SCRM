@@ -838,3 +838,42 @@ CREATE TABLE `wecom_task_center`
   UNIQUE KEY `idx_uniq_project_uuid_corp_id_type_name` (`project_uuid`,`corp_id`, `task_type`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微的员工任务';
 
+-- ----------------------------
+-- Table structure for wecom_task_center_statistic_member
+-- ----------------------------
+DROP TABLE IF EXISTS `wecom_task_center_statistic_member`;
+CREATE TABLE `wecom_task_center_statistic_member` (
+  `id`                   INT(11) NOT NULL AUTO_INCREMENT,
+  `project_uuid`         varchar(64) NOT NULL COMMENT '项目ID',
+  `task_uuid`            VARCHAR(64) NOT NULL COMMENT '任务uuid',
+  `member_id`              VARCHAR(128) NOT NULL COMMENT '员工的id',
+  `member_name`              VARCHAR(128) NOT NULL COMMENT '员工的名称',
+  `status`                varchar(32) DEFAULT NULL COMMENT  '员工的任务执行状态',
+  `external_user_count`    bigint(20) DEFAULT NULL COMMENT '员工的客户总数',
+  `delivered_count`    bigint(20) DEFAULT NULL COMMENT '员工的客户送达总数',
+  `non_friend_count`    bigint(20) DEFAULT NULL COMMENT '员工的客户非好友总数',
+  `sent_time`              datetime  DEFAULT NULL COMMENT '执行时间',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_task_uuid_member_id_sent_time` (`task_uuid`, `member_id`, `sent_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微任务中心的员工统计';
+
+-- ----------------------------
+-- Table structure for wecom_task_center_statistic_external_user
+-- ----------------------------
+DROP TABLE IF EXISTS `wecom_task_center_statistic_external_user`;
+CREATE TABLE `wecom_task_center_statistic_external_user` (
+  `id`                   INT(11) NOT NULL AUTO_INCREMENT,
+  `project_uuid`         varchar(64) NOT NULL COMMENT '项目ID',
+  `task_uuid`            VARCHAR(64) NOT NULL COMMENT '群发的任务uuid',
+  `member_id`            VARCHAR(128) NOT NULL COMMENT '员工的id',
+  `external_user_id`     varchar(255) DEFAULT NULL COMMENT '客户的ID',
+  `external_user_name`     varchar(255) DEFAULT NULL COMMENT '客户的名称',
+  `external_user_type`   varchar(24) DEFAULT NULL COMMENT '客户的类型',
+  `status`                varchar(64) DEFAULT NULL COMMENT  '客户的任务执行状态',
+  `add_comments_time`     datetime     DEFAULT NULL COMMENT '客户的执行时间',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微任务中心的员工对应的客户统计';
