@@ -21,31 +21,31 @@ public enum WeekEnum {
     /**
      * 周一
      */
-    Monday("星期一", "Mon"),
+    Monday("1", "Mon"),
     /**
      * 周二
      */
-    Tuesday("星期二", "Tue"),
+    Tuesday("2", "Tue"),
     /**
      * 周三
      */
-    Wednesday("星期三", "Wed"),
+    Wednesday("3", "Wed"),
     /**
      * 周四
      */
-    Thursday("星期四", "Thu"),
+    Thursday("4", "Thu"),
     /**
      * 周五
      */
-    Friday("星期五", "Fri"),
+    Friday("5", "Fri"),
     /**
      * 周六
      */
-    Saturday("星期六", "Sat"),
+    Saturday("6", "Sat"),
     /**
      * 周日
      */
-    Sunday("星期日", "Sun"),
+    Sunday("7", "Sun"),
     ;
 
     private static final Map<String, WeekEnum> CODE_ROLE_MAP = new HashMap<>();

@@ -75,7 +75,7 @@ public class CronExpressionResolver {
      * @param time time
      * @return next time
      */
-    public long nextLongTime(long time) throws ParseException {
+    public long nextLongTime(long time) {
         CronExpression cronExpression = CronExpression.parse(cron);
         // currentTime为计算下次时间点的开始时间
         ZoneId zoneId = ZoneId.systemDefault();

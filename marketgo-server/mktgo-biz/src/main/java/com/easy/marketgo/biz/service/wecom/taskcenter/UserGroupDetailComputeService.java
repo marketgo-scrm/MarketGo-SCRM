@@ -2,10 +2,13 @@ package com.easy.marketgo.biz.service.wecom.taskcenter;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.easy.marketgo.biz.service.CronExpressionResolver;
 import com.easy.marketgo.biz.service.wecom.QueryUserGroupDetailService;
 import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
 import com.easy.marketgo.cdp.service.CdpManagerService;
 import com.easy.marketgo.common.enums.*;
+import com.easy.marketgo.common.enums.cron.PeriodEnum;
+import com.easy.marketgo.common.utils.GenerateCronUtil;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.UuidUtils;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
@@ -81,6 +84,8 @@ public class UserGroupDetailComputeService {
 
     public void queryWeComTaskCenterUserGroup(String taskType) {
         log.info("start query user group send task center. taskType={}", taskType);
+        checkRepeatTaskCenter(taskType);
+
         List<WeComTaskCenterEntity> entities =
                 weComTaskCenterRepository.getWeComMassTaskByScheduleTime(QUERY_USER_GROUP_TIME_BEFORE,
                         taskType, WeComMassTaskStatus.UNSTART.getValue(),
@@ -233,12 +238,30 @@ public class UserGroupDetailComputeService {
             long endOfDay = DateUtil.endOfDay(entity.getRepeatEndTime()).getTime();
             long currentTime = System.currentTimeMillis();
 
-            if(currentTime > endOfDay  || currentTime < startOfDay) {
+            if (currentTime > endOfDay || currentTime < startOfDay) {
                 log.info("query task center is not start or finish. entity={}", entity);
                 continue;
             }
+            String[] startDate = DateUtil.formatDateTime(entity.getRepeatStartTime()).split(" ");
+            String[] startTime = DateUtil.formatDateTime(entity.getScheduleTime()).split(" ");
+            String cron = "";
+            if (entity.getRepeatType().equals(PeriodEnum.DAILY.name())) {
+                cron = GenerateCronUtil.INSTANCE.generateDailyCronByPeriodAndTime(startDate[0], startTime[1]);
+            } else if (entity.getRepeatType().equals(PeriodEnum.WEEKLY.name())) {
+                cron = GenerateCronUtil.INSTANCE.generateWeeklyCronByPeriodAndTime(startDate[0], startTime[1],
+                        entity.getRepeatDay());
+            } else if (entity.getRepeatType().equals(PeriodEnum.MONTHLY.name())) {
+                cron = GenerateCronUtil.INSTANCE.generateMonthlyCronByPeriodAndTime(startDate[0], startTime[1],
+                        entity.getRepeatDay());
+            }
 
-//            entity.getRepeatType()
+            log.info("compute cron string. cron={}", cron);
+
+            CronExpressionResolver cronExpressionResolver = CronExpressionResolver.getInstance(cron);
+            long nextTime = cronExpressionResolver.nextLongTime(currentTime);
+
+            log.info("compute next time for cron string. cron={}, nextTime={}", cron, nextTime);
+
         }
     }
 

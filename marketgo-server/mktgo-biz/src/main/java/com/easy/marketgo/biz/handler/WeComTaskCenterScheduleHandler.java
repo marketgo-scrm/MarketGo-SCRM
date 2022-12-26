@@ -5,6 +5,7 @@ import com.easy.marketgo.biz.service.wecom.masstask.QueryMassTaskMetricsService;
 import com.easy.marketgo.biz.service.wecom.masstask.SendGroupMassTaskProducer;
 import com.easy.marketgo.biz.service.wecom.masstask.SendMomentMassTaskProducer;
 import com.easy.marketgo.biz.service.wecom.masstask.SendSingleMassTaskProducer;
+import com.easy.marketgo.biz.service.wecom.taskcenter.UserGroupDetailComputeService;
 import com.easy.marketgo.common.enums.WeComMassTaskSendIdType;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -23,10 +24,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WeComTaskCenterScheduleHandler {
     @Autowired
-    private QueryMassTaskMetricsService queryMassTaskMetricsService;
-
-    @Autowired
-    private QueryUserGroupDetailService queryUserGroupDetailService;
+    private UserGroupDetailComputeService userGroupDetailComputeService;
 
     @Autowired
     private SendSingleMassTaskProducer sendSingleMassTaskProducer;
@@ -40,9 +38,9 @@ public class WeComTaskCenterScheduleHandler {
     @XxlJob(value = "taskCenterComputeUserGroupDetail")
     public ReturnT<String> computeUserGroupDetail() throws Exception {
 
-        queryUserGroupDetailService.queryWeComMassTaskUserGroup(WeComMassTaskTypeEnum.SINGLE.name());
-        queryUserGroupDetailService.queryWeComMassTaskUserGroup(WeComMassTaskTypeEnum.GROUP.name());
-        queryUserGroupDetailService.queryWeComMassTaskUserGroup(WeComMassTaskTypeEnum.MOMENT.name());
+        userGroupDetailComputeService.queryWeComTaskCenterUserGroup(WeComMassTaskTypeEnum.SINGLE.name());
+        userGroupDetailComputeService.queryWeComTaskCenterUserGroup(WeComMassTaskTypeEnum.GROUP.name());
+        userGroupDetailComputeService.queryWeComTaskCenterUserGroup(WeComMassTaskTypeEnum.MOMENT.name());
         return ReturnT.SUCCESS;
     }
 

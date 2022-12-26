@@ -42,7 +42,7 @@ public class WeComTaskCenterEntity extends UuidBaseEntity {
     private String scheduleType;
 
     /**
-     * 重复类型:每天 DAY/每周 WEEK/每月 MONTH
+     * 重复类型:每天 DAILY/每周 WEEKLY/每月 MONTHLY
      */
     private String repeatType;
 

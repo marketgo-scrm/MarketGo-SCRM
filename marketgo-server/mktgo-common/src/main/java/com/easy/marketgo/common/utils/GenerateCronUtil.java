@@ -16,7 +16,7 @@ import java.util.Date;
  * Describe:
  */
 @Slf4j
-public enum  GenerateCronUtil {
+public enum GenerateCronUtil {
     /**
      * 单例
      */
@@ -70,6 +70,89 @@ public enum  GenerateCronUtil {
             default:
                 break;
         }
+        return cron;
+    }
+
+    /**
+     * 根据执行周期和初次执行时间，生成cron表达式
+     *
+     * @param beginDate 初次执行日期
+     * @param beginTime 初次执行时间
+     * @return cron表达式
+     */
+    public String generateDailyCronByPeriodAndTime(String beginDate, String beginTime) {
+        Date parsedDate;
+        try {
+            parsedDate = dateFormat.parse(beginTime);
+        } catch (ParseException e) {
+            log.error("parse time error. [time]: {}", beginTime);
+            return "";
+        }
+        String[] splitDate = beginDate.split("-");
+        String year = splitDate[0];
+        String month = splitDate[1];
+        String day = splitDate[2];
+        String[] splitTime = beginTime.split(":");
+        String hour = splitTime[0];
+        String minute = splitTime[1];
+        String second = splitTime[2];
+        String cron = cron = String.format(CronPatternConstant.DAILY_CRON_PATTERN, second, minute, hour);
+        return cron;
+    }
+
+    /**
+     * 根据执行周期和初次执行时间，生成cron表达式
+     *
+     * @param beginDate 初次执行日期
+     * @param beginTime 初次执行时间
+     * @param week      星期的name
+     * @return cron表达式
+     */
+    public String generateWeeklyCronByPeriodAndTime(String beginDate, String beginTime, String week) {
+        Date parsedDate;
+        try {
+            parsedDate = dateFormat.parse(beginTime);
+        } catch (ParseException e) {
+            log.error("parse time error. [time]: {}", beginTime);
+            return "";
+        }
+        String[] splitDate = beginDate.split("-");
+        String year = splitDate[0];
+        String month = splitDate[1];
+        String day = splitDate[2];
+        String[] splitTime = beginTime.split(":");
+        String hour = splitTime[0];
+        String minute = splitTime[1];
+        String second = splitTime[2];
+
+        String weekCode = WeekEnum.nameOf(week).getCode();
+        String cron = String.format(CronPatternConstant.WEEKLY_CRON_PATTERN, second, minute, hour, weekCode);
+
+        return cron;
+    }
+
+    /**
+     * 根据执行周期和初次执行时间，生成cron表达式
+     *
+     * @param beginDate 初次执行日期
+     * @param beginTime 初次执行时间
+     * @param day       日期的值
+     * @return cron表达式
+     */
+    public String generateMonthlyCronByPeriodAndTime(String beginDate, String beginTime, String day) {
+        Date parsedDate;
+        try {
+            parsedDate = dateFormat.parse(beginTime);
+        } catch (ParseException e) {
+            log.error("parse time error. [time]: {}", beginTime);
+            return "";
+        }
+        String[] splitTime = beginTime.split(":");
+        String hour = splitTime[0];
+        String minute = splitTime[1];
+        String second = splitTime[2];
+
+        String cron = String.format(CronPatternConstant.MONTHLY_CRON_PATTERN, second, minute, hour, day);
         return cron;
     }
 }

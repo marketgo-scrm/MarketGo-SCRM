@@ -33,8 +33,8 @@ public class WeComTaskCenterRequest {
             "FIXED_TIME,REPEAT_TIME")
     private WeComMassTaskScheduleType scheduleType;
 
-    @ApiModelProperty(value = "周期活动的类型，每天 DAY/每周 WEEK/每月 MONTH", required = true, allowableValues = "DAY, " +
-            "WEEK,MONTH")
+    @ApiModelProperty(value = "周期活动的类型，每天 DAILY/每周 WEEKLY/每月 MONTHLY", required = true, allowableValues = "DAILY, " +
+            "WEEKLY,MONTHLY")
     private WeComTaskCenterRepeatType repeatType;
     @ApiModelProperty(value = "周期活动执行的日期，每天 0/每周 1-7/每月 1-31", required = true)
     private String repeatDay;
