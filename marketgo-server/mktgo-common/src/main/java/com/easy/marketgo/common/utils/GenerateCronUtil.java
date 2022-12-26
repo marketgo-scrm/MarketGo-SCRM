@@ -81,13 +81,6 @@ public enum GenerateCronUtil {
      * @return cron表达式
      */
     public String generateDailyCronByPeriodAndTime(String beginDate, String beginTime) {
-        Date parsedDate;
-        try {
-            parsedDate = dateFormat.parse(beginTime);
-        } catch (ParseException e) {
-            log.error("parse time error. [time]: {}", beginTime);
-            return "";
-        }
         String[] splitDate = beginDate.split("-");
         String year = splitDate[0];
         String month = splitDate[1];
@@ -109,13 +102,7 @@ public enum GenerateCronUtil {
      * @return cron表达式
      */
     public String generateWeeklyCronByPeriodAndTime(String beginDate, String beginTime, String week) {
-        Date parsedDate;
-        try {
-            parsedDate = dateFormat.parse(beginTime);
-        } catch (ParseException e) {
-            log.error("parse time error. [time]: {}", beginTime);
-            return "";
-        }
+
         String[] splitDate = beginDate.split("-");
         String year = splitDate[0];
         String month = splitDate[1];
@@ -140,13 +127,7 @@ public enum GenerateCronUtil {
      * @return cron表达式
      */
     public String generateMonthlyCronByPeriodAndTime(String beginDate, String beginTime, String day) {
-        Date parsedDate;
-        try {
-            parsedDate = dateFormat.parse(beginTime);
-        } catch (ParseException e) {
-            log.error("parse time error. [time]: {}", beginTime);
-            return "";
-        }
+
         String[] splitTime = beginTime.split(":");
         String hour = splitTime[0];
         String minute = splitTime[1];
