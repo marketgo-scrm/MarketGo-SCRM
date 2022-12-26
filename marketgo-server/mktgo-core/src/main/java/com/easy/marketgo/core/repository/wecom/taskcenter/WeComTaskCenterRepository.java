@@ -76,8 +76,8 @@ public interface WeComTaskCenterRepository extends CrudRepository<WeComTaskCente
     int updateTaskVersion(@Param("id") Integer id, @Param("version") Integer version);
 
     @Modifying
-    @Query("UPDATE wecom_task_center SET remind_time = :remind_time  WHERE uuid=:uuid")
-    int updateTaskRemindTime(@Param("remind_time") Date remindTime, @Param("uuid") String uuid);
+    @Query("UPDATE wecom_task_center SET execute_time = :execute_time  WHERE uuid=:uuid")
+    int updateTaskExecuteTime(@Param("execute_time") Date remindTime, @Param("uuid") String uuid);
 
     @Modifying
     @Query("DELETE FROM wecom_task_center WHERE uuid IN (:uuids) AND task_status IN (:statuses)")
