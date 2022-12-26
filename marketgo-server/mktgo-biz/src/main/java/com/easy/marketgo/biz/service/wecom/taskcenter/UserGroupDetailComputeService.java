@@ -234,7 +234,7 @@ public class UserGroupDetailComputeService {
         }
 
         for (WeComTaskCenterEntity entity : entities) {
-            long startOfDay = DateUtil.endOfDay(entity.getRepeatStartTime()).getTime();
+            long startOfDay = DateUtil.beginOfDay(entity.getRepeatStartTime()).getTime();
             long endOfDay = DateUtil.endOfDay(entity.getRepeatEndTime()).getTime();
             long currentTime = System.currentTimeMillis();
 
