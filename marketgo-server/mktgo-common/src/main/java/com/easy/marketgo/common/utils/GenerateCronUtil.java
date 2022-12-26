@@ -16,11 +16,11 @@ import java.util.Date;
  * Describe:
  */
 @Slf4j
-public class GenerateCronUtil {
+public enum  GenerateCronUtil {
     /**
      * 单例
      */
-//    INSTANCE;
+    INSTANCE;
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final SimpleDateFormat weekFormat = new SimpleDateFormat("E");
