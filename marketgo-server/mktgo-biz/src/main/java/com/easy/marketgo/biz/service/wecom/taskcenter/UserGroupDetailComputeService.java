@@ -239,7 +239,8 @@ public class UserGroupDetailComputeService {
             long currentTime = System.currentTimeMillis();
 
             if (currentTime > endOfDay || currentTime < startOfDay) {
-                log.info("query task center is not start or finish. entity={}", entity);
+                log.info("query task center is not start or finish. currentTime={}, startTime={}, endTime={}, " +
+                        "entity={}", currentTime, startOfDay, endOfDay, entity);
                 continue;
             }
             String[] startDate = DateUtil.formatDateTime(entity.getRepeatStartTime()).split(" ");
