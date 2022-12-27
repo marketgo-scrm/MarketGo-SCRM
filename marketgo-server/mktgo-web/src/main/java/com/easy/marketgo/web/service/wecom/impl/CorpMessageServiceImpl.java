@@ -15,18 +15,22 @@ import com.easy.marketgo.common.constants.Constants;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.WeComCorpConfigStepEnum;
 import com.easy.marketgo.common.exception.CommonException;
+import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.RandomUtils;
 import com.easy.marketgo.core.entity.ProjectConfigEntity;
 import com.easy.marketgo.core.entity.TenantConfigEntity;
 import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.WeComCorpMessageEntity;
+import com.easy.marketgo.core.redis.RedisService;
 import com.easy.marketgo.core.repository.wecom.ProjectConfigRepository;
 import com.easy.marketgo.core.repository.wecom.TenantConfigRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.WeComCorpMessageRepository;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
+import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.web.model.response.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
@@ -38,7 +42,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author : kevinwang
@@ -69,6 +75,9 @@ public class CorpMessageServiceImpl implements CorpMessageService {
 
     @Autowired
     private XxlJobManualTriggerService xxlJobManualTriggerService;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public BaseResponse checkAgentParams(String projectId, String corpId, String agentId, String secret) {
@@ -206,7 +215,8 @@ public class CorpMessageServiceImpl implements CorpMessageService {
                 throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
             }
 
-            TenantConfigEntity tenantConfigEntity = tenantConfigRepository.findByUuid(projectConfigEntity.getTenantUuid());
+            TenantConfigEntity tenantConfigEntity =
+                    tenantConfigRepository.findByUuid(projectConfigEntity.getTenantUuid());
             if (tenantConfigEntity == null) {
                 throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
             }
@@ -235,9 +245,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
     }
 
     @Override
-    public WeComCorpCallbackResponse getCallbackConfig(String projectId, String corpId, String configType) {
-
-        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorpId(corpId);
+    public BaseResponse getCallbackConfig(String projectId, String corpId, String configType) {
         ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);
         if (projectConfigEntity == null) {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
@@ -247,19 +255,19 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         if (tenantConfigEntity == null) {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
         }
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorp(projectId, corpId);
+        log.info("start to query corp message. corpId={}, entity={}", corpId, entity);
         WeComCorpCallbackResponse response = new WeComCorpCallbackResponse();
         if (configType.equals(WeComCorpConfigStepEnum.CONTACTS_MSG.getValue())) {
             response.setToken(entity.getContactsToken());
             response.setEncodingAesKey(entity.getContactsEncodingAesKey());
-            //TUDO 添加配置
             response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CONSTACTS + corpId);
-        } else if (configType.equals(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
+        } else {
             response.setToken(entity.getExternalUserToken());
             response.setEncodingAesKey(entity.getExternalUserEncodingAesKey());
-            //TUDO 添加配置
             response.setCallbackUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_CALLBACK_CUSTOMER + corpId);
         }
-        return response;
+        return BaseResponse.success(response);
     }
 
     @Override
@@ -271,6 +279,46 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         RpcResponse<WeComQueryExternalUserDetailClientResponse> responseRpcResponse =
                 weComExternalUserRpcService.queryExternalUserDetail(request);
         System.out.println("responseRpcResponse= " + responseRpcResponse);
+    }
+
+    @Override
+    public BaseResponse updateOrInsertForwardServer(String projectId, String corpId, String configType,
+                                                    WeComForwardServerMessageRequest request) {
+        log.info("start to save corp forward server message. corpId={}, request={}", corpId, request);
+        try {
+            if (request == null || CollectionUtils.isEmpty(request.getForwardServer())) {
+                throw new CommonException(ErrorCodeEnum.ERROR_WEB_PARAM_IS_ILLEGAL);
+            }
+            String message = request.getForwardServer().stream().collect(Collectors.joining(","));
+            log.info("save corp forward server message. corpId={}, request={}, message={}", corpId, request, message);
+            if (configType.equals(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
+                weComCorpMessageRepository.updateForwardCustomerAddressByCorpId(projectId, corpId, message);
+                redisService.set(String.format(Constants.WECOM_CALLBACK_CUSTOMER_FORWARD_URL, corpId), message, 0L);
+            } else {
+                weComCorpMessageRepository.updateForwardAddressByCorpId(projectId, corpId, message);
+                redisService.set(String.format(Constants.WECOM_CALLBACK_FORWARD_URL, corpId), message, 0L);
+            }
+            return BaseResponse.success();
+        } catch (Exception e) {
+            log.error("failed to save corp forward server message. corpId={}, request={}", corpId, request, e);
+        }
+        return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_CDP_FORWARD_SETTING);
+    }
+
+    @Override
+    public BaseResponse getForwardServer(String projectId, String corpId, String configType) {
+        log.info("start to get corp forward server message. corpId={}", corpId);
+        WeComForwardServerMessageResponse response = new WeComForwardServerMessageResponse();
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorp(projectId, corpId);
+        if (entity != null && StringUtils.isNotEmpty(entity.getForwardAddress())) {
+            if (configType.equals(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
+                response.setForwardServer(Arrays.asList(entity.getForwardCustomerAddress().split(",")));
+            } else {
+                response.setForwardServer(Arrays.asList(entity.getForwardAddress().split(",")));
+            }
+        }
+        log.info("get corp forward server message. response={}", response);
+        return BaseResponse.success(response);
     }
 
 }

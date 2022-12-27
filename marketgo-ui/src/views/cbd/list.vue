@@ -4,51 +4,47 @@
     <div class="content">
       <el-row class="row" :gutter="20" v-for="(row, idx) of list" :key="idx">
         <el-col :span="8" v-for="cdp of row" :key="cdp.cdpType">
-          <div class="grid-content bg-purple">
+          <div
+            :class="['grid-content', { enable: cdp.switchStatus }]"
+            @click="
+              cdp.configStatus
+                ? setCdpStatus(cdp.cdpType, !cdp.switchStatus)
+                : ''
+            "
+          >
             <div class="icon">
-              <img :src="require('@/assets/cdp/' + cdp.cdpType + '.png')" />
+              <img :src="require(`@/assets/cdp/${cdp.cdpType}.png`)" />
             </div>
             <div class="info">
               <div class="name">
                 {{ cdp.cdpName }}
-                <span class="action" @click="setCdp(cdp)">{{
+                <span class="action" @click.stop="setCdp(cdp)">{{
                   cdp.configStatus ? "设置" : "未设置"
                 }}</span>
               </div>
               <div class="desc">{{ cdp.desc }}</div>
             </div>
-            <el-tooltip
-              effect="dark"
-              :content="
-                cdp.configStatus ? (cdp.switchStatus ? '禁用' : '启用') : ''
+            <div
+              :class="[
+                'fl-r',
+                { enable: cdp.configStatus },
+                { suc: cdp.switchStatus },
+              ]"
+              @click="
+                cdp.configStatus
+                  ? setCdpStatus(cdp.cdpType, !cdp.switchStatus)
+                  : ''
               "
-              placement="top"
-              :disabled="!cdp.configStatus"
             >
-              <div
-                :class="[
-                  'fl-r',
-                  { enable: cdp.configStatus },
-                  { suc: cdp.switchStatus },
-                ]"
-                @click="
-                  cdp.configStatus
-                    ? setCdpStatus(cdp.cdpType, !cdp.switchStatus)
-                    : ''
-                "
-              >
-                <div>
-                  <i
-                    :class="
-                      cdp.switchStatus ? 'el-icon-success' : 'el-icon-warning'
-                    "
-                  ></i>
-                </div>
-                <div>
-                  <span>{{ cdp.switchStatus ? "已启用" : "未启用" }}</span>
-                </div>
+              <div>
+                <i
+                  :class="cdp.switchStatus ? 'el-icon-success' : 'icon-circle'"
+                ></i>
               </div>
-            </el-tooltip>
+              <div>
+                <span>{{ cdp.switchStatus ? "已启用" : "未启用" }}</span>
+              </div>
+            </div>
           </div></el-col
         >
       </el-row>
@@ -157,17 +153,22 @@ export default {
         padding: 20px 26px;
         display: flex;
         position: relative;
+        &.enable {
+          background: #f4f8ff;
+          border: 2px solid #679bff;
+        }
         &:hover {
           box-shadow: 0px 0px 10px 0px #679bff;
           cursor: pointer;
         }
         .icon {
-          width: 43px;
-          height: 43px;
+          width: 42px;
+          height: 42px;
           display: flex;
           align-items: center;
           img {
             width: 100%;
+            max-height: 100%;
           }
         }
         .info {
@@ -203,6 +204,14 @@ export default {
           }
           span {
             font-size: 12px;
+          }
+          .icon-circle {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: none;
+            display: inline-block;
+            border: 1px solid #cacaca;
           }
           &.enable {
             cursor: pointer;

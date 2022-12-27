@@ -7,6 +7,7 @@
         :rules="rules"
         ref="ruleForm"
         label-width="100px"
+        label-position="left"
       >
         <el-form-item label="API Secret" prop="apiSecret">
           <el-input v-model="formData.apiSecret"></el-input>
@@ -21,11 +22,11 @@
           <el-input v-model="formData.projectName"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button size="medium" style="width: 160px" round @click="unbind"
+          <el-button size="small" style="width: 162px" round @click="unbind"
             >解除绑定</el-button
           >
           <el-button
-            size="medium"
+            size="small"
             :icon="
               isTest
                 ? testFlag 
@@ -34,7 +35,7 @@
                 : ''
             "
             :loading="loading"
-            style="width: 160px"
+            style="width: 162px;margin-left:8px;padding: 9px 0px;"
             round
             @click="testbind('ruleForm')"
             >{{              isTest
@@ -44,8 +45,8 @@
                 : '绑定测试'}}</el-button
           >
           <el-button
-            size="medium"
-            style="width: 100px"
+            size="small"
+            style="width: 100px;margin-left:8px;"
             type="primary"
             round
             @click="bind('ruleForm')"
@@ -246,11 +247,11 @@ export default {
       width: 440px;
     }
     ::v-deep(.el-icon-success) {
-      font-size: 17px;
+      font-size: 14px;
       color: #67c23a;
     }
     ::v-deep(.el-icon-warning) {
-      font-size: 17px;
+      font-size: 14px;
       color: #e6a23c;
     }
   }

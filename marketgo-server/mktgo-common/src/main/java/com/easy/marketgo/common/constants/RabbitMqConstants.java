@@ -90,4 +90,14 @@ public class RabbitMqConstants {
 
     public static final String ROUTING_KEY_WECOM_LIVE_CODE_EXTERNAL_USER = "wecom.live_code.external_user.routing.key";
     public static final String QUEUE_NAME_WECOM_LIVE_CODE_EXTERNAL_USER = "wecom.live_code.external_user.queue";
+
+    public static final String EXCHANGE_NAME_WECOM_MEMBER_FORWARD = "wecom.member.forward.exchange";
+
+    public static final String ROUTING_KEY_WECOM_MEMBER_FORWARD  = "wecom.member.forward.routing.key";
+    public static final String QUEUE_NAME_WECOM_MEMBER_FORWARD  = "wecom.member.forward.queue";
+
+    public static final String EXCHANGE_NAME_WECOM_EXTERNAL_USER_FORWARD = "wecom.external_user.forward.exchange";
+
+    public static final String ROUTING_KEY_WECOM_EXTERNAL_USER_FORWARD = "wecom.external_user.forward.routing.key";
+    public static final String QUEUE_NAME_WECOM_EXTERNAL_USER_FORWARD = "wecom.external_user.forward.queue";
 }

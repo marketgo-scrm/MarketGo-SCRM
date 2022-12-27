@@ -16,15 +16,16 @@ public enum ErrorCodeEnum {
      * 错误码范围1000-1999
      */
 
-//    ERROR_PARAM_IS_EMPTY(1001, "请求参数异常"),
+    ERROR_WEB_PARAM_IS_ILLEGAL(1001, "请求参数不合法，请检查参数正确性"),
     ERROR_WEB_AGENT_PARAM(1002, "请求应用参数错误"),
     ERROR_NOT_SUPPORT_MASS_TASK(1003, "不支持的企微群发类型"),
     ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME(1004, "企微活动重名，请修改名称"),
     ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME(1005, "企微群发任务名称检查失败"),
 
 
-    ERROR_WEB_PARAM_IS_ILLEGAL(1001, "请求参数不合法，请检查参数正确性"),
+
     ERROR_WEB_WECOM_MASS_TASK_NOT_SUPPORT_CHANGE(1010, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),
+
     ERROR_WEB_MEDIA_UNSUPPORTED_FILE_TYPE(1100, "不支持的文件类型"),
     ERROR_WEB_MEDIA_UPLOAD_FAILED(1101, "企业微信素材文件上传失败。"),
     ERROR_WEB_PROJECT_IS_ILLEGAL(1102, "项目信息查询失败。"),
@@ -40,6 +41,7 @@ public enum ErrorCodeEnum {
     ERROR_WEB_QUERY_USER_GROUP_MESSAGE_IS_EMPTY(1112, "查询人群信息失败，人群信息不存在"),
     ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_NAME_EMPTY(1113, "上传的文件名称是空"),
     ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY(1114, "上传的文件中没有数据"),
+
     ERROR_WEB_INTERNAL_SERVICE(1151, "服务内部出现异常，请检查相关服务是否运行正常"),
     ERROR_WEB_REQUEST_USER_GROUP_IS_EMPTY(1152, "数据库中没有查询到人群信息的记录"),
     ERROR_WEB_REQUEST_USER_COMP_IS_EMPTY(1153, "数据库中没有查询到员工信息的记录"),
@@ -55,6 +57,10 @@ public enum ErrorCodeEnum {
     ERROR_NOT_SUPPORT_ROLE(1163, "不支持授权超级管理员角色"),
     ERROR_WEB_LIVE_CODE_EXISTS(1164, "活码不存在"),
     ERROR_WEB_ROLE_DESC_EMPTY(1165, "角色不能为空"),
+
+
+
+    ERROR_WEB_CDP_FORWARD_SETTING(1200, "设置转发服务失败"),
     /**
      * 内部错误码定义
      * 模块-biz

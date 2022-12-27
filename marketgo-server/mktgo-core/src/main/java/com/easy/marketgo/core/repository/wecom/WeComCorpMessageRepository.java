@@ -37,7 +37,7 @@ public interface WeComCorpMessageRepository extends CrudRepository<WeComCorpMess
 
     @Query("SELECT * FROM wecom_corp_config WHERE corp_id = :corp_id AND project_uuid = :project_uuid")
     WeComCorpMessageEntity getCorpConfigByCorp(@Param("project_uuid") String projectUuid,
-                                                 @Param("corp_id") String corpId);
+                                               @Param("corp_id") String corpId);
 
     @Query("SELECT * FROM wecom_corp_config WHERE corp_id = :corp_id")
     WeComCorpMessageEntity getCorpConfigByCorpId(@Param("corp_id") String corpId);
@@ -47,4 +47,14 @@ public interface WeComCorpMessageRepository extends CrudRepository<WeComCorpMess
 
     @Query("SELECT * FROM wecom_corp_config WHERE project_uuid = :project_uuid")
     List<WeComCorpMessageEntity> getCorpConfigListByProjectUuid(@Param("project_uuid") String projectUuid);
+
+    @Modifying
+    @Query("UPDATE wecom_corp_config SET forward_address = :forwardAddress WHERE " +
+            "corp_id = :corpId AND project_uuid = :projectUuid")
+    int updateForwardAddressByCorpId(String projectUuid, String corpId, String forwardAddress);
+
+    @Modifying
+    @Query("UPDATE wecom_corp_config SET forward_customer_address = :forwardAddress WHERE " +
+            "corp_id = :corpId AND project_uuid = :projectUuid")
+    int updateForwardCustomerAddressByCorpId(String projectUuid, String corpId, String forwardAddress);
 }
