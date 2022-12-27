@@ -76,6 +76,25 @@ public class ForwardCallbackMsgBaseConsumer {
         }
     }
 
+    protected void sendWeComCustomerCallbackMsg(WeComForwardCallbackMsg sendData) {
+
+        if (sendData == null) {
+            return;
+        }
+
+        String value = redisService.get(String.format(Constants.WECOM_CALLBACK_CUSTOMER_FORWARD_URL, sendData.getCorpId()));
+
+        if (StringUtils.isBlank(value)) {
+            return;
+        }
+        List<String> url = Arrays.asList(value.split(","));
+        if (sendData.getMsgType() == HttpMethod.GET) {
+            sendWeComMemberCallbackMsgForGetRequest(sendData, url);
+        } else {
+            sendWeComMemberCallbackMsgForPostRequest(sendData, url);
+        }
+    }
+
     private void sendWeComMemberCallbackMsgForGetRequest(WeComForwardCallbackMsg sendData, List<String> url) {
         Map<String, String> params = Maps.newHashMap();
         params.put("msg_signature", sendData.getMsgSignature());

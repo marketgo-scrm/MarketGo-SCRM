@@ -59,15 +59,6 @@ public class UserGroupDetailComputeService {
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
     @Autowired
-    private WeComRelationMemberExternalUserRepository weComRelationMemberExternalUserRepository;
-
-    @Autowired
-    private WeComDepartmentRepository weComDepartmentRepository;
-
-    @Autowired
-    private WeComMemberMessageRepository weComMemberMessageRepository;
-
-    @Autowired
     private WeComGroupChatsRepository weComGroupChatsRepository;
 
     @Autowired
