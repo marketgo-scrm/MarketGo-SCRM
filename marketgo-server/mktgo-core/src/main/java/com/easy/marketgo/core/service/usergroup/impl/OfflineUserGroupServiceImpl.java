@@ -10,7 +10,6 @@ import com.easy.marketgo.core.service.usergroup.UserGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,7 +28,6 @@ public class OfflineUserGroupServiceImpl implements UserGroupService {
     @Autowired
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
-    @Async
     @Override
     public void userGroupEstimate(String projectId, String corpId, String requestId, String taskType, String userGroupRules) {
         if (StringUtils.isBlank(userGroupRules)) {

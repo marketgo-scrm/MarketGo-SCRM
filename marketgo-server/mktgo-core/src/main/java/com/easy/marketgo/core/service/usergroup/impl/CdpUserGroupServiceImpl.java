@@ -9,7 +9,6 @@ import com.easy.marketgo.core.service.usergroup.UserGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,7 +24,6 @@ public class CdpUserGroupServiceImpl implements UserGroupService {
     @Autowired
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
-    @Async
     @Override
     public void userGroupEstimate(String projectId, String corpId, String requestId, String taskType, String userGroupRules) {
 
