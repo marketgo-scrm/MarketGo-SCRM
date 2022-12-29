@@ -3,7 +3,7 @@ package com.easy.marketgo.core.service.usergroup;
 import com.easy.marketgo.common.enums.UserGroupAudienceTypeEnum;
 import com.easy.marketgo.core.service.usergroup.impl.CdpUserGroupServiceImpl;
 import com.easy.marketgo.core.service.usergroup.impl.OfflineUserGroupServiceImpl;
-import com.easy.marketgo.core.service.usergroup.impl.WeComUserGroupServiceImpl;
+import com.easy.marketgo.core.service.usergroup.impl.WeComUserGroupManagerImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ public class WeComUserGroupStrategyFactory {
     private OfflineUserGroupServiceImpl offlineUserGroupService;
 
     @Autowired
-    private WeComUserGroupServiceImpl weComUserGroupService;
+    private WeComUserGroupManagerImpl weComUserGroupService;
 
     @PostConstruct
     private void init() {

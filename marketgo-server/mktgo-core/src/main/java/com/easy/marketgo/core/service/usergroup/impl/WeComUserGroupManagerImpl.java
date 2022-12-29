@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class WeComUserGroupServiceImpl implements UserGroupService {
+public class WeComUserGroupManagerImpl implements UserGroupService {
 
     @Autowired
     private WeComTaskTypeStrategyFactory weComTaskTypeStrategyFactory;
