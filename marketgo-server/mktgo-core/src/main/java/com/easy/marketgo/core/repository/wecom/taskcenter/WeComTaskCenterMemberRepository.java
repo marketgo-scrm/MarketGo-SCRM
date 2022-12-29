@@ -1,6 +1,7 @@
 package com.easy.marketgo.core.repository.wecom.taskcenter;
 
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
+import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberEntity;
 import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -16,8 +17,7 @@ import java.util.List;
  * @data : 12/24/22 9:20 PM
  * Describe:
  */
-public interface WeComTaskCenterRepository extends CrudRepository<WeComTaskCenterEntity, Long>,
-        WeComTaskCenterCustomizedRepository {
+public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTaskCenterMemberEntity, Long>{
 
     @Query("SELECT * FROM wecom_task_center WHERE project_uuid = :project_uuid AND name = :name")
     WeComTaskCenterEntity getTaskCenterByName(@Param("project_uuid") String projectUuid,
@@ -42,8 +42,8 @@ public interface WeComTaskCenterRepository extends CrudRepository<WeComTaskCente
     @Query("SELECT * FROM wecom_task_center WHERE task_type = :task_type AND schedule_type IN (:schedule_type) AND ( " +
             "execute_time is not null AND DATE_ADD(NOW(), INTERVAL :minute MINUTE) >execute_time)")
     List<WeComTaskCenterEntity> getWeComMassTaskByExecuteTime(@Param("minute") int minute,
-                                                               @Param("task_type") String taskType,
-                                                               @Param("schedule_type") List<String> scheduleType);
+                                                              @Param("task_type") String taskType,
+                                                              @Param("schedule_type") List<String> scheduleType);
 
     @Query("SELECT * FROM wecom_task_center WHERE id = :id AND project_uuid = :project_uuid AND task_type = :task_type")
     WeComTaskCenterEntity getByProjectIdTypeAndId(@Param("project_uuid") String projectUuid,

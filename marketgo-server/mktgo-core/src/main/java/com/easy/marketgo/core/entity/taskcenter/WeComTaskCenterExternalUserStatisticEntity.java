@@ -1,6 +1,6 @@
 package com.easy.marketgo.core.entity.taskcenter;
 
-import com.easy.marketgo.core.entity.BaseEntity;
+import com.easy.marketgo.core.entity.UuidBaseEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.data.relational.core.mapping.Table;
@@ -16,7 +16,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @Table("wecom_task_center_statistic_external_user")
-public class WeComTaskCenterExternalUserStatisticEntity extends BaseEntity {
+public class WeComTaskCenterExternalUserStatisticEntity extends UuidBaseEntity {
     private String projectUuid;
     private String taskUuid;
     private String memberId;
@@ -24,5 +24,5 @@ public class WeComTaskCenterExternalUserStatisticEntity extends BaseEntity {
     private String externalUserName;
     private String externalUserType;
     private String status;
-    private Date addCommentsTime;
+    private Date addTime;
 }

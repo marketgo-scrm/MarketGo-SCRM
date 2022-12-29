@@ -1,0 +1,237 @@
+package com.easy.marketgo.biz.service.wecom.taskcenter;
+
+import cn.hutool.core.util.IdUtil;
+import com.easy.marketgo.api.model.request.masstask.WeComMomentMassTaskClientRequest;
+import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
+import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.core.entity.WeComMediaResourceEntity;
+import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
+import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberEntity;
+import com.easy.marketgo.core.model.bo.WeComSendMassTaskContent;
+import com.easy.marketgo.core.model.taskcenter.WeComMomentTaskCenterRequest;
+import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterRequest;
+import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
+import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author : kevinwang
+ * @version : 1.0
+ * @data : 8/12/22 5:57 PM
+ * Describe:
+ */
+@Slf4j
+@Component
+public class SendBaseTaskCenterProducer {
+
+    protected static final Integer TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE = 1;
+
+    @Autowired
+    private WeComMediaResourceRepository weComMediaResourceRepository;
+
+    @Autowired
+    private WeComTaskCenterMemberRepository weComTaskCenterMemberRepository;
+
+    public WeComTaskCenterRequest buildTaskCenterContent(String type, String messageType, String content) {
+        WeComTaskCenterRequest request = new WeComTaskCenterRequest();
+        List<WeComSendMassTaskContent> weComSendMassTaskContents = JsonUtils.toArray(content,
+                WeComSendMassTaskContent.class);
+        request.setChatType(type);
+        request.setMessageType(messageType);
+        List<String> mediaUuids = new ArrayList<>();
+        List<WeComTaskCenterRequest.AttachmentsMessage> attachments = new ArrayList<>();
+        weComSendMassTaskContents.forEach(weComSendMassTaskContent -> {
+            if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.TEXT) {
+                WeComTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComTaskCenterRequest.AttachmentsMessage();
+                WeComTaskCenterRequest.TextMessage textMessage = new WeComTaskCenterRequest.TextMessage();
+                textMessage.setContent(weComSendMassTaskContent.getText().getContent());
+                attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.TEXT.getValue().toLowerCase());
+                attachmentsMessage.setText(textMessage);
+                attachments.add(attachmentsMessage);
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.IMAGE) {
+                WeComTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComTaskCenterRequest.AttachmentsMessage();
+                WeComTaskCenterRequest.ImageAttachmentsMessage imageAttachmentsMessage =
+                        new WeComTaskCenterRequest.ImageAttachmentsMessage();
+                if (weComSendMassTaskContent.getImage() != null && StringUtils.isNotBlank(weComSendMassTaskContent.getImage().getMediaUuid())) {
+                    mediaUuids.add(weComSendMassTaskContent.getImage().getMediaUuid());
+                    imageAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getImage().getMediaUuid()));
+                    imageAttachmentsMessage.setImageContent(weComSendMassTaskContent.getImage().getImageContent());
+                    attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.IMAGE.getValue().toLowerCase());
+                    attachmentsMessage.setImage(imageAttachmentsMessage);
+                    attachments.add(attachmentsMessage);
+                }
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.LINK) {
+                WeComTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComTaskCenterRequest.AttachmentsMessage();
+                WeComTaskCenterRequest.LinkAttachmentsMessage linkAttachmentsMessage =
+                        new WeComTaskCenterRequest.LinkAttachmentsMessage();
+                if (weComSendMassTaskContent.getLink() != null &&
+                        StringUtils.isNotBlank(weComSendMassTaskContent.getLink().getTitle()) &&
+                        StringUtils.isNotBlank(weComSendMassTaskContent.getLink().getUrl())) {
+                    linkAttachmentsMessage.setTitle(weComSendMassTaskContent.getLink().getTitle());
+                    if (StringUtils.isNotBlank(weComSendMassTaskContent.getLink().getDesc())) {
+                        linkAttachmentsMessage.setDesc(weComSendMassTaskContent.getLink().getDesc());
+                    }
+                    if (StringUtils.isNotBlank(weComSendMassTaskContent.getLink().getUrl())) {
+                        linkAttachmentsMessage.setUrl(weComSendMassTaskContent.getLink().getUrl());
+                    }
+                    if (StringUtils.isNotBlank(weComSendMassTaskContent.getLink().getMediaUuid())) {
+                        linkAttachmentsMessage.setPicUrl(queryMediaId(weComSendMassTaskContent.getLink().getMediaUuid()));
+                        mediaUuids.add(weComSendMassTaskContent.getLink().getMediaUuid());
+                    }
+
+                    attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.LINK.getValue().toLowerCase());
+                    attachmentsMessage.setLink(linkAttachmentsMessage);
+                    attachments.add(attachmentsMessage);
+                }
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.MINIPROGRAM) {
+                WeComTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComTaskCenterRequest.AttachmentsMessage();
+                WeComTaskCenterRequest.MiniProgramAttachmentsMessage miniProgramAttachmentsMessage =
+                        new WeComTaskCenterRequest.MiniProgramAttachmentsMessage();
+                if (weComSendMassTaskContent.getMiniProgram() != null &&
+                        StringUtils.isNotBlank(weComSendMassTaskContent.getMiniProgram().getTitle())) {
+                    miniProgramAttachmentsMessage.setTitle(weComSendMassTaskContent.getMiniProgram().getTitle());
+                    miniProgramAttachmentsMessage.setAppId(weComSendMassTaskContent.getMiniProgram().getAppId());
+                    miniProgramAttachmentsMessage.setPage(weComSendMassTaskContent.getMiniProgram().getPage());
+                    mediaUuids.add(weComSendMassTaskContent.getMiniProgram().getMediaUuid());
+                    miniProgramAttachmentsMessage.setPicMediaId(queryMediaId(weComSendMassTaskContent.getMiniProgram().getMediaUuid()));
+                    miniProgramAttachmentsMessage.setImageContent(weComSendMassTaskContent.getMiniProgram().getImageContent());
+                    attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.MINIPROGRAM.getValue().toLowerCase());
+                    attachmentsMessage.setMiniProgram(miniProgramAttachmentsMessage);
+                    attachments.add(attachmentsMessage);
+                }
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.VIDEO) {
+                WeComTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComTaskCenterRequest.AttachmentsMessage();
+                WeComTaskCenterRequest.VideoAttachmentsMessage videoAttachmentsMessage =
+                        new WeComTaskCenterRequest.VideoAttachmentsMessage();
+
+                mediaUuids.add(weComSendMassTaskContent.getVideo().getMediaUuid());
+                videoAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getVideo().getMediaUuid()));
+                videoAttachmentsMessage.setImageContent(weComSendMassTaskContent.getVideo().getImageContent());
+                attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.VIDEO.getValue().toLowerCase());
+                attachmentsMessage.setVideo(videoAttachmentsMessage);
+                attachments.add(attachmentsMessage);
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.FILE) {
+                WeComTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComTaskCenterRequest.AttachmentsMessage();
+                WeComTaskCenterRequest.FileAttachmentsMessage fileAttachmentsMessage =
+                        new WeComTaskCenterRequest.FileAttachmentsMessage();
+                mediaUuids.add(weComSendMassTaskContent.getFile().getMediaUuid());
+                fileAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getFile().getMediaUuid()));
+
+                attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.FILE.getValue().toLowerCase());
+                attachmentsMessage.setFile(fileAttachmentsMessage);
+                attachments.add(attachmentsMessage);
+            }
+        });
+        if (CollectionUtils.isNotEmpty(attachments)) {
+            request.setAttachments(attachments);
+        }
+        if (CollectionUtils.isNotEmpty(mediaUuids)) {
+            finishUpdateMediaId(mediaUuids);
+        }
+        return request;
+    }
+
+    public WeComMomentTaskCenterRequest buildMomentTaskCenterContent(String content) {
+        WeComMomentTaskCenterRequest request = new WeComMomentTaskCenterRequest();
+        List<WeComSendMassTaskContent> weComSendMassTaskContents = JsonUtils.toArray(content,
+                WeComSendMassTaskContent.class);
+        List<String> mediaUuids = new ArrayList<>();
+        List<WeComMomentTaskCenterRequest.AttachmentsMessage> attachments = new ArrayList<>();
+        weComSendMassTaskContents.forEach(weComSendMassTaskContent -> {
+            if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.TEXT) {
+                WeComMomentTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComMomentTaskCenterRequest.AttachmentsMessage();
+                WeComMomentTaskCenterRequest.TextMessage textAttachmentsMessage =
+                        new WeComMomentTaskCenterRequest.TextMessage();
+                WeComMomentTaskCenterRequest.TextMessage textMessage =
+                        new WeComMomentTaskCenterRequest.TextMessage();
+                textMessage.setContent(weComSendMassTaskContent.getText().getContent());
+                attachmentsMessage.setText(textAttachmentsMessage);
+                attachments.add(attachmentsMessage);
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.IMAGE) {
+                WeComMomentTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComMomentTaskCenterRequest.AttachmentsMessage();
+                WeComMomentTaskCenterRequest.ImageAttachmentsMessage imageAttachmentsMessage =
+                        new WeComMomentTaskCenterRequest.ImageAttachmentsMessage();
+                imageAttachmentsMessage.setImageContent(weComSendMassTaskContent.getImage().getImageContent());
+                mediaUuids.add(weComSendMassTaskContent.getImage().getMediaUuid());
+                imageAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getImage().getMediaUuid()));
+                attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.IMAGE.getValue().toLowerCase());
+                attachmentsMessage.setImage(imageAttachmentsMessage);
+                attachments.add(attachmentsMessage);
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.LINK) {
+                WeComMomentTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComMomentTaskCenterRequest.AttachmentsMessage();
+                WeComMomentTaskCenterRequest.LinkAttachmentsMessage linkAttachmentsMessage =
+                        new WeComMomentTaskCenterRequest.LinkAttachmentsMessage();
+                linkAttachmentsMessage.setTitle(weComSendMassTaskContent.getLink().getTitle());
+                linkAttachmentsMessage.setMediaId(weComSendMassTaskContent.getLink().getUrl());
+                mediaUuids.add(weComSendMassTaskContent.getLink().getMediaUuid());
+                linkAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getLink().getMediaUuid()));
+
+                attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.LINK.getValue().toLowerCase());
+                attachmentsMessage.setLink(linkAttachmentsMessage);
+                attachments.add(attachmentsMessage);
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.VIDEO) {
+                WeComMomentTaskCenterRequest.AttachmentsMessage attachmentsMessage =
+                        new WeComMomentTaskCenterRequest.AttachmentsMessage();
+                WeComMomentTaskCenterRequest.VideoAttachmentsMessage videoAttachmentsMessage =
+                        new WeComMomentTaskCenterRequest.VideoAttachmentsMessage();
+                mediaUuids.add(weComSendMassTaskContent.getVideo().getMediaUuid());
+                videoAttachmentsMessage.setImageContent(weComSendMassTaskContent.getVideo().getImageContent());
+                videoAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getVideo().getMediaUuid()));
+
+                attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.VIDEO.getValue().toLowerCase());
+                attachmentsMessage.setVideo(videoAttachmentsMessage);
+                attachments.add(attachmentsMessage);
+            }
+        });
+        if (CollectionUtils.isNotEmpty(attachments)) {
+            request.setAttachments(attachments);
+        }
+        if (CollectionUtils.isNotEmpty(mediaUuids)) {
+            finishUpdateMediaId(mediaUuids);
+        }
+        return request;
+    }
+
+    private String queryMediaId(String uuid) {
+        WeComMediaResourceEntity entity = weComMediaResourceRepository.queryByUuid(uuid);
+        if (entity == null) return null;
+        return entity.getMediaId();
+    }
+
+    private void finishUpdateMediaId(List<String> mediaUuids) {
+        weComMediaResourceRepository.updateMediaByUuid(mediaUuids);
+    }
+
+    protected String saveMemberTask(WeComTaskCenterEntity entity, String memberId) {
+        WeComTaskCenterMemberEntity memberEntity = new WeComTaskCenterMemberEntity();
+        memberEntity.setUuid(IdUtil.simpleUUID());
+        memberEntity.setCorpId(entity.getCorpId());
+        memberEntity.setMemberId(memberId);
+        memberEntity.setName(entity.getName());
+        memberEntity.setTaskType(entity.getTaskType());
+        memberEntity.setTaskType("TASK_CENTER");
+        memberEntity.setProjectUuid(entity.getProjectUuid());
+        memberEntity.setScheduleType(entity.getScheduleType());
+        memberEntity.setTaskTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue()) ?
+                entity.getExecuteTime() : entity.getScheduleTime());
+
+        weComTaskCenterMemberRepository.save(memberEntity);
+        return memberEntity.getUuid();
+    }
+}

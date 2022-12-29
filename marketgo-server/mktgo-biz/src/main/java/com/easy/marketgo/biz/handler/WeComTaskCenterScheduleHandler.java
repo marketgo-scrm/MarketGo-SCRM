@@ -1,12 +1,9 @@
 package com.easy.marketgo.biz.handler;
 
-import com.easy.marketgo.biz.service.wecom.QueryUserGroupDetailService;
-import com.easy.marketgo.biz.service.wecom.masstask.QueryMassTaskMetricsService;
-import com.easy.marketgo.biz.service.wecom.masstask.SendGroupMassTaskProducer;
-import com.easy.marketgo.biz.service.wecom.masstask.SendMomentMassTaskProducer;
-import com.easy.marketgo.biz.service.wecom.masstask.SendSingleMassTaskProducer;
+import com.easy.marketgo.biz.service.wecom.taskcenter.SendGroupTaskCenterProducer;
+import com.easy.marketgo.biz.service.wecom.taskcenter.SendMomentTaskCenterProducer;
+import com.easy.marketgo.biz.service.wecom.taskcenter.SendSingleTaskCenterProducer;
 import com.easy.marketgo.biz.service.wecom.taskcenter.UserGroupDetailComputeService;
-import com.easy.marketgo.common.enums.WeComMassTaskSendIdType;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.annotation.XxlJob;
@@ -27,13 +24,13 @@ public class WeComTaskCenterScheduleHandler {
     private UserGroupDetailComputeService userGroupDetailComputeService;
 
     @Autowired
-    private SendSingleMassTaskProducer sendSingleMassTaskProducer;
+    private SendSingleTaskCenterProducer sendSingleTaskCenterProducer;
 
     @Autowired
-    private SendGroupMassTaskProducer sendGroupMassTaskProducer;
+    private SendGroupTaskCenterProducer sendGroupTaskCenterProducer;
 
     @Autowired
-    private SendMomentMassTaskProducer sendMomentMassTaskProducer;
+    private SendMomentTaskCenterProducer sendMomentTaskCenterProducer;
 
     @XxlJob(value = "taskCenterComputeUserGroupDetail")
     public ReturnT<String> computeUserGroupDetail() throws Exception {
@@ -46,10 +43,9 @@ public class WeComTaskCenterScheduleHandler {
 
     @XxlJob(value = "sendTaskCenterForUserGroup")
     public ReturnT<String> sendMassTaskForUserGroup() throws Exception {
-        sendSingleMassTaskProducer.sendSingleMassTask();
-        sendGroupMassTaskProducer.sendGroupMassTask();
-        sendMomentMassTaskProducer.sendMomentMassTask();
+        sendSingleTaskCenterProducer.sendSingleTask();
+        sendGroupTaskCenterProducer.sendGroupTask();
+        sendMomentTaskCenterProducer.sendMomentTask();
         return ReturnT.SUCCESS;
     }
-
 }

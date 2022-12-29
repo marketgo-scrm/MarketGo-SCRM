@@ -107,7 +107,7 @@ public class QueryUserGroupDetailService {
                 continue;
             }
 
-            if (weComUserGroupAudienceEntity.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.OFFLIEN_USER_GROUP.getValue())) {
+            if (weComUserGroupAudienceEntity.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.OFFLINE_USER_GROUP.getValue())) {
                 String offlineConditions = weComUserGroupAudienceEntity.getOfflineConditions();
                 if (StringUtils.isBlank(offlineConditions)) {
                     log.error("query offline user group conditions is empty. weComUserGroupAudienceEntity={}",

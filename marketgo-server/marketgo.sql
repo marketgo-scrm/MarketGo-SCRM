@@ -846,6 +846,7 @@ CREATE TABLE `wecom_task_center`
 DROP TABLE IF EXISTS `wecom_task_center_statistic_member`;
 CREATE TABLE `wecom_task_center_statistic_member` (
   `id`                   INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid`                     VARCHAR(64) NOT NULL COMMENT '业务主键',
   `project_uuid`         varchar(64) NOT NULL COMMENT '项目ID',
   `task_uuid`            VARCHAR(64) NOT NULL COMMENT '任务uuid',
   `member_id`              VARCHAR(128) NOT NULL COMMENT '员工的id',
@@ -867,6 +868,7 @@ CREATE TABLE `wecom_task_center_statistic_member` (
 DROP TABLE IF EXISTS `wecom_task_center_statistic_external_user`;
 CREATE TABLE `wecom_task_center_statistic_external_user` (
   `id`                   INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid`                     VARCHAR(64) NOT NULL COMMENT '业务主键',
   `project_uuid`         varchar(64) NOT NULL COMMENT '项目ID',
   `task_uuid`            VARCHAR(64) NOT NULL COMMENT '群发的任务uuid',
   `member_id`            VARCHAR(128) NOT NULL COMMENT '员工的id',
@@ -874,7 +876,28 @@ CREATE TABLE `wecom_task_center_statistic_external_user` (
   `external_user_name`     varchar(255) DEFAULT NULL COMMENT '客户的名称',
   `external_user_type`   varchar(24) DEFAULT NULL COMMENT '客户的类型',
   `status`                varchar(64) DEFAULT NULL COMMENT  '客户的任务执行状态',
-  `add_comments_time`     datetime     DEFAULT NULL COMMENT '客户的执行时间',
+  `add_time`              datetime     DEFAULT NULL COMMENT '客户的执行时间',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微任务中心的员工对应的客户统计';
+
+-- ----------------------------
+-- Table structure for wecom_task_center_member
+-- ----------------------------
+DROP TABLE IF EXISTS `wecom_task_center_member`;
+CREATE TABLE `wecom_task_center_member` (
+  `id`                   INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid`                     VARCHAR(64) NOT NULL COMMENT '业务主键',
+  `project_uuid`         varchar(64) NOT NULL COMMENT '项目ID',
+  `corp_id`                  VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+  `task_uuid`            VARCHAR(64) NOT NULL COMMENT '群发的任务uuid',
+  `name`                     VARCHAR(256)  DEFAULT NULL COMMENT '任务名称',
+  `member_id`            VARCHAR(128) NOT NULL COMMENT '员工的id',
+  `type`                 varchar(64) DEFAULT NULL COMMENT '群发任务 MASS_TASK, 任务中心 TASK_CENTER',
+  `task_type`           varchar(64) DEFAULT NULL COMMENT '任务类型:群发好友 SINGLE/群发客户群 GROUP/群发朋友圈 MOMENT',
+  `schedule_type`       VARCHAR(50)   DEFAULT NULL COMMENT '发送类型:立即发送 IMMEDIATE/定时发送 FIXED_TIME/周期发送 REPEAT_TIME',
+  `task_time`       datetime     DEFAULT NULL COMMENT '任务执行时间',
   `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
   `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
   PRIMARY KEY (`id`)

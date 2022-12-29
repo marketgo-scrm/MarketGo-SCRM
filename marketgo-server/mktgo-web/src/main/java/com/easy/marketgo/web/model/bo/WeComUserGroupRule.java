@@ -23,6 +23,12 @@ public class WeComUserGroupRule {
     private boolean excludeSwitch;
     @ApiModelProperty(value = "排除客户的人群条件详情")
     private ExternalUserMessage excludeExternalUsers;
+    @ApiModelProperty(value = "客户群的条件详情")
+    private GroupChatsMessage groupChats;
+    @ApiModelProperty(value = "排除客户群的开关")
+    private boolean excludeGroupChatSwitch;
+    @ApiModelProperty(value = "排除客户群条件详情")
+    private GroupChatsMessage excludeGroupChats;
 
     @Data
     public static class MembersMessage {
@@ -56,6 +62,34 @@ public class WeComUserGroupRule {
         private String relation;
         @ApiModelProperty(value = "标签列表")
         private List<WeComCorpTag> tags;
+    }
+
+    @Data
+    public static class GroupChatsMessage {
+        @ApiModelProperty(value = "是否是全部客户群")
+        private Boolean isAll;
+        @ApiModelProperty(value = "条件之间的关系， OR 或， AND 且")
+        private String relation;
+        @ApiModelProperty(value = "客户群名称选中的开关")
+        private boolean groupChatNameSwitch;
+        @ApiModelProperty(value = "客户群创建时间选中的开关")
+        private boolean createTimeSwitch;
+        @ApiModelProperty(value = "客户群列表选中开关")
+        private boolean groupChatsSwitch;
+        @ApiModelProperty(value = "客户群人数选中开关")
+        private boolean userCountSwitch;
+        @ApiModelProperty(value = "客户群人数的规则， GT 大于，GTE 大于或等于，LT 小于，LTE 小于或等于，EQ 等于 NEQ 不等于")
+        private String userCountRule;
+        @ApiModelProperty(value = "客户群人数")
+        private Long userCount;
+        @ApiModelProperty(value = "客户群名称")
+        private String groupChatName;
+        @ApiModelProperty(value = "客户群列表")
+        private List<GroupChatMessage> groupChats;
+        @ApiModelProperty(value = "创建的开始时间")
+        private String startTime;
+        @ApiModelProperty(value = "创建的结束时间")
+        private String endTime;
     }
 
 

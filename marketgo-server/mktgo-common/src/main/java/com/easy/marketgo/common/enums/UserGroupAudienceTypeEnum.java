@@ -14,7 +14,7 @@ public enum UserGroupAudienceTypeEnum {
 
     CDP_USER_GROUP("CDP"),
 
-    OFFLIEN_USER_GROUP("OFFLINE");
+    OFFLINE_USER_GROUP("OFFLINE");
 
     private String value;
 

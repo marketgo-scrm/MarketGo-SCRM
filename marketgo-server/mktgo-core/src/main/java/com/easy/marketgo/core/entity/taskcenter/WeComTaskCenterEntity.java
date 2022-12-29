@@ -70,6 +70,12 @@ public class WeComTaskCenterEntity extends UuidBaseEntity {
      * 关联人群预估UUID
      */
     private String userGroupUuid;
+
+    /**
+     * 消息类型：【SEND_MESSAGE】发送内容 【ASSIGN_TASK】指派任务
+     */
+    private String messageType;
+
     /**
      * 推送消息内容
      */
