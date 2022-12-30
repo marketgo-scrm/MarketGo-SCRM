@@ -1,6 +1,7 @@
 package com.easy.marketgo.core.repository.wecom.taskcenter;
 
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
+import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.model.bo.QueryMassTaskBuildSqlParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -20,7 +21,7 @@ import java.util.List;
  * Describe:
  */
 public interface WeComTaskCenterCustomizedRepository {
-    List<WeComMassTaskEntity> listByBuildSqlParam(QueryMassTaskBuildSqlParam massTaskParam);
+    List<WeComTaskCenterEntity> listByBuildSqlParam(QueryMassTaskBuildSqlParam massTaskParam);
 
     Integer countByBuildSqlParam(QueryMassTaskBuildSqlParam massTaskParam);
 
@@ -30,7 +31,7 @@ public interface WeComTaskCenterCustomizedRepository {
         private DataSource dataSource;
 
         @Override
-        public List<WeComMassTaskEntity> listByBuildSqlParam(QueryMassTaskBuildSqlParam massTaskParam) {
+        public List<WeComTaskCenterEntity> listByBuildSqlParam(QueryMassTaskBuildSqlParam massTaskParam) {
             BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(massTaskParam);
             return new NamedParameterJdbcTemplate(this.dataSource).query(getSelectByCndSql(massTaskParam, false),
                     paramSource, new BeanPropertyRowMapper(WeComMassTaskEntity.class));
@@ -46,7 +47,8 @@ public interface WeComTaskCenterCustomizedRepository {
 
         private String getSelectByCndSql(QueryMassTaskBuildSqlParam massTaskParam, boolean isCount) {
             StringBuilder sql = new StringBuilder(
-                    String.format("SELECT %s FROM wecom_mass_task WHERE project_uuid = :projectUuid AND task_type = " +
+                    String.format("SELECT %s FROM wecom_task_center WHERE project_uuid = :projectUuid AND task_type =" +
+                            " " +
                             ":weComMassTaskTypeEnum", isCount ? "COUNT(*)" : "*"));
             if (StringUtils.isNotBlank(massTaskParam.getCorpId())) {
                 sql.append(" AND corp_id = :corpId");
@@ -80,7 +82,7 @@ public interface WeComTaskCenterCustomizedRepository {
                 sql.append(" LIMIT :startIndex,:pageSize");
             }
             String sqlStr = sql.toString();
-            log.info("Select by build sql param: sql={}", sqlStr);
+            log.info("select by build sql param: sql={}", sqlStr);
             return sqlStr;
         }
     }

@@ -18,6 +18,7 @@ import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskMemberStatisticEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
+import com.easy.marketgo.core.model.bo.QueryMassTaskBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
 import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
@@ -34,10 +35,7 @@ import com.easy.marketgo.core.service.WeComAgentMessageService;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
-import com.easy.marketgo.web.model.response.masstask.WeComMassTaskCreatorsResponse;
-import com.easy.marketgo.web.model.response.masstask.WeComMassTaskDetailResponse;
-import com.easy.marketgo.web.model.response.masstask.WeComQueryMassTaskStatisticForMembers;
-import com.easy.marketgo.web.model.response.masstask.WeComQueryMassTaskStatisticResponse;
+import com.easy.marketgo.web.model.response.masstask.*;
 import com.easy.marketgo.web.model.response.taskcenter.WeComMembersStatisticResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterStatisticResponse;
 import com.easy.marketgo.web.service.wecom.WeComTaskCenterService;
@@ -173,7 +171,53 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                                        String corpId, List<String> statuses, String keyword,
                                        List<String> createUserIds, String sortKey, String sortOrder, String startTime
             , String endTime) {
-        return null;
+        WeComGetMassTaskListResponse response = new WeComGetMassTaskListResponse();
+        QueryMassTaskBuildSqlParam param = QueryMassTaskBuildSqlParam.builder()
+                .projectUuid(projectId)
+                .corpId(corpId)
+                .weComMassTaskTypeEnum(taskType)
+                .creatorIds(createUserIds)
+                .endTime(DateUtil.parse(endTime))
+                .startTime(DateUtil.parse(startTime))
+                .sortKey(sortKey)
+                .keyword(keyword)
+                .statuses(statuses)
+                .pageNum(pageNum)
+                .pageSize(pageSize)
+                .sortOrderKey("DESC")
+                .build();
+
+        log.info("list weCom task center for param. param={}", param);
+        Integer count = weComTaskCenterRepository.countByBuildSqlParam(param);
+        log.info("count to list weCom  task center for param. count={}", count);
+        List<WeComTaskCenterEntity> massTaskList = weComTaskCenterRepository.listByBuildSqlParam(param);
+        List<WeComGetMassTaskListResponse.MassTaskDetail> massTasks = new ArrayList<>();
+
+
+        massTaskList.forEach(entity -> {
+            WeComGetMassTaskListResponse.MassTaskDetail detail = new WeComGetMassTaskListResponse.MassTaskDetail();
+            detail.setName(entity.getName());
+            detail.setCreatorName(entity.getCreatorName());
+            detail.setCreatorId(entity.getCreatorId());
+            detail.setId(entity.getId());
+            detail.setUuid(entity.getUuid());
+            detail.setScheduleTime(DateUtil.formatDateTime(entity.getScheduleTime()));
+            detail.setTaskStatus(WeComMassTaskStatus.fromValue(entity.getTaskStatus()));
+            detail.setScheduleType(WeComMassTaskScheduleType.fromValue(entity.getScheduleType()));
+            detail.setCanRemind(canRemind(entity));
+            String result = completeRateResult(entity);
+            detail.setCompleteRate(result);
+            if (result.equals("100%")) {
+                detail.setCanRemind(Boolean.FALSE);
+            }
+
+            massTasks.add(detail);
+        });
+        response.setTotalCount(count);
+        response.setList(massTasks);
+        log.info("finish to query task center list response. corpId={}, response={}", corpId,
+                JsonUtils.toJSONString(response));
+        return BaseResponse.success(response);
     }
 
     @Override
