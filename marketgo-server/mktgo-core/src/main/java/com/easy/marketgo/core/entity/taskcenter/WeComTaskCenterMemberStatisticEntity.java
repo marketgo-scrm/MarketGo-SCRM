@@ -25,5 +25,6 @@ public class WeComTaskCenterMemberStatisticEntity extends UuidBaseEntity {
     private Integer deliveredCount;
     private Integer nonFriendCount;
     private String status;
+    private Date planTime;
     private Date sentTime;
 }

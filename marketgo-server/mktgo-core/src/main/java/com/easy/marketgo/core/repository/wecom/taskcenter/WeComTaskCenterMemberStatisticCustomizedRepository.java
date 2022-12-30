@@ -1,6 +1,7 @@
 package com.easy.marketgo.core.repository.wecom.taskcenter;
 
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskMemberStatisticEntity;
+import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
 import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public interface WeComTaskCenterMemberStatisticCustomizedRepository {
 
-    List<WeComMassTaskMemberStatisticEntity> listByBuildSqlParam(QueryMassTaskMemberMetricsBuildSqlParam param);
+    List<WeComTaskCenterMemberStatisticEntity> listByBuildSqlParam(QueryMassTaskMemberMetricsBuildSqlParam param);
 
     Integer countByBuildSqlParam(QueryMassTaskMemberMetricsBuildSqlParam param);
 
@@ -30,7 +31,7 @@ public interface WeComTaskCenterMemberStatisticCustomizedRepository {
         private DataSource dataSource;
 
         @Override
-        public List<WeComMassTaskMemberStatisticEntity> listByBuildSqlParam(QueryMassTaskMemberMetricsBuildSqlParam param) {
+        public List<WeComTaskCenterMemberStatisticEntity> listByBuildSqlParam(QueryMassTaskMemberMetricsBuildSqlParam param) {
             BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
             return new NamedParameterJdbcTemplate(this.dataSource).query(getSelectByCndSql(param, false),
                     paramSource, new BeanPropertyRowMapper(WeComMassTaskMemberStatisticEntity.class));
@@ -45,7 +46,7 @@ public interface WeComTaskCenterMemberStatisticCustomizedRepository {
 
         private String getSelectByCndSql(QueryMassTaskMemberMetricsBuildSqlParam param, boolean isCount) {
             StringBuilder sql = new StringBuilder(
-                    String.format("SELECT %s FROM wecom_mass_task_statistic_member WHERE project_uuid = :projectUuid"
+                    String.format("SELECT %s FROM wecom_task_center_statistic_member WHERE project_uuid = :projectUuid"
                             , isCount ? "COUNT(*)" : "*"));
 
             if (StringUtils.isNotEmpty(param.getKeyword())) {
@@ -67,7 +68,7 @@ public interface WeComTaskCenterMemberStatisticCustomizedRepository {
                 sql.append(" LIMIT :startIndex,:pageSize");
             }
             String sqlStr = sql.toString();
-            log.info("Select by build sql param: sql={}", sqlStr);
+            log.info("select by build sql param: sql={}", sqlStr);
             return sqlStr;
         }
     }

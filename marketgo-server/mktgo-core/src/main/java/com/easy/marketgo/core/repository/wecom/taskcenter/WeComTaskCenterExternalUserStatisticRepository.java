@@ -24,18 +24,22 @@ public interface WeComTaskCenterExternalUserStatisticRepository extends CrudRepo
 
     @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE uuid= :uuid AND task_uuid= " +
             ":taskUuid AND status= :status")
-    int countByTaskUuidAndStatus(String taskUuid, String uuid, String status);
+    Integer countByTaskUuidAndStatus(String taskUuid, String uuid, String status);
+
+    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE task_uuid= :taskUuid AND status= :status " +
+            "AND plan_time LIKE :planTime")
+    Integer countByTaskUuidAndStatusAndPlanTime(String taskUuid, String status, String planTime);
 
     @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE task_uuid= :taskUuid AND " +
             "external_user_type = :externalUserType AND status= :status")
-    int countByTaskUuidAndStatusAndType(String taskUuid, String externalUserType, String status);
+    Integer countByTaskUuidAndStatusAndType(String taskUuid, String externalUserType, String status);
 
     @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE task_uuid= :taskUuid AND external_user_id = :externalUserId AND member_id= :memberId")
-    int countByTaskUuidAndMemberId(String taskUuid, String memberId, String externalUserId);
+    Integer countByTaskUuidAndMemberId(String taskUuid, String memberId, String externalUserId);
 
     @Modifying
     @Query("DELETE FROM wecom_task_center_statistic_external_user WHERE task_uuid = :task_uuid AND member_id = " +
             ":member_id AND status= :status")
-    int deleteByTaskUuidAndMemberId(@Param("task_uuid") String taskUuid, @Param("member_id") String memberId,
+    Integer deleteByTaskUuidAndMemberId(@Param("task_uuid") String taskUuid, @Param("member_id") String memberId,
                                     String status);
 }

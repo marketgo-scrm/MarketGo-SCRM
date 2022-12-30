@@ -14,22 +14,22 @@ import java.util.List;
 public interface WeComTaskCenterService {
 
     BaseResponse updateOrInsertTaskCenter(String projectId, String corpId, String taskType,
-                                        WeComTaskCenterRequest weComTaskCenterRequest);
+                                          WeComTaskCenterRequest weComTaskCenterRequest);
 
     BaseResponse remindSendTask(String projectId, String corpId, String taskType, String taskUuid);
 
     BaseResponse listTaskCenter(String projectId,
-                              String taskType,
-                              Integer pageNum,
-                              Integer pageSize,
-                              String corpId,
-                              List<String> statuses,
-                              String keyword,
-                              List<String> createUserIds,
-                              String sortKey,
-                              String sortOrder,
-                              String startTime,
-                              String endTime);
+                                String taskType,
+                                Integer pageNum,
+                                Integer pageSize,
+                                String corpId,
+                                List<String> statuses,
+                                String keyword,
+                                List<String> createUserIds,
+                                String sortKey,
+                                String sortOrder,
+                                String startTime,
+                                String endTime);
 
     BaseResponse listMembers(String projectId,
                              String corpId,
@@ -39,12 +39,12 @@ public interface WeComTaskCenterService {
                              Integer pageSize,
                              String taskUuid,
                              String keyword,
-                             String status);
+                             String status, String planTime);
 
 
     BaseResponse getTaskCenterDetails(String projectUuid, Integer taskId);
 
-    BaseResponse getTaskCenterStatistic(String taskUuid, String metricsType);
+    BaseResponse getTaskCenterStatistic(String taskUuid, String metricsType, String planTime);
 
     BaseResponse getTaskCenterCreators(String projectUuid, String corpId, String taskType);
 

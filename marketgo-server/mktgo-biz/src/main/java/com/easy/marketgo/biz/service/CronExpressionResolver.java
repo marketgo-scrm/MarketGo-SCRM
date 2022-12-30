@@ -80,7 +80,8 @@ public class CronExpressionResolver {
         // currentTime为计算下次时间点的开始时间
         ZoneId zoneId = ZoneId.systemDefault();
         LocalDateTime localDateTime = new Date(time).toInstant().atZone(zoneId).toLocalDateTime();
-        return Date.from(cronExpression.next(localDateTime).atZone(zoneId).toInstant()).getTime();
+        return cronExpression.next(localDateTime) == null ? 0 :
+                Date.from(cronExpression.next(localDateTime).atZone(zoneId).toInstant()).getTime();
     }
 
     /**

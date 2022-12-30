@@ -855,6 +855,7 @@ CREATE TABLE `wecom_task_center_statistic_member` (
   `external_user_count`    bigint(20) DEFAULT NULL COMMENT '员工的客户总数',
   `delivered_count`    bigint(20) DEFAULT NULL COMMENT '员工的客户送达总数',
   `non_friend_count`    bigint(20) DEFAULT NULL COMMENT '员工的客户非好友总数',
+  `plan_time`              datetime  DEFAULT NULL COMMENT '计划执行时间',
   `sent_time`              datetime  DEFAULT NULL COMMENT '执行时间',
   `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
   `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
@@ -876,7 +877,8 @@ CREATE TABLE `wecom_task_center_statistic_external_user` (
   `external_user_name`     varchar(255) DEFAULT NULL COMMENT '客户的名称',
   `external_user_type`   varchar(24) DEFAULT NULL COMMENT '客户的类型',
   `status`                varchar(64) DEFAULT NULL COMMENT  '客户的任务执行状态',
-  `add_time`              datetime     DEFAULT NULL COMMENT '客户的执行时间',
+  `plan_time`              datetime  DEFAULT NULL COMMENT '计划执行时间',
+  `receive_time`              datetime     DEFAULT NULL COMMENT '客户的执行时间',
   `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
   `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
   PRIMARY KEY (`id`)

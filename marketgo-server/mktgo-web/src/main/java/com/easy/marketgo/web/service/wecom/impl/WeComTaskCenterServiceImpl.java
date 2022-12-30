@@ -1,18 +1,24 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import com.easy.marketgo.api.service.WeComMassTaskRpcService;
 import com.easy.marketgo.api.service.WeComSendAgentMessageRpcService;
+import com.easy.marketgo.biz.service.CronExpressionResolver;
 import com.easy.marketgo.biz.service.XxlJobManualTriggerService;
-import com.easy.marketgo.common.enums.ErrorCodeEnum;
-import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
-import com.easy.marketgo.common.enums.WeComMassTaskStatus;
-import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
+import com.easy.marketgo.common.enums.*;
+import com.easy.marketgo.common.enums.cron.PeriodEnum;
 import com.easy.marketgo.common.exception.CommonException;
+import com.easy.marketgo.common.utils.GenerateCronUtil;
 import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
+import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
+import com.easy.marketgo.core.entity.masstask.WeComMassTaskMemberStatisticEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
+import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
+import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
 import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
@@ -24,11 +30,16 @@ import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatist
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterExternalUserStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterRepository;
+import com.easy.marketgo.core.service.WeComAgentMessageService;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.masstask.WeComMassTaskCreatorsResponse;
 import com.easy.marketgo.web.model.response.masstask.WeComMassTaskDetailResponse;
+import com.easy.marketgo.web.model.response.masstask.WeComQueryMassTaskStatisticForMembers;
+import com.easy.marketgo.web.model.response.masstask.WeComQueryMassTaskStatisticResponse;
+import com.easy.marketgo.web.model.response.taskcenter.WeComMembersStatisticResponse;
+import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterStatisticResponse;
 import com.easy.marketgo.web.service.wecom.WeComTaskCenterService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
@@ -38,10 +49,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.easy.marketgo.common.enums.ErrorCodeEnum.ERROR_WEB_MASS_TASK_IS_EMPTY;
+import static com.easy.marketgo.common.enums.ErrorCodeEnum.ERROR_WEB_MASS_TASK_METRICS_TYPE_NOT_SUPPORT;
 
 /**
  * @author : kevinwang
@@ -77,6 +91,9 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
     @Autowired
     private XxlJobManualTriggerService xxlJobManualTriggerService;
+
+    @Autowired
+    private WeComAgentMessageService weComAgentMessageService;
 
     @Override
     public BaseResponse updateOrInsertTaskCenter(String projectId, String corpId, String taskType,
@@ -132,7 +149,23 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
     @Override
     public BaseResponse remindSendTask(String projectId, String corpId, String taskType, String taskUuid) {
-        return null;
+        List<WeComTaskCenterMemberStatisticEntity> entities =
+                weComTaskCenterMemberStatisticRepository.queryByTaskUuidAndStatus(taskUuid,
+                        WeComMassTaskMemberStatusEnum.UNSENT.getValue());
+        if (CollectionUtils.isEmpty(entities)) {
+            return BaseResponse.success();
+        }
+        List<String> unsentMembers = new ArrayList<>();
+        for (WeComTaskCenterMemberStatisticEntity entity : entities) {
+            unsentMembers.add(entity.getMemberId());
+        }
+
+        WeComAgentMessageEntity agentMessageEntity = weComAgentMessageRepository.getWeComAgentByCorp(projectId, corpId);
+        String agentId = (agentMessageEntity != null) ? agentMessageEntity.getAgentId() : "";
+
+        weComAgentMessageService.sendRemindMessage(taskType, corpId, agentId, taskUuid,
+                unsentMembers);
+        return BaseResponse.success();
     }
 
     @Override
@@ -145,8 +178,54 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
     @Override
     public BaseResponse listMembers(String projectId, String corpId, String taskType, String metricsType,
-                                    Integer pageNum, Integer pageSize, String taskUuid, String keyword, String status) {
-        return null;
+                                    Integer pageNum, Integer pageSize, String taskUuid, String keyword, String status
+            , String planTime) {
+        log.info("start to query task center statistic for member. corpId={}, taskType={}, pageNum={}, pageSize={}, " +
+                "taskUuid={}, status={}", corpId, taskType, pageNum, pageSize, taskUuid, status);
+        if (metricsType.equals(WeComMassTaskMetricsType.MASS_TASK_EXTERNAL_USER.getValue())) {
+            return listMembersForExternalUser(projectId, corpId, metricsType, pageNum, pageSize, taskUuid,
+                    keyword, status);
+        } else if (metricsType.equals(WeComMassTaskMetricsType.MASS_TASK_RATE.getValue())) {
+            return listMembersForRate(corpId, metricsType, pageNum, pageSize, taskUuid);
+        }
+        WeComQueryMassTaskStatisticForMembers response = new WeComQueryMassTaskStatisticForMembers();
+        QueryMassTaskMemberMetricsBuildSqlParam param =
+                QueryMassTaskMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).
+                        pageNum(pageNum).pageSize(pageSize).status(status).build();
+        Integer count = weComTaskCenterMemberStatisticRepository.countByBuildSqlParam(param);
+        log.info("query mass task member list count. count={}", count);
+        List<WeComTaskCenterMemberStatisticEntity> entities =
+                weComTaskCenterMemberStatisticRepository.listByBuildSqlParam(param);
+        response.setCount(count);
+        response.setStatus(status);
+        List<WeComQueryMassTaskStatisticForMembers.MemberDetail> memberDetails = new ArrayList<>();
+        entities.forEach(entity -> {
+            WeComQueryMassTaskStatisticForMembers.MemberDetail memberDetail =
+                    new WeComQueryMassTaskStatisticForMembers.MemberDetail();
+
+            memberDetail.setMemberId(entity.getMemberId());
+            memberDetail.setExternalUserCount(entity.getExternalUserCount());
+            memberDetails.add(memberDetail);
+        });
+        memberDetails.forEach(member -> {
+            WeComMemberMessageEntity weComMemberMessageEntity =
+                    weComMemberMessageRepository.getMemberMessgeByMemberId(corpId, member.getMemberId());
+            member.setMemberName(weComMemberMessageEntity.getMemberName());
+            member.setAvatar(weComMemberMessageEntity.getAvatar());
+        });
+        WeComTaskCenterEntity entity = weComTaskCenterRepository.findByUuid(projectId, taskType, taskUuid);
+        if (entity == null) {
+            return BaseResponse.failure(ERROR_WEB_MASS_TASK_IS_EMPTY);
+        }
+        response.setCanRemind(canRemind(entity));
+        String result = completeRateResult(entity);
+        if (result.equals("100%")) {
+            response.setCanRemind(Boolean.FALSE);
+        }
+        response.setMembers(memberDetails);
+        log.info("query mass task statistic for member response. corpId={}, response={}", corpId,
+                JsonUtils.toJSONString(response));
+        return BaseResponse.success(response);
     }
 
     @Override
@@ -169,8 +248,75 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
     }
 
     @Override
-    public BaseResponse getTaskCenterStatistic(String taskUuid, String metricsType) {
-        return null;
+    public BaseResponse getTaskCenterStatistic(String taskUuid, String metricsType, String planTime) {
+        WeComTaskCenterStatisticResponse response = new WeComTaskCenterStatisticResponse();
+
+        if (WeComMassTaskMetricsType.MASS_TASK_EXTERNAL_USER.getValue().equals(metricsType)) {
+            WeComTaskCenterStatisticResponse.ExternalUserStatisticDetail externalUserDetail =
+                    new WeComTaskCenterStatisticResponse.ExternalUserStatisticDetail();
+
+            for (WeComMassTaskExternalUserStatusEnum value : WeComMassTaskExternalUserStatusEnum.values()) {
+                int count = weComTaskCenterExternalUserStatisticRepository.countByTaskUuidAndStatusAndPlanTime(taskUuid,
+                        value.getValue(), planTime);
+                if (value == WeComMassTaskExternalUserStatusEnum.UNDELIVERED) {
+                    externalUserDetail.setNonDeliveredCount(count);
+                } else if (value == WeComMassTaskExternalUserStatusEnum.DELIVERED) {
+                    externalUserDetail.setDeliveredCount(count);
+                } else if (value == WeComMassTaskExternalUserStatusEnum.UNFRIEND) {
+                    externalUserDetail.setUnfriendCount(count);
+                }
+            }
+            externalUserDetail.setExternalUserTotalCount(externalUserDetail.getNonDeliveredCount() +
+                    externalUserDetail.getDeliveredCount() + externalUserDetail.getUnfriendCount());
+            response.setExternalUserDetail(externalUserDetail);
+        } else if (WeComMassTaskMetricsType.MASS_TASK_MEMBER.getValue().equals(metricsType)) {
+            WeComTaskCenterStatisticResponse.MemberStatisticDetail memberDetail =
+                    new WeComTaskCenterStatisticResponse.MemberStatisticDetail();
+
+            for (WeComMassTaskMemberStatusEnum value : WeComMassTaskMemberStatusEnum.values()) {
+                int count = weComTaskCenterMemberStatisticRepository.countByTaskUuidAndStatus(taskUuid,
+                        value.getValue(), planTime);
+                if (value == WeComMassTaskMemberStatusEnum.UNSENT) {
+                    memberDetail.setNonSendCount(count);
+                } else if (value == WeComMassTaskMemberStatusEnum.SENT) {
+                    memberDetail.setSendCount(count);
+                } else if (value == WeComMassTaskMemberStatusEnum.SENT_FAIL) {
+                    memberDetail.setSendFailedCount(count);
+                }
+            }
+            memberDetail.setMemberTotalCount(memberDetail.getSendCount() + memberDetail.getNonSendCount());
+            response.setMemberDetail(memberDetail);
+        } else if (WeComMassTaskMetricsType.MASS_TASK_RATE.getValue().equals(metricsType)) {
+            WeComTaskCenterStatisticResponse.StatisticDetail detail =
+                    new WeComTaskCenterStatisticResponse.StatisticDetail();
+            List<Long> totalCount = computeTotalCount(taskUuid);
+            long currentTime = System.currentTimeMillis();
+            Integer sentCount = 0;
+            Integer unSentCount = 0;
+            for (Long item : totalCount) {
+                if (item < currentTime) {
+                    sentCount += 1;
+                } else {
+                    unSentCount += 1;
+                }
+            }
+            Integer totalSendCount = totalCount.size();
+
+            Integer sentCountForDb = weComTaskCenterMemberStatisticRepository.countByTaskUuidAndPlanTime(taskUuid);
+
+            sentCountForDb = sentCountForDb == null ? 0 : sentCountForDb;
+            Integer failedCount = sentCount - sentCountForDb;
+
+            detail.setTotalSendCount(totalSendCount);
+            detail.setSentCount(sentCountForDb);
+            detail.setUnsentCount(unSentCount);
+            detail.setFailedCount(failedCount);
+            response.setStatisticDetail(detail);
+        } else {
+            return BaseResponse.failure(ERROR_WEB_MASS_TASK_METRICS_TYPE_NOT_SUPPORT);
+        }
+        log.info("query task center statistic response. response={}", JsonUtils.toJSONString(response));
+        return BaseResponse.success(response);
     }
 
     @Override
@@ -255,5 +401,195 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                     projectId, taskType, taskId, name, e);
         }
         return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getCode()).message(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getMessage()).build();
+    }
+
+    private List<Long> computeTotalCount(String taskUuid) {
+        List<Long> executeTimes = new ArrayList<>();
+        WeComTaskCenterEntity entity = weComTaskCenterRepository.getByTaskUUID(taskUuid);
+
+        long startOfDay = DateUtil.beginOfDay(entity.getRepeatStartTime()).getTime();
+        long endOfDay = DateUtil.endOfDay(entity.getRepeatEndTime()).getTime();
+
+
+        String[] startDate = DateUtil.formatDateTime(entity.getRepeatStartTime()).split(" ");
+        String[] startTime = DateUtil.formatDateTime(entity.getScheduleTime()).split(" ");
+        String cron = "";
+        if (entity.getRepeatType().equals(PeriodEnum.DAILY.name())) {
+            cron = GenerateCronUtil.INSTANCE.generateDailyCronByPeriodAndTime(startDate[0], startTime[1]);
+        } else if (entity.getRepeatType().equals(PeriodEnum.WEEKLY.name())) {
+            cron = GenerateCronUtil.INSTANCE.generateWeeklyCronByPeriodAndTime(startDate[0], startTime[1],
+                    entity.getRepeatDay());
+        } else if (entity.getRepeatType().equals(PeriodEnum.MONTHLY.name())) {
+            cron = GenerateCronUtil.INSTANCE.generateMonthlyCronByPeriodAndTime(startDate[0], startTime[1],
+                    entity.getRepeatDay());
+        }
+
+        log.info("compute cron string. cron={}", cron);
+        CronExpressionResolver cronExpressionResolver = CronExpressionResolver.getInstance(cron);
+        long nextTime = cronExpressionResolver.nextLongTime(startOfDay);
+        if (nextTime > 0) {
+            executeTimes.add(nextTime);
+        }
+        while (nextTime > 0 && nextTime < endOfDay) {
+            nextTime = cronExpressionResolver.nextLongTime(nextTime);
+            if (nextTime > 0) {
+                executeTimes.add(nextTime);
+            }
+        }
+        log.info("compute next time for cron string. cron={}, nextTime={}", cron, nextTime);
+        return executeTimes;
+    }
+
+    private BaseResponse listMembersForExternalUser(String projectId, String corpId, String taskType, Integer pageNum
+            , Integer pageSize, String taskUuid, String keyword, String status) {
+        log.info("start to query task center statistic for external user. corpId={}, taskType={}, pageNum={}, " +
+                "pageSize={},taskUuid={}, status={}", corpId, taskType, pageNum, pageSize, taskUuid, status);
+
+        WeComQueryMassTaskStatisticForMembers response = new WeComQueryMassTaskStatisticForMembers();
+
+        QueryMassTaskMemberMetricsBuildSqlParam param =
+                QueryMassTaskMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).
+                        pageNum(pageNum).pageSize(pageSize).build();
+
+        Integer count = weComTaskCenterMemberStatisticRepository.countByBuildSqlParam(param);
+
+        log.info("query task center member list count. count={}", count);
+
+        List<WeComTaskCenterMemberStatisticEntity> weComTaskCenterMemberStatisticEntities =
+                weComTaskCenterMemberStatisticRepository.listByBuildSqlParam(param);
+        response.setCount(count);
+
+        List<WeComQueryMassTaskStatisticForMembers.MemberDetail> members = new ArrayList<>();
+        weComTaskCenterMemberStatisticEntities.forEach(entity -> {
+            WeComQueryMassTaskStatisticForMembers.MemberDetail detail =
+                    new WeComQueryMassTaskStatisticForMembers.MemberDetail();
+            detail.setMemberName(entity.getMemberName());
+            detail.setMemberId(entity.getMemberId());
+            if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue())) {
+                detail.setExternalUserCount(entity.getExternalUserCount() == null ? 0 : entity.getExternalUserCount());
+            } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.DELIVERED.getValue())) {
+                detail.setExternalUserCount(entity.getDeliveredCount() == null ? 0 : entity.getDeliveredCount());
+            } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNFRIEND.getValue())) {
+                detail.setExternalUserCount(entity.getNonFriendCount() == null ? 0 : entity.getNonFriendCount());
+            }
+            members.add(detail);
+        });
+
+        response.setMembers(members);
+        log.info("finish to task center statistic for external user response. corpId={}, response={}", corpId,
+                JsonUtils.toJSONString(response));
+        return BaseResponse.success(response);
+    }
+
+    private BaseResponse listMembersForRate(String corpId, String taskType, Integer pageNum, Integer pageSize,
+                                            String taskUuid) {
+        log.info("start to query task center statistic for rate. corpId={}, taskType={}, pageNum={}, " +
+                "pageSize={},taskUuid={}", corpId, taskType, pageNum, pageSize, taskUuid);
+
+        WeComMembersStatisticResponse response = new WeComMembersStatisticResponse();
+        List<WeComMembersStatisticResponse.DayDetail> dayDetails = new ArrayList<>();
+        List<Long> planTimes = computeTotalCount(taskUuid);
+        long currentTime = System.currentTimeMillis();
+        planTimes = planTimes.stream().filter(e -> e < currentTime).sorted().collect(Collectors.toList());
+        if (pageNum * pageSize > planTimes.size()) {
+            response.setDayDetails(dayDetails);
+            log.info("finish to task center statistic for rate response. corpId={}, response={}", corpId,
+                    JsonUtils.toJSONString(response));
+            return BaseResponse.success(response);
+        }
+        for (int i = pageNum * pageSize; i < (planTimes.size() < ((pageNum + 1) * pageSize) ? planTimes.size() :
+                ((pageNum + 1) * pageSize)); i++) {
+            Long time = planTimes.get(i);
+            DateTime dateTime = DateUtil.date(time);
+            String dateString = dateTime.toDateStr();
+            log.info("check date string. dateString={}", dateString);
+            WeComMembersStatisticResponse.DayDetail dayDetail = new WeComMembersStatisticResponse.DayDetail();
+            List<WeComTaskCenterMemberStatisticEntity> entities =
+                    weComTaskCenterMemberStatisticRepository.queryByTaskUuidAndplanTime(taskUuid, dateString);
+            dayDetail.setPlanTime(dateString);
+            Integer externalUserCount = 0;
+
+            Integer unSentCount = 0;
+            Integer sentCount = 0;
+            String result = "0%";
+            if (CollectionUtils.isNotEmpty(entities)) {
+                for (WeComTaskCenterMemberStatisticEntity entity : entities) {
+                    externalUserCount += entity.getExternalUserCount() == null ? 0 : entity.getExternalUserCount();
+                    if (entity.getStatus().equals(WeComMassTaskMemberStatusEnum.SENT)) {
+                        sentCount += 1;
+                    } else {
+                        unSentCount += 1;
+                    }
+                }
+
+                NumberFormat numberFormat = NumberFormat.getInstance();
+                numberFormat.setMaximumFractionDigits(2);
+                result =
+                        numberFormat.format((float) sentCount / (float) entities.size() * 100);
+                result += "%";
+            }
+
+            dayDetail.setMemberCount(entities.size());
+            dayDetail.setCompleteRate(result);
+            dayDetail.setExternalUserCount(externalUserCount);
+            dayDetails.add(dayDetail);
+        }
+
+        response.setDayDetails(dayDetails);
+        log.info("finish to task center statistic for rate response. corpId={}, response={}", corpId,
+                JsonUtils.toJSONString(response));
+        return BaseResponse.success(response);
+    }
+
+    private Boolean canRemind(WeComTaskCenterEntity entity) {
+        if (entity.getTaskStatus().equals(WeComMassTaskStatus.FINISHED.getValue()) ||
+                entity.getTaskStatus().equals(WeComMassTaskStatus.UNSTART.getValue())) {
+            return Boolean.FALSE;
+        }
+
+        return Boolean.TRUE;
+    }
+
+    private String completeRateResult(WeComTaskCenterEntity entity) {
+        List<Long> planTimes = computeTotalCount(entity.getUuid());
+        long currentTime = System.currentTimeMillis();
+        long planTime = currentTime;
+        if (CollectionUtils.isNotEmpty(planTimes)) {
+            for (Long item : planTimes) {
+                if (item < currentTime) {
+                    planTime = item;
+                }
+            }
+        }
+        DateTime dateTime = DateUtil.date(planTime);
+        String dateString = dateTime.toDateStr();
+        log.info("check date string. dateString={}", dateString);
+
+        String result = "0%";
+        Integer nonSendCount = 0;
+        Integer sendCount = 0;
+        Integer sendFailedCount = 0;
+        for (WeComMassTaskMemberStatusEnum value : WeComMassTaskMemberStatusEnum.values()) {
+            int countValue = weComTaskCenterMemberStatisticRepository.countByTaskUuidAndStatus(entity.getUuid(),
+                    value.getValue(), dateString);
+            if (value == WeComMassTaskMemberStatusEnum.UNSENT) {
+                nonSendCount = countValue;
+            } else if (value == WeComMassTaskMemberStatusEnum.SENT) {
+                sendCount = countValue;
+            } else if (value == WeComMassTaskMemberStatusEnum.SENT_FAIL) {
+                sendFailedCount = countValue;
+            }
+        }
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        numberFormat.setMaximumFractionDigits(2);
+        log.info("complete task center rate. sendCount={}, nonSendCount={}, sendFailedCount={}", sendCount,
+                nonSendCount, sendFailedCount);
+        if (nonSendCount != 0 || sendCount != 0 || sendFailedCount != 0) {
+            result =
+                    numberFormat.format((float) sendCount / (float) (nonSendCount + sendCount + sendFailedCount) * 100);
+            result += "%";
+
+        }
+        return result;
     }
 }

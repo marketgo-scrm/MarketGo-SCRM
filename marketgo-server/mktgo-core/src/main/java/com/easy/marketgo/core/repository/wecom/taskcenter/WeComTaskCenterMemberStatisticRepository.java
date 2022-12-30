@@ -1,6 +1,5 @@
 package com.easy.marketgo.core.repository.wecom.taskcenter;
 
-import com.easy.marketgo.core.entity.masstask.WeComMassTaskMemberStatisticEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -30,14 +29,21 @@ public interface WeComTaskCenterMemberStatisticRepository extends CrudRepository
             "sent_time") String sentTime, @Param("uuid") String uuid, @Param("member_id") String memberId);
 
     @Query("SELECT * FROM wecom_task_center_statistic_member WHERE task_uuid= :task_uuid AND member_id= :member_id")
-    WeComMassTaskMemberStatisticEntity queryByMemberAndTaskUuid(@Param("task_uuid") String taskUuid,
-                                                                @Param("member_id") String memberId);
+    WeComTaskCenterMemberStatisticEntity queryByMemberAndTaskUuid(@Param("task_uuid") String taskUuid,
+                                                                  @Param("member_id") String memberId);
 
-    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND status= :status")
-    int countByTaskUuidAAndStatus(String taskUuid, String status);
+    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND status= :status " +
+            "AND plan_time LIKE concat('', :planTime, '%')")
+    Integer countByTaskUuidAndStatus(String taskUuid, String status, String planTime);
 
-    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid")
-    List<WeComMassTaskMemberStatisticEntity> queryByTaskUuid(String taskUuid);
+    @Query("SELECT COUNT(distinct plan_time) FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid")
+    Integer countByTaskUuidAndPlanTime(String taskUuid);
+
+    @Query("SELECT * FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND status = :status")
+    List<WeComTaskCenterMemberStatisticEntity> queryByTaskUuidAndStatus(String taskUuid, String status);
+
+    @Query("SELECT * FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND plan_time LIKE concat('', :planTime, '%')")
+    List<WeComTaskCenterMemberStatisticEntity> queryByTaskUuidAndplanTime(String taskUuid, String planTime);
 
     @Modifying
     @Query("UPDATE wecom_task_center_statistic_member set delivered_count = :delivered_count, non_friend_count= " +

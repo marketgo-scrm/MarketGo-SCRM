@@ -117,14 +117,17 @@ public class WeComTaskCenterController {
                     "task_uuid", required = false) String taskUuid,
             @ApiParam(value = "任务名称", required = true) @Valid @RequestParam(value =
                     "keyword", required = false) String keyword,
-            @ApiParam(value = "统计指标类型 MEMBER EXTERNAL_USER COMMENTS", required = true, allowableValues =
-                    "MEMBER, EXTERNAL_USER,COMMENTS") @NotNull @Valid @RequestParam(value =
+            @ApiParam(value = "计划执行日期", required = true) @Valid @RequestParam(value =
+                    "plan_date", required = false) String planDate,
+            @ApiParam(value = "统计指标类型 MEMBER EXTERNAL_USER RATE", required = true, allowableValues =
+                    "MEMBER, EXTERNAL_USER,RATE") @NotNull @Valid @RequestParam(value =
                     "metrics_type", required = true) String metricsType,
             @ApiParam(value = "企微群发状态 员工维度(UNSENT 未执行; SENT 已执行;) 客户维度(UNDELIVERED 未送达客户; DELIVERED 已送达客户; UNFRIEND " +
-                    "送达失败的客户; EXCEED_LIMIT 结束达上限； COMMENT 评论； LIKE 点赞)", required = false, allowableValues = "UNSENT, " +
-                    "SENT, UNDELIVERED, DELIVERED, UNFRIEND, EXCEED_LIMIT, COMMENT, LIKE ") @Valid @RequestParam(value = "status", required = false) String status) {
+                    "送达失败的客户;)", required = false, allowableValues = "UNSENT, " +
+                    "SENT, UNDELIVERED, DELIVERED, UNFRIEND") @Valid @RequestParam(value = "status",
+                    required = false) String status) {
         return ResponseEntity.ok(weComTaskCenterService.listMembers(projectId, corpId, taskType, metricsType, pageNum,
-                pageSize, taskUuid, keyword, status));
+                pageSize, taskUuid, keyword, status, planDate));
     }
 
     @ApiResponses({
@@ -151,10 +154,12 @@ public class WeComTaskCenterController {
                     required = true) String projectId,
             @ApiParam(value = "企微群发uuid", required = true) @Valid @RequestParam(value = "task_uuid",
                     required = false) String taskUuid,
-            @ApiParam(value = "统计指标类型 MEMBER 员工； EXTERNAL_USER 客户, COMMENTS 互动统计", required = true, allowableValues =
-                    "MEMBER, EXTERNAL_USER, COMMENTS") @NotNull @Valid @RequestParam(value = "metrics_type",
+            @ApiParam(value = "计划执行日期", required = true) @Valid @RequestParam(value =
+                    "plan_date", required = false) String planDate,
+            @ApiParam(value = "统计指标类型 MEMBER 员工； EXTERNAL_USER 客户, RATE 周期统计", required = true, allowableValues =
+                    "MEMBER, EXTERNAL_USER, RATE") @NotNull @Valid @RequestParam(value = "metrics_type",
                     required = true) String metricsType) {
-        return ResponseEntity.ok(weComTaskCenterService.getTaskCenterStatistic(taskUuid, metricsType));
+        return ResponseEntity.ok(weComTaskCenterService.getTaskCenterStatistic(taskUuid, metricsType, planDate));
     }
 
     @ApiResponses({
