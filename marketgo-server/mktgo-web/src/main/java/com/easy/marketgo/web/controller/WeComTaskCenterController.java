@@ -68,14 +68,13 @@ public class WeComTaskCenterController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "ok", response = WeComGetMassTaskListResponse.class)
     })
-    @ApiOperation(value = "获取员工任务列表", nickname = "getTaskCenterList", notes = "", response =
+    @ApiOperation(value = "获取任务中心列表", nickname = "getTaskCenterList", notes = "", response =
             WeComGetMassTaskListResponse.class)
     @RequestMapping(value = {"/list"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getTaskCenterList(
             @ApiParam(value = "企微项目uuid", required = true) @NotNull @Valid @RequestParam(value = "project_id",
                     required = true) String projectId,
-            @ApiParam(value = "企微群发类型; SINGLE 群发好友; GROUP 群发客户群; MOMENT 群发朋友圈", required = true, allowableValues =
-                    "SINGLE, GROUP, MOMENT") @NotNull @Valid @RequestParam(value = "task_type", required = true) String taskType,
+            @ApiParam(value = "任务类型; SINGLE 客户任务; GROUP 客户群任务; MOMENT 朋友圈", required = false) @NotNull @Valid @RequestParam(value = "task_types", required = false) List<String> taskTypes,
             @ApiParam(value = "页码", required = true) @NotNull @Min(1) @Valid @RequestParam(value = "page_num",
                     required = true, defaultValue = "1") Integer pageNum,
             @ApiParam(value = "每页条数", required = true) @NotNull @Min(1) @Max(1000) @Valid @RequestParam(value =
@@ -90,7 +89,7 @@ public class WeComTaskCenterController {
             @Valid @RequestParam(value = "sort_order", required = false) String sortOrder,
             @ApiParam(value = "开始时间", required = false) @Valid @RequestParam(value = "start_time", required = false) String startTime,
             @ApiParam(value = "结束时间", required = false) @Valid @RequestParam(value = "end_time", required = false) String endTime) {
-        return ResponseEntity.ok(weComTaskCenterService.listTaskCenter(projectId, taskType, pageNum, pageSize, corpId,
+        return ResponseEntity.ok(weComTaskCenterService.listTaskCenter(projectId, taskTypes, pageNum, pageSize, corpId,
                 statuses, keyword, createUserIds, sortKey, sortOrder, startTime, endTime));
     }
 

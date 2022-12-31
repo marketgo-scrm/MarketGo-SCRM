@@ -19,7 +19,7 @@ public interface WeComTaskCenterService {
     BaseResponse remindSendTask(String projectId, String corpId, String taskType, String taskUuid);
 
     BaseResponse listTaskCenter(String projectId,
-                                String taskType,
+                                List<String> taskTypes,
                                 Integer pageNum,
                                 Integer pageSize,
                                 String corpId,

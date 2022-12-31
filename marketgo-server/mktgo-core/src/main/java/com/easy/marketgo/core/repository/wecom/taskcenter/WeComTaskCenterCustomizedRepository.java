@@ -3,6 +3,7 @@ package com.easy.marketgo.core.repository.wecom.taskcenter;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.model.bo.QueryMassTaskBuildSqlParam;
+import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterBuildSqlParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +22,9 @@ import java.util.List;
  * Describe:
  */
 public interface WeComTaskCenterCustomizedRepository {
-    List<WeComTaskCenterEntity> listByBuildSqlParam(QueryMassTaskBuildSqlParam massTaskParam);
+    List<WeComTaskCenterEntity> listByBuildSqlParam(QueryTaskCenterBuildSqlParam param);
 
-    Integer countByBuildSqlParam(QueryMassTaskBuildSqlParam massTaskParam);
+    Integer countByBuildSqlParam(QueryTaskCenterBuildSqlParam param);
 
     @Slf4j
     class WeComTaskCenterCustomizedRepositoryImpl implements WeComTaskCenterCustomizedRepository {
@@ -31,53 +32,57 @@ public interface WeComTaskCenterCustomizedRepository {
         private DataSource dataSource;
 
         @Override
-        public List<WeComTaskCenterEntity> listByBuildSqlParam(QueryMassTaskBuildSqlParam massTaskParam) {
-            BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(massTaskParam);
-            return new NamedParameterJdbcTemplate(this.dataSource).query(getSelectByCndSql(massTaskParam, false),
+        public List<WeComTaskCenterEntity> listByBuildSqlParam(QueryTaskCenterBuildSqlParam param) {
+            BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
+            return new NamedParameterJdbcTemplate(this.dataSource).query(getSelectByCndSql(param, false),
                     paramSource, new BeanPropertyRowMapper(WeComMassTaskEntity.class));
         }
 
         @Override
-        public Integer countByBuildSqlParam(QueryMassTaskBuildSqlParam massTaskParam) {
-            BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(massTaskParam);
-            return new NamedParameterJdbcTemplate(this.dataSource).queryForObject(getSelectByCndSql(massTaskParam,
+        public Integer countByBuildSqlParam(QueryTaskCenterBuildSqlParam param) {
+            BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
+            return new NamedParameterJdbcTemplate(this.dataSource).queryForObject(getSelectByCndSql(param,
                     true),
                     paramSource, Integer.class);
         }
 
-        private String getSelectByCndSql(QueryMassTaskBuildSqlParam massTaskParam, boolean isCount) {
+        private String getSelectByCndSql(QueryTaskCenterBuildSqlParam param, boolean isCount) {
             StringBuilder sql = new StringBuilder(
-                    String.format("SELECT %s FROM wecom_task_center WHERE project_uuid = :projectUuid AND task_type =" +
-                            " " +
-                            ":weComMassTaskTypeEnum", isCount ? "COUNT(*)" : "*"));
-            if (StringUtils.isNotBlank(massTaskParam.getCorpId())) {
+                    String.format("SELECT %s FROM wecom_task_center WHERE project_uuid = :projectUuid ", isCount ?
+                            "COUNT(*)" : "*"));
+            if (StringUtils.isNotBlank(param.getCorpId())) {
                 sql.append(" AND corp_id = :corpId");
             }
-            if (CollectionUtils.isNotEmpty(massTaskParam.getStatuses())) {
+            if (CollectionUtils.isNotEmpty(param.getStatuses())) {
                 sql.append(" AND task_status IN (:statuses)");
             }
-            if (StringUtils.isNotEmpty(massTaskParam.getKeyword())) {
+
+            if (CollectionUtils.isNotEmpty(param.getTaskTypes())) {
+                sql.append(" AND task_type IN (:taskTypes)");
+            }
+
+            if (StringUtils.isNotEmpty(param.getKeyword())) {
                 sql.append(" AND (name LIKE CONCAT('%', :keyword, '%')");
-                if (StringUtils.isNumeric(massTaskParam.getKeyword())) {
-                    sql.append(" OR id = ").append(massTaskParam.getKeyword());
+                if (StringUtils.isNumeric(param.getKeyword())) {
+                    sql.append(" OR id = ").append(param.getKeyword());
                 }
                 sql.append(")");
             }
-            if (CollectionUtils.isNotEmpty(massTaskParam.getCreatorIds())) {
+            if (CollectionUtils.isNotEmpty(param.getCreatorIds())) {
                 sql.append(" AND creator_id IN (:creatorIds)");
             }
-            if (massTaskParam.getStartTime() != null) {
+            if (param.getStartTime() != null) {
                 sql.append(" AND create_time >= :startTime");
             }
-            if (massTaskParam.getEndTime() != null) {
+            if (param.getEndTime() != null) {
                 sql.append(" AND create_time < :endTime");
             }
             if (!isCount) {
-                if (StringUtils.isNotBlank(massTaskParam.getSortKey())) {
-                    sql.append(String.format(" ORDER BY %s %s", massTaskParam.getSortKey(),
-                            massTaskParam.getSortOrderKey()));
+                if (StringUtils.isNotBlank(param.getSortKey())) {
+                    sql.append(String.format(" ORDER BY %s %s", param.getSortKey(),
+                            param.getSortOrderKey()));
                 } else {
-                    sql.append(String.format(" ORDER BY id %s", massTaskParam.getSortOrderKey()));
+                    sql.append(String.format(" ORDER BY id %s", param.getSortOrderKey()));
                 }
                 sql.append(" LIMIT :startIndex,:pageSize");
             }

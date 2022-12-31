@@ -21,6 +21,7 @@ import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEn
 import com.easy.marketgo.core.model.bo.QueryMassTaskBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
 import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
+import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterBuildSqlParam;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
@@ -37,6 +38,7 @@ import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.masstask.*;
 import com.easy.marketgo.web.model.response.taskcenter.WeComMembersStatisticResponse;
+import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterListResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterStatisticResponse;
 import com.easy.marketgo.web.service.wecom.WeComTaskCenterService;
 import lombok.extern.slf4j.Slf4j;
@@ -167,15 +169,15 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
     }
 
     @Override
-    public BaseResponse listTaskCenter(String projectId, String taskType, Integer pageNum, Integer pageSize,
+    public BaseResponse listTaskCenter(String projectId, List<String> taskTypes, Integer pageNum, Integer pageSize,
                                        String corpId, List<String> statuses, String keyword,
                                        List<String> createUserIds, String sortKey, String sortOrder, String startTime
             , String endTime) {
-        WeComGetMassTaskListResponse response = new WeComGetMassTaskListResponse();
-        QueryMassTaskBuildSqlParam param = QueryMassTaskBuildSqlParam.builder()
+        WeComTaskCenterListResponse response = new WeComTaskCenterListResponse();
+        QueryTaskCenterBuildSqlParam param = QueryTaskCenterBuildSqlParam.builder()
                 .projectUuid(projectId)
                 .corpId(corpId)
-                .weComMassTaskTypeEnum(taskType)
+                .taskTypes(taskTypes)
                 .creatorIds(createUserIds)
                 .endTime(DateUtil.parse(endTime))
                 .startTime(DateUtil.parse(startTime))
@@ -191,19 +193,23 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
         Integer count = weComTaskCenterRepository.countByBuildSqlParam(param);
         log.info("count to list weCom  task center for param. count={}", count);
         List<WeComTaskCenterEntity> massTaskList = weComTaskCenterRepository.listByBuildSqlParam(param);
-        List<WeComGetMassTaskListResponse.MassTaskDetail> massTasks = new ArrayList<>();
+        List<WeComTaskCenterListResponse.MassTaskDetail> taskCenter = new ArrayList<>();
 
 
         massTaskList.forEach(entity -> {
-            WeComGetMassTaskListResponse.MassTaskDetail detail = new WeComGetMassTaskListResponse.MassTaskDetail();
+            WeComTaskCenterListResponse.MassTaskDetail detail = new WeComTaskCenterListResponse.MassTaskDetail();
             detail.setName(entity.getName());
             detail.setCreatorName(entity.getCreatorName());
             detail.setCreatorId(entity.getCreatorId());
             detail.setId(entity.getId());
             detail.setUuid(entity.getUuid());
             detail.setScheduleTime(DateUtil.formatDateTime(entity.getScheduleTime()));
+            if (entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue())) {
+                detail.setScheduleTime(DateUtil.formatDateTime(entity.getRepeatStartTime()));
+            }
             detail.setTaskStatus(WeComMassTaskStatus.fromValue(entity.getTaskStatus()));
             detail.setScheduleType(WeComMassTaskScheduleType.fromValue(entity.getScheduleType()));
+            detail.setTaskType(WeComMassTaskTypeEnum.fromValue(entity.getTaskType()));
             detail.setCanRemind(canRemind(entity));
             String result = completeRateResult(entity);
             detail.setCompleteRate(result);
@@ -211,10 +217,10 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 detail.setCanRemind(Boolean.FALSE);
             }
 
-            massTasks.add(detail);
+            taskCenter.add(detail);
         });
         response.setTotalCount(count);
-        response.setList(massTasks);
+        response.setList(taskCenter);
         log.info("finish to query task center list response. corpId={}, response={}", corpId,
                 JsonUtils.toJSONString(response));
         return BaseResponse.success(response);
