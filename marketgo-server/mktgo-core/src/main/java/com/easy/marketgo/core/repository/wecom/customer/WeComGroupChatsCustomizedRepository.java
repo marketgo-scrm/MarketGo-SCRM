@@ -27,7 +27,7 @@ public interface WeComGroupChatsCustomizedRepository {
 
     List<WeComGroupChatsEntity> listGroupChatsByCnd(QueryGroupChatsBuildSqlParam param);
 
-    Integer countByCnd(QueryGroupChatsBuildSqlParam param);
+        Integer countByCnd(QueryGroupChatsBuildSqlParam param);
 
 
     @Slf4j
