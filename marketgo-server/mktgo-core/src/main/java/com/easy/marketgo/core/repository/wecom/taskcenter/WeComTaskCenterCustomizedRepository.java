@@ -1,8 +1,6 @@
 package com.easy.marketgo.core.repository.wecom.taskcenter;
 
-import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
-import com.easy.marketgo.core.model.bo.QueryMassTaskBuildSqlParam;
 import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterBuildSqlParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -35,7 +33,7 @@ public interface WeComTaskCenterCustomizedRepository {
         public List<WeComTaskCenterEntity> listByBuildSqlParam(QueryTaskCenterBuildSqlParam param) {
             BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
             return new NamedParameterJdbcTemplate(this.dataSource).query(getSelectByCndSql(param, false),
-                    paramSource, new BeanPropertyRowMapper(WeComMassTaskEntity.class));
+                    paramSource, new BeanPropertyRowMapper(WeComTaskCenterEntity.class));
         }
 
         @Override
