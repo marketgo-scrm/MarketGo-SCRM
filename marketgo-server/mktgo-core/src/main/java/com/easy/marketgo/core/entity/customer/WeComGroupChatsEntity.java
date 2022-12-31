@@ -24,4 +24,5 @@ public class WeComGroupChatsEntity extends BaseEntity {
     private String adminList;
     private Date chatCreateTime;
     private String notice;
+    private Integer userCount;
 }

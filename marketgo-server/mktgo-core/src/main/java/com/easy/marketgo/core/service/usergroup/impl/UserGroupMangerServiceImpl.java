@@ -5,6 +5,7 @@ import com.easy.marketgo.core.service.usergroup.UserGroupService;
 import com.easy.marketgo.core.service.usergroup.WeComUserGroupStrategyFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,8 +25,13 @@ public class UserGroupMangerServiceImpl implements UserGroupMangerService {
     @Override
     public void userGroupEstimate(String projectId, String requestId, String corpId, String userGroupType,
                                   String taskType, String userGroupRules) {
-        UserGroupService userGroupService = weComUserGroupStrategyFactory.getUserGroupService(userGroupType);
+        startUserGroupEstimate(projectId, requestId, corpId, userGroupType, taskType, userGroupRules);
+    }
 
+    @Async
+    public void startUserGroupEstimate(String projectId, String requestId, String corpId, String userGroupType,
+                                       String taskType, String userGroupRules) {
+        UserGroupService userGroupService = weComUserGroupStrategyFactory.getUserGroupService(userGroupType);
         userGroupService.userGroupEstimate(projectId, corpId, requestId, taskType, userGroupRules);
     }
 }

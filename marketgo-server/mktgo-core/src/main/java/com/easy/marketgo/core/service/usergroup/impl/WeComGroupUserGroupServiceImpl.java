@@ -78,6 +78,7 @@ public class WeComGroupUserGroupServiceImpl implements WeComUserGroupService {
             log.info("user group for member estimate result. memberCount={}, distinctMemberList={}", memberCount,
                     distinctMemberList);
 
+
             externalUserCount = weComGroupChatsRepository.countByOwner(corpId, distinctMemberList);
             log.info("user group to query group chat count. groupChatCount={}", externalUserCount);
 

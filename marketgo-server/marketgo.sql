@@ -904,3 +904,5 @@ CREATE TABLE `wecom_task_center_member` (
   `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微任务中心的员工对应的客户统计';
+
+ALTER TABLE wecom_group_chats ADD user_count INT(11) DEFAULT NULL COMMENT '客户群的人数';

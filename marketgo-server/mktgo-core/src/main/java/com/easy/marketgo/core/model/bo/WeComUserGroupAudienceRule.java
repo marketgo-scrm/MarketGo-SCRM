@@ -17,6 +17,10 @@ public class WeComUserGroupAudienceRule {
     private boolean excludeSwitch;
     private ExternalUserMessage excludeExternalUsers;
 
+    private GroupChatsMessage groupChats;
+    private boolean excludeGroupChatSwitch;
+    private GroupChatsMessage excludeGroupChats;
+
     @Data
     public static class MembersMessage {
         private Boolean isAll;
@@ -37,7 +41,7 @@ public class WeComUserGroupAudienceRule {
     }
 
     @Data
-    public static class TagsMessage{
+    public static class TagsMessage {
         private String relation;
         private List<WeComCorpTag> tags;
     }
@@ -68,5 +72,33 @@ public class WeComUserGroupAudienceRule {
     public static class GroupChatMessage {
         private String chatId;
         private String chatName;
+    }
+
+    @Data
+    public static class GroupChatsMessage {
+        //是否是全部客户群
+        private Boolean isAll;
+        //条件之间的关系， OR 或， AND 且
+        private String relation;
+        //客户群名称选中的开关
+        private boolean groupChatNameSwitch;
+        //客户群创建时间选中的开关
+        private boolean createTimeSwitch;
+        // 客户群列表选中开关
+        private boolean groupChatsSwitch;
+        //客户群人数选中开关
+        private boolean userCountSwitch;
+        // 客户群人数的规则， GT 大于，GTE 大于或等于，LT 小于，LTE 小于或等于，EQ 等于 NEQ 不等于
+        private String userCountRule;
+        //客户群人数
+        private Long userCount;
+        //客户群名称
+        private String groupChatName;
+        //客户群列表
+        private List<GroupChatMessage> groupChats;
+        // 创建的开始时间
+        private String startTime;
+        // 创建的结束时间
+        private String endTime;
     }
 }

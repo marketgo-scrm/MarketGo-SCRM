@@ -80,9 +80,6 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
     @Autowired
     private WeComMediaResourceRepository weComMediaResourceRepository;
 
-    @Resource
-    private WeComSendAgentMessageRpcService weComSendAgentMessageRpcService;
-
     @Autowired
     private WeComMemberMessageRepository weComMemberMessageRepository;
 

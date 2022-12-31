@@ -74,19 +74,8 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
     private CdpConfigRepository cdpConfigRepository;
 
     @Autowired
-    private WeComDepartmentRepository weComDepartmentRepository;
-
-    @Autowired
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
-    @Autowired
-    private WeComMemberMessageRepository weComMemberMessageRepository;
-
-    @Autowired
-    private WeComRelationMemberExternalUserRepository weComRelationMemberExternalUserRepository;
-
-    @Autowired
-    private WeComGroupChatsRepository weComGroupChatsRepository;
 
     @Autowired
     private UserGroupOfflineRepository userGroupOfflineRepository;
@@ -96,9 +85,6 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
 
     @Autowired
     private UserGroupMangerService userGroupMangerService;
-
-    private static final Integer CAPACITY_ONE = 10;
-    private static final Integer CORE_THREAD_NUM = 1;
 
     @Override
     public BaseResponse estimate(String projectId, UserGroupAudienceRules audienceRules, String requestId,
