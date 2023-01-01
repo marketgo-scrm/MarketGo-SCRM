@@ -1,8 +1,8 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
 import cn.hutool.core.util.IdUtil;
-import com.easy.marketgo.cdp.model.CdpTestSettingRequest;
-import com.easy.marketgo.cdp.service.CdpManagerService;
+import com.easy.marketgo.core.model.cdp.CdpTestSettingRequest;
+import com.easy.marketgo.core.service.cdp.CdpManagerService;
 import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;

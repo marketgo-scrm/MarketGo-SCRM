@@ -1,5 +1,6 @@
 package com.easy.marketgo.core.service.usergroup.impl;
 
+import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.usergroup.UserGroupRules;
 import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.service.usergroup.UserGroupService;
@@ -36,5 +37,14 @@ public class WeComUserGroupManagerImpl implements UserGroupService {
                 "weComUserGroupAudienceRule={}", requestId, corpId, taskType, weComUserGroupAudienceRule);
         WeComUserGroupService weComUserGroupService = weComTaskTypeStrategyFactory.getUserGroupTaskService(taskType);
         weComUserGroupService.userGroupEstimate(projectId, corpId, requestId, weComUserGroupAudienceRule);
+    }
+
+    @Override
+    public void queryUserGroupDetail(String projectId, String corpId, String taskType, String taskUuid,
+                                     String userGroupRule) {
+        WeComUserGroupAudienceRule weComUserGroupAudienceRule = JsonUtils.toObject(userGroupRule,
+                WeComUserGroupAudienceRule.class);
+        WeComUserGroupService weComUserGroupService = weComTaskTypeStrategyFactory.getUserGroupTaskService(taskType);
+        weComUserGroupService.queryUserGroupDetail(projectId, corpId, taskUuid, weComUserGroupAudienceRule);
     }
 }

@@ -3,6 +3,7 @@ package com.easy.marketgo.core.service.contacts;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
+import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author : kevinwang
@@ -61,5 +63,51 @@ public class WeComMemberService {
             });
         }
         return memberList;
+    }
+
+    public List<String> getMemberList(String corpId, WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
+        List<Long> departmentList = new ArrayList<>();
+        List<String> memberList = new ArrayList<>();
+        if (!weComUserGroupAudienceRule.getMembers().getIsAll()) {
+            if (CollectionUtils.isNotEmpty(weComUserGroupAudienceRule.getMembers().getUsers())) {
+                weComUserGroupAudienceRule.getMembers().getUsers().forEach(user -> {
+                    memberList.add(user.getMemberId());
+                });
+            }
+
+            if (CollectionUtils.isNotEmpty(weComUserGroupAudienceRule.getMembers().getDepartments())) {
+                weComUserGroupAudienceRule.getMembers().getDepartments().forEach(department -> {
+                    departmentList.add(department.getId());
+                });
+
+                List<WeComDepartmentEntity> departmentEntities =
+                        weComDepartmentRepository.findByParentIdIn(departmentList);
+                while (CollectionUtils.isNotEmpty(departmentEntities)) {
+                    List<Long> tempDepartmentList = new ArrayList<>();
+                    departmentEntities.forEach(departmentEntity -> {
+                        tempDepartmentList.add(departmentEntity.getDepartmentId());
+                    });
+                    log.info("find department list. tempDepartmentList={}", tempDepartmentList);
+                    departmentList.addAll(tempDepartmentList);
+                    departmentEntities =
+                            weComDepartmentRepository.findByParentIdIn(tempDepartmentList);
+                }
+
+                QueryMemberBuildSqlParam queryMemberBuildSqlParam =
+                        QueryMemberBuildSqlParam.builder().corpId(corpId).departments(departmentList).build();
+                List<WeComMemberMessageEntity> memberTmp =
+                        weComMemberMessageRepository.listByParam(queryMemberBuildSqlParam);
+                log.info("query user group for member from db count. memberTmp={}", memberTmp.size());
+                if (CollectionUtils.isNotEmpty(memberTmp)) {
+                    log.info("user group for member estimate result. memberCount={}", memberTmp.size());
+                    memberTmp.forEach(item -> {
+                        memberList.add(item.getMemberId());
+                    });
+                }
+            }
+        } else {
+
+        }
+        return memberList.stream().distinct().collect(Collectors.toList());
     }
 }

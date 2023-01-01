@@ -1,8 +1,8 @@
 package com.easy.marketgo.cdp.analysys;
 
 import com.easy.marketgo.cdp.analysys.response.CrowdMessageResponse;
-import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
-import com.easy.marketgo.cdp.model.CrowdBaseRequest;
+import com.easy.marketgo.core.model.cdp.CdpCrowdListMessage;
+import com.easy.marketgo.core.model.cdp.CrowdBaseRequest;
 import com.easy.marketgo.cdp.service.CdpCrowdService;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;

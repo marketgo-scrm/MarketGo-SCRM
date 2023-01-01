@@ -11,4 +11,7 @@ import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 public interface WeComUserGroupService {
     void userGroupEstimate(String projectId, String corpId, String requestId,
                            WeComUserGroupAudienceRule weComUserGroupAudienceRule);
+
+    void queryUserGroupDetail(String projectId, String corpId, String taskUuid,
+                              WeComUserGroupAudienceRule userGroupRules);
 }

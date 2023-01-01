@@ -1,8 +1,8 @@
 package com.easy.marketgo.cdp.service.impl;
 
-import com.easy.marketgo.cdp.model.*;
 import com.easy.marketgo.cdp.service.CdpCrowdService;
-import com.easy.marketgo.cdp.service.CdpManagerService;
+import com.easy.marketgo.core.model.cdp.*;
+import com.easy.marketgo.core.service.cdp.CdpManagerService;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
 import com.easy.marketgo.core.entity.cdp.CdpCrowdUsersSyncEntity;

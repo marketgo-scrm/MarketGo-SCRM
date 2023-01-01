@@ -30,6 +30,13 @@ public class UserGroupMangerServiceImpl implements UserGroupMangerService {
         startUserGroupEstimate(projectId, requestId, corpId, taskType, userGroupRules);
     }
 
+    @Override
+    public void queryUserGroupDetail(String projectId, String corpId, String userGroupType, String taskType,
+                                     String taskUuid, String userGroupRules) {
+        UserGroupService userGroupService = weComUserGroupStrategyFactory.getUserGroupService(userGroupType);
+        userGroupService.queryUserGroupDetail(projectId, corpId, taskType, taskUuid, userGroupRules);
+    }
+
     @Async
     public void startUserGroupEstimate(String projectId, String requestId, String corpId,
                                        String taskType, String userGroupRules) {

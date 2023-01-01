@@ -42,6 +42,7 @@ public enum ErrorCodeEnum {
     ERROR_WEB_QUERY_USER_GROUP_MESSAGE_IS_EMPTY(1112, "查询人群信息失败，人群信息不存在"),
     ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_NAME_EMPTY(1113, "上传的文件名称是空"),
     ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY(1114, "上传的文件中没有数据"),
+    ERROR_WEB_OFFLINE_USER_GROUP_COMPUTE_FAILED(1115, "离线人群计算失败"),
 
     ERROR_WEB_INTERNAL_SERVICE(1151, "服务内部出现异常，请检查相关服务是否运行正常"),
     ERROR_WEB_REQUEST_USER_GROUP_IS_EMPTY(1152, "数据库中没有查询到人群信息的记录"),
@@ -105,7 +106,6 @@ public enum ErrorCodeEnum {
     ERROR_WECOM_EDIT_TAG_IS_DENIED(81011, "调用企微接口提示：无权限标记标签。"),
     ERROR_WECOM_TAG_NAME_IS_SAME(40071, "调用企微接口提示：标签或标签组名称已经存在。"),
     ERROR_WECOM_INVALID_CONFIG_ID(41044, "调用企微接口提示：无效的活码ID"),
-    ;
     ;
 
 

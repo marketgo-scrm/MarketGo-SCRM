@@ -1,23 +1,15 @@
 package com.easy.marketgo.cdp.sensor;
 
-import com.easy.marketgo.cdp.analysys.response.CrowdMessageResponse;
-import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
-import com.easy.marketgo.cdp.model.CrowdBaseRequest;
+import com.easy.marketgo.core.model.cdp.CdpCrowdListMessage;
+import com.easy.marketgo.core.model.cdp.CrowdBaseRequest;
 import com.easy.marketgo.cdp.service.CdpCrowdService;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
-import com.easy.marketgo.common.utils.JsonUtils;
-import com.easy.marketgo.core.util.OkHttpUtils;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author : kevinwang

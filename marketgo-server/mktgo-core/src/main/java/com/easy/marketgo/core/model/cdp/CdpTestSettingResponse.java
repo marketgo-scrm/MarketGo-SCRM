@@ -1,4 +1,4 @@
-package com.easy.marketgo.cdp.model;
+package com.easy.marketgo.core.model.cdp;
 
 import lombok.Data;
 

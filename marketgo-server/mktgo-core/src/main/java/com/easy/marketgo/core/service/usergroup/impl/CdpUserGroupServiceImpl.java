@@ -2,15 +2,22 @@ package com.easy.marketgo.core.service.usergroup.impl;
 
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
+import com.easy.marketgo.core.model.cdp.CrowdUsersBaseRequest;
 import com.easy.marketgo.core.model.usergroup.CdpUserGroupAudienceRule;
 import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
 import com.easy.marketgo.core.model.usergroup.UserGroupRules;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
+import com.easy.marketgo.core.service.cdp.CdpManagerService;
 import com.easy.marketgo.core.service.usergroup.UserGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author : kevinwang
@@ -24,6 +31,9 @@ public class CdpUserGroupServiceImpl implements UserGroupService {
 
     @Autowired
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
+
+    @Autowired
+    private CdpManagerService cdpManagerService;
 
     @Override
     public void userGroupEstimate(String projectId, String corpId, String requestId, String taskType, UserGroupRules userGroupRules) {
@@ -52,5 +62,23 @@ public class CdpUserGroupServiceImpl implements UserGroupService {
         weComUserGroupAudienceRepository.updateResultByRequestId(requestId, projectId,
                 JsonUtils.toJSONString(userGroupEstimateResult),
                 UserGroupAudienceStatusEnum.SUCCEED.getValue());
+    }
+
+    @Override
+    public void queryUserGroupDetail(String projectId, String corpId, String taskType, String taskUuid, String userGroupRule) {
+
+        CdpUserGroupAudienceRule cdpUserGroupAudienceRule = JsonUtils.toObject(userGroupRule,
+                CdpUserGroupAudienceRule.class);
+        CrowdUsersBaseRequest request = new CrowdUsersBaseRequest();
+        request.setProjectUuid(projectId);
+        request.setCdpType(cdpUserGroupAudienceRule.getCdpType());
+        request.setCorpId(corpId);
+        List<CrowdUsersBaseRequest.CrowdMessage> crowList = new ArrayList<>();
+        for (CdpUserGroupAudienceRule.CrowdMessage message : cdpUserGroupAudienceRule.getCrowds()) {
+            CrowdUsersBaseRequest.CrowdMessage crowdMessage = new CrowdUsersBaseRequest.CrowdMessage();
+            BeanUtils.copyProperties(message, crowdMessage);
+            crowList.add(crowdMessage);
+        }
+        cdpManagerService.queryCrowdUsers(request);
     }
 }

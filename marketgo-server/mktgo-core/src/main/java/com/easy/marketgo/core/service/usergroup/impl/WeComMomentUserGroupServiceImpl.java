@@ -1,13 +1,18 @@
 package com.easy.marketgo.core.service.usergroup.impl;
 
+import cn.hutool.crypto.SecureUtil;
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.common.utils.UuidUtils;
+import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
 import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
+import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
 import com.easy.marketgo.core.service.contacts.WeComMemberService;
 import com.easy.marketgo.core.service.usergroup.WeComUserGroupService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,37 +47,16 @@ public class WeComMomentUserGroupServiceImpl implements WeComUserGroupService {
     @Autowired
     private WeComRelationMemberExternalUserRepository weComRelationMemberExternalUserRepository;
 
+    @Autowired
+    private WeComMassTaskSendQueueRepository weComMassTaskSendQueueRepository;
+
     @Override
-    public void userGroupEstimate(String projectId, String corpId, String requestId, WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
+    public void userGroupEstimate(String projectId, String corpId, String requestId,
+                                  WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
         Integer memberCount = 0;
         Integer externalUserCount = 0;
         try {
-            List<Long> departments = new ArrayList<>();
-            List<String> memberList = new ArrayList<>();
-            if (!weComUserGroupAudienceRule.getMembers().getIsAll()) {
-                //获取人群条件中的部门列表
-                if (CollectionUtils.isNotEmpty(weComUserGroupAudienceRule.getMembers().getDepartments())) {
-                    weComUserGroupAudienceRule.getMembers().getDepartments().forEach(department -> {
-                        departments.add(department.getId());
-                    });
-
-                    List<Long> departmentList = weComMemberService.getSubDepartmentList(departments);
-                    if (CollectionUtils.isNotEmpty(departmentList)) {
-                        departments.addAll(departmentList);
-                    }
-                    memberList.addAll(weComMemberService.getMembers(corpId, departments));
-                }
-
-                //获取人群条件中的员工列表
-                if (CollectionUtils.isNotEmpty(weComUserGroupAudienceRule.getMembers().getUsers())) {
-                    weComUserGroupAudienceRule.getMembers().getUsers().forEach(user -> {
-                        memberList.add(user.getMemberId());
-                    });
-                    memberCount = memberList.size();
-                }
-            }
-
-            List<String> distinctMemberList = memberList.stream().distinct().collect(Collectors.toList());
+            List<String> distinctMemberList = weComMemberService.getMemberList(corpId, weComUserGroupAudienceRule);
             memberCount = distinctMemberList.size();
             log.info("user group for member estimate result. memberCount={}, distinctMemberList={}", memberCount,
                     distinctMemberList);
@@ -106,6 +90,39 @@ public class WeComMomentUserGroupServiceImpl implements WeComUserGroupService {
         weComUserGroupAudienceRepository.updateResultByRequestId(requestId, projectId,
                 JsonUtils.toJSONString(userGroupEstimateResult),
                 UserGroupAudienceStatusEnum.SUCCEED.getValue());
+
+    }
+
+    @Override
+    public void queryUserGroupDetail(String projectId, String corpId, String taskUuid,
+                                     WeComUserGroupAudienceRule userGroupRules) {
+
+        List<String> memberList = weComMemberService.getMemberList(corpId, userGroupRules);
+
+        WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity = new WeComMassTaskSendQueueEntity();
+        if (CollectionUtils.isNotEmpty(memberList)) {
+            String members = memberList.stream().collect(Collectors.joining(","));
+            weComMassTaskSendQueueEntity.setMemberMd5(SecureUtil.md5(members));
+            weComMassTaskSendQueueEntity.setMemberId(members);
+        }
+
+        weComMassTaskSendQueueEntity.setUuid(UuidUtils.generateUuid());
+
+        weComMassTaskSendQueueEntity.setTaskUuid(taskUuid);
+
+        if (!userGroupRules.getExternalUsers().getIsAll() &&
+                userGroupRules.getExternalUsers().isCorpTagSwitch() &&
+                userGroupRules.getExternalUsers().getCorpTags() != null &&
+                CollectionUtils.isNotEmpty(userGroupRules.getExternalUsers().getCorpTags().getTags())) {
+            List<String> tags = new ArrayList<>();
+            userGroupRules.getExternalUsers().getCorpTags().getTags().forEach(tag -> {
+                tags.add(tag.getId());
+            });
+            weComMassTaskSendQueueEntity.setExternalUserIds(tags.stream().collect(Collectors.joining(",")));
+        }
+
+        weComMassTaskSendQueueEntity.setStatus(WeComMassTaskSendStatusEnum.UNSEND.name());
+        weComMassTaskSendQueueRepository.save(weComMassTaskSendQueueEntity);
 
     }
 }

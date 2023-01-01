@@ -1,9 +1,10 @@
-package com.easy.marketgo.cdp.service;
+package com.easy.marketgo.core.service.cdp;
 
-import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
-import com.easy.marketgo.cdp.model.CdpTestSettingRequest;
-import com.easy.marketgo.cdp.model.CdpTestSettingResponse;
-import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
+
+import com.easy.marketgo.core.model.cdp.CdpCrowdListMessage;
+import com.easy.marketgo.core.model.cdp.CdpTestSettingRequest;
+import com.easy.marketgo.core.model.cdp.CdpTestSettingResponse;
+import com.easy.marketgo.core.model.cdp.CrowdUsersBaseRequest;
 
 /**
  * @author : kevinwang
