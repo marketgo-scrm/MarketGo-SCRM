@@ -83,8 +83,9 @@ public class WeComGroupUserGroupServiceImpl implements WeComUserGroupService {
 
             QueryGroupChatsBuildSqlParam paramBuilder =
                     QueryGroupChatsBuildSqlParam.builder().corpId(corpId).memberIds(distinctMemberList).build();
-            paramBuilder.setRelation(weComUserGroupAudienceRule.getGroupChats().getRelation());
-            if (!weComUserGroupAudienceRule.getGroupChats().getIsAll()) {
+
+            if (weComUserGroupAudienceRule.getGroupChats() != null && !weComUserGroupAudienceRule.getGroupChats().getIsAll()) {
+                paramBuilder.setRelation(weComUserGroupAudienceRule.getGroupChats().getRelation());
                 //创建时间的条件
                 if (weComUserGroupAudienceRule.getGroupChats().isCreateTimeSwitch()) {
                     paramBuilder.setStartTime(weComUserGroupAudienceRule.getGroupChats().getStartTime());
@@ -116,7 +117,7 @@ public class WeComGroupUserGroupServiceImpl implements WeComUserGroupService {
                 }
             }
             //排除客户条件
-            if (weComUserGroupAudienceRule.isExcludeGroupChatSwitch()) {
+            if (weComUserGroupAudienceRule.isExcludeGroupChatSwitch() && weComUserGroupAudienceRule.getExcludeGroupChats() != null) {
                 //创建时间的条件
                 if (weComUserGroupAudienceRule.getExcludeGroupChats().isCreateTimeSwitch()) {
                     paramBuilder.setExcludeStartTime(weComUserGroupAudienceRule.getGroupChats().getStartTime());
