@@ -1,6 +1,6 @@
 package com.easy.marketgo.core.service.usergroup;
 
-import com.easy.marketgo.core.model.bo.WeComUserGroupAudienceRule;
+import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 
 /**
  * @author : kevinwang

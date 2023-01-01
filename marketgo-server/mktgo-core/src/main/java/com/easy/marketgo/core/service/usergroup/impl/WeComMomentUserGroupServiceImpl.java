@@ -3,8 +3,8 @@ package com.easy.marketgo.core.service.usergroup.impl;
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
-import com.easy.marketgo.core.model.bo.UserGroupEstimateResultBO;
-import com.easy.marketgo.core.model.bo.WeComUserGroupAudienceRule;
+import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
+import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
@@ -99,12 +99,12 @@ public class WeComMomentUserGroupServiceImpl implements WeComUserGroupService {
         } catch (Exception e) {
             log.error("failed to user group for external user estimate result. requestId={}", requestId, e);
         }
-        UserGroupEstimateResultBO userGroupEstimateResultBO = new UserGroupEstimateResultBO();
-        userGroupEstimateResultBO.setExternalUserCount(externalUserCount);
-        userGroupEstimateResultBO.setMemberCount(memberCount);
+        UserGroupEstimateResult userGroupEstimateResult = new UserGroupEstimateResult();
+        userGroupEstimateResult.setExternalUserCount(externalUserCount);
+        userGroupEstimateResult.setMemberCount(memberCount);
 
         weComUserGroupAudienceRepository.updateResultByRequestId(requestId, projectId,
-                JsonUtils.toJSONString(userGroupEstimateResultBO),
+                JsonUtils.toJSONString(userGroupEstimateResult),
                 UserGroupAudienceStatusEnum.SUCCEED.getValue());
 
     }

@@ -1,4 +1,4 @@
-package com.easy.marketgo.core.model.bo;
+package com.easy.marketgo.core.model.usergroup;
 
 import lombok.Data;
 

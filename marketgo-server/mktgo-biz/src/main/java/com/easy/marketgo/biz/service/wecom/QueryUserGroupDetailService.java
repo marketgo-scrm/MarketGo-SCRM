@@ -1,7 +1,6 @@
 package com.easy.marketgo.biz.service.wecom;
 
 import cn.hutool.crypto.SecureUtil;
-import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
 import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
 import com.easy.marketgo.cdp.service.CdpManagerService;
 import com.easy.marketgo.common.enums.UserGroupAudienceTypeEnum;
@@ -17,6 +16,9 @@ import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
 import com.easy.marketgo.core.model.bo.*;
+import com.easy.marketgo.core.model.usergroup.CdpUserGroupAudienceRule;
+import com.easy.marketgo.core.model.usergroup.OfflineUserGroupAudienceRule;
+import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;

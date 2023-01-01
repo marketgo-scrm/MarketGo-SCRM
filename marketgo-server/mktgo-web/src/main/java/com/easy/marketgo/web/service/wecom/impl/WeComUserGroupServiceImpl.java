@@ -16,7 +16,7 @@ import com.easy.marketgo.common.utils.UuidUtils;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
 import com.easy.marketgo.core.entity.usergroup.UserGroupOfflineEntity;
-import com.easy.marketgo.core.model.bo.UserGroupEstimateResultBO;
+import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
 import com.easy.marketgo.core.repository.cdp.CdpConfigRepository;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
@@ -120,10 +120,10 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
         BeanUtils.copyProperties(entity, userGroupEstimateResponse);
         String result = entity.getEstimateResult();
         if (StringUtils.isNotBlank(result)) {
-            UserGroupEstimateResultBO userGroupEstimateResultBO = JsonUtils.toObject(result,
-                    UserGroupEstimateResultBO.class);
-            userGroupEstimateResponse.setExternalUserCount(userGroupEstimateResultBO.getExternalUserCount());
-            userGroupEstimateResponse.setMemberCount(userGroupEstimateResultBO.getMemberCount());
+            UserGroupEstimateResult userGroupEstimateResult = JsonUtils.toObject(result,
+                    UserGroupEstimateResult.class);
+            userGroupEstimateResponse.setExternalUserCount(userGroupEstimateResult.getExternalUserCount());
+            userGroupEstimateResponse.setMemberCount(userGroupEstimateResult.getMemberCount());
         }
         log.info("query user group estimate response. corpId={}, userGroupEstimateResponse={}", corpId,
                 JsonUtils.toJSONString(userGroupEstimateResponse));
@@ -154,10 +154,10 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
         userGroupMessageResponse.setUuid(groupUuid);
         String result = weComUserGroupAudienceEntity.getEstimateResult();
         if (StringUtils.isNotBlank(result)) {
-            UserGroupEstimateResultBO userGroupEstimateResultBO = JsonUtils.toObject(result,
-                    UserGroupEstimateResultBO.class);
-            userGroupMessageResponse.setExternalUserCount(userGroupEstimateResultBO.getExternalUserCount());
-            userGroupMessageResponse.setMemberCount(userGroupEstimateResultBO.getMemberCount());
+            UserGroupEstimateResult userGroupEstimateResult = JsonUtils.toObject(result,
+                    UserGroupEstimateResult.class);
+            userGroupMessageResponse.setExternalUserCount(userGroupEstimateResult.getExternalUserCount());
+            userGroupMessageResponse.setMemberCount(userGroupEstimateResult.getMemberCount());
         }
         log.info("query user group message response. groupUuid={}, audienceRules={}", groupUuid,
                 JsonUtils.toJSONString(userGroupMessageResponse));

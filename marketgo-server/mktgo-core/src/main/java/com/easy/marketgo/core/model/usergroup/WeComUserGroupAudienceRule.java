@@ -1,4 +1,4 @@
-package com.easy.marketgo.core.model.bo;
+package com.easy.marketgo.core.model.usergroup;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -15,13 +15,13 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeComUserGroupAudienceRule {
     private MembersMessage members;
-    private ExternalUserMessage externalUsers;
+    private ExternalUserMessage externalUsers = null;
     private boolean excludeSwitch;
-    private ExternalUserMessage excludeExternalUsers;
+    private ExternalUserMessage excludeExternalUsers = null;
 
-    private GroupChatsMessage groupChats;
+    private GroupChatsMessage groupChats = null;
     private boolean excludeGroupChatSwitch;
-    private GroupChatsMessage excludeGroupChats;
+    private GroupChatsMessage excludeGroupChats = null;
 
     @Data
     public static class MembersMessage {

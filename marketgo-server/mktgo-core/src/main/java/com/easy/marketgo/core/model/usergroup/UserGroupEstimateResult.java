@@ -1,4 +1,4 @@
-package com.easy.marketgo.core.model.bo;
+package com.easy.marketgo.core.model.usergroup;
 
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import lombok.Data;
  * Describe:
  */
 @Data
-public class UserGroupEstimateResultBO {
+public class UserGroupEstimateResult {
     private Integer memberCount;
     private Integer externalUserCount;
 }

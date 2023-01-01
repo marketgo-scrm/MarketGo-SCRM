@@ -38,7 +38,7 @@ public class WeComTaskTypeStrategyFactory {
         userGroupMap.put(WeComMassTaskTypeEnum.MOMENT.name(), this.weComMomentUserGroupService);
     }
 
-    public WeComUserGroupService getUserGroupTaskService(String userGroupType) {
-        return userGroupMap.get(userGroupType);
+    public WeComUserGroupService getUserGroupTaskService(String userGroupTaskType) {
+        return userGroupMap.get(userGroupTaskType);
     }
 }
