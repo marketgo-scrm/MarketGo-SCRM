@@ -57,13 +57,11 @@ public class SendSingleTaskCenterProducer extends SendBaseTaskCenterProducer {
                             WeComMassTaskTypeEnum.SINGLE.name(), WeComMassTaskStatus.COMPUTED.getValue(),
                             Arrays.asList(WeComMassTaskScheduleType.IMMEDIATE.getValue(),
                                     WeComMassTaskScheduleType.FIXED_TIME.getValue()));
-            if (CollectionUtils.isEmpty(entities)) {
-                log.info("query send single task center is empty.");
-                return;
-            }
             log.info("start to query user group send queue for single task center. entities={}", entities);
-            for (WeComTaskCenterEntity entity : entities) {
-                sendSingleTask(entity);
+            if (CollectionUtils.isNotEmpty(entities)) {
+                for (WeComTaskCenterEntity entity : entities) {
+                    sendSingleTask(entity);
+                }
             }
 
             List<WeComTaskCenterEntity> repeatEntities =
@@ -72,14 +70,12 @@ public class SendSingleTaskCenterProducer extends SendBaseTaskCenterProducer {
                             Arrays.asList(WeComMassTaskScheduleType.REPEAT_TIME.getValue()));
             log.info("start to query user group send queue for single repeat task center. repeatEntities={}",
                     repeatEntities);
-            if (CollectionUtils.isEmpty(repeatEntities)) {
-                log.info("query send repeat single task center is empty.");
-                return;
+            if (CollectionUtils.isNotEmpty(repeatEntities)) {
+                for (WeComTaskCenterEntity entity : repeatEntities) {
+                    sendSingleTask(entity);
+                }
             }
 
-            for (WeComTaskCenterEntity entity : repeatEntities) {
-                sendSingleTask(entity);
-            }
         } catch (Exception e) {
             log.error("failed to send single task center message to queue.", e);
         }
