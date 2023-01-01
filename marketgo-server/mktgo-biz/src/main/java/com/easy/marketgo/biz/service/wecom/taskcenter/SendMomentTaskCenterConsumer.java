@@ -1,6 +1,5 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import cn.hutool.core.date.DateUtil;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
 import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
@@ -79,7 +78,7 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                         WeComMassTaskTypeEnum.MOMENT, sendData.getUuid(), taskUuid, sendData.getSender(),
                         sendData.getPlanTime(),
                         WeComMassTaskMemberStatusEnum.UNSENT, count, Boolean.TRUE);
-
+                weComMassTaskSendQueueRepository.deleteSendQueueByUuid(entity.getUuid());
             } catch (Exception e) {
                 log.error("failed to send moment mass task. entity={}", entity, e);
             }

@@ -88,7 +88,7 @@ public class SendGroupTaskCenterCenterConsumer extends SendTaskCenterBaseConsume
             sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                     WeComMassTaskTypeEnum.GROUP, sendData.getUuid(), taskUuid, memberId,sendData.getPlanTime(),
                     status, totalCount, Boolean.TRUE);
-
+            weComMassTaskSendQueueRepository.deleteSendQueueByUuid(entity.getUuid());
         }
     }
 }
