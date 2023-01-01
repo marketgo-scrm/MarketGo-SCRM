@@ -1,18 +1,15 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import com.easy.marketgo.api.model.request.masstask.WeComMassTaskClientRequest;
 import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
-import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterRequest;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterRepository;
 import com.easy.marketgo.core.service.taskcenter.WeComContentCacheManagerService;
@@ -26,7 +23,8 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.easy.marketgo.common.constants.RabbitMqConstants.*;
+import static com.easy.marketgo.common.constants.RabbitMqConstants.EXCHANGE_NAME_WECOM_TASK_CENTER_GROUP;
+import static com.easy.marketgo.common.constants.RabbitMqConstants.ROUTING_KEY_WECOM_TASK_CENTER_GROUP;
 
 /**
  * @author : kevinwang
@@ -76,6 +74,12 @@ public class SendGroupTaskCenterProducer extends SendBaseTaskCenterProducer {
                 request.setTaskUuid(entity.getUuid());
                 request.setCorpId(entity.getCorpId());
                 request.setAgentId(agentId);
+                request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
+                        entity.getExecuteTime() : entity.getScheduleTime());
+                if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
+                    request.setTargetType(entity.getTargetType());
+                    request.setTargetTime(entity.getTargetTime());
+                }
                 weComContentCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
                 List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
                         weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),

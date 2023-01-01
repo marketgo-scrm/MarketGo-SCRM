@@ -1,13 +1,11 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
 import cn.hutool.core.codec.Base64;
-import com.easy.marketgo.api.model.request.masstask.WeComMassTaskClientRequest;
-import com.easy.marketgo.api.model.response.RpcResponse;
-import com.easy.marketgo.api.model.response.masstask.WeComSendMassTaskClientResponse;
-import com.easy.marketgo.api.service.WeComMassTaskRpcService;
-import com.easy.marketgo.common.constants.Constants;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
-import com.easy.marketgo.common.enums.*;
+import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
@@ -15,20 +13,15 @@ import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterRequest;
 import com.easy.marketgo.core.redis.RedisService;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
-import org.apache.dubbo.common.utils.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author : kevinwang
@@ -83,7 +76,6 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                 log.error("query externalUser message is empty for task center.");
                 return;
             }
-            WeComMassTaskMemberStatusEnum status = WeComMassTaskMemberStatusEnum.UNSENT;
             for (WeComRelationMemberExternalUserEntity userEntity : entities) {
                 //memberId##uuid##taskUuid##externaluserid##base64(name)
                 String key = String.format("%s##%s##%s##%s##%s", memberId, sendData.getUuid(), taskUuid,
@@ -95,10 +87,10 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                     WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), 0L);
             sendExternalUserStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                     WeComMassTaskTypeEnum.SINGLE, taskUuid, memberId, sendData.getUuid(), externalUserList,
-                    WeComMassTaskExternalUserStatusEnum.UNDELIVERED, Boolean.TRUE);
-            sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
-                    WeComMassTaskTypeEnum.SINGLE, sendData.getUuid(), taskUuid, memberId,
-                    status, totalCount, Boolean.TRUE);
+                    sendData.getPlanTime(), WeComMassTaskExternalUserStatusEnum.UNDELIVERED, Boolean.TRUE);
+            sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(), WeComMassTaskTypeEnum.SINGLE,
+                    sendData.getUuid(), taskUuid, memberId, sendData.getPlanTime(),
+                    WeComMassTaskMemberStatusEnum.UNSENT, totalCount, Boolean.TRUE);
 
         }
     }

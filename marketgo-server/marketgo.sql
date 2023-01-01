@@ -834,7 +834,7 @@ CREATE TABLE `wecom_task_center`
   `execute_time`              datetime  DEFAULT NULL COMMENT '提醒时间',
   `finish_time`              datetime  DEFAULT NULL COMMENT '任务完成时间',
   `target_type`              VARCHAR(50)   DEFAULT NULL COMMENT '目标类型:天 DAY/小时 HOUR/分钟 MINUTE',
-  `target_time`              VARCHAR(128)   DEFAULT NULL COMMENT '目标时间',
+  `target_time`              INT(11)   DEFAULT NULL COMMENT '目标时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_uniq_uuid` (`uuid`),
   UNIQUE KEY `idx_uniq_project_uuid_corp_id_type_name` (`project_uuid`,`corp_id`, `task_type`,`name`)

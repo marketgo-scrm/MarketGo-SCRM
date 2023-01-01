@@ -2,38 +2,33 @@ package com.easy.marketgo.biz.service.wecom.taskcenter;
 
 import cn.hutool.core.date.DateUtil;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
-import com.easy.marketgo.common.enums.*;
+import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.customer.WeComGroupChatsEntity;
 import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
-import com.easy.marketgo.core.entity.masstask.WeComMassTaskExternalUserStatisticEntity;
-import com.easy.marketgo.core.entity.masstask.WeComMassTaskMemberStatisticEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterExternalUserStatisticEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
-import com.easy.marketgo.core.model.bo.WeComMassTaskMetricsBO;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterMetrics;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskExternalUserStatisticRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskMemberStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterExternalUserStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberStatisticRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
-import org.apache.dubbo.common.utils.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Date;
 
-import static com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum.*;
+import static com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum.MASS_TASK_EXTERNAL_USER_DETAIL;
+import static com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum.MASS_TASK_MEMBER_DETAIL;
 
 /**
  * @author : kevinwang
@@ -74,16 +69,18 @@ public class TaskCenterMetricsConsumer {
         if (typeEnum == MASS_TASK_MEMBER_DETAIL) {
             changeMemberStatus(weComTaskCenterMetrics.getProjectUuid(), weComTaskCenterMetrics.getCorpId(),
                     weComTaskCenterMetrics.getUuid(), weComTaskCenterMetrics.getTaskUuid(),
-                    weComTaskCenterMetrics.getMemberMessage());
+                    weComTaskCenterMetrics.getPlanTime(), weComTaskCenterMetrics.getMemberMessage());
         } else if (typeEnum == MASS_TASK_EXTERNAL_USER_DETAIL) {
             changeExternalUserStatus(weComTaskCenterMetrics.getProjectUuid(), weComTaskCenterMetrics.getCorpId(),
                     weComTaskCenterMetrics.getTaskType(), weComTaskCenterMetrics.getUuid(),
-                    weComTaskCenterMetrics.getTaskUuid(), weComTaskCenterMetrics.getExternalUserMessage());
+                    weComTaskCenterMetrics.getTaskUuid(), weComTaskCenterMetrics.getPlanTime(),
+                    weComTaskCenterMetrics.getExternalUserMessage());
         }
     }
 
     private void changeMemberStatus(final String projectUuid, final String corpId, final String uuid,
-                                    final String taskUuid, WeComTaskCenterMetrics.MemberMessage message) {
+                                    final String taskUuid, Date planTime,
+                                    WeComTaskCenterMetrics.MemberMessage message) {
         if (CollectionUtils.isEmpty(message.getMemberState())) {
             log.info("failed to change task center for member status because member list is empty");
             return;
@@ -103,6 +100,7 @@ public class TaskCenterMetricsConsumer {
                     entity.setProjectUuid(projectUuid);
                     entity.setUuid(uuid);
                     entity.setTaskUuid(taskUuid);
+                    entity.setPlanTime(planTime);
                     entity.setMemberName(memberName);
                     entity.setStatus(item.getStatus().name());
                     entity.setExternalUserCount(item.getExternalUserCount());
@@ -119,7 +117,7 @@ public class TaskCenterMetricsConsumer {
 
     private void changeExternalUserStatus(final String projectUuid, final String corpId,
                                           WeComMassTaskTypeEnum taskType, final String uuid, final String taskUuid,
-                                          WeComTaskCenterMetrics.ExternalUserMessage message) {
+                                          Date planTime, WeComTaskCenterMetrics.ExternalUserMessage message) {
         if (CollectionUtils.isEmpty(message.getExternalUserStatus())) {
             log.info("failed to change task center for external user status because member list is empty");
             return;
@@ -139,6 +137,7 @@ public class TaskCenterMetricsConsumer {
                     entity.setProjectUuid(projectUuid);
                     entity.setTaskUuid(taskUuid);
                     entity.setUuid(uuid);
+                    entity.setPlanTime(planTime);
                     entity.setExternalUserId(item.getExternalUserId());
                     if (taskType == WeComMassTaskTypeEnum.SINGLE) {
                         WeComRelationMemberExternalUserEntity externalUserEntity =
@@ -155,7 +154,7 @@ public class TaskCenterMetricsConsumer {
                         }
                     }
                     entity.setStatus(item.getStatus().name());
-                    entity.setAddTime(DateUtil.parse(item.getTime()));
+                    entity.setReceiveTime(DateUtil.parse(item.getTime()));
                     log.info("save change external user status. projectUuid={}, corpId={}, taskUuid={}, message={}",
                             projectUuid, corpId, taskUuid, entity);
                     weComTaskCenterExternalUserStatisticRepository.save(entity);

@@ -78,6 +78,12 @@ public class SendMomentTaskCenterProducer extends SendBaseTaskCenterProducer {
                 request.setCorpId(entity.getCorpId());
                 request.setAgentId(agentId);
                 request.setProjectUuid(entity.getProjectUuid());
+                request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
+                        entity.getExecuteTime() : entity.getScheduleTime());
+                if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
+                    request.setTargetType(entity.getTargetType());
+                    request.setTargetTime(entity.getTargetTime());
+                }
                 weComContentCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
                 List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
                         weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),

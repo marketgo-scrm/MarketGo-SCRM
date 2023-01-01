@@ -56,5 +56,5 @@ public class WeComTaskCenterRequest {
     @ApiModelProperty(value = "目标类型:天 DAY/小时 HOUR/分钟 MINUTE")
     private String targetType;
     @ApiModelProperty(value = "目标的时间设置")
-    private String targetTime;
+    private Integer targetTime;
 }

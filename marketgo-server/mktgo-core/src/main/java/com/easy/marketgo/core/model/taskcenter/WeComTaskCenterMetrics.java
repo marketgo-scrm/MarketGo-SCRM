@@ -6,6 +6,7 @@ import com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ public class WeComTaskCenterMetrics {
     private String taskUuid;
     private String uuid;
     private String corpId;
+    private Date planTime;
     private WeComMassTaskTypeEnum taskType;
     private WeComMassTaskMetricTypeEnum metricType;
     private MemberMessage memberMessage;

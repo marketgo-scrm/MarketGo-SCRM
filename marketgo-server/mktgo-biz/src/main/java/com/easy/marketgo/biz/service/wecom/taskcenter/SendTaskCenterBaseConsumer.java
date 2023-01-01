@@ -42,7 +42,7 @@ public class SendTaskCenterBaseConsumer {
 
     protected void sendExternalUserStatusDetail(String projectUuid, String corpId, WeComMassTaskTypeEnum taskType,
                                                 String taskUuid, String memberId, String uuid,
-                                                List<String> externalUsers,
+                                                List<String> externalUsers, Date planTime,
                                                 WeComMassTaskExternalUserStatusEnum status, Boolean finish) {
         WeComTaskCenterMetrics weComMassTaskMetrics = new WeComTaskCenterMetrics();
         weComMassTaskMetrics.setTaskUuid(taskUuid);
@@ -51,6 +51,7 @@ public class SendTaskCenterBaseConsumer {
         weComMassTaskMetrics.setUuid(uuid);
         weComMassTaskMetrics.setCorpId(corpId);
         weComMassTaskMetrics.setTaskType(taskType);
+        weComMassTaskMetrics.setPlanTime(planTime);
         WeComTaskCenterMetrics.ExternalUserMessage externalUserMessage =
                 new WeComTaskCenterMetrics.ExternalUserMessage();
 
@@ -71,7 +72,7 @@ public class SendTaskCenterBaseConsumer {
     }
 
     protected void sendMemberStatusDetail(String projectUuid, String corpId, WeComMassTaskTypeEnum taskType,
-                                          String uuid, String taskUuid, String memberId,
+                                          String uuid, String taskUuid, String memberId, Date planTime,
                                           WeComMassTaskMemberStatusEnum status,
                                           Integer externalUserCount, Boolean finish) {
         WeComTaskCenterMetrics weComMassTaskMetrics = new WeComTaskCenterMetrics();
@@ -80,6 +81,7 @@ public class SendTaskCenterBaseConsumer {
         weComMassTaskMetrics.setTaskType(taskType);
         weComMassTaskMetrics.setTaskUuid(taskUuid);
         weComMassTaskMetrics.setUuid(uuid);
+        weComMassTaskMetrics.setPlanTime(planTime);
         weComMassTaskMetrics.setMetricType(MASS_TASK_MEMBER_DETAIL);
         WeComTaskCenterMetrics.MemberMessage memberMessage =
                 new WeComTaskCenterMetrics.MemberMessage();

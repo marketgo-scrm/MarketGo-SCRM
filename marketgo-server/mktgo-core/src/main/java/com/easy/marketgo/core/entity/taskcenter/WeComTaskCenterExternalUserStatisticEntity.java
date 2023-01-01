@@ -24,5 +24,6 @@ public class WeComTaskCenterExternalUserStatisticEntity extends UuidBaseEntity {
     private String externalUserName;
     private String externalUserType;
     private String status;
-    private Date addTime;
+    private Date planTime;
+    private Date receiveTime;
 }

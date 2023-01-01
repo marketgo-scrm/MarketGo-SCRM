@@ -1,6 +1,5 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import com.easy.marketgo.api.model.request.masstask.WeComMassTaskClientRequest;
 import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
@@ -62,24 +61,22 @@ public class SendSingleTaskCenterProducer extends SendBaseTaskCenterProducer {
                 log.info("query send single task center is empty.");
                 return;
             }
-            log.info("start query user group send queue for single task center. entities={}", entities);
+            log.info("start to query user group send queue for single task center. entities={}", entities);
             for (WeComTaskCenterEntity entity : entities) {
                 sendSingleTask(entity);
             }
-
 
             List<WeComTaskCenterEntity> repeatEntities =
                     weComTaskCenterRepository.getWeComMassTaskByScheduleType(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
                             WeComMassTaskTypeEnum.SINGLE.name(),
                             Arrays.asList(WeComMassTaskScheduleType.REPEAT_TIME.getValue()));
-            log.info("query send task center. repeatEntities={}", repeatEntities);
+            log.info("start to query user group send queue for single repeat task center. repeatEntities={}",
+                    repeatEntities);
             if (CollectionUtils.isEmpty(repeatEntities)) {
                 log.info("query send repeat single task center is empty.");
                 return;
             }
 
-            log.info("start query user group send queue for single repeat task center. repeatEntities={}",
-                    repeatEntities);
             for (WeComTaskCenterEntity entity : repeatEntities) {
                 sendSingleTask(entity);
             }
@@ -95,7 +92,6 @@ public class SendSingleTaskCenterProducer extends SendBaseTaskCenterProducer {
 
         String content = entity.getContent();
         if (StringUtils.isNotBlank(content)) {
-
             log.info("send content for single task center. content={}", content);
             WeComTaskCenterRequest request =
                     buildTaskCenterContent(WeComMassTaskTypeEnum.SINGLE.name().toLowerCase(), entity.getMessageType(),
@@ -104,6 +100,12 @@ public class SendSingleTaskCenterProducer extends SendBaseTaskCenterProducer {
             request.setTaskUuid(entity.getUuid());
             request.setCorpId(entity.getCorpId());
             request.setAgentId(agentId);
+            request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
+                    entity.getExecuteTime() : entity.getScheduleTime());
+            if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
+                request.setTargetType(entity.getTargetType());
+                request.setTargetTime(entity.getTargetTime());
+            }
             weComContentCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
             log.info("send WeComTaskCenterRequest for single task center. request={}", request);
             List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =

@@ -1,15 +1,13 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
 import cn.hutool.core.codec.Base64;
-import com.easy.marketgo.api.model.request.masstask.WeComMassTaskClientRequest;
-import com.easy.marketgo.api.model.response.RpcResponse;
-import com.easy.marketgo.api.model.response.masstask.WeComSendMassTaskClientResponse;
-import com.easy.marketgo.api.service.WeComMassTaskRpcService;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
-import com.easy.marketgo.common.enums.*;
+import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.customer.WeComGroupChatsEntity;
-import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterRequest;
 import com.easy.marketgo.core.redis.RedisService;
@@ -22,8 +20,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,10 +83,10 @@ public class SendGroupTaskCenterCenterConsumer extends SendTaskCenterBaseConsume
             redisService.set(String.format("%s##%s##%s", memberId, sendData.getUuid(), taskUuid),
                     WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), 0L);
             sendExternalUserStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
-                    WeComMassTaskTypeEnum.GROUP, taskUuid, memberId, sendData.getUuid(), externalUserList,
+                    WeComMassTaskTypeEnum.GROUP, taskUuid, memberId, sendData.getUuid(), externalUserList,sendData.getPlanTime(),
                     WeComMassTaskExternalUserStatusEnum.UNDELIVERED, Boolean.TRUE);
             sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
-                    WeComMassTaskTypeEnum.GROUP, sendData.getUuid(), taskUuid, memberId,
+                    WeComMassTaskTypeEnum.GROUP, sendData.getUuid(), taskUuid, memberId,sendData.getPlanTime(),
                     status, totalCount, Boolean.TRUE);
 
         }

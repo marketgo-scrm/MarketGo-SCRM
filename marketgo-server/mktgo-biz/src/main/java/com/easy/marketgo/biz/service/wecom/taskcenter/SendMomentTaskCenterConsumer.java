@@ -1,7 +1,10 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
 import com.easy.marketgo.common.constants.RabbitMqConstants;
-import com.easy.marketgo.common.enums.*;
+import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,10 +72,12 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                         WeComMassTaskSendStatusEnum.SEND.name(), taskUuid);
 
                 Integer count = queryExternalUserList(sendData.getProjectUuid(), sendData.getCorpId(),
-                        sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), tagIdList);
+                        sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
+                        tagIdList);
 
                 sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                         WeComMassTaskTypeEnum.MOMENT, sendData.getUuid(), taskUuid, sendData.getSender(),
+                        sendData.getPlanTime(),
                         WeComMassTaskMemberStatusEnum.UNSENT, count, Boolean.TRUE);
 
             } catch (Exception e) {
@@ -81,7 +87,7 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
     }
 
     private Integer queryExternalUserList(String projectUuid, String corpId, String uuid, String taskUuid,
-                                          String memberId, List<String> tags) {
+                                          String memberId, Date planTime, List<String> tags) {
         QueryUserGroupBuildSqlParam param =
                 QueryUserGroupBuildSqlParam.builder().corpId(corpId).memberIds(Arrays.asList(memberId)).tagRelation(
                         "OR").tags(tags).build();
@@ -97,9 +103,8 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
             });
             List<String> externalUsers = externalUserList.stream().distinct().collect(Collectors.toList());
             count = externalUsers.size();
-            sendExternalUserStatusDetail(projectUuid, corpId,
-                    WeComMassTaskTypeEnum.GROUP, taskUuid, memberId, uuid, externalUsers,
-                    WeComMassTaskExternalUserStatusEnum.UNDELIVERED, Boolean.TRUE);
+            sendExternalUserStatusDetail(projectUuid, corpId, WeComMassTaskTypeEnum.GROUP, taskUuid, memberId, uuid,
+                    externalUsers, planTime, WeComMassTaskExternalUserStatusEnum.UNDELIVERED, Boolean.TRUE);
         }
         return count;
     }
