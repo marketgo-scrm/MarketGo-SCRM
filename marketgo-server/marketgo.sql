@@ -899,7 +899,7 @@ CREATE TABLE `wecom_task_center_member` (
   `type`                 varchar(64) DEFAULT NULL COMMENT '群发任务 MASS_TASK, 任务中心 TASK_CENTER',
   `task_type`           varchar(64) DEFAULT NULL COMMENT '任务类型:群发好友 SINGLE/群发客户群 GROUP/群发朋友圈 MOMENT',
   `schedule_type`       VARCHAR(50)   DEFAULT NULL COMMENT '发送类型:立即发送 IMMEDIATE/定时发送 FIXED_TIME/周期发送 REPEAT_TIME',
-  `task_time`       datetime     DEFAULT NULL COMMENT '任务执行时间',
+  `plan_time`       datetime     DEFAULT NULL COMMENT '任务执行时间',
   `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
   `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
   PRIMARY KEY (`id`)

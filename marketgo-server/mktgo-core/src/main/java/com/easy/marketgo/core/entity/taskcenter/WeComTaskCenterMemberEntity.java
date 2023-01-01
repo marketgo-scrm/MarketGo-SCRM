@@ -55,7 +55,7 @@ public class WeComTaskCenterMemberEntity extends UuidBaseEntity {
      */
     private String scheduleType;
 
-    private Date taskTime;
+    private Date planTime;
 //    /**
 //     * 重复类型:每天 DAILY/每周 WEEKLY/每月 MONTHLY
 //     */

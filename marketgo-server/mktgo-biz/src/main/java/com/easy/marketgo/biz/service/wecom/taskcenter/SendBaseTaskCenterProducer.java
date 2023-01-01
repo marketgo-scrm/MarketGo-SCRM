@@ -225,9 +225,10 @@ public class SendBaseTaskCenterProducer {
         memberEntity.setName(entity.getName());
         memberEntity.setTaskType(entity.getTaskType());
         memberEntity.setTaskType("TASK_CENTER");
+        memberEntity.setTaskUuid(entity.getUuid());
         memberEntity.setProjectUuid(entity.getProjectUuid());
         memberEntity.setScheduleType(entity.getScheduleType());
-        memberEntity.setTaskTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue()) ?
+        memberEntity.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue()) ?
                 entity.getExecuteTime() : entity.getScheduleTime());
 
         weComTaskCenterMemberRepository.save(memberEntity);
