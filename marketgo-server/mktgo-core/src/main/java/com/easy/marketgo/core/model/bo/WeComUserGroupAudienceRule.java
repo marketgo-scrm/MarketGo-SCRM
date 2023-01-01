@@ -1,5 +1,6 @@
 package com.easy.marketgo.core.model.bo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * Describe:
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WeComUserGroupAudienceRule {
     private MembersMessage members;
     private ExternalUserMessage externalUsers;
