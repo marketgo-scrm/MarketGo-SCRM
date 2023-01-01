@@ -3,7 +3,6 @@ package com.easy.marketgo.core.service.usergroup.impl;
 import cn.hutool.crypto.SecureUtil;
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
-import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.UuidUtils;
 import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
@@ -19,7 +18,6 @@ import com.easy.marketgo.core.service.contacts.WeComCustomerService;
 import com.easy.marketgo.core.service.contacts.WeComMemberService;
 import com.easy.marketgo.core.service.usergroup.WeComUserGroupService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

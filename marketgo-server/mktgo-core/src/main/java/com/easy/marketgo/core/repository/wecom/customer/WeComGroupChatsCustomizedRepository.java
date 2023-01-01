@@ -1,9 +1,6 @@
 package com.easy.marketgo.core.repository.wecom.customer;
 
 import com.easy.marketgo.core.entity.customer.WeComGroupChatsEntity;
-import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
-import com.easy.marketgo.core.model.bo.QueryExternalUserBuildSqlParam;
-import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.taskcenter.QueryGroupChatsBuildSqlParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
