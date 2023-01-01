@@ -14,13 +14,13 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeComUserGroupAudienceRule {
-    private MembersMessage members;
+    private MembersMessage members = null;
     private ExternalUserMessage externalUsers = null;
-    private boolean excludeSwitch;
+    private boolean excludeSwitch = false;
     private ExternalUserMessage excludeExternalUsers = null;
 
     private GroupChatsMessage groupChats = null;
-    private boolean excludeGroupChatSwitch;
+    private boolean excludeGroupChatSwitch = false;
     private GroupChatsMessage excludeGroupChats = null;
 
     @Data
