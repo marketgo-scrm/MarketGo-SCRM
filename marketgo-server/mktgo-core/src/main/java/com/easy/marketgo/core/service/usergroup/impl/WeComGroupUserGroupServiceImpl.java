@@ -2,7 +2,6 @@ package com.easy.marketgo.core.service.usergroup.impl;
 
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
-import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.bo.UserGroupEstimateResultBO;
 import com.easy.marketgo.core.model.bo.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.model.taskcenter.QueryGroupChatsBuildSqlParam;

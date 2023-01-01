@@ -31,6 +31,8 @@ public class UserGroupMangerServiceImpl implements UserGroupMangerService {
     @Async
     public void startUserGroupEstimate(String projectId, String requestId, String corpId, String userGroupType,
                                        String taskType, String userGroupRules) {
+        log.info("start to user group estimate. requestId={}, corpId={}, userGroupType={}, taskType={}, " +
+                "userGroupRules={}", requestId, corpId, userGroupType, taskType, userGroupRules);
         UserGroupService userGroupService = weComUserGroupStrategyFactory.getUserGroupService(userGroupType);
         userGroupService.userGroupEstimate(projectId, corpId, requestId, taskType, userGroupRules);
     }

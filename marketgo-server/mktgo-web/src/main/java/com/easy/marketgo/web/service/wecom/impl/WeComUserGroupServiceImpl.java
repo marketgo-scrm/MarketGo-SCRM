@@ -14,24 +14,14 @@ import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.UuidUtils;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
-import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
-import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
 import com.easy.marketgo.core.entity.usergroup.UserGroupOfflineEntity;
-import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
-import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.bo.UserGroupEstimateResultBO;
 import com.easy.marketgo.core.repository.cdp.CdpConfigRepository;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
-import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
-import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
-import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
-import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.service.usergroup.UserGroupMangerService;
-import com.easy.marketgo.web.model.bo.CdpUserGroupRule;
 import com.easy.marketgo.web.model.bo.OfflineUserGroupMessage;
-import com.easy.marketgo.web.model.bo.OfflineUserGroupRule;
 import com.easy.marketgo.web.model.bo.WeComUserGroupRule;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
 import com.easy.marketgo.web.model.response.BaseResponse;
@@ -39,7 +29,6 @@ import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.model.response.UserGroupMessageResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpCrowdListResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.common.utils.CollectionUtils;
@@ -48,17 +37,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
-
-import static com.google.common.util.concurrent.MoreExecutors.getExitingExecutorService;
 
 /**
  * @author : kevinwang
