@@ -54,7 +54,7 @@ public class SendSingleTaskCenterProducer extends SendBaseTaskCenterProducer {
     public void sendSingleTask() {
         try {
             List<WeComTaskCenterEntity> entities =
-                    weComTaskCenterRepository.getWeComMassTaskByScheduleTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
+                    weComTaskCenterRepository.getWeComTaskCenterByScheduleTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
                             WeComMassTaskTypeEnum.SINGLE.name(), WeComMassTaskStatus.COMPUTED.getValue(),
                             Arrays.asList(WeComMassTaskScheduleType.IMMEDIATE.getValue(),
                                     WeComMassTaskScheduleType.FIXED_TIME.getValue()));
@@ -66,8 +66,8 @@ public class SendSingleTaskCenterProducer extends SendBaseTaskCenterProducer {
             }
 
             List<WeComTaskCenterEntity> repeatEntities =
-                    weComTaskCenterRepository.getWeComMassTaskByExecuteTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
-                            WeComMassTaskTypeEnum.SINGLE.name(),
+                    weComTaskCenterRepository.getWeComTaskCenterByExecuteTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
+                            WeComMassTaskTypeEnum.SINGLE.name(),WeComMassTaskStatus.COMPUTED.getValue(),
                             Arrays.asList(WeComMassTaskScheduleType.REPEAT_TIME.getValue()));
             log.info("start to query user group send queue for single repeat task center. repeatEntities={}",
                     repeatEntities);

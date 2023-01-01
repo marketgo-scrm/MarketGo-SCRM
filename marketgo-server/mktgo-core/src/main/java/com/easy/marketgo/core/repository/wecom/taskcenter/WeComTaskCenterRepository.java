@@ -28,22 +28,24 @@ public interface WeComTaskCenterRepository extends CrudRepository<WeComTaskCente
 
     @Query("SELECT * FROM wecom_task_center WHERE DATE_ADD(NOW(), INTERVAL :minute MINUTE) > schedule_time AND " +
             "task_type = :task_type AND task_status = :task_status AND schedule_type IN (:schedule_type)")
-    List<WeComTaskCenterEntity> getWeComMassTaskByScheduleTime(@Param("minute") int minute,
-                                                               @Param("task_type") String taskType,
-                                                               @Param("task_status") String taskStatus,
-                                                               @Param("schedule_type") List<String> scheduleType);
+    List<WeComTaskCenterEntity> getWeComTaskCenterByScheduleTime(@Param("minute") int minute,
+                                                                 @Param("task_type") String taskType,
+                                                                 @Param("task_status") String taskStatus,
+                                                                 @Param("schedule_type") List<String> scheduleType);
 
-    @Query("SELECT * FROM wecom_task_center WHERE task_type = :task_type AND schedule_type IN (:schedule_type) AND ( " +
+    @Query("SELECT * FROM wecom_task_center WHERE task_type = :task_type AND task_status = :task_status AND " +
+            "schedule_type IN (:schedule_type) AND ( " +
             "execute_time is null OR DATE_ADD(execute_time, INTERVAL :hour HOUR) <  NOW())")
-    List<WeComTaskCenterEntity> getWeComMassTaskByScheduleType(@Param("hour") int hour,
-                                                               @Param("task_type") String taskType,
-                                                               @Param("schedule_type") List<String> scheduleType);
+    List<WeComTaskCenterEntity> getWeComTaskCenterByScheduleType(@Param("hour") int hour,
+                                                                 @Param("task_type") String taskType,
+                                                                 @Param("schedule_type") List<String> scheduleType);
 
     @Query("SELECT * FROM wecom_task_center WHERE task_type = :task_type AND schedule_type IN (:schedule_type) AND ( " +
-            "execute_time is not null AND DATE_ADD(NOW(), INTERVAL :minute MINUTE) >execute_time)")
-    List<WeComTaskCenterEntity> getWeComMassTaskByExecuteTime(@Param("minute") int minute,
-                                                               @Param("task_type") String taskType,
-                                                               @Param("schedule_type") List<String> scheduleType);
+            "execute_time is not null AND DATE_ADD(NOW(), INTERVAL :minute MINUTE) > execute_time)")
+    List<WeComTaskCenterEntity> getWeComTaskCenterByExecuteTime(@Param("minute") int minute,
+                                                                @Param("task_type") String taskType,
+                                                                @Param("task_status") String taskStatus,
+                                                                @Param("schedule_type") List<String> scheduleType);
 
     @Query("SELECT * FROM wecom_task_center WHERE id = :id AND project_uuid = :project_uuid AND task_type = :task_type")
     WeComTaskCenterEntity getByProjectIdTypeAndId(@Param("project_uuid") String projectUuid,

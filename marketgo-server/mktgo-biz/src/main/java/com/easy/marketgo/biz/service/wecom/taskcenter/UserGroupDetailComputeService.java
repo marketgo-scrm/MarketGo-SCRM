@@ -49,12 +49,12 @@ public class UserGroupDetailComputeService {
         checkRepeatTaskCenter(taskType);
 
         List<WeComTaskCenterEntity> entities =
-                weComTaskCenterRepository.getWeComMassTaskByScheduleTime(QUERY_USER_GROUP_TIME_BEFORE,
+                weComTaskCenterRepository.getWeComTaskCenterByScheduleTime(QUERY_USER_GROUP_TIME_BEFORE,
                         taskType, WeComMassTaskStatus.UNSTART.getValue(),
                         Arrays.asList(WeComMassTaskScheduleType.IMMEDIATE.getValue(),
                                 WeComMassTaskScheduleType.FIXED_TIME.getValue()));
         log.info("schedule task query send task center. taskType={}, entities={}", taskType, entities);
-        if (CollectionUtils.isEmpty(entities)) {
+        if (CollectionUtils.isNotEmpty(entities)) {
             log.info("schedule task query task center is empty. taskType={}", taskType);
             return;
         }
@@ -119,7 +119,7 @@ public class UserGroupDetailComputeService {
     private void checkRepeatTaskCenter(String taskType) {
         log.info("start query user group send task center for repeat task. taskType={}", taskType);
         List<WeComTaskCenterEntity> entities =
-                weComTaskCenterRepository.getWeComMassTaskByScheduleType(QUERY_USER_GROUP_TIME_BEFORE_REPEAT_TIME,
+                weComTaskCenterRepository.getWeComTaskCenterByScheduleType(QUERY_USER_GROUP_TIME_BEFORE_REPEAT_TIME,
                         taskType, Arrays.asList(WeComMassTaskScheduleType.REPEAT_TIME.getValue()));
         log.info("query send task center. entities={}", entities);
         if (CollectionUtils.isEmpty(entities)) {
@@ -160,14 +160,14 @@ public class UserGroupDetailComputeService {
                 continue;
             }
 
-            if (entity.getTaskStatus().equals(WeComMassTaskStatus.UNSTART.getValue())) {
-                weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
-                        WeComMassTaskStatus.COMPUTED.getValue());
-            }
+            weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
+                    WeComMassTaskStatus.COMPUTING.getValue());
 
             weComTaskCenterRepository.updateTaskExecuteTime(DateUtil.date(nextTime), entity.getUuid());
 
             startComputeUserGroup(entity);
+            weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
+                    WeComMassTaskStatus.COMPUTED.getValue());
         }
     }
 }

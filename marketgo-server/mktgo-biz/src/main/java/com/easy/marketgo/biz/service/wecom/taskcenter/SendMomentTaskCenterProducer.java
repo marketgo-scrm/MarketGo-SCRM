@@ -56,7 +56,7 @@ public class SendMomentTaskCenterProducer extends SendBaseTaskCenterProducer {
         log.info("start query send moment task center");
 
         List<WeComTaskCenterEntity> entities =
-                weComTaskCenterRepository.getWeComMassTaskByScheduleTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
+                weComTaskCenterRepository.getWeComTaskCenterByScheduleTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
                         WeComMassTaskTypeEnum.MOMENT.name(), WeComMassTaskStatus.COMPUTED.getValue(),
                         Arrays.asList(WeComMassTaskScheduleType.IMMEDIATE.getValue(),
                                 WeComMassTaskScheduleType.FIXED_TIME.getValue()));
