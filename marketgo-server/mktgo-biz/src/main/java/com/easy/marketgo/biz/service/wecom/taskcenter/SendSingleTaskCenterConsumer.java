@@ -88,11 +88,12 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
             sendExternalUserStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                     WeComMassTaskTypeEnum.SINGLE, taskUuid, memberId, sendData.getUuid(), externalUserList,
                     sendData.getPlanTime(), WeComMassTaskExternalUserStatusEnum.UNDELIVERED,
-                            Boolean.TRUE);
+                    Boolean.TRUE);
             sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(), WeComMassTaskTypeEnum.SINGLE,
                     sendData.getUuid(), taskUuid, memberId, sendData.getPlanTime(),
                     WeComMassTaskMemberStatusEnum.UNSENT, totalCount, Boolean.TRUE);
 
+            weComMassTaskSendQueueRepository.deleteSendQueueByUuid(entity.getUuid());
         }
     }
 }

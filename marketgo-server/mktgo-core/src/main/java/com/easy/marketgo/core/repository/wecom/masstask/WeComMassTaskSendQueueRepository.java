@@ -38,4 +38,8 @@ public interface WeComMassTaskSendQueueRepository extends CrudRepository<WeComMa
 
     @Query("SELECT * FROM wecom_mass_task_send_queue WHERE uuid = :uuid")
     WeComMassTaskSendQueueEntity queryByUuid(String uuid);
+
+    @Modifying
+    @Query("DELETE FROM wecom_mass_task_send_queue WHERE uuid = :uuid")
+    Integer deleteSendQueueByUuid(String uuid);
 }
