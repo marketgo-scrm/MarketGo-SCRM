@@ -42,7 +42,7 @@ public class SendTaskCenterBaseConsumer {
 
     protected void sendExternalUserStatusDetail(String projectUuid, String corpId, WeComMassTaskTypeEnum taskType,
                                                 String taskUuid, String memberId, String uuid,
-                                                List<String> externalUsers, Date planTime,
+                                                List<String> externalUsers, String planTime,
                                                 WeComMassTaskExternalUserStatusEnum status, Boolean finish) {
         WeComTaskCenterMetrics weComMassTaskMetrics = new WeComTaskCenterMetrics();
         weComMassTaskMetrics.setTaskUuid(taskUuid);
@@ -72,7 +72,7 @@ public class SendTaskCenterBaseConsumer {
     }
 
     protected void sendMemberStatusDetail(String projectUuid, String corpId, WeComMassTaskTypeEnum taskType,
-                                          String uuid, String taskUuid, String memberId, Date planTime,
+                                          String uuid, String taskUuid, String memberId, String planTime,
                                           WeComMassTaskMemberStatusEnum status,
                                           Integer externalUserCount, Boolean finish) {
         WeComTaskCenterMetrics weComMassTaskMetrics = new WeComTaskCenterMetrics();

@@ -1,5 +1,6 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
+import cn.hutool.core.date.DateUtil;
 import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
@@ -75,7 +76,8 @@ public class SendGroupTaskCenterProducer extends SendBaseTaskCenterProducer {
                 request.setCorpId(entity.getCorpId());
                 request.setAgentId(agentId);
                 request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
-                        entity.getExecuteTime() : entity.getScheduleTime());
+                        DateUtil.formatDateTime(entity.getExecuteTime()) :
+                        DateUtil.formatDateTime(entity.getScheduleTime()));
                 if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
                     request.setTargetType(entity.getTargetType());
                     request.setTargetTime(entity.getTargetTime());

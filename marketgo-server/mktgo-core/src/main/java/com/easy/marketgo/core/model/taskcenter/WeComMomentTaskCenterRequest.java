@@ -3,7 +3,6 @@ package com.easy.marketgo.core.model.taskcenter;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,7 +27,7 @@ public class WeComMomentTaskCenterRequest implements Serializable {
     private List<AttachmentsMessage> attachments;
     private String targetType;
     private Integer targetTime;
-    private Date planTime;
+    private String planTime;
 
     @Data
     @ToString

@@ -69,11 +69,11 @@ public class TaskCenterMetricsConsumer {
         if (typeEnum == MASS_TASK_MEMBER_DETAIL) {
             changeMemberStatus(weComTaskCenterMetrics.getProjectUuid(), weComTaskCenterMetrics.getCorpId(),
                     weComTaskCenterMetrics.getUuid(), weComTaskCenterMetrics.getTaskUuid(),
-                    weComTaskCenterMetrics.getPlanTime(), weComTaskCenterMetrics.getMemberMessage());
+                    DateUtil.parse(weComTaskCenterMetrics.getPlanTime()), weComTaskCenterMetrics.getMemberMessage());
         } else if (typeEnum == MASS_TASK_EXTERNAL_USER_DETAIL) {
             changeExternalUserStatus(weComTaskCenterMetrics.getProjectUuid(), weComTaskCenterMetrics.getCorpId(),
                     weComTaskCenterMetrics.getTaskType(), weComTaskCenterMetrics.getUuid(),
-                    weComTaskCenterMetrics.getTaskUuid(), weComTaskCenterMetrics.getPlanTime(),
+                    weComTaskCenterMetrics.getTaskUuid(), DateUtil.parse(weComTaskCenterMetrics.getPlanTime()),
                     weComTaskCenterMetrics.getExternalUserMessage());
         }
     }

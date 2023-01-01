@@ -1,5 +1,6 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
+import cn.hutool.core.date.DateUtil;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
 import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,8 +72,8 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                         WeComMassTaskSendStatusEnum.SEND.name(), taskUuid);
 
                 Integer count = queryExternalUserList(sendData.getProjectUuid(), sendData.getCorpId(),
-                        sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
-                        tagIdList);
+                        sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(),
+                        sendData.getPlanTime(), tagIdList);
 
                 sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                         WeComMassTaskTypeEnum.MOMENT, sendData.getUuid(), taskUuid, sendData.getSender(),
@@ -87,7 +87,7 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
     }
 
     private Integer queryExternalUserList(String projectUuid, String corpId, String uuid, String taskUuid,
-                                          String memberId, Date planTime, List<String> tags) {
+                                          String memberId, String planTime, List<String> tags) {
         QueryUserGroupBuildSqlParam param =
                 QueryUserGroupBuildSqlParam.builder().corpId(corpId).memberIds(Arrays.asList(memberId)).tagRelation(
                         "OR").tags(tags).build();

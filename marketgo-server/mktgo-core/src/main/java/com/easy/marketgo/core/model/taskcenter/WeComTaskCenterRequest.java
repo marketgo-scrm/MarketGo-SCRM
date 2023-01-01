@@ -31,7 +31,7 @@ public class WeComTaskCenterRequest implements Serializable {
     private List<AttachmentsMessage> attachments;
     private String targetType;
     private Integer targetTime;
-    private Date planTime;
+    private String planTime;
 
     @Data
     @ToString
