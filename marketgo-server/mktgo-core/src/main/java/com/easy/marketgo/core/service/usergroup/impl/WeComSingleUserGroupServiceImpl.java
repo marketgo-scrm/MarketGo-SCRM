@@ -11,7 +11,6 @@ import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
 import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
-import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
 import com.easy.marketgo.core.service.contacts.WeComCustomerService;
@@ -39,9 +38,6 @@ public class WeComSingleUserGroupServiceImpl implements WeComUserGroupService {
 
     @Autowired
     private WeComCustomerService weComCustomerService;
-
-    @Autowired
-    private WeComMemberMessageRepository weComMemberMessageRepository;
 
     @Autowired
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
