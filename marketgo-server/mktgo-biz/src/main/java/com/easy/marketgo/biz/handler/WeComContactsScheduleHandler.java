@@ -41,7 +41,7 @@ public class WeComContactsScheduleHandler {
 
         List<WeComCorpMessageEntity> entities = weComCorpMessageRepository.getCorpConfigList();
         if (CollectionUtils.isEmpty(entities)) {
-            log.info("sync members to query corp config list is empty.");
+            log.info("schedule task sync members to query corp config list is empty.");
             return ReturnT.SUCCESS;
         }
 
@@ -55,7 +55,7 @@ public class WeComContactsScheduleHandler {
     public ReturnT<String> syncGroupChats() throws Exception {
         List<WeComCorpMessageEntity> entities = weComCorpMessageRepository.getCorpConfigList();
         if (CollectionUtils.isEmpty(entities)) {
-            log.info("sync group chats to query corp config list is empty.");
+            log.info("schedule task sync group chats to query corp config list is empty.");
             return ReturnT.SUCCESS;
         }
 
@@ -69,7 +69,7 @@ public class WeComContactsScheduleHandler {
     public ReturnT<String> syncCorpTags() throws Exception {
         List<WeComCorpMessageEntity> entities = weComCorpMessageRepository.getCorpConfigList();
         if (CollectionUtils.isEmpty(entities)) {
-            log.info("sync corp tags to query corp config list is empty.");
+            log.info("schedule task sync corp tags to query corp config list is empty.");
             return ReturnT.SUCCESS;
         }
 
