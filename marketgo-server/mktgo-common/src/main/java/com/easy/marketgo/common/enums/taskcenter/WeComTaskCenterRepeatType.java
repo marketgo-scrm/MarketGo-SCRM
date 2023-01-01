@@ -10,11 +10,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Describe:
  */
 public enum WeComTaskCenterRepeatType {
-    REPEAT_TYPE_DAY("DAY"),
+    REPEAT_TYPE_DAY("DAILY"),
 
-    REPEAT_TYPE_WEEK("WEEK"),
+    REPEAT_TYPE_WEEK("WEEKLY"),
 
-    REPEAT_TYPE_MONTH("MONTH");
+    REPEAT_TYPE_MONTH("MONTHLY");
 
     private String value;
 

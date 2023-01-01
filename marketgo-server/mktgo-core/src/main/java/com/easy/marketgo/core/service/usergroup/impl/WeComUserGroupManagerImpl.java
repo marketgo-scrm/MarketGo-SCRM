@@ -1,6 +1,5 @@
 package com.easy.marketgo.core.service.usergroup.impl;
 
-import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.usergroup.UserGroupRules;
 import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.service.usergroup.UserGroupService;
