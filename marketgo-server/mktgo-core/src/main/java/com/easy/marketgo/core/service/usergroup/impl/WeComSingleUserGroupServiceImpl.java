@@ -89,8 +89,9 @@ public class WeComSingleUserGroupServiceImpl implements WeComUserGroupService {
                 }
 
                 //标签条件
-                if (weComUserGroupAudienceRule.getExternalUsers().isCorpTagSwitch()
-                        && weComUserGroupAudienceRule.getExternalUsers().getCorpTags() != null && CollectionUtils.isNotEmpty(weComUserGroupAudienceRule.getExternalUsers().getCorpTags().getTags())) {
+                if (weComUserGroupAudienceRule.getExternalUsers().isCorpTagSwitch() &&
+                        weComUserGroupAudienceRule.getExternalUsers().getCorpTags() != null &&
+                        CollectionUtils.isNotEmpty(weComUserGroupAudienceRule.getExternalUsers().getCorpTags().getTags())) {
                     paramBuilder.setTagRelation(weComUserGroupAudienceRule.getExternalUsers().getCorpTags().getRelation());
                     List<String> tags = new ArrayList<>();
                     weComUserGroupAudienceRule.getExternalUsers().getCorpTags().getTags().forEach(weComCorpTag -> {
