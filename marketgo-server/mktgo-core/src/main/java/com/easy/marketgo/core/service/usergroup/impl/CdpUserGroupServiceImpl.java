@@ -4,6 +4,7 @@ import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.usergroup.CdpUserGroupAudienceRule;
 import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
+import com.easy.marketgo.core.model.usergroup.UserGroupRules;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.service.usergroup.UserGroupService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +26,13 @@ public class CdpUserGroupServiceImpl implements UserGroupService {
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
     @Override
-    public void userGroupEstimate(String projectId, String corpId, String requestId, String taskType, String userGroupRules) {
+    public void userGroupEstimate(String projectId, String corpId, String requestId, String taskType, UserGroupRules userGroupRules) {
 
-        CdpUserGroupAudienceRule cdpUserGroupAudienceRule = JsonUtils.toObject(userGroupRules,
-                CdpUserGroupAudienceRule.class);
+        CdpUserGroupAudienceRule cdpUserGroupAudienceRule = userGroupRules.getCdpUserGroupRule();
+        if (cdpUserGroupAudienceRule == null) {
+            log.error("cdp user group is empty for estimate result. requestId={}", requestId);
+            return;
+        }
         Integer memberCount = 0;
         Integer externalUserCount = 0;
         try {

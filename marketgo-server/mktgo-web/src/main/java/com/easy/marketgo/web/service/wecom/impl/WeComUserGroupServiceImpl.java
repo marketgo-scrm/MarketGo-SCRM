@@ -111,8 +111,8 @@ public class WeComUserGroupServiceImpl implements WeComUserGroupService {
             weComUserGroupAudienceEntity.setStatus(UserGroupAudienceStatusEnum.COMPUTING.getValue());
             weComUserGroupAudienceRepository.save(weComUserGroupAudienceEntity);
 
-            userGroupMangerService.userGroupEstimate(projectId, requestId, corpId, audienceRules.getUserGroupType(),
-                    taskType, JsonUtils.toJSONString(audienceRules));
+            userGroupMangerService.userGroupEstimate(projectId, requestId, corpId, taskType,
+                    JsonUtils.toJSONString(audienceRules));
             entity = weComUserGroupAudienceRepository.queryWeComUserGroupAudienceEntityByRequestId(projectId,
                     requestId);
         }

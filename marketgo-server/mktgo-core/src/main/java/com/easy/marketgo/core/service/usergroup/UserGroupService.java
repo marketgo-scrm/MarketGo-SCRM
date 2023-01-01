@@ -1,5 +1,7 @@
 package com.easy.marketgo.core.service.usergroup;
 
+import com.easy.marketgo.core.model.usergroup.UserGroupRules;
+
 /**
  * @author : kevinwang
  * @version : 1.0
@@ -7,5 +9,5 @@ package com.easy.marketgo.core.service.usergroup;
  * Describe:
  */
 public interface UserGroupService {
-    void userGroupEstimate(String projectId, String corpId, String requestId, String taskType, String userGroupRules);
+    void userGroupEstimate(String projectId, String corpId, String requestId, String taskType, UserGroupRules userGroupRules);
 }

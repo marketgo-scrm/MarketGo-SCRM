@@ -8,6 +8,6 @@ package com.easy.marketgo.core.service.usergroup;
  */
 public interface UserGroupMangerService {
 
-    void userGroupEstimate(String projectId, String requestId, String corpId, String userGroupType, String taskType,
+    void userGroupEstimate(String projectId, String requestId, String corpId, String taskType,
                            String userGroupRules);
 }

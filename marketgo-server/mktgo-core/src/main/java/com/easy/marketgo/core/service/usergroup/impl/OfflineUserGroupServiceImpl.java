@@ -4,6 +4,7 @@ import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.usergroup.OfflineUserGroupAudienceRule;
 import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
+import com.easy.marketgo.core.model.usergroup.UserGroupRules;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.service.usergroup.UserGroupService;
@@ -29,14 +30,14 @@ public class OfflineUserGroupServiceImpl implements UserGroupService {
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
     @Override
-    public void userGroupEstimate(String projectId, String corpId, String requestId, String taskType, String userGroupRules) {
-        if (StringUtils.isBlank(userGroupRules)) {
-            log.error("user group is empty for offline estimate result. requestId={}", requestId);
+    public void userGroupEstimate(String projectId, String corpId, String requestId, String taskType,
+                                  UserGroupRules userGroupRules) {
+
+        OfflineUserGroupAudienceRule offlineUserGroupAudienceRule = userGroupRules.getOfflineUserGroupRule();
+        if (offlineUserGroupAudienceRule == null) {
+            log.error("offline user group is empty for estimate result. requestId={}", requestId);
             return;
         }
-        OfflineUserGroupAudienceRule offlineUserGroupAudienceRule = JsonUtils.toObject(userGroupRules,
-                OfflineUserGroupAudienceRule.class);
-
         Integer memberCount = 0;
         Integer externalUserCount = 0;
         try {
