@@ -60,55 +60,68 @@ public class SendMomentTaskCenterProducer extends SendBaseTaskCenterProducer {
                         WeComMassTaskTypeEnum.MOMENT.name(), WeComMassTaskStatus.COMPUTED.getValue(),
                         Arrays.asList(WeComMassTaskScheduleType.IMMEDIATE.getValue(),
                                 WeComMassTaskScheduleType.FIXED_TIME.getValue()));
-        if (CollectionUtils.isEmpty(entities)) {
-            log.info("query single task center is empty.");
-            return;
+        log.info("start query user group send queue for moment task center. entities={}", entities);
+        if (CollectionUtils.isNotEmpty(entities)) {
+            for (WeComTaskCenterEntity entity : entities) {
+                sendMomentTaskCenter(entity);
+            }
         }
 
-        for (WeComTaskCenterEntity entity : entities) {
-
-            WeComAgentMessageEntity agentMessageEntity =
-                    weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
-            log.info("query agent message for task center. agentMessageEntity={}", agentMessageEntity);
-            String agentId = (agentMessageEntity == null) ? "" : agentMessageEntity.getAgentId();
-
-            String content = entity.getContent();
-            log.info("query send moment task center content. content={}", content);
-            if (StringUtils.isNotBlank(content)) {
-                WeComMomentTaskCenterRequest request = buildMomentTaskCenterContent(content);
-                request.setCorpId(entity.getCorpId());
-                request.setAgentId(agentId);
-                request.setProjectUuid(entity.getProjectUuid());
-                request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
-                        DateUtil.formatDateTime(entity.getExecuteTime()) :
-                        DateUtil.formatDateTime(entity.getScheduleTime()));
-                if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
-                    request.setTargetType(entity.getTargetType());
-                    request.setTargetTime(entity.getTargetTime());
-                }
-                weComContentCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
-                List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
-                        weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),
-                                WeComMassTaskSendStatusEnum.UNSEND.name());
-                weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
-                        WeComMassTaskStatus.SENDING.getValue());
-                for (WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity : weComMassTaskSendQueueEntities) {
-                    request.setTaskUuid(weComMassTaskSendQueueEntity.getTaskUuid());
-                    List<String> sendList = Arrays.asList(weComMassTaskSendQueueEntity.getMemberId().split(","));
-                    for (String sender : sendList) {
-                        request.setSender(sender);
-                        log.info("send request to queue for single task center. sendMessage={}",
-                                JsonUtils.toJSONString(request));
-                        String uuid = saveMemberTask(entity, sender);
-                        request.setUuid(uuid);
-                        produceRabbitMqMessage(request);
-                    }
-
-                    log.info("send moment task center to queue message. request={}", JsonUtils.toJSONString(request));
-                }
-                weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
-                        WeComMassTaskStatus.SENT.getValue());
+        List<WeComTaskCenterEntity> repeatEntities =
+                weComTaskCenterRepository.getWeComTaskCenterByExecuteTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
+                        WeComMassTaskTypeEnum.MOMENT.name(), WeComMassTaskStatus.COMPUTED.getValue(),
+                        Arrays.asList(WeComMassTaskScheduleType.REPEAT_TIME.getValue()));
+        log.info("start to query user group send queue for moment repeat task center. repeatEntities={}",
+                repeatEntities);
+        if (CollectionUtils.isNotEmpty(repeatEntities)) {
+            for (WeComTaskCenterEntity entity : repeatEntities) {
+                sendMomentTaskCenter(entity);
             }
+        }
+    }
+
+    private void sendMomentTaskCenter(WeComTaskCenterEntity entity) {
+        WeComAgentMessageEntity agentMessageEntity =
+                weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
+        log.info("query agent message for task center. agentMessageEntity={}", agentMessageEntity);
+        String agentId = (agentMessageEntity == null) ? "" : agentMessageEntity.getAgentId();
+
+        String content = entity.getContent();
+        log.info("query send moment task center content. content={}", content);
+        if (StringUtils.isNotBlank(content)) {
+            WeComMomentTaskCenterRequest request = buildMomentTaskCenterContent(content);
+            request.setCorpId(entity.getCorpId());
+            request.setAgentId(agentId);
+            request.setProjectUuid(entity.getProjectUuid());
+            request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
+                    DateUtil.formatDateTime(entity.getExecuteTime()) :
+                    DateUtil.formatDateTime(entity.getScheduleTime()));
+            if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
+                request.setTargetType(entity.getTargetType());
+                request.setTargetTime(entity.getTargetTime());
+            }
+            weComContentCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
+            List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
+                    weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),
+                            WeComMassTaskSendStatusEnum.UNSEND.name());
+            weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
+                    WeComMassTaskStatus.SENDING.getValue());
+            for (WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity : weComMassTaskSendQueueEntities) {
+                request.setTaskUuid(weComMassTaskSendQueueEntity.getTaskUuid());
+                List<String> sendList = Arrays.asList(weComMassTaskSendQueueEntity.getMemberId().split(","));
+                for (String sender : sendList) {
+                    request.setSender(sender);
+                    log.info("send request to queue for single task center. sendMessage={}",
+                            JsonUtils.toJSONString(request));
+                    String uuid = saveMemberTask(entity, sender);
+                    request.setUuid(uuid);
+                    produceRabbitMqMessage(request);
+                }
+
+                log.info("send moment task center to queue message. request={}", JsonUtils.toJSONString(request));
+            }
+            weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
+                    WeComMassTaskStatus.SENT.getValue());
         }
     }
 
