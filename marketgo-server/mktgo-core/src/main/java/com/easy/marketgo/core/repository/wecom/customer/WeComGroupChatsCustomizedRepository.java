@@ -78,6 +78,7 @@ public interface WeComGroupChatsCustomizedRepository {
             }
             if (StringUtils.isNotBlank(param.getExcludeEndTime())) {
                 builder.append(" OR chat_create_time > :excludeEndTime)");
+                startFlag = false;
             }
             if (!startFlag) {
                 builder.append(" ) ");
