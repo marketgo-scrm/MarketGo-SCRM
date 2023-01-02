@@ -60,14 +60,14 @@ public interface WeComGroupChatsCustomizedRepository {
             }
 
             if (StringUtils.isNotEmpty(param.getGroupChatName())) {
-                builder.append(String.format(" %s group_chat_name LIKE CONCAT('%%', :excludeGroupChatName, '%%')",
-                        startFlag ? "AND (" : param.getRelation()));
+                builder.append(String.format(" %s ", startFlag ? "AND (" : param.getExcludeRelation()));
+                builder.append(" group_chat_name NOT LIKE CONCAT('%', :excludeGroupChatName, '%')");
                 startFlag = false;
             }
 
             if (StringUtils.isNotEmpty(param.getExcludeUserCountFunction()) && param.getExcludeUserCount() != null) {
                 builder.append(String.format(" %s user_count %s :excludeUserCount ", startFlag ? "AND (" :
-                                param.getRelation(),
+                                param.getExcludeRelation(),
                         (param.getUserCountFunction().equals("GT")) ? " > " : " < "));
                 startFlag = false;
             }
@@ -105,8 +105,8 @@ public interface WeComGroupChatsCustomizedRepository {
             }
 
             if (StringUtils.isNotEmpty(param.getGroupChatName())) {
-                sql.append(String.format(" %s group_chat_name LIKE CONCAT('%%', :groupChatName, '%%')",
-                        startFlag ? "AND (" : param.getRelation()));
+                sql.append(String.format(" %s ", startFlag ? "AND (" : param.getRelation()));
+                sql.append(" group_chat_name LIKE CONCAT('%', :groupChatName, '%')");
                 startFlag = false;
             }
 
