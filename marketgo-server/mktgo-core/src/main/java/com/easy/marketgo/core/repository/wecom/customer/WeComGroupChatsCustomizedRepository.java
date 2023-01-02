@@ -68,7 +68,7 @@ public interface WeComGroupChatsCustomizedRepository {
             if (StringUtils.isNotEmpty(param.getExcludeUserCountFunction()) && param.getExcludeUserCount() != null) {
                 builder.append(String.format(" %s user_count %s :excludeUserCount ", startFlag ? " (" :
                                 param.getExcludeRelation(),
-                        (param.getUserCountFunction().equals("GT")) ? " > " : " < "));
+                        (param.getExcludeUserCountFunction().equals("GT")) ? " < " : " > "));
                 startFlag = false;
             }
 
@@ -77,7 +77,7 @@ public interface WeComGroupChatsCustomizedRepository {
                         param.getExcludeRelation()));
             }
             if (StringUtils.isNotBlank(param.getExcludeEndTime())) {
-                builder.append(" AND chat_create_time > :excludeEndTime)");
+                builder.append(" OR chat_create_time > :excludeEndTime)");
             }
             if (!startFlag) {
                 builder.append(" ) ");
