@@ -59,7 +59,7 @@ public interface WeComGroupChatsCustomizedRepository {
                 startFlag = false;
             }
 
-            if (StringUtils.isNotEmpty(param.getGroupChatName())) {
+            if (StringUtils.isNotEmpty(param.getExcludeGroupChatName())) {
                 builder.append(String.format(" %s ", startFlag ? "AND (" : param.getExcludeRelation()));
                 builder.append(" group_chat_name NOT LIKE CONCAT('%', :excludeGroupChatName, '%')");
                 startFlag = false;

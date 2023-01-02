@@ -159,7 +159,8 @@ public class WeComCustomerService {
             }
 
             //客户群名称条件
-            if (weComUserGroupAudienceRule.getGroupChats().isGroupChatNameSwitch() && StringUtils.isNotBlank(weComUserGroupAudienceRule.getGroupChats().getGroupChatName())) {
+            if (weComUserGroupAudienceRule.getGroupChats().isGroupChatNameSwitch()
+                    && StringUtils.isNotBlank(weComUserGroupAudienceRule.getGroupChats().getGroupChatName())) {
                 paramBuilder.setGroupChatName(weComUserGroupAudienceRule.getGroupChats().getGroupChatName());
             }
 
@@ -191,7 +192,8 @@ public class WeComCustomerService {
             }
 
             //客户群名称条件
-            if (weComUserGroupAudienceRule.getExcludeGroupChats().isGroupChatNameSwitch() && StringUtils.isNotBlank(weComUserGroupAudienceRule.getExcludeGroupChats().getGroupChatName())) {
+            if (weComUserGroupAudienceRule.getExcludeGroupChats().isGroupChatNameSwitch() &&
+                    StringUtils.isNotBlank(weComUserGroupAudienceRule.getExcludeGroupChats().getGroupChatName())) {
                 paramBuilder.setExcludeGroupChatName(weComUserGroupAudienceRule.getExcludeGroupChats().getGroupChatName());
             }
 
