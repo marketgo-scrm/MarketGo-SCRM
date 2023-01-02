@@ -46,8 +46,7 @@ public interface WeComGroupChatsCustomizedRepository {
         public Integer countByCnd(QueryGroupChatsBuildSqlParam param) {
             BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
             return new NamedParameterJdbcTemplate(this.dataSource).queryForObject(buildGroupChatsSqlForParam(param,
-                    true, false),
-                    paramSource, Integer.class);
+                    true, false), paramSource, Integer.class);
         }
 
         private String buildExcludeGroupChatsSqlForParam(QueryGroupChatsBuildSqlParam param) {
@@ -57,6 +56,12 @@ public interface WeComGroupChatsCustomizedRepository {
             if (CollectionUtils.isNotEmpty(param.getExcludeGroupChatIds())) {
                 builder.append(String.format(" %s group_chat_id NOT IN (:excludeGroupChatIds) ", startFlag ? "(" :
                         param.getExcludeRelation()));
+                startFlag = false;
+            }
+
+            if (StringUtils.isNotEmpty(param.getGroupChatName())) {
+                builder.append(String.format(" %s group_chat_name LIKE CONCAT('%%', :excludeGroupChatName, '%%')",
+                        startFlag ? "AND (" : param.getRelation()));
                 startFlag = false;
             }
 
@@ -100,7 +105,7 @@ public interface WeComGroupChatsCustomizedRepository {
             }
 
             if (StringUtils.isNotEmpty(param.getGroupChatName())) {
-                sql.append(String.format(" %s group_chat_name LIKE CONCAT('%', :groupChatName, '%')",
+                sql.append(String.format(" %s group_chat_name LIKE CONCAT('%%', :groupChatName, '%%')",
                         startFlag ? "AND (" : param.getRelation()));
                 startFlag = false;
             }
