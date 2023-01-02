@@ -60,13 +60,13 @@ public interface WeComGroupChatsCustomizedRepository {
             }
 
             if (StringUtils.isNotEmpty(param.getExcludeGroupChatName())) {
-                builder.append(String.format(" %s ", startFlag ? "AND (" : param.getExcludeRelation()));
+                builder.append(String.format(" %s ", startFlag ? " ( " : param.getExcludeRelation()));
                 builder.append(" group_chat_name NOT LIKE CONCAT('%', :excludeGroupChatName, '%')");
                 startFlag = false;
             }
 
             if (StringUtils.isNotEmpty(param.getExcludeUserCountFunction()) && param.getExcludeUserCount() != null) {
-                builder.append(String.format(" %s user_count %s :excludeUserCount ", startFlag ? "AND (" :
+                builder.append(String.format(" %s user_count %s :excludeUserCount ", startFlag ? " (" :
                                 param.getExcludeRelation(),
                         (param.getUserCountFunction().equals("GT")) ? " > " : " < "));
                 startFlag = false;
