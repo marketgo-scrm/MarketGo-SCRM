@@ -3,8 +3,6 @@ package com.easy.marketgo.web.service.wecom.impl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
-import com.easy.marketgo.api.service.WeComMassTaskRpcService;
-import com.easy.marketgo.api.service.WeComSendAgentMessageRpcService;
 import com.easy.marketgo.biz.service.CronExpressionResolver;
 import com.easy.marketgo.biz.service.XxlJobManualTriggerService;
 import com.easy.marketgo.common.enums.*;
@@ -14,21 +12,14 @@ import com.easy.marketgo.common.utils.GenerateCronUtil;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
-import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
-import com.easy.marketgo.core.entity.masstask.WeComMassTaskMemberStatisticEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
-import com.easy.marketgo.core.model.bo.QueryMassTaskBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
 import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
 import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterBuildSqlParam;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskExternalUserStatisticRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskMemberStatisticRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterExternalUserStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterRepository;
@@ -36,7 +27,8 @@ import com.easy.marketgo.core.service.WeComAgentMessageService;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
-import com.easy.marketgo.web.model.response.masstask.*;
+import com.easy.marketgo.web.model.response.masstask.WeComMassTaskCreatorsResponse;
+import com.easy.marketgo.web.model.response.masstask.WeComMassTaskDetailResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComMembersStatisticResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterListResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterStatisticResponse;
@@ -235,20 +227,20 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
         } else if (metricsType.equals(WeComMassTaskMetricsType.MASS_TASK_RATE.getValue())) {
             return listMembersForRate(corpId, metricsType, pageNum, pageSize, taskUuid);
         }
-        WeComQueryMassTaskStatisticForMembers response = new WeComQueryMassTaskStatisticForMembers();
+        WeComMembersStatisticResponse response = new WeComMembersStatisticResponse();
         QueryMassTaskMemberMetricsBuildSqlParam param =
                 QueryMassTaskMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).
                         pageNum(pageNum).pageSize(pageSize).status(status).build();
         Integer count = weComTaskCenterMemberStatisticRepository.countByBuildSqlParam(param);
-        log.info("query mass task member list count. count={}", count);
+        log.info("query task center member list count. count={}", count);
         List<WeComTaskCenterMemberStatisticEntity> entities =
                 weComTaskCenterMemberStatisticRepository.listByBuildSqlParam(param);
         response.setCount(count);
         response.setStatus(status);
-        List<WeComQueryMassTaskStatisticForMembers.MemberDetail> memberDetails = new ArrayList<>();
+        List<WeComMembersStatisticResponse.MemberDetail> memberDetails = new ArrayList<>();
         entities.forEach(entity -> {
-            WeComQueryMassTaskStatisticForMembers.MemberDetail memberDetail =
-                    new WeComQueryMassTaskStatisticForMembers.MemberDetail();
+            WeComMembersStatisticResponse.MemberDetail memberDetail =
+                    new WeComMembersStatisticResponse.MemberDetail();
 
             memberDetail.setMemberId(entity.getMemberId());
             memberDetail.setExternalUserCount(entity.getExternalUserCount());
@@ -483,7 +475,7 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 executeTimes.add(nextTime);
             }
         }
-        log.info("compute next time for cron string. cron={}, nextTime={}", cron, nextTime);
+        log.info("compute next time for cron string. cron={}, execute size={}", cron, executeTimes.size());
         return executeTimes;
     }
 
@@ -492,7 +484,7 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
         log.info("start to query task center statistic for external user. corpId={}, taskType={}, pageNum={}, " +
                 "pageSize={},taskUuid={}, status={}", corpId, taskType, pageNum, pageSize, taskUuid, status);
 
-        WeComQueryMassTaskStatisticForMembers response = new WeComQueryMassTaskStatisticForMembers();
+        WeComMembersStatisticResponse response = new WeComMembersStatisticResponse();
 
         QueryMassTaskMemberMetricsBuildSqlParam param =
                 QueryMassTaskMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).
@@ -506,10 +498,10 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 weComTaskCenterMemberStatisticRepository.listByBuildSqlParam(param);
         response.setCount(count);
 
-        List<WeComQueryMassTaskStatisticForMembers.MemberDetail> members = new ArrayList<>();
+        List<WeComMembersStatisticResponse.MemberDetail> members = new ArrayList<>();
         weComTaskCenterMemberStatisticEntities.forEach(entity -> {
-            WeComQueryMassTaskStatisticForMembers.MemberDetail detail =
-                    new WeComQueryMassTaskStatisticForMembers.MemberDetail();
+            WeComMembersStatisticResponse.MemberDetail detail =
+                    new WeComMembersStatisticResponse.MemberDetail();
             detail.setMemberName(entity.getMemberName());
             detail.setMemberId(entity.getMemberId());
             if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue())) {
