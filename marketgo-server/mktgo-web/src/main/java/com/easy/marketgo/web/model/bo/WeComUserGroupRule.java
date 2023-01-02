@@ -81,7 +81,7 @@ public class WeComUserGroupRule {
         @ApiModelProperty(value = "客户群人数的规则， GT 大于，GTE 大于或等于，LT 小于，LTE 小于或等于，EQ 等于 NEQ 不等于")
         private String userCountRule;
         @ApiModelProperty(value = "客户群人数")
-        private Long userCount;
+        private Integer userCount;
         @ApiModelProperty(value = "客户群名称")
         private String groupChatName;
         @ApiModelProperty(value = "客户群列表")

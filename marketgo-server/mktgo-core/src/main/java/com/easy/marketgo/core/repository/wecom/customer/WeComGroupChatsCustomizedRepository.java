@@ -100,7 +100,7 @@ public interface WeComGroupChatsCustomizedRepository {
             }
 
             if (StringUtils.isNotEmpty(param.getGroupChatName())) {
-                sql.append(String.format(" %s group_chat_name LIKE LIKE CONCAT('%', :groupChatName, '%')",
+                sql.append(String.format(" %s group_chat_name LIKE CONCAT('%', :groupChatName, '%')",
                         startFlag ? "AND (" : param.getRelation()));
                 startFlag = false;
             }
