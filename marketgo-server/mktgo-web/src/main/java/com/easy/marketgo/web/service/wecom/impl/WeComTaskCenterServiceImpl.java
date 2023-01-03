@@ -149,7 +149,7 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
         for (WeComTaskCenterMemberStatisticEntity entity : entities) {
             unsentMembers.add(entity.getMemberId());
         }
-
+        unsentMembers = unsentMembers.stream().distinct().collect(Collectors.toList());
         WeComAgentMessageEntity agentMessageEntity = weComAgentMessageRepository.getWeComAgentByCorp(projectId, corpId);
         String agentId = (agentMessageEntity != null) ? agentMessageEntity.getAgentId() : "";
 

@@ -2,7 +2,6 @@ package com.easy.marketgo.core.service;
 
 import com.easy.marketgo.api.model.request.WeComSendAgentMessageClientRequest;
 import com.easy.marketgo.api.service.WeComSendAgentMessageRpcService;
-import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,13 +34,8 @@ public class WeComAgentMessageService {
         appMsgRequest.setMsgType(WeComSendAgentMessageClientRequest.MsgTypeEnum.TEXT);
         appMsgRequest.setMsgId(taskUuid);
         Map<String, String> textMessage = new HashMap<>();
-        if (taskType.equalsIgnoreCase(WeComMassTaskTypeEnum.MOMENT.name())) {
-            textMessage.put("content", "【任务提醒】有新的任务啦！\n"
-                    + "可前往【客户朋友圈】中确认发送，记得及时完成哦～");
-        } else {
-            textMessage.put("content", "【任务提醒】有新的任务啦！\n"
-                    + "可前往【群发助手】中确认发送，记得及时完成哦～");
-        }
+        textMessage.put("content", "【任务提醒】有新的员工任务啦！\n"
+                + "记得及时完成哦～");
         appMsgRequest.setContent(JsonUtils.toJSONString(textMessage));
         appMsgRequest.setToUser(members);
         log.info("send text massage to member for remind. request={}", appMsgRequest);

@@ -76,7 +76,4 @@ public class WeComTaskCenterDetailResponse {
     private String targetType;
     @ApiModelProperty(value = "目标的时间设置")
     private Integer targetTime;
-
-    @ApiModelProperty(value = "提醒发送的开关")
-    private Boolean canRemind = false;
 }
