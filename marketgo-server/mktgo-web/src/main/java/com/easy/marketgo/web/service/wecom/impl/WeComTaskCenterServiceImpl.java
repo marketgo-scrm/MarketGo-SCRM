@@ -470,9 +470,6 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
         log.info("compute cron string. cron={}", cron);
         CronExpressionResolver cronExpressionResolver = CronExpressionResolver.getInstance(cron);
         long nextTime = cronExpressionResolver.nextLongTime(startOfDay);
-        if (nextTime > 0) {
-            executeTimes.add(nextTime);
-        }
         while (nextTime > 0 && nextTime < endOfDay) {
             executeTimes.add(nextTime);
             nextTime = cronExpressionResolver.nextLongTime(nextTime);
