@@ -298,7 +298,7 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
             for (WeComMassTaskExternalUserStatusEnum value : WeComMassTaskExternalUserStatusEnum.values()) {
                 Integer count =
                         weComTaskCenterExternalUserStatisticRepository.countByTaskUuidAndStatusAndPlanTime(taskUuid,
-                        value.getValue(), planTime);
+                                value.getValue(), planTime);
                 if (value == WeComMassTaskExternalUserStatusEnum.UNDELIVERED) {
                     externalUserDetail.setNonDeliveredCount(count);
                 } else if (value == WeComMassTaskExternalUserStatusEnum.DELIVERED) {
@@ -508,11 +508,11 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                     new WeComMembersStatisticResponse.MemberDetail();
             detail.setMemberName(entity.getMemberName());
             detail.setMemberId(entity.getMemberId());
-            if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue())) {
+            if (StringUtils.isBlank(status) || status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue())) {
                 detail.setExternalUserCount(entity.getExternalUserCount() == null ? 0 : entity.getExternalUserCount());
-            } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.DELIVERED.getValue())) {
+            } else if (StringUtils.isBlank(status) || status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.DELIVERED.getValue())) {
                 detail.setExternalUserCount(entity.getDeliveredCount() == null ? 0 : entity.getDeliveredCount());
-            } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNFRIEND.getValue())) {
+            } else if (StringUtils.isBlank(status) || status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNFRIEND.getValue())) {
                 detail.setExternalUserCount(entity.getNonFriendCount() == null ? 0 : entity.getNonFriendCount());
             }
             members.add(detail);
