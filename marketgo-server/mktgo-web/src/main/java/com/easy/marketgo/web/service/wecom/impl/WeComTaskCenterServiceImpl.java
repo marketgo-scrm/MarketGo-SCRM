@@ -474,10 +474,8 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
             executeTimes.add(nextTime);
         }
         while (nextTime > 0 && nextTime < endOfDay) {
+            executeTimes.add(nextTime);
             nextTime = cronExpressionResolver.nextLongTime(nextTime);
-            if (nextTime > 0) {
-                executeTimes.add(nextTime);
-            }
         }
         log.info("compute next time for cron string. cron={}, execute size={}", cron, executeTimes.size());
         for (Long item : executeTimes) {
