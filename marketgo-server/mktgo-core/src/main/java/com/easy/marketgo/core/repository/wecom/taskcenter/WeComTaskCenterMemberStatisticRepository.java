@@ -42,6 +42,9 @@ public interface WeComTaskCenterMemberStatisticRepository extends CrudRepository
     @Query("SELECT * FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND status = :status")
     List<WeComTaskCenterMemberStatisticEntity> queryByTaskUuidAndStatus(String taskUuid, String status);
 
+    @Query("SELECT * FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid")
+    List<WeComTaskCenterMemberStatisticEntity> queryByTaskUuid(String taskUuid);
+
     @Query("SELECT * FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND plan_time LIKE concat('', :planTime, '%')")
     List<WeComTaskCenterMemberStatisticEntity> queryByTaskUuidAndplanTime(String taskUuid, String planTime);
 
@@ -51,4 +54,8 @@ public interface WeComTaskCenterMemberStatisticRepository extends CrudRepository
     void updateMemberMetricsForExternalUser(@Param("delivered_count") Integer deliveredCount,
                                             @Param("non_friend_count") Integer nonFriendCount,
                                             @Param("task_uuid") String taskUuid, @Param("member_id") String memberId);
+
+    @Modifying
+    @Query("DELETE FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid")
+    int deleteByTaskUuid(String taskUuid);
 }

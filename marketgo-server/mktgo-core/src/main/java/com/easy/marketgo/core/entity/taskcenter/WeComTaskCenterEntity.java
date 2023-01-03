@@ -98,7 +98,7 @@ public class WeComTaskCenterEntity extends UuidBaseEntity {
 
     private Integer targetTime;
 
-    private Date executeTime;
+    private Date planTime;
 
     private Date finishTime;
 }

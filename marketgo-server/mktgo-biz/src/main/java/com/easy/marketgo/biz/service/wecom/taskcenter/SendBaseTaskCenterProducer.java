@@ -14,6 +14,7 @@ import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberR
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -219,17 +220,15 @@ public class SendBaseTaskCenterProducer {
 
     protected String saveMemberTask(WeComTaskCenterEntity entity, String memberId) {
         WeComTaskCenterMemberEntity memberEntity = new WeComTaskCenterMemberEntity();
+
+        BeanUtils.copyProperties(entity, memberEntity);
         memberEntity.setUuid(IdUtil.simpleUUID());
-        memberEntity.setCorpId(entity.getCorpId());
         memberEntity.setMemberId(memberId);
-        memberEntity.setName(entity.getName());
         memberEntity.setTaskType(entity.getTaskType());
         memberEntity.setTaskType("TASK_CENTER");
         memberEntity.setTaskUuid(entity.getUuid());
         memberEntity.setProjectUuid(entity.getProjectUuid());
         memberEntity.setScheduleType(entity.getScheduleType());
-        memberEntity.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue()) ?
-                entity.getExecuteTime() : entity.getScheduleTime());
 
         weComTaskCenterMemberRepository.save(memberEntity);
         return memberEntity.getUuid();

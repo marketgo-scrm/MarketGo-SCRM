@@ -42,4 +42,8 @@ public interface WeComTaskCenterExternalUserStatisticRepository extends CrudRepo
             ":member_id AND status= :status")
     Integer deleteByTaskUuidAndMemberId(@Param("task_uuid") String taskUuid, @Param("member_id") String memberId,
                                     String status);
+
+    @Modifying
+    @Query("DELETE FROM wecom_task_center_statistic_external_user WHERE task_uuid = :task_uuid")
+    Integer deleteByTaskUuid(@Param("task_uuid") String taskUuid);
 }

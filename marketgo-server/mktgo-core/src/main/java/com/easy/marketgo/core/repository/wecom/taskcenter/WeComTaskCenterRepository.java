@@ -35,14 +35,14 @@ public interface WeComTaskCenterRepository extends CrudRepository<WeComTaskCente
 
     @Query("SELECT * FROM wecom_task_center WHERE task_type = :task_type AND " +
             "schedule_type IN (:schedule_type) AND ( " +
-            "execute_time is null OR DATE_ADD(execute_time, INTERVAL :hour HOUR) <  NOW())")
+            "plan_time is null OR DATE_ADD(plan_time, INTERVAL :hour HOUR) <  NOW())")
     List<WeComTaskCenterEntity> getWeComTaskCenterByScheduleType(@Param("hour") int hour,
                                                                  @Param("task_type") String taskType,
                                                                  @Param("schedule_type") List<String> scheduleType);
 
     @Query("SELECT * FROM wecom_task_center WHERE task_type = :task_type AND task_status = :task_status AND " +
             "schedule_type IN (:schedule_type) AND ( " +
-            "execute_time is not null AND DATE_ADD(NOW(), INTERVAL :minute MINUTE) > execute_time)")
+            "plan_time is not null AND DATE_ADD(NOW(), INTERVAL :minute MINUTE) > plan_time)")
     List<WeComTaskCenterEntity> getWeComTaskCenterByExecuteTime(@Param("minute") int minute,
                                                                 @Param("task_type") String taskType,
                                                                 @Param("task_status") String taskStatus,
@@ -85,8 +85,8 @@ public interface WeComTaskCenterRepository extends CrudRepository<WeComTaskCente
     int updateTaskVersion(@Param("id") Integer id, @Param("version") Integer version);
 
     @Modifying
-    @Query("UPDATE wecom_task_center SET execute_time = :execute_time  WHERE uuid=:uuid")
-    int updateTaskExecuteTime(@Param("execute_time") Date remindTime, @Param("uuid") String uuid);
+    @Query("UPDATE wecom_task_center SET plan_time = :plan_time  WHERE uuid=:uuid")
+    int updateTaskExecuteTime(@Param("plan_time") Date remindTime, @Param("uuid") String uuid);
 
     @Modifying
     @Query("DELETE FROM wecom_task_center WHERE uuid IN (:uuids) AND task_status IN (:statuses)")

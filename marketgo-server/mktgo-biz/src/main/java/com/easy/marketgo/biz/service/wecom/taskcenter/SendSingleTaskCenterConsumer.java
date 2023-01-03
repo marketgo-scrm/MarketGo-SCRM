@@ -1,6 +1,5 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import cn.hutool.core.codec.Base64;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
 import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
@@ -10,9 +9,9 @@ import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterRequest;
-import com.easy.marketgo.core.redis.RedisService;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
+import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.springframework.amqp.core.Message;
@@ -40,7 +39,7 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
     private WeComRelationMemberExternalUserRepository weComRelationMemberExternalUserRepository;
 
     @Autowired
-    private RedisService redisService;
+    private TaskCacheManagerService taskCacheManagerService;
 
     @RabbitListener(queues = {RabbitMqConstants.QUEUE_NAME_WECOM_TASK_CENTER_SINGLE}, containerFactory =
             "weComSingleTaskCenterListenerContainerFactory", concurrency = "1")
@@ -77,14 +76,11 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                 return;
             }
             for (WeComRelationMemberExternalUserEntity userEntity : entities) {
-                //memberId##uuid##taskUuid##externaluserid##base64(name)
-                String key = String.format("%s##%s##%s##%s##%s", memberId, sendData.getUuid(), taskUuid,
-                        userEntity.getExternalUserId(), Base64.encode(userEntity.getExternalUserName()));
-                log.info("save external user message for single task center to cache . key={}", key);
-                redisService.set(key, WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), 0L);
+                taskCacheManagerService.setCustomerCache(memberId, sendData.getUuid(), taskUuid,
+                        userEntity.getExternalUserId(), userEntity.getExternalUserName());
             }
-            redisService.set(String.format("%s##%s##%s", memberId, sendData.getUuid(), taskUuid),
-                    WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), 0L);
+            taskCacheManagerService.setMemberCache(memberId, sendData.getUuid(), taskUuid);
+
             sendExternalUserStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                     WeComMassTaskTypeEnum.SINGLE, taskUuid, memberId, sendData.getUuid(), externalUserList,
                     sendData.getPlanTime(), WeComMassTaskExternalUserStatusEnum.UNDELIVERED,

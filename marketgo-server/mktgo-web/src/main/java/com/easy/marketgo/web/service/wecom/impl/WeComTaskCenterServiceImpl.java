@@ -21,9 +21,11 @@ import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterExternalUserStatisticRepository;
+import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterRepository;
 import com.easy.marketgo.core.service.WeComAgentMessageService;
+import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
@@ -84,6 +86,12 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
     @Autowired
     private WeComAgentMessageService weComAgentMessageService;
+
+    @Autowired
+    private TaskCacheManagerService taskCacheManagerService;
+
+    @Autowired
+    private WeComTaskCenterMemberRepository weComTaskCenterMemberRepository;
 
     @Override
     public BaseResponse updateOrInsertTaskCenter(String projectId, String corpId, String taskType,
@@ -416,10 +424,23 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 weComMediaResourceRepository.deleteByUuids(mediaUuidList);
             }
         }
+
+        List<WeComTaskCenterMemberStatisticEntity> entities =
+                weComTaskCenterMemberStatisticRepository.queryByTaskUuid(taskUuid);
+        if (CollectionUtils.isNotEmpty(entities)) {
+            for (WeComTaskCenterMemberStatisticEntity item : entities) {
+                taskCacheManagerService.delMemberCache(item.getMemberId(), item.getUuid(), item.getTaskUuid());
+                taskCacheManagerService.delCustomerCache(item.getMemberId(), item.getUuid(), item.getTaskUuid());
+            }
+        }
+
+        taskCacheManagerService.delCacheContent(taskUuid);
+
+        weComTaskCenterMemberStatisticRepository.deleteByTaskUuid(taskUuid);
+        weComTaskCenterExternalUserStatisticRepository.deleteByTaskUuid(taskUuid);
+        weComTaskCenterMemberRepository.deleteByUuid(taskUuid);
         weComTaskCenterRepository.deleteByIdAndTaskType(entity.getId(), taskType);
-        /**
-         * 删除缓存？？？？
-         */
+
         return BaseResponse.success();
     }
 

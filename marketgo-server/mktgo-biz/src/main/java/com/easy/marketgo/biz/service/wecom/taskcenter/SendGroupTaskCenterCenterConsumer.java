@@ -1,6 +1,5 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import cn.hutool.core.codec.Base64;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
 import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
@@ -10,9 +9,9 @@ import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.customer.WeComGroupChatsEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterRequest;
-import com.easy.marketgo.core.redis.RedisService;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
+import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.core.Message;
@@ -40,7 +39,7 @@ public class SendGroupTaskCenterCenterConsumer extends SendTaskCenterBaseConsume
     private WeComGroupChatsRepository weComGroupChatsRepository;
 
     @Autowired
-    private RedisService redisService;
+    private TaskCacheManagerService taskCacheManagerService;
 
     @RabbitListener(queues = {RabbitMqConstants.QUEUE_NAME_WECOM_TASK_CENTER_GROUP}, containerFactory =
             "weComGroupTaskCenterListenerContainerFactory", concurrency = "1")
@@ -74,19 +73,16 @@ public class SendGroupTaskCenterCenterConsumer extends SendTaskCenterBaseConsume
             }
             WeComMassTaskMemberStatusEnum status = WeComMassTaskMemberStatusEnum.UNSENT;
             for (WeComGroupChatsEntity userEntity : entities) {
-                //memberId##uuid##taskUuid##externaluserid##base64(name)
-                String key = String.format("%s##%s##%s##%s##%s", memberId, sendData.getUuid(), taskUuid,
-                        userEntity.getCorpId(), Base64.encode(userEntity.getGroupChatName()));
-                log.info("save group chat message for group task center to cache . key={}", key);
-                redisService.set(key, WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), 0L);
+                taskCacheManagerService.setCustomerCache(memberId, sendData.getUuid(), taskUuid,
+                        userEntity.getCorpId(), userEntity.getGroupChatName());
             }
-            redisService.set(String.format("%s##%s##%s", memberId, sendData.getUuid(), taskUuid),
-                    WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), 0L);
+            taskCacheManagerService.setMemberCache(memberId, sendData.getUuid(), taskUuid);
             sendExternalUserStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
-                    WeComMassTaskTypeEnum.GROUP, taskUuid, memberId, sendData.getUuid(), externalUserList,sendData.getPlanTime(),
+                    WeComMassTaskTypeEnum.GROUP, taskUuid, memberId, sendData.getUuid(), externalUserList,
+                    sendData.getPlanTime(),
                     WeComMassTaskExternalUserStatusEnum.UNDELIVERED, Boolean.TRUE);
             sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
-                    WeComMassTaskTypeEnum.GROUP, sendData.getUuid(), taskUuid, memberId,sendData.getPlanTime(),
+                    WeComMassTaskTypeEnum.GROUP, sendData.getUuid(), taskUuid, memberId, sendData.getPlanTime(),
                     status, totalCount, Boolean.TRUE);
             weComMassTaskSendQueueRepository.deleteSendQueueByUuid(entity.getUuid());
         }

@@ -13,7 +13,7 @@ import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterRequest;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterRepository;
-import com.easy.marketgo.core.service.taskcenter.WeComContentCacheManagerService;
+import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +49,7 @@ public class SendGroupTaskCenterProducer extends SendBaseTaskCenterProducer {
     private WeComAgentMessageRepository weComAgentMessageRepository;
 
     @Autowired
-    private WeComContentCacheManagerService weComContentCacheManagerService;
+    private TaskCacheManagerService taskCacheManagerService;
 
     public void sendGroupTask() {
         List<WeComTaskCenterEntity> entities =
@@ -92,13 +92,13 @@ public class SendGroupTaskCenterProducer extends SendBaseTaskCenterProducer {
             request.setCorpId(entity.getCorpId());
             request.setAgentId(agentId);
             request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
-                    DateUtil.formatDateTime(entity.getExecuteTime()) :
+                    DateUtil.formatDateTime(entity.getPlanTime()) :
                     DateUtil.formatDateTime(entity.getScheduleTime()));
             if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
                 request.setTargetType(entity.getTargetType());
                 request.setTargetTime(entity.getTargetTime());
             }
-            weComContentCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
+            taskCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
             List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
                     weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),
                             WeComMassTaskSendStatusEnum.UNSEND.name());

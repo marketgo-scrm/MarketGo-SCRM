@@ -1,12 +1,10 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import com.easy.marketgo.api.model.request.WeComSendAgentMessageClientRequest;
 import com.easy.marketgo.api.service.WeComSendAgentMessageRpcService;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
 import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
-import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterMetrics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -14,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum.MASS_TASK_EXTERNAL_USER_DETAIL;
 import static com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum.MASS_TASK_MEMBER_DETAIL;
@@ -98,26 +97,5 @@ public class SendTaskCenterBaseConsumer {
         memberMessage.setFinish(finish);
         weComMassTaskMetrics.setMemberMessage(memberMessage);
         produceRabbitMqMessage(weComMassTaskMetrics);
-    }
-
-    private void sendNotifyMessage(String taskType, String corpId, String agentId, String taskUuid, String members) {
-        WeComSendAgentMessageClientRequest appMsgRequest = new WeComSendAgentMessageClientRequest();
-
-        appMsgRequest.setAgentId(agentId);
-        appMsgRequest.setCorpId(corpId);
-        appMsgRequest.setMsgType(WeComSendAgentMessageClientRequest.MsgTypeEnum.TEXT);
-        appMsgRequest.setMsgId(taskUuid);
-        Map<String, String> textMessage = new HashMap<>();
-        if (taskType.equalsIgnoreCase(WeComMassTaskTypeEnum.MOMENT.name())) {
-            textMessage.put("content", "【任务提醒】有新的任务啦！\n"
-                    + "可前往【客户朋友圈】中确认发送，记得及时完成哦～");
-        } else {
-            textMessage.put("content", "【任务提醒】有新的任务啦！\n"
-                    + "可前往【群发助手】中确认发送，记得及时完成哦～");
-        }
-        appMsgRequest.setContent(JsonUtils.toJSONString(textMessage));
-        appMsgRequest.setToUser(Arrays.asList(members));
-        log.info("send text massage to member for remind. request={}", appMsgRequest);
-        weComSendAgentMessageRpcService.sendAgentMessage(appMsgRequest);
     }
 }

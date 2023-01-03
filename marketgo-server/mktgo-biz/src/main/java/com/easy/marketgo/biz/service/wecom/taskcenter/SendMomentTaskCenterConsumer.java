@@ -12,6 +12,7 @@ import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.taskcenter.WeComMomentTaskCenterRequest;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
+import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,9 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
 
     @Autowired
     private WeComRelationMemberExternalUserRepository weComRelationMemberExternalUserRepository;
+
+    @Autowired
+    private TaskCacheManagerService taskCacheManagerService;
 
     @RabbitListener(queues = {RabbitMqConstants.QUEUE_NAME_WECOM_TASK_CENTER_MOMENT}, containerFactory =
             "weComMomentTaskCenterListenerContainerFactory", concurrency = "1")
@@ -73,7 +77,7 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                 Integer count = queryExternalUserList(sendData.getProjectUuid(), sendData.getCorpId(),
                         sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(),
                         sendData.getPlanTime(), tagIdList);
-
+                taskCacheManagerService.setMemberCache(sendData.getSender(), sendData.getUuid(), taskUuid);
                 sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                         WeComMassTaskTypeEnum.MOMENT, sendData.getUuid(), taskUuid, sendData.getSender(),
                         sendData.getPlanTime(),
@@ -98,6 +102,8 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
         if (CollectionUtils.isNotEmpty(entities)) {
             List<String> externalUserList = new ArrayList<>();
             entities.forEach(entity -> {
+                taskCacheManagerService.setCustomerCache(memberId, uuid, taskUuid,
+                        entity.getExternalUserId(), entity.getExternalUserName());
                 externalUserList.add(entity.getExternalUserId());
             });
             List<String> externalUsers = externalUserList.stream().distinct().collect(Collectors.toList());
