@@ -2,7 +2,11 @@ package com.easy.marketgo.web.controller;
 
 import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
-import com.easy.marketgo.web.model.response.masstask.*;
+import com.easy.marketgo.web.model.response.masstask.WeComMassTaskCreatorsResponse;
+import com.easy.marketgo.web.model.response.taskcenter.WeComMembersStatisticResponse;
+import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterDetailResponse;
+import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterListResponse;
+import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterStatisticResponse;
 import com.easy.marketgo.web.service.wecom.WeComTaskCenterService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,10 +70,10 @@ public class WeComTaskCenterController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = WeComGetMassTaskListResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = WeComTaskCenterListResponse.class)
     })
     @ApiOperation(value = "获取任务中心列表", nickname = "getTaskCenterList", notes = "", response =
-            WeComGetMassTaskListResponse.class)
+            WeComTaskCenterListResponse.class)
     @RequestMapping(value = {"/list"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getTaskCenterList(
             @ApiParam(value = "企微项目uuid", required = true) @NotNull @Valid @RequestParam(value = "project_id",
@@ -94,10 +98,10 @@ public class WeComTaskCenterController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = WeComQueryMassTaskStatisticForMembers.class)
+            @ApiResponse(code = 0, message = "ok", response = WeComMembersStatisticResponse.class)
     })
-    @ApiOperation(value = "获取员工任务统计的员工列表", nickname = "WeComGetMassTaskListResponse", notes = "", response =
-            WeComQueryMassTaskStatisticForMembers.class)
+    @ApiOperation(value = "获取员工任务统计的员工列表", nickname = "WeComMembersStatisticResponse", notes = "", response =
+            WeComMembersStatisticResponse.class)
     @RequestMapping(value = {"/members"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity listMembers(
             @ApiParam(value = "企微项目uuid", required = true) @NotNull @Valid @RequestParam(value = "project_id",
@@ -130,10 +134,10 @@ public class WeComTaskCenterController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = WeComMassTaskDetailResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = WeComTaskCenterDetailResponse.class)
     })
     @ApiOperation(value = "获取员工任务配置详情", nickname = "getTaskCenterDetails", notes = "", response =
-            WeComMassTaskDetailResponse.class)
+            WeComTaskCenterDetailResponse.class)
     @RequestMapping(value = {"/detail"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getTaskCenterDetails(
             @ApiParam(value = "企微项目uuid", required = true) @NotNull @Valid @RequestParam(value = "project_id",
@@ -143,10 +147,10 @@ public class WeComTaskCenterController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = WeComQueryMassTaskStatisticResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = WeComTaskCenterStatisticResponse.class)
     })
     @ApiOperation(value = "获取员工任务统计数据", nickname = "getTaskCenterStatistic", notes = "", response =
-            WeComQueryMassTaskStatisticResponse.class)
+            WeComTaskCenterStatisticResponse.class)
     @RequestMapping(value = {"/statistic"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getTaskCenterStatistic(
             @ApiParam(value = "企微项目uuid", required = true) @NotNull @Valid @RequestParam(value = "project_id",

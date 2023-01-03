@@ -28,8 +28,8 @@ import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
 import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.masstask.WeComMassTaskCreatorsResponse;
-import com.easy.marketgo.web.model.response.masstask.WeComMassTaskDetailResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComMembersStatisticResponse;
+import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterListResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterStatisticResponse;
 import com.easy.marketgo.web.service.wecom.WeComTaskCenterService;
@@ -270,14 +270,20 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
     @Override
     public BaseResponse getTaskCenterDetails(String projectUuid, Integer taskId) {
-        WeComMassTaskDetailResponse response = new WeComMassTaskDetailResponse();
+        WeComTaskCenterDetailResponse response = new WeComTaskCenterDetailResponse();
 
         WeComTaskCenterEntity entity = weComTaskCenterRepository.queryById(taskId);
         if (entity == null) {
             return BaseResponse.failure(ERROR_WEB_MASS_TASK_IS_EMPTY);
         }
         BeanUtils.copyProperties(entity, response);
-        response.setScheduleTime(DateUtil.formatDateTime(entity.getScheduleTime()));
+        if (entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue())) {
+            response.setScheduleTime(DateUtil.formatDateTime(entity.getScheduleTime()).split(" ")[1]);
+            response.setRepeatStartTime(DateUtil.formatDateTime(entity.getRepeatStartTime()).split(" ")[0]);
+            response.setRepeatEndTime(DateUtil.formatDateTime(entity.getRepeatEndTime()).split(" ")[0]);
+        } else {
+            response.setScheduleTime(DateUtil.formatDateTime(entity.getScheduleTime()));
+        }
         response.setCreateTime(DateUtil.formatDateTime(entity.getCreateTime()));
         List<WeComMassTaskSendMsg> list = JsonUtils.toArray(entity.getContent(), WeComMassTaskSendMsg.class);
         response.setMsgContent(list);
