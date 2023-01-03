@@ -296,7 +296,8 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                     new WeComTaskCenterStatisticResponse.ExternalUserStatisticDetail();
 
             for (WeComMassTaskExternalUserStatusEnum value : WeComMassTaskExternalUserStatusEnum.values()) {
-                int count = weComTaskCenterExternalUserStatisticRepository.countByTaskUuidAndStatusAndPlanTime(taskUuid,
+                Integer count =
+                        weComTaskCenterExternalUserStatisticRepository.countByTaskUuidAndStatusAndPlanTime(taskUuid,
                         value.getValue(), planTime);
                 if (value == WeComMassTaskExternalUserStatusEnum.UNDELIVERED) {
                     externalUserDetail.setNonDeliveredCount(count);
@@ -452,7 +453,6 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
         long startOfDay = DateUtil.beginOfDay(entity.getRepeatStartTime()).getTime();
         long endOfDay = DateUtil.endOfDay(entity.getRepeatEndTime()).getTime();
-
 
         String[] startDate = DateUtil.formatDateTime(entity.getRepeatStartTime()).split(" ");
         String[] startTime = DateUtil.formatDateTime(entity.getScheduleTime()).split(" ");

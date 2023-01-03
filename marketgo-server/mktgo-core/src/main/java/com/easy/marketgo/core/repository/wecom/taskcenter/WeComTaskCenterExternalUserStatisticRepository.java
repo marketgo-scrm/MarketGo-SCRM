@@ -27,7 +27,7 @@ public interface WeComTaskCenterExternalUserStatisticRepository extends CrudRepo
     Integer countByTaskUuidAndStatus(String taskUuid, String uuid, String status);
 
     @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE task_uuid= :taskUuid AND status= :status " +
-            "AND plan_time LIKE :planTime")
+            "AND plan_time LIKE concat('', :planTime, '%')")
     Integer countByTaskUuidAndStatusAndPlanTime(String taskUuid, String status, String planTime);
 
     @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE task_uuid= :taskUuid AND " +
