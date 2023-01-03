@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -422,7 +423,8 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                     projectId, taskType, taskId, name);
             if (!WeComMassTaskTypeEnum.isSupported(taskType)) {
                 log.error("Unsupported wecom task center type, taskType={}.", taskType);
-                return BaseResponse.builder().code(ErrorCodeEnum.ERROR_NOT_SUPPORT_MASS_TASK.getCode()).message(ErrorCodeEnum.ERROR_NOT_SUPPORT_MASS_TASK.getMessage()).build();
+                return BaseResponse.builder().code(ErrorCodeEnum.ERROR_NOT_SUPPORT_MASS_TASK.getCode())
+                        .message(ErrorCodeEnum.ERROR_NOT_SUPPORT_MASS_TASK.getMessage()).build();
             }
             WeComTaskCenterEntity weComTaskCenterEntity = weComTaskCenterRepository.getTaskCenterByName(projectId,
                     name);
@@ -430,7 +432,8 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
             if (weComTaskCenterEntity != null && !weComTaskCenterEntity.getId().equals(taskId)) {
                 log.info("failed to check weCom task center name, projectUuid={}, taskType={}, taskId={}, name={}, " +
                         "weComTaskCenterEntity={}.", projectId, taskType, taskId, name, weComTaskCenterEntity);
-                return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME.getCode()).message(ErrorCodeEnum.ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME.getMessage()).build();
+                return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME.getCode())
+                        .message(ErrorCodeEnum.ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME.getMessage()).build();
             }
             log.info("succeed to check weCom task center name, projectUuid={}, taskType={}, taskId={}, taskCname={}, " +
                     "weComTaskCenterEntity={}.", projectId, taskType, taskId, name, weComTaskCenterEntity);
@@ -439,7 +442,8 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
             log.error("failed to check weCom task center name, projectUuid={}, taskType={}, taskId={}, name={}.",
                     projectId, taskType, taskId, name, e);
         }
-        return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getCode()).message(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getMessage()).build();
+        return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getCode())
+                .message(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getMessage()).build();
     }
 
     private List<Long> computeTotalCount(String taskUuid) {
@@ -476,6 +480,11 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
             }
         }
         log.info("compute next time for cron string. cron={}, execute size={}", cron, executeTimes.size());
+        for (Long item : executeTimes) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String timeNow = sdf.format(item);
+            log.info("compute execute time for cron string. cron={}, execute time={}", cron, timeNow);
+        }
         return executeTimes;
     }
 
