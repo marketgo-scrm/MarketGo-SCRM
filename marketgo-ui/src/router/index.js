@@ -82,6 +82,12 @@ export const constantRoutes = [
                 component: (resolve) => require(['@/views/customergrouplist'], resolve),
             },
             {
+                path: 'taskcenter',
+                name: 'taskcenter',
+                title: '任务中心',
+                component: (resolve) => require(['@/views/taskcenter'], resolve),
+            },
+            {
                 path: 'masscustomer',
                 name: 'masscustomer',
                 title: '群发客户',

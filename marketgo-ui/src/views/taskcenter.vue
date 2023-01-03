@@ -1,6 +1,6 @@
 <template>
   <div>
-    <main-head title="群发客户">
+    <main-head title="任务中心">
       <el-form class="head-form" inline size="small" label-width="0">
         <el-form-item>
           <el-button
@@ -9,9 +9,10 @@
               size="medium"
               icon="el-icon-circle-plus"
               round
+              disabled
               @click="toAdd"
           >
-            新建群发客户
+            新建任务
           </el-button>
         </el-form-item>
       </el-form>
@@ -91,6 +92,24 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="5">
+            <el-form-item label="任务类型">
+              <el-select
+                  style="width: 100%"
+                  collapse-tags
+                  v-model="queryParams.task_type"
+                  placeholder="请选择"
+                  clearable
+              >
+                <el-option
+                    v-for="(dict, index) in task_typeOption"
+                    :key="index"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row>
           <el-col :span="1" style="height: 10px;margin-right: 10px"> </el-col>
@@ -123,6 +142,11 @@
         <el-table-column label="创建人" prop="creatorName" />
         <el-table-column label="开始时间" sortable prop="scheduleTime">
         </el-table-column>
+        <el-table-column label="类型">
+          <template slot-scope="scope">
+            {{ getTaskTypeName(scope.row.taskType) }}
+          </template>
+        </el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
             {{ getStatusName(scope.row.taskStatus) }}
@@ -135,8 +159,8 @@
           <template #default="{ row }">
             <el-button size="small" type="text" :disabled="!row.canRemind" @click="remind(row)">提醒发送</el-button>
 <!--            <el-divider direction="vertical" v-if="row.canRemind"></el-divider>-->
-            <el-divider direction="vertical"></el-divider>
-            <el-button @click="openDetails(row)" size="small" type="text">详情</el-button>
+<!--            <el-divider direction="vertical"></el-divider>-->
+<!--            <el-button @click="openDetails(row)" size="small" type="text">详情</el-button>-->
             <el-divider direction="vertical"></el-divider>
             <el-button size="small" type="text" @click="del(row)">删除</el-button>
           </template>
@@ -171,6 +195,7 @@ export default {
         create_user_ids:[],
         times: ['',''],
         statuses: [],
+        task_type: '',
       },
       pickerOptions: {
         shortcuts: [
@@ -211,6 +236,12 @@ export default {
         { label: "进行中", value: 'COMPUTING,COMPUTED,SENDING' },
         { label: "已结束", value: 'FINISHED' },
       ],
+      task_typeOption: [
+        { label: "全部", value: '' },
+        { label: "群发好友", value: 'SINGLE' },
+        { label: "群发客户群", value: 'GROUP' },
+        { label: "群发朋友圈", value: 'MOMENT' },
+      ],
       dataList: [],
       creators: [],//创建人
     }
@@ -218,6 +249,11 @@ export default {
   mounted() {
     this.searchData()
     this.getCreators()
+  },
+  watch: {
+    'queryParams.task_type' : function () {
+      this.getCreators()
+    }
   },
   methods: {
     pageSizeChange(e) {
@@ -233,7 +269,7 @@ export default {
       }).then(() => {
         console.log(row)
         this.$http.post(
-            `mktgo/wecom/mass_task/delete?project_id=${this.$store.state.projectUuid}&task_type=SINGLE&task_uuid=${row.uuid}`,
+            `mktgo/wecom/task_center/delete?project_id=${this.$store.state.projectUuid}&task_type=${row.task_type}&task_uuid=${row.uuid}`,
             {}).then(function (res) {
           console.log(res)
           if (res.code == 0) {
@@ -252,7 +288,7 @@ export default {
     remind(row) {
       let _this = this
       this.$http.post(
-          `mktgo/wecom/mass_task/remind?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=SINGLE&task_uuid=${row.uuid}`,
+          `mktgo/wecom/task_center/remind?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=${row.task_type}&task_uuid=${row.uuid}`,
           {}).then(function (res) {
         console.log(res)
         if (res.code == 0) {
@@ -266,7 +302,8 @@ export default {
     getCreators() {
       let _this = this
       this.$http.get(
-          `mktgo/wecom/mass_task/creators?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=SINGLE`,
+          // `mktgo/wecom/task_center/creators?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=SINGLE`,
+          `mktgo/wecom/task_center/creators?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=${this.queryParams.task_type ? this.queryParams.task_type : 'SINGLE'}`,
           {}).then(function (res) {
         _this.creators = res.data.creators
       });
@@ -282,6 +319,7 @@ export default {
         sort_key: '',
         sort_order: '',
         statuses: '',
+        task_type: '',
       }
 
       /*let statusesStr = ''
@@ -300,16 +338,26 @@ export default {
         k == 'start_time' ? queryStr += `&start_time=${this.queryParams.times[0]}` : ''
         k == 'end_time' ? queryStr += `&end_time=${this.queryParams.times[1]}` : ''
         k == 'statuses' ? queryStr += `&statuses=${this.queryParams.statuses.join(',')}` : ''
+        k == 'task_type' ? queryStr += `&task_type=${this.queryParams.task_type}` : ''
       }
       queryStr += `&page_num=${page_num ? page_num : this.page_num}`
       queryStr += `&page_size=${this.page_size}`
       let data = await this.$http.get(
-          `mktgo/wecom/mass_task/list?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=SINGLE`+queryStr,
+          `mktgo/wecom/task_center/list?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`+queryStr,
           {});
       console.log(data)
       if (data.code == 0) {
         this.dataList = data.data.list
         this.total = data.data.totalCount
+      }
+    },
+    getTaskTypeName(type) {
+      if (type == 'SINGLE') {
+        return '客户任务';
+      } else if (type == 'GROUP') {
+        return '客户群任务';
+      } else {
+        return '朋友圈任务'
       }
     },
     getStatusName(status) {
@@ -358,6 +406,7 @@ export default {
         create_user_ids:[],
         times: ['',''],
         statuses: [],
+        task_type: '',
       }
       // this.getList()
     }
