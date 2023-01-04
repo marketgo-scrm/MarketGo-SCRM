@@ -1,19 +1,19 @@
-package com.easy.marketgo.gateway.wecom.sevice.token;
+package com.easy.marketgo.core.service.wecom.token;
 
 import com.easy.marketgo.common.constants.Constants;
+import com.easy.marketgo.common.constants.wecom.WeComConstants;
+import com.easy.marketgo.common.constants.wecom.WeComHttpConstants;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.WeComCorpMessageEntity;
+import com.easy.marketgo.core.model.wecom.QueryAgentAccessTokenResponse;
+import com.easy.marketgo.core.model.wecom.QueryTokenBaseRequest;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.WeComCorpMessageRepository;
 import com.easy.marketgo.core.util.OkHttpUtils;
-import com.easy.marketgo.gateway.wecom.constants.WeComConstants;
-import com.easy.marketgo.gateway.wecom.constants.WeComHttpConstants;
-import com.easy.marketgo.gateway.wecom.request.QueryTokenBaseRequest;
-import com.easy.marketgo.gateway.wecom.response.QueryAgentAccessTokenResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.common.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,11 +46,8 @@ public class AccessTokenManagerService extends TokenBaseManagerService {
                 if (!StringUtils.isBlank(accessToken)) {
                     return accessToken;
                 }
-                QueryAgentAccessTokenResponse response = getTokenFromWeCom(buildParams(corpId, agentId));
-                if (response.getErrcode().equals(ErrorCodeEnum.OK.getCode())) {
-                    setTokenToCache(cacheKey, response.getAccessToken(), response.getExpiresIn());
-                }
-                accessToken = response.getAccessToken();
+                String response = getTokenFromWeCom(buildParams(corpId, agentId));
+                accessToken = parserTokenResponse(cacheKey, response);
             } catch (Exception e) {
                 log.error("failed to get agent access addressToken from weCom. cacheKey={}", cacheKey, e);
             } finally {
@@ -61,10 +58,9 @@ public class AccessTokenManagerService extends TokenBaseManagerService {
     }
 
     public void flushAgentAccessToken(final String corpId, final String agentId) {
-        QueryAgentAccessTokenResponse response = getTokenFromWeCom(buildParams(corpId, agentId));
-        if (response.getErrcode().equals(ErrorCodeEnum.OK.getCode())) {
-            setAccessToken(corpId, agentId, response.getAccessToken(), response.getExpiresIn());
-        }
+        String response = getTokenFromWeCom(buildParams(corpId, agentId));
+        String cacheKey = String.format(WeComConstants.CACHE_KEY_AGENT_ACCESS_TOKEN, corpId, agentId);
+        parserTokenResponse(cacheKey, response);
     }
 
     public void setAccessToken(final String corpId, final String agentId, final String accessToken,
@@ -74,7 +70,7 @@ public class AccessTokenManagerService extends TokenBaseManagerService {
     }
 
     @Override
-    public QueryAgentAccessTokenResponse getTokenFromWeCom(QueryTokenBaseRequest request) {
+    public String getTokenFromWeCom(QueryTokenBaseRequest request) {
         HashMap<String, String> params = new HashMap<>();
         params.put(WeComHttpConstants.CORPID, request.getCorpId());
         params.put(WeComHttpConstants.CORPSECRET, request.getSecret());
@@ -84,20 +80,9 @@ public class AccessTokenManagerService extends TokenBaseManagerService {
         } catch (Exception e) {
             log.error("failed to query agent access addressToken. ", e);
         }
-        if (StringUtils.isEmpty(response)) {
-            log.error("failed to query agent access addressToken. response={}", StringUtils.isEmpty(response) ? "" :
-                    response);
-            return null;
-        }
-        log.info("query agent access addressToken response from weCom. response={}", StringUtils.isEmpty(response) ?
-                "" : response);
-        QueryAgentAccessTokenResponse queryAgentAccessTokenResponse =
-                JsonUtils.toObject(response, QueryAgentAccessTokenResponse.class);
-        if (!queryAgentAccessTokenResponse.getErrcode().equals(ErrorCodeEnum.OK.getCode())) {
-            log.error("failed to query agent access addressToken. response={}", response);
-        }
 
-        return queryAgentAccessTokenResponse;
+
+        return response;
     }
 
     private String getWeComAppSecret(String corpId, String agentId) {
@@ -126,5 +111,22 @@ public class AccessTokenManagerService extends TokenBaseManagerService {
         request.setSecret(agentSecret);
 
         return request;
+    }
+
+    public String parserTokenResponse(String cacheKey, String response) {
+        if (StringUtils.isBlank(response)) {
+            log.error("failed to query agent access addressToken.");
+            return null;
+        }
+        log.info("query agent access addressToken response from weCom. response={}", StringUtils.isEmpty(response) ?
+                "" : response);
+        QueryAgentAccessTokenResponse queryAgentAccessTokenResponse =
+                JsonUtils.toObject(response, QueryAgentAccessTokenResponse.class);
+        if (!queryAgentAccessTokenResponse.getErrcode().equals(ErrorCodeEnum.OK.getCode())) {
+            log.error("failed to query agent access addressToken. response={}", response);
+            setTokenToCache(cacheKey, queryAgentAccessTokenResponse.getAccessToken(),
+                    queryAgentAccessTokenResponse.getExpiresIn());
+        }
+        return queryAgentAccessTokenResponse.getAccessToken();
     }
 }

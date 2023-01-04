@@ -1,6 +1,5 @@
 package com.easy.marketgo.web.model.response.user;
 
-import com.easy.marketgo.web.model.response.BaseResponse;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

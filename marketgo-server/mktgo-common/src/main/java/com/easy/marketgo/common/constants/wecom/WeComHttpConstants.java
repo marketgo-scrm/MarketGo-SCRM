@@ -1,4 +1,4 @@
-package com.easy.marketgo.gateway.wecom.constants;
+package com.easy.marketgo.common.constants.wecom;
 
 import lombok.experimental.UtilityClass;
 
@@ -95,8 +95,8 @@ public class WeComHttpConstants {
     //删除企业标签
     public final String DELETE_CORP_TAG_LIST_URL = REQUEST_PREFIX_URL + "cgi-bin/externalcontact/del_corp_tag";
 
-    public final String CORP_TICKET_URL = REQUEST_PREFIX_URL + "cgi-bin/get_jsapi_ticket";
-    public final String AGENT_TICKET_URL = REQUEST_PREFIX_URL + "cgi-bin/ticket/get";
+    public final String WECOM_CORP_TICKET_URL = REQUEST_PREFIX_URL + "cgi-bin/get_jsapi_ticket";
+    public final String WECOM_AGENT_TICKET_URL = REQUEST_PREFIX_URL + "cgi-bin/ticket/get";
 
     public final String QUERY_MEMBER_DETAIL_URL = REQUEST_PREFIX_URL + "cgi-bin/user/get";
     public final String MEMBERID_GET_FOR_OAUTH2 = REQUEST_PREFIX_URL + "cgi-bin/user/getuserinfo";
@@ -131,11 +131,12 @@ public class WeComHttpConstants {
     public final String TICKET_TYPE = "type";
     public final String CORPID = "corpid";
     public final String AGENTID = "agentid";
+    public final String AUTH_VERIFY_CODE = "code";
     public final String CORPSECRET = "corpsecret";
     public final String AGENT_ACCESS_TOKEN = "access_token";
     public final String DEPARTMENTS_ID = "id";
     public final String DEPARTMENT_MEMBER_ID = "department_id";
-    public final String NONCESTR = "WECOM_NONCESTR";
+    public final String NONCESTR = "MARKETGO_WECOM_NONCESTR";
     public final String STATE = "state";
     public final String TEMPLATEID_LIST = "templateid_list";
 

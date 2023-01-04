@@ -1,7 +1,7 @@
 package com.easy.marketgo.web.controller;
 
 import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.masstask.WeComMassTaskCreatorsResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComMembersStatisticResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterDetailResponse;

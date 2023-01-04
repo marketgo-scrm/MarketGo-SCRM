@@ -1,7 +1,7 @@
 package com.easy.marketgo.web.controller;
 
 import com.easy.marketgo.web.model.request.WeComMassTaskRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.masstask.*;
 import com.easy.marketgo.web.service.wecom.WeComMassTaskService;
 import io.swagger.annotations.*;

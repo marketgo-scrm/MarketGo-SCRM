@@ -1,6 +1,6 @@
 package com.easy.marketgo.web.controller.user;
 
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.ProjectFetchResponse;
 import com.easy.marketgo.web.service.project.IProjectService;
 import io.swagger.annotations.Api;

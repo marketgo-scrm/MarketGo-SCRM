@@ -24,7 +24,7 @@ import com.easy.marketgo.core.service.usergroup.UserGroupMangerService;
 import com.easy.marketgo.web.model.bo.OfflineUserGroupMessage;
 import com.easy.marketgo.web.model.bo.WeComUserGroupRule;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.model.response.UserGroupMessageResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpCrowdListResponse;

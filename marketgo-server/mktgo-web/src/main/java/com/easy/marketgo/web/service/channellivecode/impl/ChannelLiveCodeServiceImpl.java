@@ -28,7 +28,7 @@ import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageReposi
 import com.easy.marketgo.web.model.bo.WeComCorpTag;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.contactway.ChannelLiveCodeCreateRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.contactway.ChannelLiveCodeDetailResponse;
 import com.easy.marketgo.web.model.response.contactway.ChannelLiveCodeResponse;
 import com.easy.marketgo.web.model.response.media.MediaUploadResponse;

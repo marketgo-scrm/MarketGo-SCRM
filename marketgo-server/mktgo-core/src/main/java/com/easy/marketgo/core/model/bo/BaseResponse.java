@@ -1,8 +1,6 @@
-package com.easy.marketgo.web.model.response;
+package com.easy.marketgo.core.model.bo;
 
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.io.Serializable;
@@ -19,15 +17,11 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@ApiModel(description = "请求接口返回的统一response")
 public class BaseResponse<T> implements Serializable {
 
     private static final long serialVersionUID = -8509750561348840506L;
-    @ApiModelProperty(value = "错误码")
     private Integer code = null;
-    @ApiModelProperty(value = "错误信息")
     private String message = null;
-    @ApiModelProperty(value = "业务数据")
     private T data;
 
     //成功 不返回数据直接返回成功信息

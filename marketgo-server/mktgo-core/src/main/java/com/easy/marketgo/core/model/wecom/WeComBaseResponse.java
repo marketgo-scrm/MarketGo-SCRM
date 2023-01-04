@@ -1,4 +1,4 @@
-package com.easy.marketgo.gateway.wecom.response;
+package com.easy.marketgo.core.model.wecom;
 
 import lombok.Data;
 

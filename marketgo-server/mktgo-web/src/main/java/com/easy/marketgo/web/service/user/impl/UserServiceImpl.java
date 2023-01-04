@@ -19,7 +19,7 @@ import com.easy.marketgo.web.client.ClientRequestContextHolder;
 import com.easy.marketgo.web.model.request.user.LoginUserRequest;
 import com.easy.marketgo.web.model.request.user.SystemUserMessageRequest;
 import com.easy.marketgo.web.model.request.user.UserChangePasswordRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.user.LoginUserResponse;
 import com.easy.marketgo.web.model.response.user.LogoutUserResponse;
 import com.easy.marketgo.web.service.user.IUserService;
@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.Objects;
 
 /**

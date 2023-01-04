@@ -1,23 +1,14 @@
 package com.easy.marketgo.web.controller.user;
 
 import com.easy.marketgo.web.annotation.TokenIgnore;
-import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.user.*;
-import com.easy.marketgo.web.model.response.BaseResponse;
-import com.easy.marketgo.web.model.response.ProjectFetchResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.customer.WeComGroupChatsResponse;
-import com.easy.marketgo.web.model.response.user.LoginUserResponse;
-import com.easy.marketgo.web.model.response.user.LogoutUserResponse;
-import com.easy.marketgo.web.model.response.user.OrganizationalStructureQueryResponse;
-import com.easy.marketgo.web.model.response.user.OrganizationalStructureResponse;
-import com.easy.marketgo.web.model.response.user.UserRoleInfo;
-import com.easy.marketgo.web.model.response.user.UserRoleListQueryResponse;
-import com.easy.marketgo.web.model.response.user.UserRoleListResponse;
-import com.easy.marketgo.web.model.response.user.RolePermissionsResponse;
+import com.easy.marketgo.web.model.response.user.*;
 import com.easy.marketgo.web.service.user.IOrganizationalStructureService;
-import com.easy.marketgo.web.service.user.IUserService;
 import com.easy.marketgo.web.service.user.IUserPermissionsService;
 import com.easy.marketgo.web.service.user.IUserRoleService;
+import com.easy.marketgo.web.service.user.IUserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

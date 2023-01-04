@@ -1,8 +1,7 @@
-package com.easy.marketgo.gateway.wecom.sevice.token;
+package com.easy.marketgo.core.service.wecom.token;
 
+import com.easy.marketgo.core.model.wecom.QueryTokenBaseRequest;
 import com.easy.marketgo.core.redis.RedisService;
-import com.easy.marketgo.gateway.wecom.request.QueryTokenBaseRequest;
-import com.easy.marketgo.gateway.wecom.response.WeComBaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -39,12 +38,16 @@ public abstract class TokenBaseManagerService {
     }
 
     protected void lock() {
-        reentrantLock.lock();
+        try {
+            reentrantLock.lock();
+        } catch (Exception e) {
+            reentrantLock.unlock();
+        }
     }
 
     protected void unlock() {
         reentrantLock.unlock();
     }
 
-    abstract WeComBaseResponse getTokenFromWeCom(QueryTokenBaseRequest request);
+    protected abstract String getTokenFromWeCom(QueryTokenBaseRequest request);
 }

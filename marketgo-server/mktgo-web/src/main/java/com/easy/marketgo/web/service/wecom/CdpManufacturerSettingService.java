@@ -1,11 +1,7 @@
 package com.easy.marketgo.web.service.wecom;
 
 import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
-import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
-import com.easy.marketgo.web.model.response.BaseResponse;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 
 /**
  * @author : kevinwang

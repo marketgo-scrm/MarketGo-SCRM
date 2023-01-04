@@ -1,7 +1,7 @@
-package com.easy.marketgo.gateway.wecom.request;
+package com.easy.marketgo.core.model.wecom;
 
+import com.easy.marketgo.common.enums.SdkConfigSignatureTyeEnum;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,9 +14,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class QueryTokenBaseRequest {
-    private String corpId;
-    private String agentId;
-    private String secret;
+public class QueryApiTicketRequest extends QueryTokenBaseRequest {
+    private SdkConfigSignatureTyeEnum type;
 }

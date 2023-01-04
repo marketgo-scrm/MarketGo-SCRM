@@ -14,7 +14,7 @@ import com.easy.marketgo.core.repository.wecom.channelLivecode.WeComChannelLiveC
 import com.easy.marketgo.core.repository.wecom.channelLivecode.WeComChannelLiveCodeStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.contactway.ChannelLiveCodeStatisticsResponse;
 import com.easy.marketgo.web.model.response.contactway.ChannelLiveCodeStatisticsSummaryResponse;
 import com.easy.marketgo.web.service.channellivecode.ChannelLiveCodeStatisticsService;

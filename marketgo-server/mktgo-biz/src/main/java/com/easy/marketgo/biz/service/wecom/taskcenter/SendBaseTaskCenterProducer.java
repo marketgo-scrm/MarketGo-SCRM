@@ -1,7 +1,6 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
 import cn.hutool.core.util.IdUtil;
-import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.WeComMediaResourceEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;

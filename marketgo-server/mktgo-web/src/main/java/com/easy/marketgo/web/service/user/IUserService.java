@@ -3,7 +3,7 @@ package com.easy.marketgo.web.service.user;
 import com.easy.marketgo.web.model.request.user.LoginUserRequest;
 import com.easy.marketgo.web.model.request.user.SystemUserMessageRequest;
 import com.easy.marketgo.web.model.request.user.UserChangePasswordRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.user.LoginUserResponse;
 import com.easy.marketgo.web.model.response.user.LogoutUserResponse;
 

@@ -19,7 +19,7 @@ import com.easy.marketgo.core.repository.wecom.ProjectConfigRepository;
 import com.easy.marketgo.core.repository.wecom.TenantConfigRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.web.model.request.MediaUploadRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.media.MediaUploadResponse;
 import com.easy.marketgo.web.service.wecom.MediaUploadService;
 import lombok.extern.slf4j.Slf4j;

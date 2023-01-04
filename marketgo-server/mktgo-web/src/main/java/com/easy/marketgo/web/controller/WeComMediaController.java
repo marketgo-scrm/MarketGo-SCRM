@@ -1,7 +1,7 @@
 package com.easy.marketgo.web.controller;
 
 import com.easy.marketgo.web.model.request.MediaUploadRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.media.MediaUploadResponse;
 import com.easy.marketgo.web.service.wecom.MediaUploadService;
 import io.swagger.annotations.*;

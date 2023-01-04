@@ -1,10 +1,8 @@
 package com.easy.marketgo.web.controller;
 
 import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
-import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.cdp.*;
-import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
 import com.easy.marketgo.web.service.wecom.CdpManufacturerSettingService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
