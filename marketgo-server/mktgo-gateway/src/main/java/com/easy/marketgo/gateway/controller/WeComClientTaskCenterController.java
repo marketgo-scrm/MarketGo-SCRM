@@ -31,7 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/mktgo/client/wecom/task_center")
 @Slf4j
-public class WeComClientTaskCenterController extends BaseController {
+public class WeComClientTaskCenterController {
 
     @Autowired
     private WeComClientTaskCenterService weComClientTaskCenterService;
