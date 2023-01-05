@@ -2,7 +2,6 @@ package com.easy.marketgo.core.service.usergroup.impl;
 
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
-import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
 import com.easy.marketgo.core.model.cdp.CrowdUsersBaseRequest;
 import com.easy.marketgo.core.model.usergroup.CdpUserGroupAudienceRule;
 import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
@@ -32,11 +31,12 @@ public class CdpUserGroupServiceImpl implements UserGroupService {
     @Autowired
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
-    @Autowired
+    @Autowired(required = false)
     private CdpManagerService cdpManagerService;
 
     @Override
-    public void userGroupEstimate(String projectId, String corpId, String requestId, String taskType, UserGroupRules userGroupRules) {
+    public void userGroupEstimate(String projectId, String corpId, String requestId, String taskType,
+                                  UserGroupRules userGroupRules) {
 
         CdpUserGroupAudienceRule cdpUserGroupAudienceRule = userGroupRules.getCdpUserGroupRule();
         if (cdpUserGroupAudienceRule == null) {
@@ -65,7 +65,8 @@ public class CdpUserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public void queryUserGroupDetail(String projectId, String corpId, String taskType, String taskUuid, String userGroupRule) {
+    public void queryUserGroupDetail(String projectId, String corpId, String taskType, String taskUuid,
+                                     String userGroupRule) {
 
         CdpUserGroupAudienceRule cdpUserGroupAudienceRule = JsonUtils.toObject(userGroupRule,
                 CdpUserGroupAudienceRule.class);
