@@ -68,7 +68,7 @@ public interface WeComTaskCenterRepository extends CrudRepository<WeComTaskCente
     @Query("SELECT * FROM wecom_task_center WHERE uuid = :uuid")
     WeComTaskCenterEntity getByTaskUUID(@Param("uuid") String uuid);
 
-    @Query("SELECT * FROM wecom_task_center WHERE task_type = :task_type AND task_status NOT IN (:taskStatusList)")
+    @Query("SELECT * FROM wecom_task_center WHERE task_status NOT IN (:taskStatusList)")
     List<WeComTaskCenterEntity> querytByNotInTaskStatus(List<String> taskStatusList);
 
     @Query("SELECT * FROM wecom_task_center WHERE  schedule_time < time")
