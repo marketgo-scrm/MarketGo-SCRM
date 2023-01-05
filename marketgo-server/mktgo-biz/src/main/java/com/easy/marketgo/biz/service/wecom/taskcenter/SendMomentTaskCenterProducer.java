@@ -93,6 +93,7 @@ public class SendMomentTaskCenterProducer extends SendBaseTaskCenterProducer {
             request.setCorpId(entity.getCorpId());
             request.setAgentId(agentId);
             request.setProjectUuid(entity.getProjectUuid());
+            request.setTaskName(entity.getName());
             request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
                     DateUtil.formatDateTime(entity.getPlanTime()) :
                     DateUtil.formatDateTime(entity.getScheduleTime()));

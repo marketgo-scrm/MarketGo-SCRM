@@ -9,28 +9,25 @@ import java.util.Objects;
  * @data : 6/24/22 9:05 PM
  * Describe:
  */
-public enum WeComMassTaskTypeEnum {
+public enum WeComTaskCenterTargetTypeEnum {
     /**
-     * 群发好友
+     * 分钟
      */
-    SINGLE("SINGLE", "客户"),
+    MINUTE("MINUTE", "分钟"),
     /**
-     * 群发客户群
+     * 小时
      */
-    GROUP("SINGLE", "客户群"),
+    HOUR("HOUR", "小时"),
     /**
-     * 群发朋友圈
+     * 天
      */
-    MOMENT("SINGLE", "朋友圈"),
-    /**
-     * 活码
-     */
-    LIVE_CODE("SINGLE", "活码");
+    DAY("DAY", "天"),
+   ;
 
     private String name;
     private String cname;
 
-    WeComMassTaskTypeEnum(String name, String cname) {
+    WeComTaskCenterTargetTypeEnum(String name, String cname) {
         this.name = name;
         this.cname = cname;
     }
@@ -39,8 +36,8 @@ public enum WeComMassTaskTypeEnum {
         return Arrays.stream(values()).anyMatch(WeComMassTaskTypeEnum -> WeComMassTaskTypeEnum.name().equals(type));
     }
 
-    public static WeComMassTaskTypeEnum fromValue(String type) {
-        for (WeComMassTaskTypeEnum value : WeComMassTaskTypeEnum.values()) {
+    public static WeComTaskCenterTargetTypeEnum fromValue(String type) {
+        for (WeComTaskCenterTargetTypeEnum value : WeComTaskCenterTargetTypeEnum.values()) {
             String valueType = value.name();
             if (Objects.equals(valueType, type)) {
                 return value;

@@ -30,7 +30,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class SendGroupTaskCenterCenterConsumer extends SendTaskCenterBaseConsumer {
+public class SendGroupTaskCenterConsumer extends SendTaskCenterBaseConsumer {
 
     @Autowired
     private WeComMassTaskSendQueueRepository weComMassTaskSendQueueRepository;
@@ -77,6 +77,10 @@ public class SendGroupTaskCenterCenterConsumer extends SendTaskCenterBaseConsume
                         userEntity.getCorpId(), userEntity.getGroupChatName());
             }
             taskCacheManagerService.setMemberCache(memberId, sendData.getUuid(), taskUuid);
+            sendTaskCenterNotify(sendData.getProjectUuid(), sendData.getCorpId(), sendData.getAgentId(),
+                    WeComMassTaskTypeEnum.GROUP,
+                    sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
+                    sendData.getTaskName(), sendData.getTargetTime(), sendData.getTargetType());
             sendExternalUserStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                     WeComMassTaskTypeEnum.GROUP, taskUuid, memberId, sendData.getUuid(), externalUserList,
                     sendData.getPlanTime(),

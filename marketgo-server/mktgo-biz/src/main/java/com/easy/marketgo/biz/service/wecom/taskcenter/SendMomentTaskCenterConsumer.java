@@ -78,6 +78,10 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                         sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(),
                         sendData.getPlanTime(), tagIdList);
                 taskCacheManagerService.setMemberCache(sendData.getSender(), sendData.getUuid(), taskUuid);
+                sendTaskCenterNotify(sendData.getProjectUuid(), sendData.getCorpId(), sendData.getAgentId(),
+                        WeComMassTaskTypeEnum.GROUP,
+                        sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
+                        sendData.getTaskName(), sendData.getTargetTime(), sendData.getTargetType());
                 sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                         WeComMassTaskTypeEnum.MOMENT, sendData.getUuid(), taskUuid, sendData.getSender(),
                         sendData.getPlanTime(),

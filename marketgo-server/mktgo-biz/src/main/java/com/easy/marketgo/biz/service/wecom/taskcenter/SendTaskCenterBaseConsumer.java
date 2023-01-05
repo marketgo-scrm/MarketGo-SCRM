@@ -1,11 +1,11 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import com.easy.marketgo.api.service.WeComSendAgentMessageRpcService;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
 import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterMetrics;
+import com.easy.marketgo.core.service.WeComAgentMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum.MASS_TASK_EXTERNAL_USER_DETAIL;
@@ -32,7 +33,7 @@ public class SendTaskCenterBaseConsumer {
     private RabbitTemplate weComTaskCenterStatisticAmqpTemplate;
 
     @Resource
-    private WeComSendAgentMessageRpcService weComSendAgentMessageRpcService;
+    private WeComAgentMessageService weComAgentMessageService;
 
     protected void produceRabbitMqMessage(Object values) {
         weComTaskCenterStatisticAmqpTemplate.convertAndSend(RabbitMqConstants.EXCHANGE_NAME_WECOM_TASK_CENTER_STATISTIC,
@@ -97,5 +98,13 @@ public class SendTaskCenterBaseConsumer {
         memberMessage.setFinish(finish);
         weComMassTaskMetrics.setMemberMessage(memberMessage);
         produceRabbitMqMessage(weComMassTaskMetrics);
+    }
+
+    protected void sendTaskCenterNotify(String projectUuid, String corpId, String agentId,
+                                        WeComMassTaskTypeEnum taskType,
+                                        String uuid, String taskUuid, String memberId, String planTime,
+                                        String taskName, Integer targetTime, String targetType) {
+        weComAgentMessageService.sendTaskCenterMessage(projectUuid, taskType.getName(), corpId, agentId, taskUuid,
+                uuid, taskName, Arrays.asList(memberId), planTime, targetTime, targetType);
     }
 }

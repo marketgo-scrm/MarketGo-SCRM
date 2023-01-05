@@ -80,7 +80,10 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                         userEntity.getExternalUserId(), userEntity.getExternalUserName());
             }
             taskCacheManagerService.setMemberCache(memberId, sendData.getUuid(), taskUuid);
-
+            sendTaskCenterNotify(sendData.getProjectUuid(), sendData.getCorpId(), sendData.getAgentId(),
+                    WeComMassTaskTypeEnum.SINGLE,
+                    sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
+                    sendData.getTaskName(), sendData.getTargetTime(), sendData.getTargetType());
             sendExternalUserStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                     WeComMassTaskTypeEnum.SINGLE, taskUuid, memberId, sendData.getUuid(), externalUserList,
                     sendData.getPlanTime(), WeComMassTaskExternalUserStatusEnum.UNDELIVERED,

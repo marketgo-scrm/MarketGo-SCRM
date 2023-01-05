@@ -48,4 +48,12 @@ public class WeComTaskCenterScheduleHandler {
         sendMomentTaskCenterProducer.sendMomentTask();
         return ReturnT.SUCCESS;
     }
+
+    @XxlJob(value = "updateTaskCenterContent")
+    public ReturnT<String> updateTaskCenterContent() throws Exception {
+        sendSingleTaskCenterProducer.sendSingleTask();
+        sendGroupTaskCenterProducer.sendGroupTask();
+        sendMomentTaskCenterProducer.sendMomentTask();
+        return ReturnT.SUCCESS;
+    }
 }

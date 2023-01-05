@@ -1,7 +1,10 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
 import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.WeComMediaResourceEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberEntity;
@@ -9,6 +12,7 @@ import com.easy.marketgo.core.model.bo.WeComSendMassTaskContent;
 import com.easy.marketgo.core.model.taskcenter.WeComMomentTaskCenterRequest;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterRequest;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
+import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,13 +42,32 @@ public class SendBaseTaskCenterProducer {
     @Autowired
     private WeComTaskCenterMemberRepository weComTaskCenterMemberRepository;
 
-    public WeComTaskCenterRequest buildTaskCenterContent(String type, String messageType, String content) {
+    @Autowired
+    private WeComAgentMessageRepository weComAgentMessageRepository;
+
+    public WeComTaskCenterRequest buildTaskCenterContent(WeComTaskCenterEntity entity) {
+        String content = entity.getContent();
         WeComTaskCenterRequest request = new WeComTaskCenterRequest();
         List<WeComSendMassTaskContent> weComSendMassTaskContents = JsonUtils.toArray(content,
                 WeComSendMassTaskContent.class);
-        request.setChatType(type);
-        request.setMessageType(messageType);
-        List<String> mediaUuids = new ArrayList<>();
+        request.setChatType(entity.getTaskType());
+        request.setMessageType(entity.getMessageType());
+        WeComAgentMessageEntity weComAgentMessageEntity =
+                weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
+        String agentId = (weComAgentMessageEntity != null ? weComAgentMessageEntity.getAgentId() : "");
+        request.setProjectUuid(entity.getProjectUuid());
+        request.setTaskUuid(entity.getUuid());
+        request.setCorpId(entity.getCorpId());
+        request.setAgentId(agentId);
+        request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
+                DateUtil.formatDateTime(entity.getPlanTime()) :
+                DateUtil.formatDateTime(entity.getScheduleTime()));
+        if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
+            request.setTargetType(entity.getTargetType());
+            request.setTargetTime(entity.getTargetTime());
+        }
+
+        request.setTaskName(entity.getName());
         List<WeComTaskCenterRequest.AttachmentsMessage> attachments = new ArrayList<>();
         weComSendMassTaskContents.forEach(weComSendMassTaskContent -> {
             if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.TEXT) {
@@ -61,8 +84,8 @@ public class SendBaseTaskCenterProducer {
                 WeComTaskCenterRequest.ImageAttachmentsMessage imageAttachmentsMessage =
                         new WeComTaskCenterRequest.ImageAttachmentsMessage();
                 if (weComSendMassTaskContent.getImage() != null && StringUtils.isNotBlank(weComSendMassTaskContent.getImage().getMediaUuid())) {
-                    mediaUuids.add(weComSendMassTaskContent.getImage().getMediaUuid());
                     imageAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getImage().getMediaUuid()));
+                    imageAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getImage().getMediaUuid());
                     imageAttachmentsMessage.setImageContent(weComSendMassTaskContent.getImage().getImageContent());
                     attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.IMAGE.getValue().toLowerCase());
                     attachmentsMessage.setImage(imageAttachmentsMessage);
@@ -85,7 +108,6 @@ public class SendBaseTaskCenterProducer {
                     }
                     if (StringUtils.isNotBlank(weComSendMassTaskContent.getLink().getMediaUuid())) {
                         linkAttachmentsMessage.setPicUrl(queryMediaId(weComSendMassTaskContent.getLink().getMediaUuid()));
-                        mediaUuids.add(weComSendMassTaskContent.getLink().getMediaUuid());
                     }
 
                     attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.LINK.getValue().toLowerCase());
@@ -102,8 +124,8 @@ public class SendBaseTaskCenterProducer {
                     miniProgramAttachmentsMessage.setTitle(weComSendMassTaskContent.getMiniProgram().getTitle());
                     miniProgramAttachmentsMessage.setAppId(weComSendMassTaskContent.getMiniProgram().getAppId());
                     miniProgramAttachmentsMessage.setPage(weComSendMassTaskContent.getMiniProgram().getPage());
-                    mediaUuids.add(weComSendMassTaskContent.getMiniProgram().getMediaUuid());
                     miniProgramAttachmentsMessage.setPicMediaId(queryMediaId(weComSendMassTaskContent.getMiniProgram().getMediaUuid()));
+                    miniProgramAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getMiniProgram().getMediaUuid());
                     miniProgramAttachmentsMessage.setImageContent(weComSendMassTaskContent.getMiniProgram().getImageContent());
                     attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.MINIPROGRAM.getValue().toLowerCase());
                     attachmentsMessage.setMiniProgram(miniProgramAttachmentsMessage);
@@ -115,8 +137,8 @@ public class SendBaseTaskCenterProducer {
                 WeComTaskCenterRequest.VideoAttachmentsMessage videoAttachmentsMessage =
                         new WeComTaskCenterRequest.VideoAttachmentsMessage();
 
-                mediaUuids.add(weComSendMassTaskContent.getVideo().getMediaUuid());
                 videoAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getVideo().getMediaUuid()));
+                videoAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getVideo().getMediaUuid());
                 videoAttachmentsMessage.setImageContent(weComSendMassTaskContent.getVideo().getImageContent());
                 attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.VIDEO.getValue().toLowerCase());
                 attachmentsMessage.setVideo(videoAttachmentsMessage);
@@ -126,9 +148,8 @@ public class SendBaseTaskCenterProducer {
                         new WeComTaskCenterRequest.AttachmentsMessage();
                 WeComTaskCenterRequest.FileAttachmentsMessage fileAttachmentsMessage =
                         new WeComTaskCenterRequest.FileAttachmentsMessage();
-                mediaUuids.add(weComSendMassTaskContent.getFile().getMediaUuid());
                 fileAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getFile().getMediaUuid()));
-
+                fileAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getFile().getMediaUuid());
                 attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.FILE.getValue().toLowerCase());
                 attachmentsMessage.setFile(fileAttachmentsMessage);
                 attachments.add(attachmentsMessage);
@@ -137,9 +158,7 @@ public class SendBaseTaskCenterProducer {
         if (CollectionUtils.isNotEmpty(attachments)) {
             request.setAttachments(attachments);
         }
-        if (CollectionUtils.isNotEmpty(mediaUuids)) {
-            finishUpdateMediaId(mediaUuids);
-        }
+
         return request;
     }
 
@@ -147,7 +166,6 @@ public class SendBaseTaskCenterProducer {
         WeComMomentTaskCenterRequest request = new WeComMomentTaskCenterRequest();
         List<WeComSendMassTaskContent> weComSendMassTaskContents = JsonUtils.toArray(content,
                 WeComSendMassTaskContent.class);
-        List<String> mediaUuids = new ArrayList<>();
         List<WeComMomentTaskCenterRequest.AttachmentsMessage> attachments = new ArrayList<>();
         weComSendMassTaskContents.forEach(weComSendMassTaskContent -> {
             if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.TEXT) {
@@ -166,8 +184,8 @@ public class SendBaseTaskCenterProducer {
                 WeComMomentTaskCenterRequest.ImageAttachmentsMessage imageAttachmentsMessage =
                         new WeComMomentTaskCenterRequest.ImageAttachmentsMessage();
                 imageAttachmentsMessage.setImageContent(weComSendMassTaskContent.getImage().getImageContent());
-                mediaUuids.add(weComSendMassTaskContent.getImage().getMediaUuid());
                 imageAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getImage().getMediaUuid()));
+                imageAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getImage().getMediaUuid());
                 attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.IMAGE.getValue().toLowerCase());
                 attachmentsMessage.setImage(imageAttachmentsMessage);
                 attachments.add(attachmentsMessage);
@@ -177,10 +195,9 @@ public class SendBaseTaskCenterProducer {
                 WeComMomentTaskCenterRequest.LinkAttachmentsMessage linkAttachmentsMessage =
                         new WeComMomentTaskCenterRequest.LinkAttachmentsMessage();
                 linkAttachmentsMessage.setTitle(weComSendMassTaskContent.getLink().getTitle());
-                linkAttachmentsMessage.setMediaId(weComSendMassTaskContent.getLink().getUrl());
-                mediaUuids.add(weComSendMassTaskContent.getLink().getMediaUuid());
+                linkAttachmentsMessage.setUrl(weComSendMassTaskContent.getLink().getUrl());
                 linkAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getLink().getMediaUuid()));
-
+                linkAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getLink().getMediaUuid());
                 attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.LINK.getValue().toLowerCase());
                 attachmentsMessage.setLink(linkAttachmentsMessage);
                 attachments.add(attachmentsMessage);
@@ -189,10 +206,9 @@ public class SendBaseTaskCenterProducer {
                         new WeComMomentTaskCenterRequest.AttachmentsMessage();
                 WeComMomentTaskCenterRequest.VideoAttachmentsMessage videoAttachmentsMessage =
                         new WeComMomentTaskCenterRequest.VideoAttachmentsMessage();
-                mediaUuids.add(weComSendMassTaskContent.getVideo().getMediaUuid());
                 videoAttachmentsMessage.setImageContent(weComSendMassTaskContent.getVideo().getImageContent());
                 videoAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getVideo().getMediaUuid()));
-
+                videoAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getVideo().getMediaUuid());
                 attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.VIDEO.getValue().toLowerCase());
                 attachmentsMessage.setVideo(videoAttachmentsMessage);
                 attachments.add(attachmentsMessage);
@@ -201,20 +217,12 @@ public class SendBaseTaskCenterProducer {
         if (CollectionUtils.isNotEmpty(attachments)) {
             request.setAttachments(attachments);
         }
-        if (CollectionUtils.isNotEmpty(mediaUuids)) {
-            finishUpdateMediaId(mediaUuids);
-        }
         return request;
     }
 
     private String queryMediaId(String uuid) {
         WeComMediaResourceEntity entity = weComMediaResourceRepository.queryByUuid(uuid);
-        if (entity == null) return null;
-        return entity.getMediaId();
-    }
-
-    private void finishUpdateMediaId(List<String> mediaUuids) {
-        weComMediaResourceRepository.updateMediaByUuid(mediaUuids);
+        return (entity == null) ? null : entity.getMediaId();
     }
 
     protected String saveMemberTask(WeComTaskCenterEntity entity, String memberId) {
