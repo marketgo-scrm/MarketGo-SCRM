@@ -54,7 +54,7 @@ public class UserGroupDetailComputeService {
                         Arrays.asList(WeComMassTaskScheduleType.IMMEDIATE.getValue(),
                                 WeComMassTaskScheduleType.FIXED_TIME.getValue()));
         log.info("schedule task query send task center. taskType={}, entities={}", taskType, entities);
-        if (CollectionUtils.isNotEmpty(entities)) {
+        if (CollectionUtils.isEmpty(entities)) {
             log.info("schedule task query task center is empty. taskType={}", taskType);
             return;
         }
