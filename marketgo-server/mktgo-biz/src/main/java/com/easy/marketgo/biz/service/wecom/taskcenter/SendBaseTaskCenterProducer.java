@@ -162,9 +162,26 @@ public class SendBaseTaskCenterProducer {
         return request;
     }
 
-    public WeComMomentTaskCenterRequest buildMomentTaskCenterContent(String content) {
+    public WeComMomentTaskCenterRequest buildMomentTaskCenterContent(WeComTaskCenterEntity entity) {
         WeComMomentTaskCenterRequest request = new WeComMomentTaskCenterRequest();
-        List<WeComSendMassTaskContent> weComSendMassTaskContents = JsonUtils.toArray(content,
+
+        WeComAgentMessageEntity weComAgentMessageEntity =
+                weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
+        String agentId = (weComAgentMessageEntity != null ? weComAgentMessageEntity.getAgentId() : "");
+
+        request.setCorpId(entity.getCorpId());
+        request.setAgentId(agentId);
+        request.setProjectUuid(entity.getProjectUuid());
+        request.setTaskName(entity.getName());
+        request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
+                DateUtil.formatDateTime(entity.getPlanTime()) :
+                DateUtil.formatDateTime(entity.getScheduleTime()));
+        if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
+            request.setTargetType(entity.getTargetType());
+            request.setTargetTime(entity.getTargetTime());
+        }
+
+        List<WeComSendMassTaskContent> weComSendMassTaskContents = JsonUtils.toArray(entity.getContent(),
                 WeComSendMassTaskContent.class);
         List<WeComMomentTaskCenterRequest.AttachmentsMessage> attachments = new ArrayList<>();
         weComSendMassTaskContents.forEach(weComSendMassTaskContent -> {

@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 public class TaskCacheManagerService {
 
-    private final static String CACHE_CONTENT_KEY_NAME = "content_%s";
+    private final static String CACHE_CONTENT_KEY_NAME = "task_center_content_%s";
 
     private final static long CACHE_SAVE_TIME = 30 * 24 * 60 * 60;
 
@@ -37,6 +37,11 @@ public class TaskCacheManagerService {
     public String getCacheContent(String uuid) {
         String content = redisService.get(String.format(CACHE_CONTENT_KEY_NAME, uuid));
         return (StringUtils.isNotBlank(content)) ? content : null;
+    }
+
+    public Long getCacheContentExpireTime(String uuid) {
+        Long ExpireTime = redisService.getExpire(String.format(CACHE_CONTENT_KEY_NAME, uuid));
+        return (ExpireTime != null) ? ExpireTime : null;
     }
 
     public void delCacheContent(String uuid) {

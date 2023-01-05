@@ -1,9 +1,6 @@
 package com.easy.marketgo.biz.handler;
 
-import com.easy.marketgo.biz.service.wecom.taskcenter.SendGroupTaskCenterProducer;
-import com.easy.marketgo.biz.service.wecom.taskcenter.SendMomentTaskCenterProducer;
-import com.easy.marketgo.biz.service.wecom.taskcenter.SendSingleTaskCenterProducer;
-import com.easy.marketgo.biz.service.wecom.taskcenter.UserGroupDetailComputeService;
+import com.easy.marketgo.biz.service.wecom.taskcenter.*;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.annotation.XxlJob;
@@ -32,6 +29,9 @@ public class WeComTaskCenterScheduleHandler {
     @Autowired
     private SendMomentTaskCenterProducer sendMomentTaskCenterProducer;
 
+    @Autowired
+    private ContentUpdateCacheService contentUpdateCacheService;
+
     @XxlJob(value = "taskCenterComputeUserGroupDetail")
     public ReturnT<String> computeUserGroupDetail() throws Exception {
 
@@ -51,9 +51,7 @@ public class WeComTaskCenterScheduleHandler {
 
     @XxlJob(value = "updateTaskCenterContent")
     public ReturnT<String> updateTaskCenterContent() throws Exception {
-        sendSingleTaskCenterProducer.sendSingleTask();
-        sendGroupTaskCenterProducer.sendGroupTask();
-        sendMomentTaskCenterProducer.sendMomentTask();
+        contentUpdateCacheService.checkContentExpireIn();
         return ReturnT.SUCCESS;
     }
 }
