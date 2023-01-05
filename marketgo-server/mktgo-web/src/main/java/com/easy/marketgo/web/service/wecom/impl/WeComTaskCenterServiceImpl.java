@@ -621,20 +621,22 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
     }
 
     private String completeRateResult(WeComTaskCenterEntity entity) {
-        List<Long> planTimes = computeTotalCount(entity.getUuid());
-        long currentTime = System.currentTimeMillis();
-        long planTime = currentTime;
-        if (CollectionUtils.isNotEmpty(planTimes)) {
-            for (Long item : planTimes) {
-                if (item < currentTime) {
-                    planTime = item;
+        String dateString = DateUtil.date(entity.getScheduleTime().getTime()).toDateStr();
+        if (entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue())) {
+            List<Long> planTimes = computeTotalCount(entity.getUuid());
+            long currentTime = System.currentTimeMillis();
+            long planTime = currentTime;
+            if (CollectionUtils.isNotEmpty(planTimes)) {
+                for (Long item : planTimes) {
+                    if (item < currentTime) {
+                        planTime = item;
+                    }
                 }
             }
+            DateTime dateTime = DateUtil.date(planTime);
+            dateString = dateTime.toDateStr();
         }
-        DateTime dateTime = DateUtil.date(planTime);
-        String dateString = dateTime.toDateStr();
         log.info("check date string. dateString={}", dateString);
-
         String result = "0%";
         Integer nonSendCount = 0;
         Integer sendCount = 0;
