@@ -1,9 +1,9 @@
-package com.easy.marketgo.core.service.usergroup;
+package com.easy.marketgo.biz.service.wecom.usergroup;
 
 import com.easy.marketgo.common.enums.UserGroupAudienceTypeEnum;
-import com.easy.marketgo.core.service.usergroup.impl.CdpUserGroupServiceImpl;
-import com.easy.marketgo.core.service.usergroup.impl.OfflineUserGroupServiceImpl;
-import com.easy.marketgo.core.service.usergroup.impl.WeComUserGroupManagerImpl;
+import com.easy.marketgo.biz.service.wecom.usergroup.impl.CdpUserGroupServiceImpl;
+import com.easy.marketgo.biz.service.wecom.usergroup.impl.OfflineUserGroupServiceImpl;
+import com.easy.marketgo.biz.service.wecom.usergroup.impl.WeComUserGroupManagerImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

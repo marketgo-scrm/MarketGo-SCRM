@@ -1,10 +1,10 @@
-package com.easy.marketgo.core.service.usergroup.impl;
+package com.easy.marketgo.biz.service.wecom.usergroup.impl;
 
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.usergroup.UserGroupRules;
-import com.easy.marketgo.core.service.usergroup.UserGroupMangerService;
-import com.easy.marketgo.core.service.usergroup.UserGroupService;
-import com.easy.marketgo.core.service.usergroup.WeComUserGroupStrategyFactory;
+import com.easy.marketgo.biz.service.wecom.usergroup.UserGroupMangerService;
+import com.easy.marketgo.biz.service.wecom.usergroup.UserGroupService;
+import com.easy.marketgo.biz.service.wecom.usergroup.WeComUserGroupStrategyFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

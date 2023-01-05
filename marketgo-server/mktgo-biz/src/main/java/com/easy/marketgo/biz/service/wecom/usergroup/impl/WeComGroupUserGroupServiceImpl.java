@@ -1,37 +1,42 @@
-package com.easy.marketgo.core.service.usergroup.impl;
+package com.easy.marketgo.biz.service.wecom.usergroup.impl;
 
 import cn.hutool.crypto.SecureUtil;
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.UuidUtils;
-import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
+import com.easy.marketgo.core.entity.customer.WeComGroupChatsEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
-import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
+import com.easy.marketgo.core.model.taskcenter.QueryGroupChatsBuildSqlParam;
 import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
 import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
-import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
+import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
+import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
 import com.easy.marketgo.core.service.contacts.WeComCustomerService;
 import com.easy.marketgo.core.service.contacts.WeComMemberService;
-import com.easy.marketgo.core.service.usergroup.WeComUserGroupService;
+import com.easy.marketgo.biz.service.wecom.usergroup.WeComUserGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * @author : kevinwang
  * @version : 1.0
- * @data : 12/29/22 4:30 PM
+ * @data : 12/29/22 4:31 PM
  * Describe:
  */
+
 @Slf4j
 @Component
-public class WeComSingleUserGroupServiceImpl implements WeComUserGroupService {
+public class WeComGroupUserGroupServiceImpl implements WeComUserGroupService {
 
     @Autowired
     private WeComMemberService weComMemberService;
@@ -40,10 +45,13 @@ public class WeComSingleUserGroupServiceImpl implements WeComUserGroupService {
     private WeComCustomerService weComCustomerService;
 
     @Autowired
+    private WeComMemberMessageRepository weComMemberMessageRepository;
+
+    @Autowired
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
     @Autowired
-    private WeComRelationMemberExternalUserRepository weComRelationMemberExternalUserRepository;
+    private WeComGroupChatsRepository weComGroupChatsRepository;
 
     @Autowired
     private WeComMassTaskSendQueueRepository weComMassTaskSendQueueRepository;
@@ -51,6 +59,7 @@ public class WeComSingleUserGroupServiceImpl implements WeComUserGroupService {
     @Override
     public void userGroupEstimate(String projectId, String corpId, String requestId,
                                   WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
+
         Integer memberCount = 0;
         Integer externalUserCount = 0;
         try {
@@ -59,12 +68,13 @@ public class WeComSingleUserGroupServiceImpl implements WeComUserGroupService {
             log.info("user group for member estimate result. memberCount={}, distinctMemberList={}", memberCount,
                     distinctMemberList);
 
-            QueryUserGroupBuildSqlParam paramBuilder =
-                    weComCustomerService.buildQueryExternalUserSqlParam(corpId, distinctMemberList,
-                            weComUserGroupAudienceRule, null, null);
+            QueryGroupChatsBuildSqlParam paramBuilder =
+                    weComCustomerService.buildQueryGroupChatsSqlParam(corpId, distinctMemberList,
+                            weComUserGroupAudienceRule);
 
-            externalUserCount = weComRelationMemberExternalUserRepository.countByUserGroupCnd(paramBuilder);
-            log.info("user group for external user estimate result. externalUserCount={}", externalUserCount);
+            externalUserCount = weComGroupChatsRepository.countByCnd(paramBuilder);
+            log.info("user group to query group chat count. groupChatCount={}", externalUserCount);
+
         } catch (Exception e) {
             log.error("failed to user group for external user estimate result. requestId={}", requestId, e);
         }
@@ -81,23 +91,23 @@ public class WeComSingleUserGroupServiceImpl implements WeComUserGroupService {
     public void queryUserGroupDetail(String projectId, String corpId, String taskUuid,
                                      WeComUserGroupAudienceRule userGroupRules) {
 
-        List<String> memberList = weComMemberService.getMemberList(corpId, userGroupRules);
-        log.info("query weCom user group for member. memberList={}", memberList);
-        for (String member : memberList) {
-            List<WeComRelationMemberExternalUserEntity> externalUserEntities =
-                    weComCustomerService.getExternalUsers(corpId, Arrays.asList(member), userGroupRules);
-            log.info("weCom user group for external user estimate total result. externalUserCount={}",
-                    externalUserEntities.size());
-
-            Map<String, List<String>> memberRelationExternalUsers =
-                    externalUserEntities.stream().collect(Collectors.groupingBy(WeComRelationMemberExternalUserEntity::getMemberId,
-                            Collectors.mapping(WeComRelationMemberExternalUserEntity::getExternalUserId,
+        List<String> memberList = new ArrayList<>();
+        if (!userGroupRules.getMembers().getIsAll()) {
+            memberList = weComMemberService.getMemberList(corpId, userGroupRules);
+        } else {
+            memberList = weComGroupChatsRepository.queryOwnersByCorpId(corpId);
+        }
+        QueryGroupChatsBuildSqlParam param = weComCustomerService.buildQueryGroupChatsSqlParam(corpId, memberList,
+                userGroupRules);
+        List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities = new ArrayList<>();
+        if (param != null) {
+            List<WeComGroupChatsEntity> entities = weComGroupChatsRepository.listGroupChatsByCnd(param);
+            Map<String, List<String>> memberRelationGroupChats =
+                    entities.stream().collect(Collectors.groupingBy(WeComGroupChatsEntity::getOwner,
+                            Collectors.mapping(WeComGroupChatsEntity::getGroupChatId,
                                     Collectors.toList())));
-            log.info("weCom user group query external user list result. member={}, externalUser size={}", member,
-                    memberRelationExternalUsers.size());
-            List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities = new ArrayList<>();
             Iterator<Map.Entry<String, List<String>>> iterator =
-                    memberRelationExternalUsers.entrySet().iterator();
+                    memberRelationGroupChats.entrySet().iterator();
             while (iterator.hasNext()) {
                 WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity =
                         new WeComMassTaskSendQueueEntity();
@@ -112,7 +122,18 @@ public class WeComSingleUserGroupServiceImpl implements WeComUserGroupService {
                 log.info("weCom save task send queue. weComMassTaskSendQueueEntity={}", weComMassTaskSendQueueEntity);
                 weComMassTaskSendQueueEntities.add(weComMassTaskSendQueueEntity);
             }
-            weComMassTaskSendQueueRepository.saveAll(weComMassTaskSendQueueEntities);
+        } else {
+            memberList.forEach(member -> {
+                WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity = new WeComMassTaskSendQueueEntity();
+                weComMassTaskSendQueueEntity.setUuid(UuidUtils.generateUuid());
+                weComMassTaskSendQueueEntity.setMemberMd5(member);
+                weComMassTaskSendQueueEntity.setMemberId(member);
+                weComMassTaskSendQueueEntity.setTaskUuid(taskUuid);
+                weComMassTaskSendQueueEntity.setExternalUserIds("");
+                weComMassTaskSendQueueEntity.setStatus(WeComMassTaskSendStatusEnum.UNSEND.name());
+                weComMassTaskSendQueueEntities.add(weComMassTaskSendQueueEntity);
+            });
         }
+        weComMassTaskSendQueueRepository.saveAll(weComMassTaskSendQueueEntities);
     }
 }

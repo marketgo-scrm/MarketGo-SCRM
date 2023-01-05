@@ -1,7 +1,7 @@
-package com.easy.marketgo.core.service.usergroup;
+package com.easy.marketgo.biz.service.wecom.usergroup;
 
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
-import com.easy.marketgo.core.service.usergroup.impl.*;
+import com.easy.marketgo.biz.service.wecom.usergroup.impl.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

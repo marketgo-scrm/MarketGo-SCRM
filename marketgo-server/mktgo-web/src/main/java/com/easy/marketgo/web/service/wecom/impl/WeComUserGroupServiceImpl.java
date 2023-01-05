@@ -20,7 +20,7 @@ import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
 import com.easy.marketgo.core.repository.cdp.CdpConfigRepository;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
-import com.easy.marketgo.core.service.usergroup.UserGroupMangerService;
+import com.easy.marketgo.biz.service.wecom.usergroup.UserGroupMangerService;
 import com.easy.marketgo.web.model.bo.OfflineUserGroupMessage;
 import com.easy.marketgo.web.model.bo.WeComUserGroupRule;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;

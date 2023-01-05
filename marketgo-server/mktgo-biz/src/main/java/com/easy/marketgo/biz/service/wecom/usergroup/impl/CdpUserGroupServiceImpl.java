@@ -1,4 +1,4 @@
-package com.easy.marketgo.core.service.usergroup.impl;
+package com.easy.marketgo.biz.service.wecom.usergroup.impl;
 
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
@@ -8,7 +8,7 @@ import com.easy.marketgo.core.model.usergroup.UserGroupEstimateResult;
 import com.easy.marketgo.core.model.usergroup.UserGroupRules;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.service.cdp.CdpManagerService;
-import com.easy.marketgo.core.service.usergroup.UserGroupService;
+import com.easy.marketgo.biz.service.wecom.usergroup.UserGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -31,7 +31,7 @@ public class CdpUserGroupServiceImpl implements UserGroupService {
     @Autowired
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
-    @Autowired(required = false)
+    @Autowired
     private CdpManagerService cdpManagerService;
 
     @Override

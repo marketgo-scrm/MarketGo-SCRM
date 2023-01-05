@@ -1,4 +1,4 @@
-package com.easy.marketgo.core.service.usergroup;
+package com.easy.marketgo.biz.service.wecom.usergroup;
 
 /**
  * @author : kevinwang

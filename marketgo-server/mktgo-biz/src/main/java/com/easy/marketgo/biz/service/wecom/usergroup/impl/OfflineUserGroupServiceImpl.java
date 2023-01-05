@@ -1,10 +1,9 @@
-package com.easy.marketgo.core.service.usergroup.impl;
+package com.easy.marketgo.biz.service.wecom.usergroup.impl;
 
 import cn.hutool.crypto.SecureUtil;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.UserGroupAudienceStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
-import com.easy.marketgo.common.enums.WeComMassTaskStatus;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.UuidUtils;
@@ -15,10 +14,9 @@ import com.easy.marketgo.core.model.usergroup.UserGroupRules;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
-import com.easy.marketgo.core.service.usergroup.UserGroupService;
+import com.easy.marketgo.biz.service.wecom.usergroup.UserGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
