@@ -37,7 +37,7 @@ public class WeComAgentMessageService {
     public static final String TEXTCARD_DESCRIPTION = "<div class=\"gray\">%s</div> <div " +
             "class=\"normal\">%s</div><div class=\"highlight\">请在收到任务后%s完成</div>";
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss");
-
+    public static final DateTimeFormatter DATE_TIME_FORMATTER1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     @Resource
     private WeComSendAgentMessageRpcService weComSendAgentMessageRpcService;
 
@@ -86,7 +86,7 @@ public class WeComAgentMessageService {
         }
 
         String target = targetTime + WeComTaskCenterTargetTypeEnum.fromValue(targetType).getCname();
-        String desc = String.format(TEXTCARD_DESCRIPTION, LocalDateTime.parse(planTime, DATE_TIME_FORMATTER).format(DATE_TIME_FORMATTER),
+        String desc = String.format(TEXTCARD_DESCRIPTION, LocalDateTime.parse(planTime, DATE_TIME_FORMATTER1).format(DATE_TIME_FORMATTER),
                 taskName, target);
         String url = String.format("%s/mktgo/client/wecom/task_center/detail?member_id=%s&task_uuid=%s%s",
                 tenantConfigEntity.getServerAddress(), members.get(0), taskUuid, StringUtils.isNotBlank(uuid) ?
