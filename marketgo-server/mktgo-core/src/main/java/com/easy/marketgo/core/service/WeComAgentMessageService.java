@@ -65,7 +65,7 @@ public class WeComAgentMessageService {
 
         appMsgRequest.setAgentId(agentId);
         appMsgRequest.setCorpId(corpId);
-        appMsgRequest.setMsgType(WeComSendAgentMessageClientRequest.MsgTypeEnum.TEMPLATE_CARD);
+        appMsgRequest.setMsgType(WeComSendAgentMessageClientRequest.MsgTypeEnum.TEXTCARD);
         appMsgRequest.setMsgId(taskUuid);
 
         ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);

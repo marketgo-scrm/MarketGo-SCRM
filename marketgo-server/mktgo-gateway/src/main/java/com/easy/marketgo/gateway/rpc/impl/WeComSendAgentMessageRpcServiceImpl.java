@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -50,10 +49,6 @@ public class WeComSendAgentMessageRpcServiceImpl implements WeComSendAgentMessag
             case TEXTCARD:
                 SendAgentMessageRequest.TextCard textcard =
                         JsonUtils.toObject(content, SendAgentMessageRequest.TextCard.class);
-                String realContent = String.format(TEXTCARD_DESCRIPTION,
-                        DATE_TIME_FORMATTER.format(LocalDateTime.now()),
-                        textcard.getDescription());
-                textcard.setDescription(realContent);
                 sendAgentMessageRequest.setTextcard(textcard);
                 break;
             case TEXT:
