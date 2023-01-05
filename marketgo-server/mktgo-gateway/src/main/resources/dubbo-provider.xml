@@ -13,6 +13,9 @@
     <!--当前服务发布所依赖的协议；webserovice、Thrift、Hessain、http-->
     <dubbo:protocol name="dubbo" port="28090"/>
 
+    <!-- 服务提供者全局超时时间配置优先级最低 -->
+    <dubbo:provider timeout="60000"></dubbo:provider>
+
     <!--服务发布的配置，需要暴露的服务接口-->
     <dubbo:service
             interface="com.easy.marketgo.api.service.WeComMassTaskRpcService" ref="weComMassTaskRpcServiceImpl"/>
