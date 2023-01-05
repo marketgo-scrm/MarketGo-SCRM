@@ -49,8 +49,8 @@ public class ContentUpdateCacheService {
         }
 
         for (WeComTaskCenterEntity entity : entities) {
+            log.info("update content for task center. entity={}", entity);
             String taskUuid = entity.getUuid();
-
             Long expireTime = taskCacheManagerService.getCacheContentExpireTime(taskUuid);
             if (expireTime == null || expireTime < CACHE_CONTENT_EXPIRE_TIME) {
                 updateCacheTaskCenterContent(entity);
@@ -67,5 +67,6 @@ public class ContentUpdateCacheService {
             WeComTaskCenterRequest request = sendBaseTaskCenterProducer.buildTaskCenterContent(entity);
             taskCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
         }
+        log.info("finish to update content for task center. taskUuid={}", entity.getUuid());
     }
 }
