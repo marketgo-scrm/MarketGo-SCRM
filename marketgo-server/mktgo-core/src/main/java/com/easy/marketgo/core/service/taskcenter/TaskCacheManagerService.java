@@ -27,6 +27,8 @@ public class TaskCacheManagerService {
 
     private final static String CACHE_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s##%s##%s";
 
+    private final static String CACHE_SCAN_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s";
+
     private final static String CACHE_SCAN_MEMBER_KEY_NAME = "task_center_member_%s##%s";
 
     public final static String CACHE_CUSTOMER_REPLACE_KEY = "task_center_customer_";
@@ -71,7 +73,7 @@ public class TaskCacheManagerService {
     }
 
     public List<String> scanCustomerCache(String corpId, String memberId, String taskUuid, String uuid) {
-        String key = String.format(CACHE_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
+        String key = String.format(CACHE_SCAN_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
         List<String> keys = redisService.cursorPatternKeys(key);
         log.info("save external user message for single task center to cache . keys={}", keys);
         return keys;
