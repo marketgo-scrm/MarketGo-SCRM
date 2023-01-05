@@ -75,14 +75,14 @@ public class TaskCacheManagerService {
     public List<String> scanCustomerCache(String corpId, String memberId, String taskUuid, String uuid) {
         String key = String.format(CACHE_SCAN_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
         List<String> keys = redisService.cursorPatternKeys(key);
-        log.info("save external user message for single task center to cache . keys={}", keys);
+        log.info("scan external user message for task center from cache.  scanKey={}, keys={}", key, keys);
         return keys;
     }
 
     public void delCustomerCache(String corpId, String memberId, String taskUuid, String uuid) {
         String key = String.format(CACHE_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
         List<String> keys = redisService.cursorPatternKeys(key);
-        log.info("save external user message for single task center to cache . keys={}", keys);
+        log.info("scan external user message for task center from cache . scanKey={}, keys={}", key, keys);
         if (CollectionUtils.isNotEmpty(keys)) {
             redisService.deleteKeys(keys);
         }
