@@ -100,8 +100,8 @@ public enum ErrorCodeEnum {
      */
     ERROR_REACT_SDK_CONFIG_VERIFY(7000, "sdk config 验证失败"),
     ERROR_REACT_TASK_IS_NOT_EXIST(7001, "请求的任务列表不存在，请确认任务是否存在"),
-    ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST(7001, "请求的任务的内容不存在，请确认任务是否存在"),
-
+    ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST(7002, "请求的任务的内容不存在，请确认任务是否存在"),
+    ERROR_REACT_TASK_CUSTOMER_LIST_IS_NOT_EXIST(7003, "请求的任务的客户列表不存在，请确认任务是否存在"),
     /**
      * 企微的错误码定义
      * 模块-WECOM

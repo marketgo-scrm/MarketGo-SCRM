@@ -29,6 +29,10 @@ public class TaskCacheManagerService {
 
     private final static String CACHE_SCAN_MEMBER_KEY_NAME = "task_center_member_%s##%s";
 
+    public final static String CACHE_CUSTOMER_REPLACE_KEY = "task_center_customer_";
+
+    public final static String CACHE_KEY_SPLIT_CHARACTER = "##";
+
     private final static long CACHE_SAVE_TIME = 30 * 24 * 60 * 60;
 
     private final static long CACHE_CONTENT_SAVE_TIME = 3 * 24 * 60 * 60;
@@ -60,6 +64,17 @@ public class TaskCacheManagerService {
                 externalUserId, Base64.encode(externalUserName));
         log.info("save external user message for single task center to cache . key={}", key);
         redisService.set(key, WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), CACHE_SAVE_TIME);
+    }
+
+    public String getCustomerCache(String key) {
+        return redisService.get(key);
+    }
+
+    public List<String> scanCustomerCache(String corpId, String memberId, String taskUuid, String uuid) {
+        String key = String.format(CACHE_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
+        List<String> keys = redisService.cursorPatternKeys(key);
+        log.info("save external user message for single task center to cache . keys={}", keys);
+        return keys;
     }
 
     public void delCustomerCache(String corpId, String memberId, String taskUuid, String uuid) {

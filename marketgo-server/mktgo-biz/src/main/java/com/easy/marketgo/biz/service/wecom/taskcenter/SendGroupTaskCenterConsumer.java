@@ -73,10 +73,10 @@ public class SendGroupTaskCenterConsumer extends SendTaskCenterBaseConsumer {
             }
             WeComMassTaskMemberStatusEnum status = WeComMassTaskMemberStatusEnum.UNSENT;
             for (WeComGroupChatsEntity userEntity : entities) {
-                taskCacheManagerService.setCustomerCache(sendData.getCorpId(), memberId, sendData.getUuid(), taskUuid,
+                taskCacheManagerService.setCustomerCache(sendData.getCorpId(), memberId, taskUuid,sendData.getUuid(),
                         userEntity.getCorpId(), userEntity.getGroupChatName());
             }
-            taskCacheManagerService.setMemberCache(sendData.getCorpId(), memberId, sendData.getUuid(), taskUuid);
+            taskCacheManagerService.setMemberCache(sendData.getCorpId(), memberId, taskUuid, sendData.getUuid());
             sendTaskCenterNotify(sendData.getProjectUuid(), sendData.getCorpId(), sendData.getAgentId(),
                     WeComMassTaskTypeEnum.GROUP,
                     sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
