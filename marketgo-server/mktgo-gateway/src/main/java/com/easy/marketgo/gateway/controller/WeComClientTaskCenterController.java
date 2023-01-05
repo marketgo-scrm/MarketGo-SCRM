@@ -73,11 +73,13 @@ public class WeComClientTaskCenterController extends BaseController {
             WeComTaskCenterDetailClientResponse.class)
     @RequestMapping(value = {"/detail"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getTaskCenterDetails(
+            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
+                    true) String corpId,
             @ApiParam(value = "员工ID", required = false) @Valid @RequestParam(value = "member_id", required = false) String memberId,
             @ApiParam(value = "任务ID", required = true) @RequestParam("task_uuid") String taskUuid,
             @ApiParam(value = "uuid", required = false) @NotNull @Valid @RequestParam(value = "uuid",
                     required = false) String uuid) {
-        return ResponseEntity.ok(weComClientTaskCenterService.getTaskCenterDetails(memberId, taskUuid, uuid));
+        return ResponseEntity.ok(weComClientTaskCenterService.getTaskCenterDetails(corpId, memberId, taskUuid, uuid));
     }
 
     @ApiResponses({
@@ -87,11 +89,14 @@ public class WeComClientTaskCenterController extends BaseController {
             BaseResponse.class)
     @RequestMapping(value = {"/member/status"}, produces = {"application/json"}, method = RequestMethod.POST)
     public ResponseEntity changeTaskCenterMemberStatus(
+            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
+                    true) String corpId,
             @ApiParam(value = "员工ID", required = true) @Valid @RequestParam(value = "member_id", required = true) String memberId,
             @ApiParam(value = "任务UUID", required = true) @RequestParam("task_uuid") String taskUuid,
             @ApiParam(value = "任务状态", required = true) @RequestParam("status") String status,
             @ApiParam(value = "uuid", required = true) @NotNull @Valid @RequestParam(value = "uuid", required = true) String uuid) {
-        return ResponseEntity.ok(weComClientTaskCenterService.changeTaskCenterMemberStatus(memberId, taskUuid, uuid,
+        return ResponseEntity.ok(weComClientTaskCenterService.changeTaskCenterMemberStatus(corpId, memberId, taskUuid,
+                uuid,
                 status));
     }
 
@@ -102,12 +107,14 @@ public class WeComClientTaskCenterController extends BaseController {
             BaseResponse.class)
     @RequestMapping(value = {"/external_user/status"}, produces = {"application/json"}, method = RequestMethod.POST)
     public ResponseEntity changeTaskCenterExternalUserStatus(
+            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
+                    true) String corpId,
             @ApiParam(value = "员工ID", required = true) @Valid @RequestParam(value = "member_id", required = true) String memberId,
             @ApiParam(value = "任务UUID", required = true) @RequestParam("task_uuid") String taskUuid,
             @ApiParam(value = "任务状态", required = true) @RequestParam("external_user_id") String externalUserId,
             @ApiParam(value = "任务状态", required = true) @RequestParam("status") String status,
             @ApiParam(value = "uuid", required = true) @NotNull @Valid @RequestParam(value = "uuid", required = true) String uuid) {
-        return ResponseEntity.ok(weComClientTaskCenterService.changeTaskCenterExternalUserStatus(memberId, taskUuid,
-                uuid, externalUserId, status));
+        return ResponseEntity.ok(weComClientTaskCenterService.changeTaskCenterExternalUserStatus(corpId, memberId,
+                taskUuid, uuid, externalUserId, status));
     }
 }

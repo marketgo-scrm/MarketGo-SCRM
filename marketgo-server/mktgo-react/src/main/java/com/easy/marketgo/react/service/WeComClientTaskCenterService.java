@@ -26,10 +26,10 @@ public interface WeComClientTaskCenterService {
                                 String startTime,
                                 String endTime);
 
-    BaseResponse getTaskCenterDetails(String memberId, String taskUuid, String uuid);
+    BaseResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid);
 
-    BaseResponse changeTaskCenterMemberStatus(String memberId, String taskUuid, String uuid, String status);
+    BaseResponse changeTaskCenterMemberStatus(String corpId, String memberId, String taskUuid, String uuid, String status);
 
-    BaseResponse changeTaskCenterExternalUserStatus(String memberId, String taskUuid, String uuid,
+    BaseResponse changeTaskCenterExternalUserStatus(String corpId, String memberId, String taskUuid, String uuid,
                                                     String externalUserId, String status);
 }

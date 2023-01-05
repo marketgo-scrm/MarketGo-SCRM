@@ -26,6 +26,9 @@ public class TaskCacheManagerService {
     private final static String CACHE_MEMBER_KEY_NAME = "task_center_member_%s##%s##%s##%s";
 
     private final static String CACHE_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s##%s##%s";
+
+    private final static String CACHE_SCAN_MEMBER_KEY_NAME = "task_center_member_%s##%s";
+
     private final static long CACHE_SAVE_TIME = 30 * 24 * 60 * 60;
 
     private final static long CACHE_CONTENT_SAVE_TIME = 3 * 24 * 60 * 60;
@@ -59,11 +62,6 @@ public class TaskCacheManagerService {
         redisService.set(key, WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), CACHE_SAVE_TIME);
     }
 
-    public void setMemberCache(String corpId, String memberId, String taskUuid, String uuid) {
-        redisService.set(String.format(CACHE_MEMBER_KEY_NAME, corpId, memberId, taskUuid, uuid),
-                WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), CACHE_SAVE_TIME);
-    }
-
     public void delCustomerCache(String corpId, String memberId, String taskUuid, String uuid) {
         String key = String.format(CACHE_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
         List<String> keys = redisService.cursorPatternKeys(key);
@@ -71,6 +69,24 @@ public class TaskCacheManagerService {
         if (CollectionUtils.isNotEmpty(keys)) {
             redisService.deleteKeys(keys);
         }
+    }
+
+    public void setMemberCache(String corpId, String memberId, String taskUuid, String uuid) {
+        redisService.set(String.format(CACHE_MEMBER_KEY_NAME, corpId, memberId, taskUuid, uuid),
+                WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), CACHE_SAVE_TIME);
+    }
+
+    public List<String> scanMemberCache(String corpId, String memberId) {
+
+        String key = String.format(CACHE_SCAN_MEMBER_KEY_NAME, corpId, memberId);
+        List<String> keys = redisService.cursorPatternKeys(key);
+        log.info("scan member key for task center to cache . keys={}", keys);
+
+        return keys;
+    }
+
+    public String getMemberCache(String corpId, String memberId, String taskUuid, String uuid) {
+        return redisService.get(String.format(CACHE_MEMBER_KEY_NAME, corpId, memberId, taskUuid, uuid));
     }
 
     public void delMemberCache(String corpId, String memberId, String taskUuid, String uuid) {
