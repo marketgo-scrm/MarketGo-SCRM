@@ -39,14 +39,18 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
 
     @Override
     public BaseResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid) {
+        log.info("start to query task center detail. corpId={}, memberId={}, taskUuid={}, uuid={}", corpId, memberId,
+                taskUuid, uuid);
         String value = taskCacheManagerService.getMemberCache(corpId, memberId, taskUuid, uuid);
         if (StringUtils.isBlank(value)) {
             BaseResponse.failure(ErrorCodeEnum.ERROR_REACT_TASK_IS_NOT_EXIST);
         }
+        log.info("query customer cache message. value={}", value);
         String content = taskCacheManagerService.getCacheContent(taskUuid);
         if (StringUtils.isBlank(content)) {
             BaseResponse.failure(ErrorCodeEnum.ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST);
         }
+        log.info("query content cache message. content={}", content);
         BaseResponse response = BaseResponse.success();
 
         WeComTaskCenterDetailClientResponse detailClientResponse = JsonUtils.toObject(content,

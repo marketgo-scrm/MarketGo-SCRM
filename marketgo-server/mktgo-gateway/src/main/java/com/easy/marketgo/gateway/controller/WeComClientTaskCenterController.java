@@ -73,12 +73,10 @@ public class WeComClientTaskCenterController {
             WeComTaskCenterDetailClientResponse.class)
     @RequestMapping(value = {"/detail"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getTaskCenterDetails(
-            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
-                    true) String corpId,
+            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
             @ApiParam(value = "员工ID", required = false) @Valid @RequestParam(value = "member_id", required = false) String memberId,
             @ApiParam(value = "任务ID", required = true) @RequestParam("task_uuid") String taskUuid,
-            @ApiParam(value = "uuid", required = false) @NotNull @Valid @RequestParam(value = "uuid",
-                    required = false) String uuid) {
+            @ApiParam(value = "uuid", required = false) @NotNull @Valid @RequestParam(value = "uuid", required = false) String uuid) {
         return ResponseEntity.ok(weComClientTaskCenterService.getTaskCenterDetails(corpId, memberId, taskUuid, uuid));
     }
 
