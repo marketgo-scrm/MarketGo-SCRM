@@ -227,12 +227,12 @@ public class SendBaseTaskCenterProducer {
 
     protected String saveMemberTask(WeComTaskCenterEntity entity, String memberId) {
         WeComTaskCenterMemberEntity memberEntity = new WeComTaskCenterMemberEntity();
-
-        BeanUtils.copyProperties(entity, memberEntity);
+        String[] IGNORE_ISOLATOR_PROPERTIES = new String[]{"id",  "createTime", "updateTime"};
+        BeanUtils.copyProperties(entity, memberEntity, IGNORE_ISOLATOR_PROPERTIES);
         memberEntity.setUuid(IdUtil.simpleUUID());
         memberEntity.setMemberId(memberId);
         memberEntity.setTaskType(entity.getTaskType());
-        memberEntity.setTaskType("TASK_CENTER");
+        memberEntity.setType("TASK_CENTER");
         memberEntity.setTaskUuid(entity.getUuid());
         memberEntity.setProjectUuid(entity.getProjectUuid());
         memberEntity.setScheduleType(entity.getScheduleType());
