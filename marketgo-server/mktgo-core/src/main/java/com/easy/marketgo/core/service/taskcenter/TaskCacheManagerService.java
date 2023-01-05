@@ -23,6 +23,9 @@ public class TaskCacheManagerService {
 
     private final static String CACHE_CONTENT_KEY_NAME = "task_center_content_%s";
 
+    private final static String CACHE_MEMBER_KEY_NAME = "task_center_member_%s##%s##%s##%s";
+
+    private final static String CACHE_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s##%s##%s";
     private final static long CACHE_SAVE_TIME = 30 * 24 * 60 * 60;
 
     private final static long CACHE_CONTENT_SAVE_TIME = 3 * 24 * 60 * 60;
@@ -30,40 +33,39 @@ public class TaskCacheManagerService {
     @Autowired
     private RedisService redisService;
 
-    public void setCacheContent(String uuid, String content) {
-        redisService.set(String.format(CACHE_CONTENT_KEY_NAME, uuid), content, CACHE_CONTENT_SAVE_TIME);
+    public void setCacheContent(String taskUuid, String content) {
+        redisService.set(String.format(CACHE_CONTENT_KEY_NAME, taskUuid), content, CACHE_CONTENT_SAVE_TIME);
     }
 
-    public String getCacheContent(String uuid) {
-        String content = redisService.get(String.format(CACHE_CONTENT_KEY_NAME, uuid));
+    public String getCacheContent(String taskUuid) {
+        String content = redisService.get(String.format(CACHE_CONTENT_KEY_NAME, taskUuid));
         return (StringUtils.isNotBlank(content)) ? content : null;
     }
 
-    public Long getCacheContentExpireTime(String uuid) {
-        Long ExpireTime = redisService.getExpire(String.format(CACHE_CONTENT_KEY_NAME, uuid));
+    public Long getCacheContentExpireTime(String taskUuid) {
+        Long ExpireTime = redisService.getExpire(String.format(CACHE_CONTENT_KEY_NAME, taskUuid));
         return (ExpireTime != null) ? ExpireTime : null;
     }
 
-    public void delCacheContent(String uuid) {
-        redisService.delete(String.format(CACHE_CONTENT_KEY_NAME, uuid));
+    public void delCacheContent(String taskUuid) {
+        redisService.delete(String.format(CACHE_CONTENT_KEY_NAME, taskUuid));
     }
 
-
-    public void setCustomerCache(String memberId, String uuid, String taskUuid, String externalUserId,
+    public void setCustomerCache(String corpId, String memberId, String taskUuid, String uuid, String externalUserId,
                                  String externalUserName) {
-        String key = String.format("%s##%s##%s##%s##%s", memberId, uuid, taskUuid,
+        String key = String.format(CACHE_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid,
                 externalUserId, Base64.encode(externalUserName));
         log.info("save external user message for single task center to cache . key={}", key);
         redisService.set(key, WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), CACHE_SAVE_TIME);
     }
 
-    public void setMemberCache(String memberId, String uuid, String taskUuid) {
-        redisService.set(String.format("%s##%s##%s", memberId, uuid, taskUuid),
+    public void setMemberCache(String corpId, String memberId, String taskUuid, String uuid) {
+        redisService.set(String.format(CACHE_MEMBER_KEY_NAME, corpId, memberId, taskUuid, uuid),
                 WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), CACHE_SAVE_TIME);
     }
 
-    public void delCustomerCache(String memberId, String uuid, String taskUuid) {
-        String key = String.format("%s##%s##%s", memberId, uuid, taskUuid);
+    public void delCustomerCache(String corpId, String memberId, String taskUuid, String uuid) {
+        String key = String.format(CACHE_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
         List<String> keys = redisService.cursorPatternKeys(key);
         log.info("save external user message for single task center to cache . keys={}", keys);
         if (CollectionUtils.isNotEmpty(keys)) {
@@ -71,8 +73,7 @@ public class TaskCacheManagerService {
         }
     }
 
-    public void delMemberCache(String memberId, String uuid, String taskUuid) {
-        redisService.delete(String.format("%s##%s##%s", memberId, uuid, taskUuid));
+    public void delMemberCache(String corpId, String memberId, String taskUuid, String uuid) {
+        redisService.delete(String.format(CACHE_MEMBER_KEY_NAME, corpId, memberId, taskUuid, uuid));
     }
-
 }

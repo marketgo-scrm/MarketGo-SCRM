@@ -77,7 +77,8 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                 Integer count = queryExternalUserList(sendData.getProjectUuid(), sendData.getCorpId(),
                         sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(),
                         sendData.getPlanTime(), tagIdList);
-                taskCacheManagerService.setMemberCache(sendData.getSender(), sendData.getUuid(), taskUuid);
+                taskCacheManagerService.setMemberCache(sendData.getCorpId(), sendData.getSender(), sendData.getUuid(),
+                        taskUuid);
                 sendTaskCenterNotify(sendData.getProjectUuid(), sendData.getCorpId(), sendData.getAgentId(),
                         WeComMassTaskTypeEnum.GROUP,
                         sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
@@ -106,7 +107,7 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
         if (CollectionUtils.isNotEmpty(entities)) {
             List<String> externalUserList = new ArrayList<>();
             entities.forEach(entity -> {
-                taskCacheManagerService.setCustomerCache(memberId, uuid, taskUuid,
+                taskCacheManagerService.setCustomerCache(corpId, memberId, uuid, taskUuid,
                         entity.getExternalUserId(), entity.getExternalUserName());
                 externalUserList.add(entity.getExternalUserId());
             });

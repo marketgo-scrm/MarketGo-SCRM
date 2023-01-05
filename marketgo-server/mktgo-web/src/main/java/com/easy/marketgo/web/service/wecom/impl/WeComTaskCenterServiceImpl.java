@@ -429,8 +429,10 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 weComTaskCenterMemberStatisticRepository.queryByTaskUuid(taskUuid);
         if (CollectionUtils.isNotEmpty(entities)) {
             for (WeComTaskCenterMemberStatisticEntity item : entities) {
-                taskCacheManagerService.delMemberCache(item.getMemberId(), item.getUuid(), item.getTaskUuid());
-                taskCacheManagerService.delCustomerCache(item.getMemberId(), item.getUuid(), item.getTaskUuid());
+                taskCacheManagerService.delMemberCache(entity.getCorpId(), item.getMemberId(), item.getUuid(),
+                        item.getTaskUuid());
+                taskCacheManagerService.delCustomerCache(entity.getCorpId(), item.getMemberId(), item.getUuid(),
+                        item.getTaskUuid());
             }
         }
 
