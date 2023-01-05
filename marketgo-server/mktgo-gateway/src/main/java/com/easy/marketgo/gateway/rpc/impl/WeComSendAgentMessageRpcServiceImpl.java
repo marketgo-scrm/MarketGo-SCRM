@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.format.DateTimeFormatter;
-
 /**
  * @author : kevinwang
  * @version : 1.0
@@ -22,9 +20,6 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 @DubboService
 public class WeComSendAgentMessageRpcServiceImpl implements WeComSendAgentMessageRpcService {
-
-    public static final String TEXTCARD_DESCRIPTION = "<div>%s</div> <div>%s</div>";
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm");
 
     @Autowired
     private SendAgentMessageService sendAgentMessageService;
@@ -61,7 +56,8 @@ public class WeComSendAgentMessageRpcServiceImpl implements WeComSendAgentMessag
                 sendAgentMessageRequest.setNews(JsonUtils.toObject(content, SendAgentMessageRequest.News.class));
                 break;
             case TEMPLATE_CARD:
-                sendAgentMessageRequest.setTemplateCard(JsonUtils.toObject(content, SendAgentMessageRequest.TemplateCard.class));
+                sendAgentMessageRequest.setTemplateCard(JsonUtils.toObject(content,
+                        SendAgentMessageRequest.TemplateCard.class));
                 break;
         }
         return sendAgentMessageRequest;
