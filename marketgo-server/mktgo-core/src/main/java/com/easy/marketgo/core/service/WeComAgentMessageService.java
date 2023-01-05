@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +86,8 @@ public class WeComAgentMessageService {
         }
 
         String target = targetTime + WeComTaskCenterTargetTypeEnum.fromValue(targetType).getCname();
-        String desc = String.format(TEXTCARD_DESCRIPTION, DATE_TIME_FORMATTER.parse(planTime), taskName, target);
+        String desc = String.format(TEXTCARD_DESCRIPTION, LocalDateTime.parse(planTime, DATE_TIME_FORMATTER).format(DATE_TIME_FORMATTER),
+                taskName, target);
         String url = String.format("%s/mktgo/client/wecom/task_center/detail?member_id=%s&task_uuid=%s%s",
                 tenantConfigEntity.getServerAddress(), members.get(0), taskUuid, StringUtils.isNotBlank(uuid) ?
                         "&uuid=" + uuid : "");
