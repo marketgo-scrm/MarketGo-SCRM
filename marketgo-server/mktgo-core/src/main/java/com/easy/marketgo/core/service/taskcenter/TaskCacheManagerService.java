@@ -27,9 +27,9 @@ public class TaskCacheManagerService {
 
     private final static String CACHE_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s##%s##%s";
 
-    private final static String CACHE_SCAN_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s";
+    private final static String CACHE_SCAN_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s*";
 
-    private final static String CACHE_SCAN_MEMBER_KEY_NAME = "task_center_member_%s##%s";
+    private final static String CACHE_SCAN_MEMBER_KEY_NAME = "task_center_member_%s##%s*";
 
     public final static String CACHE_CUSTOMER_REPLACE_KEY = "task_center_customer_";
 
