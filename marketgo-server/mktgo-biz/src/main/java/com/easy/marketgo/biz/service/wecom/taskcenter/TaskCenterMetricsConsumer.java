@@ -15,7 +15,6 @@ import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterMetrics;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterExternalUserStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberStatisticRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +38,6 @@ import static com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum.MASS_TA
 @Slf4j
 @Component
 public class TaskCenterMetricsConsumer {
-
-    @Autowired
-    private WeComMassTaskSyncStatisticRepository weComMassTaskSyncStatisticRepository;
 
     @Autowired
     private WeComTaskCenterMemberStatisticRepository weComTaskCenterMemberStatisticRepository;
@@ -122,8 +118,8 @@ public class TaskCenterMetricsConsumer {
             log.info("failed to change task center for external user status because member list is empty");
             return;
         }
-        log.info("start to change external user status. projectUuid={}, corpId={}, taskUuid={}, message={}",
-                projectUuid, corpId, taskUuid, message);
+        log.info("start to change external user status for task center. projectUuid={}, corpId={}, taskUuid={}, " +
+                "message={}", projectUuid, corpId, taskUuid, message);
         for (WeComTaskCenterMetrics.ExternalUserStatus item : message.getExternalUserStatus()) {
             try {
                 if (item.getStatus() != WeComMassTaskExternalUserStatusEnum.UNDELIVERED) {
@@ -163,10 +159,6 @@ public class TaskCenterMetricsConsumer {
                 log.error("failed to change external user status for task center. projectUuid={}, corpId={}, " +
                         "taskUuid={}, message={}", projectUuid, corpId, taskUuid, message, e);
             }
-        }
-        if (message.getFinish().equals(Boolean.TRUE)) {
-            updateMassTaskExternalMetricsCount(message.getMemberId(), taskUuid, uuid);
-            weComMassTaskSyncStatisticRepository.deleteByTaskUuidAndSendId(taskUuid, message.getMsgId());
         }
     }
 

@@ -43,7 +43,7 @@ public class SendTaskCenterBaseConsumer {
 
     public void sendExternalUserStatusDetail(String projectUuid, String corpId, WeComMassTaskTypeEnum taskType,
                                              String taskUuid, String memberId, String uuid,
-                                             List<String> externalUsers, String planTime,
+                                             List<String> externalUsers, String planTime, String sentTime,
                                              WeComMassTaskExternalUserStatusEnum status, Boolean finish) {
         WeComTaskCenterMetrics weComMassTaskMetrics = new WeComTaskCenterMetrics();
         weComMassTaskMetrics.setTaskUuid(taskUuid);
@@ -52,7 +52,9 @@ public class SendTaskCenterBaseConsumer {
         weComMassTaskMetrics.setUuid(uuid);
         weComMassTaskMetrics.setCorpId(corpId);
         weComMassTaskMetrics.setTaskType(taskType);
-        weComMassTaskMetrics.setPlanTime(planTime);
+        if (StringUtils.isNotBlank(planTime)) {
+            weComMassTaskMetrics.setPlanTime(planTime);
+        }
         WeComTaskCenterMetrics.ExternalUserMessage externalUserMessage =
                 new WeComTaskCenterMetrics.ExternalUserMessage();
 
@@ -63,8 +65,12 @@ public class SendTaskCenterBaseConsumer {
                     new WeComTaskCenterMetrics.ExternalUserStatus();
             externalUserStatus.setExternalUserId(externalUser);
             externalUserStatus.setStatus(status);
+            if (StringUtils.isNotBlank(sentTime)) {
+                externalUserStatus.setTime(sentTime);
+            }
             statuses.add(externalUserStatus);
         });
+
         externalUserMessage.setExternalUserStatus(statuses);
         externalUserMessage.setMemberId(memberId);
         externalUserMessage.setFinish(finish);

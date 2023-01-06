@@ -29,6 +29,8 @@ public class TaskCacheManagerService {
 
     private final static String CACHE_SCAN_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s*";
 
+    private final static String CACHE_SCAN_CUSTOMER_ID_KEY_NAME = "task_center_customer_%s##%s##%s##%s##%s*";
+
     private final static String CACHE_SCAN_MEMBER_KEY_NAME = "task_center_member_%s##%s*";
 
     public final static String CACHE_CUSTOMER_REPLACE_KEY = "task_center_customer_";
@@ -71,6 +73,11 @@ public class TaskCacheManagerService {
         redisService.set(key, WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), CACHE_SAVE_TIME);
     }
 
+    public void setCustomerCache(String key, String status) {
+        log.info("change external user status for task center to cache . key={}", key);
+        redisService.set(key, status, CACHE_SAVE_TIME);
+    }
+
     public String getCustomerCache(String key) {
         return redisService.get(key);
     }
@@ -79,6 +86,15 @@ public class TaskCacheManagerService {
         String key = String.format(CACHE_SCAN_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
         List<String> keys = redisService.cursorPatternKeys(key);
         log.info("scan external user message for task center from cache.  scanKey={}, keys size={}", key, keys.size());
+        return keys;
+    }
+
+    public List<String> scanCustomerIdCache(String corpId, String memberId, String taskUuid, String uuid,
+                                            String externalUserId) {
+        String key = String.format(CACHE_SCAN_CUSTOMER_ID_KEY_NAME, corpId, memberId, taskUuid, uuid, externalUserId);
+        List<String> keys = redisService.cursorPatternKeys(key);
+        log.info("scan external user id message for task center from cache.  scanKey={}, keys size={}", key,
+                keys.size());
         return keys;
     }
 

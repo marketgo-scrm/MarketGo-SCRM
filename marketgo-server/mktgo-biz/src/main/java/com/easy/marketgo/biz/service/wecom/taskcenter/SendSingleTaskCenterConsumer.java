@@ -88,7 +88,7 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                     sendData.getTaskName(), sendData.getTargetTime(), sendData.getTargetType());
             sendExternalUserStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                     WeComMassTaskTypeEnum.SINGLE, taskUuid, memberId, sendData.getUuid(), externalUserList,
-                    sendData.getPlanTime(), WeComMassTaskExternalUserStatusEnum.UNDELIVERED,
+                    sendData.getPlanTime(), "", WeComMassTaskExternalUserStatusEnum.UNDELIVERED,
                     Boolean.TRUE);
             sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(), WeComMassTaskTypeEnum.SINGLE,
                     sendData.getUuid(), taskUuid, memberId, sendData.getPlanTime(),"",

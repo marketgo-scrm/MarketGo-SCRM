@@ -77,17 +77,18 @@ public class SendGroupTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                 taskCacheManagerService.setCustomerCache(sendData.getCorpId(), memberId, taskUuid, sendData.getUuid(),
                         userEntity.getCorpId(), userEntity.getGroupChatName());
             }
-            taskCacheManagerService.setMemberCache(sendData.getCorpId(), memberId, taskUuid, sendData.getUuid(), WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue());
+            taskCacheManagerService.setMemberCache(sendData.getCorpId(), memberId, taskUuid, sendData.getUuid(),
+                    WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue());
             sendTaskCenterNotify(sendData.getProjectUuid(), sendData.getCorpId(), sendData.getAgentId(),
                     WeComMassTaskTypeEnum.GROUP,
                     sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
                     sendData.getTaskName(), sendData.getTargetTime(), sendData.getTargetType());
             sendExternalUserStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                     WeComMassTaskTypeEnum.GROUP, taskUuid, memberId, sendData.getUuid(), externalUserList,
-                    sendData.getPlanTime(),
+                    sendData.getPlanTime(), "",
                     WeComMassTaskExternalUserStatusEnum.UNDELIVERED, Boolean.TRUE);
             sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
-                    WeComMassTaskTypeEnum.GROUP, sendData.getUuid(), taskUuid, memberId, sendData.getPlanTime(),"",
+                    WeComMassTaskTypeEnum.GROUP, sendData.getUuid(), taskUuid, memberId, sendData.getPlanTime(), "",
                     status, totalCount, Boolean.TRUE);
             weComMassTaskSendQueueRepository.deleteSendQueueByUuid(entity.getUuid());
         }

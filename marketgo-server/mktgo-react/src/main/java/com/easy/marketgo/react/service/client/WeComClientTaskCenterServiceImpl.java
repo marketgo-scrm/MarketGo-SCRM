@@ -2,6 +2,7 @@ package com.easy.marketgo.react.service.client;
 
 import cn.hutool.core.codec.Base64;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.exception.CommonException;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -101,7 +103,19 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
     @Override
     public BaseResponse changeTaskCenterExternalUserStatus(String corpId, String memberId, String taskUuid, String uuid,
                                                            String externalUserId, String sentTime, String status) {
-        taskCacheManagerService.setCustomerCache(corpId, memberId, taskUuid, uuid, externalUserId, status);
+
+        sendTaskCenterBaseConsumer.sendExternalUserStatusDetail("", corpId, null, taskUuid, memberId, uuid,
+                Arrays.asList(externalUserId), "", sentTime, WeComMassTaskExternalUserStatusEnum.valueOf(status),
+                Boolean.TRUE);
+        List<String> keys = taskCacheManagerService.scanCustomerIdCache(corpId, memberId, taskUuid, uuid,
+                externalUserId);
+        if (CollectionUtils.isNotEmpty(keys)) {
+            keys.forEach(item -> {
+                taskCacheManagerService.setCustomerCache(item, status);
+            });
+
+        }
+
         return BaseResponse.success();
     }
 }

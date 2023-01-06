@@ -86,7 +86,7 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                         sendData.getTaskName(), sendData.getTargetTime(), sendData.getTargetType());
                 sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                         WeComMassTaskTypeEnum.MOMENT, sendData.getUuid(), taskUuid, sendData.getSender(),
-                        sendData.getPlanTime(),"",
+                        sendData.getPlanTime(), "",
                         WeComMassTaskMemberStatusEnum.UNSENT, count, Boolean.TRUE);
                 weComMassTaskSendQueueRepository.deleteSendQueueByUuid(entity.getUuid());
             } catch (Exception e) {
@@ -115,7 +115,7 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
             List<String> externalUsers = externalUserList.stream().distinct().collect(Collectors.toList());
             count = externalUsers.size();
             sendExternalUserStatusDetail(projectUuid, corpId, WeComMassTaskTypeEnum.GROUP, taskUuid, memberId, uuid,
-                    externalUsers, planTime, WeComMassTaskExternalUserStatusEnum.UNDELIVERED, Boolean.TRUE);
+                    externalUsers, planTime, "", WeComMassTaskExternalUserStatusEnum.UNDELIVERED, Boolean.TRUE);
         }
         return count;
     }
