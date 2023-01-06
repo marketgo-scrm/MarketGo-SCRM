@@ -125,7 +125,7 @@ public class TaskCenterMetricsConsumer {
                 if (item.getStatus() != WeComMassTaskExternalUserStatusEnum.UNDELIVERED) {
 
                     weComTaskCenterExternalUserStatisticRepository.updateExternalUserStatus(item.getStatus().name(),
-                            uuid, taskUuid, message.getMemberId(), item.getExternalUserId());
+                            item.getTime(), uuid, taskUuid, message.getMemberId(), item.getExternalUserId());
                 } else {
                     WeComTaskCenterExternalUserStatisticEntity entity =
                             new WeComTaskCenterExternalUserStatisticEntity();
