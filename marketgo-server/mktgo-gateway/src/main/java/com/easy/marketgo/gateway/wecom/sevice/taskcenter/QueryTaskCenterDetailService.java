@@ -1,5 +1,6 @@
 package com.easy.marketgo.gateway.wecom.sevice.taskcenter;
 
+import com.easy.marketgo.common.enums.WeComMediaTypeEnum;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
@@ -52,6 +53,49 @@ public class QueryTaskCenterDetailService {
             WeComTaskCenterDetailClientResponse.AttachmentsMessage message =
                     new WeComTaskCenterDetailClientResponse.AttachmentsMessage();
             BeanUtils.copyProperties(item, message);
+            if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
+                WeComTaskCenterDetailClientResponse.TextMessage textMessage =
+                        new WeComTaskCenterDetailClientResponse.TextMessage();
+                BeanUtils.copyProperties(item.getText(), textMessage);
+                message.setText(textMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
+                WeComTaskCenterDetailClientResponse.ImageAttachmentsMessage imageMessage =
+                        new WeComTaskCenterDetailClientResponse.ImageAttachmentsMessage();
+                BeanUtils.copyProperties(item.getText(), imageMessage);
+                message.setImage(imageMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
+                WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage videoMessage =
+                        new WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage();
+                BeanUtils.copyProperties(item.getText(), videoMessage);
+                message.setVideo(videoMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
+                WeComTaskCenterDetailClientResponse.FileAttachmentsMessage fileMessage =
+                        new WeComTaskCenterDetailClientResponse.FileAttachmentsMessage();
+                BeanUtils.copyProperties(item.getText(), fileMessage);
+                message.setFile(fileMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
+                WeComTaskCenterDetailClientResponse.MiniProgramAttachmentsMessage miniMessage =
+                        new WeComTaskCenterDetailClientResponse.MiniProgramAttachmentsMessage();
+                BeanUtils.copyProperties(item.getText(), miniMessage);
+                message.setMiniProgram(miniMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
+                WeComTaskCenterDetailClientResponse.LinkAttachmentsMessage linkMessage =
+                        new WeComTaskCenterDetailClientResponse.LinkAttachmentsMessage();
+                BeanUtils.copyProperties(item.getText(), linkMessage);
+                message.setLink(linkMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VOICE.getType())) {
+                WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage videoAttachmentsMessage =
+                        new WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage();
+                BeanUtils.copyProperties(item.getText(), videoAttachmentsMessage);
+                message.setVideo(videoAttachmentsMessage);
+
+            }
             attachmentsMessageList.add(message);
         }
         clientResponse.setAttachments(attachmentsMessageList);
