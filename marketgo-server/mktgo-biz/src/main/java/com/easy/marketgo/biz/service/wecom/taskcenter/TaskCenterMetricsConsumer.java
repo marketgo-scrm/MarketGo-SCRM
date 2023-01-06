@@ -126,6 +126,7 @@ public class TaskCenterMetricsConsumer {
 
                     weComTaskCenterExternalUserStatisticRepository.updateExternalUserStatus(item.getStatus().name(),
                             item.getTime(), uuid, taskUuid, message.getMemberId(), item.getExternalUserId());
+                    updateMassTaskExternalMetricsCount(message.getMemberId(), taskUuid, uuid);
                 } else {
                     WeComTaskCenterExternalUserStatisticEntity entity =
                             new WeComTaskCenterExternalUserStatisticEntity();
@@ -149,7 +150,7 @@ public class TaskCenterMetricsConsumer {
                             entity.setExternalUserName(weComGroupChatsEntity.getGroupChatName());
                         }
                     }
-                    entity.setStatus(item.getStatus().name());
+
                     entity.setReceiveTime(DateUtil.parse(item.getTime()));
                     log.info("save change external user status. projectUuid={}, corpId={}, taskUuid={}, message={}",
                             projectUuid, corpId, taskUuid, entity);
