@@ -1,4 +1,4 @@
-package com.easy.marketgo.biz.config;
+package com.easy.marketgo.core.config;
 
 import com.easy.marketgo.common.constants.RabbitMqConstants;
 import org.springframework.amqp.core.Binding;

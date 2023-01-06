@@ -12,6 +12,7 @@ import com.easy.marketgo.core.model.bo.QueryUserGroupBuildSqlParam;
 import com.easy.marketgo.core.model.taskcenter.WeComMomentTaskCenterRequest;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
+import com.easy.marketgo.core.service.taskcenter.SendTaskCenterBaseConsumer;
 import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -78,14 +79,14 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                         sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(),
                         sendData.getPlanTime(), tagIdList);
                 taskCacheManagerService.setMemberCache(sendData.getCorpId(), sendData.getSender(),
-                        taskUuid, sendData.getUuid());
+                        taskUuid, sendData.getUuid(), WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue());
                 sendTaskCenterNotify(sendData.getProjectUuid(), sendData.getCorpId(), sendData.getAgentId(),
                         WeComMassTaskTypeEnum.GROUP,
                         sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
                         sendData.getTaskName(), sendData.getTargetTime(), sendData.getTargetType());
                 sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(),
                         WeComMassTaskTypeEnum.MOMENT, sendData.getUuid(), taskUuid, sendData.getSender(),
-                        sendData.getPlanTime(),
+                        sendData.getPlanTime(),"",
                         WeComMassTaskMemberStatusEnum.UNSENT, count, Boolean.TRUE);
                 weComMassTaskSendQueueRepository.deleteSendQueueByUuid(entity.getUuid());
             } catch (Exception e) {

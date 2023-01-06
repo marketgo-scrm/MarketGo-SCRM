@@ -1,6 +1,7 @@
 package com.easy.marketgo.gateway.controller;
 
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.gateway.wecom.request.client.WeComChangeStatusRequest;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterListClientResponse;
 import com.easy.marketgo.gateway.wecom.sevice.taskcenter.QueryTaskCenterDetailService;
@@ -11,10 +12,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -85,35 +83,13 @@ public class WeComClientTaskCenterController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
-    @ApiOperation(value = "修改员工任务的状态", nickname = "changeTaskCenterMemberStatus", notes = "", response =
+    @ApiOperation(value = "修改任务的状态", nickname = "changeTaskCenterMemberStatus", notes = "", response =
             BaseResponse.class)
-    @RequestMapping(value = {"/member/status"}, produces = {"application/json"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/status"}, produces = {"application/json"}, method = RequestMethod.POST)
     public ResponseEntity changeTaskCenterMemberStatus(
             @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
                     true) String corpId,
-            @ApiParam(value = "员工ID", required = true) @Valid @RequestParam(value = "member_id", required = true) String memberId,
-            @ApiParam(value = "任务UUID", required = true) @RequestParam("task_uuid") String taskUuid,
-            @ApiParam(value = "任务状态", required = true) @RequestParam("status") String status,
-            @ApiParam(value = "uuid", required = true) @NotNull @Valid @RequestParam(value = "uuid", required = true) String uuid) {
-        return ResponseEntity.ok(queryTaskCenterDetailService.changeTaskCenterMemberStatus(corpId, memberId, taskUuid
-                , uuid, status));
-    }
-
-    @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
-    })
-    @ApiOperation(value = "修改员工任务的客户状态", nickname = "changeTaskCenterExternalUserStatus", notes = "", response =
-            BaseResponse.class)
-    @RequestMapping(value = {"/external_user/status"}, produces = {"application/json"}, method = RequestMethod.POST)
-    public ResponseEntity changeTaskCenterExternalUserStatus(
-            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
-                    true) String corpId,
-            @ApiParam(value = "员工ID", required = true) @Valid @RequestParam(value = "member_id", required = true) String memberId,
-            @ApiParam(value = "任务UUID", required = true) @RequestParam("task_uuid") String taskUuid,
-            @ApiParam(value = "任务状态", required = true) @RequestParam("external_user_id") String externalUserId,
-            @ApiParam(value = "任务状态", required = true) @RequestParam("status") String status,
-            @ApiParam(value = "uuid", required = true) @NotNull @Valid @RequestParam(value = "uuid", required = true) String uuid) {
-        return ResponseEntity.ok(queryTaskCenterDetailService.changeTaskCenterExternalUserStatus(corpId, memberId,
-                taskUuid, uuid, externalUserId, status));
+            @ApiParam(value = "修改任务的状态", required = true) @RequestBody @Valid WeComChangeStatusRequest request) {
+        return ResponseEntity.ok(queryTaskCenterDetailService.changeTaskCenterMemberStatus(corpId, request));
     }
 }

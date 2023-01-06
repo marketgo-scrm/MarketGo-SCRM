@@ -11,6 +11,7 @@ import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterRequest;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
+import com.easy.marketgo.core.service.taskcenter.SendTaskCenterBaseConsumer;
 import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
@@ -79,7 +80,8 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                 taskCacheManagerService.setCustomerCache(sendData.getCorpId(), memberId, taskUuid, sendData.getUuid(),
                         userEntity.getExternalUserId(), userEntity.getExternalUserName());
             }
-            taskCacheManagerService.setMemberCache(sendData.getCorpId(), memberId, taskUuid, sendData.getUuid());
+            taskCacheManagerService.setMemberCache(sendData.getCorpId(), memberId, taskUuid, sendData.getUuid(),
+                    WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue());
             sendTaskCenterNotify(sendData.getProjectUuid(), sendData.getCorpId(), sendData.getAgentId(),
                     WeComMassTaskTypeEnum.SINGLE,
                     sendData.getUuid(), sendData.getTaskUuid(), sendData.getSender(), sendData.getPlanTime(),
@@ -89,7 +91,7 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
                     sendData.getPlanTime(), WeComMassTaskExternalUserStatusEnum.UNDELIVERED,
                     Boolean.TRUE);
             sendMemberStatusDetail(sendData.getProjectUuid(), sendData.getCorpId(), WeComMassTaskTypeEnum.SINGLE,
-                    sendData.getUuid(), taskUuid, memberId, sendData.getPlanTime(),
+                    sendData.getUuid(), taskUuid, memberId, sendData.getPlanTime(),"",
                     WeComMassTaskMemberStatusEnum.UNSENT, totalCount, Boolean.TRUE);
 
             weComMassTaskSendQueueRepository.deleteSendQueueByUuid(entity.getUuid());

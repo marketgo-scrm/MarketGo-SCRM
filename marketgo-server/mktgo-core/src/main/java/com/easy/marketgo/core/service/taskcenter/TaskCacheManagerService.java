@@ -91,9 +91,9 @@ public class TaskCacheManagerService {
         }
     }
 
-    public void setMemberCache(String corpId, String memberId, String taskUuid, String uuid) {
+    public void setMemberCache(String corpId, String memberId, String taskUuid, String uuid, String status) {
         redisService.set(String.format(CACHE_MEMBER_KEY_NAME, corpId, memberId, taskUuid, uuid),
-                WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), CACHE_SAVE_TIME);
+                status, CACHE_SAVE_TIME);
     }
 
     public List<String> scanMemberCache(String corpId, String memberId) {

@@ -1,7 +1,9 @@
 package com.easy.marketgo.gateway.wecom.sevice.taskcenter;
 
+import com.easy.marketgo.common.enums.WeComMassTaskMetricsType;
 import com.easy.marketgo.common.enums.WeComMediaTypeEnum;
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.gateway.wecom.request.client.WeComChangeStatusRequest;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
@@ -119,13 +121,16 @@ public class QueryTaskCenterDetailService {
         return BaseResponse.success(clientResponse);
     }
 
-    public BaseResponse changeTaskCenterMemberStatus(String corpId, String memberId, String taskUuid, String uuid,
-                                                     String status) {
-        return null;
+    public BaseResponse changeTaskCenterMemberStatus(String corpId, WeComChangeStatusRequest request) {
+        if (request.getType().equalsIgnoreCase(WeComMassTaskMetricsType.MASS_TASK_MEMBER.getValue())) {
+            weComClientTaskCenterService.changeTaskCenterMemberStatus(corpId, request.getMemberId(),
+                    request.getTaskUuid(), request.getUuid(), request.getSentTIme(), request.getStatus());
+        } else {
+            weComClientTaskCenterService.changeTaskCenterExternalUserStatus(corpId, request.getMemberId(),
+                    request.getTaskUuid(), request.getUuid(), request.getExternalUserId(), request.getSentTIme(),
+                    request.getStatus());
+        }
+        return BaseResponse.success();
     }
 
-    public BaseResponse changeTaskCenterExternalUserStatus(String corpId, String memberId, String taskUuid, String uuid,
-                                                           String externalUserId, String status) {
-        return null;
-    }
 }

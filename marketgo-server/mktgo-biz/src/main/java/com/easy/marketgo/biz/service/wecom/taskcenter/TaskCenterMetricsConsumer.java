@@ -19,7 +19,7 @@ import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatist
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterExternalUserStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberStatisticRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.common.utils.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +92,7 @@ public class TaskCenterMetricsConsumer {
                 if (!item.getStatus().equals(WeComMassTaskMemberStatusEnum.UNSENT)) {
                     weComTaskCenterMemberStatisticRepository.updateMemberStatusBytaskUuid(
                             WeComMassTaskMemberStatusEnum.UNSENT.getValue(), item.getStatus().getValue(),
-                            item.getTime(), uuid, item.getMemberId());
+                            item.getTime(), taskUuid, uuid, item.getMemberId());
                 } else {
                     String memberName = weComMemberMessageRepository.queryNameByMemberId(corpId, item.getMemberId());
                     WeComTaskCenterMemberStatisticEntity entity = new WeComTaskCenterMemberStatisticEntity();

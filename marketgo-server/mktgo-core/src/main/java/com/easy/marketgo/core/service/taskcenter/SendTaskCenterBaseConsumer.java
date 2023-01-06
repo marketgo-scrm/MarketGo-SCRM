@@ -1,4 +1,4 @@
-package com.easy.marketgo.biz.service.wecom.taskcenter;
+package com.easy.marketgo.core.service.taskcenter;
 
 import com.easy.marketgo.common.constants.RabbitMqConstants;
 import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
@@ -7,6 +7,7 @@ import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterMetrics;
 import com.easy.marketgo.core.service.WeComAgentMessageService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,10 +41,10 @@ public class SendTaskCenterBaseConsumer {
                 RabbitMqConstants.ROUTING_KEY_WECOM_TASK_CENTER_STATISTIC, values);
     }
 
-    protected void sendExternalUserStatusDetail(String projectUuid, String corpId, WeComMassTaskTypeEnum taskType,
-                                                String taskUuid, String memberId, String uuid,
-                                                List<String> externalUsers, String planTime,
-                                                WeComMassTaskExternalUserStatusEnum status, Boolean finish) {
+    public void sendExternalUserStatusDetail(String projectUuid, String corpId, WeComMassTaskTypeEnum taskType,
+                                             String taskUuid, String memberId, String uuid,
+                                             List<String> externalUsers, String planTime,
+                                             WeComMassTaskExternalUserStatusEnum status, Boolean finish) {
         WeComTaskCenterMetrics weComMassTaskMetrics = new WeComTaskCenterMetrics();
         weComMassTaskMetrics.setTaskUuid(taskUuid);
         weComMassTaskMetrics.setMetricType(MASS_TASK_EXTERNAL_USER_DETAIL);
@@ -71,17 +72,19 @@ public class SendTaskCenterBaseConsumer {
         produceRabbitMqMessage(weComMassTaskMetrics);
     }
 
-    protected void sendMemberStatusDetail(String projectUuid, String corpId, WeComMassTaskTypeEnum taskType,
-                                          String uuid, String taskUuid, String memberId, String planTime,
-                                          WeComMassTaskMemberStatusEnum status,
-                                          Integer externalUserCount, Boolean finish) {
+    public void sendMemberStatusDetail(String projectUuid, String corpId, WeComMassTaskTypeEnum taskType,
+                                       String uuid, String taskUuid, String memberId, String planTime,
+                                       String sentTime, WeComMassTaskMemberStatusEnum status,
+                                       Integer externalUserCount, Boolean finish) {
         WeComTaskCenterMetrics weComMassTaskMetrics = new WeComTaskCenterMetrics();
         weComMassTaskMetrics.setProjectUuid(projectUuid);
         weComMassTaskMetrics.setCorpId(corpId);
         weComMassTaskMetrics.setTaskType(taskType);
         weComMassTaskMetrics.setTaskUuid(taskUuid);
         weComMassTaskMetrics.setUuid(uuid);
-        weComMassTaskMetrics.setPlanTime(planTime);
+        if (StringUtils.isNotBlank(planTime)) {
+            weComMassTaskMetrics.setPlanTime(planTime);
+        }
         weComMassTaskMetrics.setMetricType(MASS_TASK_MEMBER_DETAIL);
         WeComTaskCenterMetrics.MemberMessage memberMessage =
                 new WeComTaskCenterMetrics.MemberMessage();
@@ -92,6 +95,9 @@ public class SendTaskCenterBaseConsumer {
                 new WeComTaskCenterMetrics.MemberStatus();
         memberStatus.setMemberId(memberId);
         memberStatus.setStatus(status);
+        if (StringUtils.isNotBlank(sentTime)) {
+            memberStatus.setTime(sentTime);
+        }
         memberStatus.setExternalUserCount(externalUserCount);
         statuses.add(memberStatus);
         memberMessage.setMemberState(statuses);

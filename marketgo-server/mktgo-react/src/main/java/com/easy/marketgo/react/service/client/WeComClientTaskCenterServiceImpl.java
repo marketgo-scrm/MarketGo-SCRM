@@ -2,9 +2,12 @@ package com.easy.marketgo.react.service.client;
 
 import cn.hutool.core.codec.Base64;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
+import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.core.service.taskcenter.SendTaskCenterBaseConsumer;
 import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
@@ -29,6 +32,9 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
 
     @Autowired
     private TaskCacheManagerService taskCacheManagerService;
+
+    @Autowired
+    private SendTaskCenterBaseConsumer sendTaskCenterBaseConsumer;
 
     @Override
     public BaseResponse listTaskCenter(List<String> type, List<String> taskTypes, Integer pageNum, Integer pageSize,
@@ -84,13 +90,18 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
 
     @Override
     public BaseResponse changeTaskCenterMemberStatus(String corpId, String memberId, String taskUuid, String uuid,
-                                                     String status) {
-        return null;
+                                                     String sendTime, String status) {
+        sendTaskCenterBaseConsumer.sendMemberStatusDetail("", corpId, WeComMassTaskTypeEnum.SINGLE,
+                uuid, taskUuid, memberId, "", sendTime, WeComMassTaskMemberStatusEnum.valueOf(status), 0, Boolean.TRUE);
+        taskCacheManagerService.setMemberCache(corpId, memberId, taskUuid, uuid, status);
+
+        return BaseResponse.success();
     }
 
     @Override
     public BaseResponse changeTaskCenterExternalUserStatus(String corpId, String memberId, String taskUuid, String uuid,
-                                                           String externalUserId, String status) {
-        return null;
+                                                           String externalUserId, String sentTime, String status) {
+        taskCacheManagerService.setCustomerCache(corpId, memberId, taskUuid, uuid, externalUserId, status);
+        return BaseResponse.success();
     }
 }
