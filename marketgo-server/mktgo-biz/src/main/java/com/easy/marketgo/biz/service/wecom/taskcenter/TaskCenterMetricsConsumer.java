@@ -81,7 +81,7 @@ public class TaskCenterMetricsConsumer {
             log.info("failed to change task center for member status because member list is empty");
             return;
         }
-        log.info("start change member status. projectUuid={}, corpId={}, taskUuid={}, message={}",
+        log.info("start change member status for task center. projectUuid={}, corpId={}, taskUuid={}, message={}",
                 projectUuid, corpId, taskUuid, message);
         for (WeComTaskCenterMetrics.MemberStatus item : message.getMemberState()) {
             try {
@@ -100,12 +100,12 @@ public class TaskCenterMetricsConsumer {
                     entity.setMemberName(memberName);
                     entity.setStatus(item.getStatus().name());
                     entity.setExternalUserCount(item.getExternalUserCount());
-                    log.info("save change member status. projectUuid={}, corpId={}, taskUuid={}, message={}",
+                    log.info("save change member status for task center. projectUuid={}, corpId={}, taskUuid={}, message={}",
                             projectUuid, corpId, taskUuid, entity);
                     weComTaskCenterMemberStatisticRepository.save(entity);
                 }
             } catch (Exception e) {
-                log.error("failed to change member status. projectUuid={}, corpId={}, taskUuid={}, message={}",
+                log.error("failed to change member status for task center. projectUuid={}, corpId={}, taskUuid={}, message={}",
                         projectUuid, corpId, taskUuid, message, e);
             }
         }
@@ -152,7 +152,7 @@ public class TaskCenterMetricsConsumer {
                     }
 
                     entity.setReceiveTime(DateUtil.parse(item.getTime()));
-                    log.info("save change external user status. projectUuid={}, corpId={}, taskUuid={}, message={}",
+                    log.info("save change external user status for task center. projectUuid={}, corpId={}, taskUuid={}, message={}",
                             projectUuid, corpId, taskUuid, entity);
                     weComTaskCenterExternalUserStatisticRepository.save(entity);
                 }
@@ -170,7 +170,7 @@ public class TaskCenterMetricsConsumer {
         Integer unFriendCount = weComTaskCenterExternalUserStatisticRepository.countByTaskUuidAndStatus(taskUuid, uuid,
                 WeComMassTaskExternalUserStatusEnum.UNFRIEND.getValue());
 
-        log.info("query external user metrics count. deliveredCount={}, unFriendCount={}", deliveredCount,
+        log.info("query external user metrics count for task center. deliveredCount={}, unFriendCount={}", deliveredCount,
                 unFriendCount);
 
         weComTaskCenterMemberStatisticRepository.updateMemberMetricsForExternalUser(deliveredCount == null ? 0 :
