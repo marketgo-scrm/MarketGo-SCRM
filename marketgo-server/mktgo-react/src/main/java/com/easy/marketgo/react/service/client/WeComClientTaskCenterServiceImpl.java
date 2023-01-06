@@ -66,8 +66,8 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
                     new WeComTaskCenterDetailClientResponse.ExternalUserMessage();
             String[] values =
                     item.replace(TaskCacheManagerService.CACHE_CUSTOMER_REPLACE_KEY, "").split(TaskCacheManagerService.CACHE_KEY_SPLIT_CHARACTER);
-            log.info("parse customer key. item={}, values={}", item, values.toString());
-            if (values.length > 6) {
+            log.info("parse customer key. item={}, values size={}", item, values.length);
+            if (values.length == 6) {
                 message.setExternalUserId(values[4]);
                 message.setName(Base64.decodeStr(values[5]));
 
