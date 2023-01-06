@@ -29,14 +29,14 @@ public class WeComTaskCenterDetailClientResponse {
     @ApiModelProperty(value = "发送的内容list")
     private List<AttachmentsMessage> attachments;
     @ApiModelProperty(value = "任务组list")
-    private List<WeComTaskCenterRequest> taskList;
+    private List<WeComTaskCenterMessage> taskList;
 
     @Data
     @ToString
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class WeComTaskCenterRequest {
+    public static class WeComTaskCenterMessage {
         @ApiModelProperty(value = "任务组uuid")
         private String uuid;
         @ApiModelProperty(value = "客户列表")

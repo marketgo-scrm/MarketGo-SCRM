@@ -2,10 +2,11 @@ package com.easy.marketgo.react.service.client;
 
 import cn.hutool.core.codec.Base64;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
+import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
-import com.easy.marketgo.react.model.response.WeComTaskCenterDetailClientResponse;
+import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,32 +39,31 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
     }
 
     @Override
-    public BaseResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid) {
+    public WeComTaskCenterDetailResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid,
+                                                              String uuid) {
         log.info("start to query task center detail. corpId={}, memberId={}, taskUuid={}, uuid={}", corpId, memberId,
                 taskUuid, uuid);
         String value = taskCacheManagerService.getMemberCache(corpId, memberId, taskUuid, uuid);
         if (StringUtils.isBlank(value)) {
-            BaseResponse.failure(ErrorCodeEnum.ERROR_REACT_TASK_IS_NOT_EXIST);
+            throw new CommonException(ErrorCodeEnum.ERROR_REACT_TASK_IS_NOT_EXIST);
         }
         log.info("query customer cache message. value={}", value);
         String content = taskCacheManagerService.getCacheContent(taskUuid);
         if (StringUtils.isBlank(content)) {
-            BaseResponse.failure(ErrorCodeEnum.ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST);
+            throw new CommonException(ErrorCodeEnum.ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST);
         }
         log.info("query content cache message. content={}", content);
-        BaseResponse response = BaseResponse.success();
-
-        WeComTaskCenterDetailClientResponse detailClientResponse = JsonUtils.toObject(content,
-                WeComTaskCenterDetailClientResponse.class);
+        WeComTaskCenterDetailResponse detailClientResponse = JsonUtils.toObject(content,
+                WeComTaskCenterDetailResponse.class);
 
         List<String> keys = taskCacheManagerService.scanCustomerCache(corpId, memberId, taskUuid, uuid);
         if (CollectionUtils.isEmpty(keys)) {
-            BaseResponse.failure(ErrorCodeEnum.ERROR_REACT_TASK_CUSTOMER_LIST_IS_NOT_EXIST);
+            throw new CommonException(ErrorCodeEnum.ERROR_REACT_TASK_CUSTOMER_LIST_IS_NOT_EXIST);
         }
-        List<WeComTaskCenterDetailClientResponse.ExternalUserMessage> users = new ArrayList<>();
+        List<WeComTaskCenterDetailResponse.ExternalUserMessage> users = new ArrayList<>();
         keys.forEach(item -> {
-            WeComTaskCenterDetailClientResponse.ExternalUserMessage message =
-                    new WeComTaskCenterDetailClientResponse.ExternalUserMessage();
+            WeComTaskCenterDetailResponse.ExternalUserMessage message =
+                    new WeComTaskCenterDetailResponse.ExternalUserMessage();
             String[] values =
                     item.replace(TaskCacheManagerService.CACHE_CUSTOMER_REPLACE_KEY, "").split(TaskCacheManagerService.CACHE_KEY_SPLIT_CHARACTER);
             log.info("parse customer key. item={}, values size={}", item, values.length);
@@ -76,10 +76,10 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
             message.setStatus(status);
             users.add(message);
         });
+        detailClientResponse.setUuid(uuid);
         detailClientResponse.setExternalUserId(users);
         log.info("finish to query task center detail. response={}", detailClientResponse);
-        response.setData(detailClientResponse);
-        return response;
+        return detailClientResponse;
     }
 
     @Override

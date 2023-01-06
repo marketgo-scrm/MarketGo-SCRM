@@ -3,7 +3,7 @@ package com.easy.marketgo.gateway.controller;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterListClientResponse;
-import com.easy.marketgo.react.service.WeComClientTaskCenterService;
+import com.easy.marketgo.gateway.wecom.sevice.taskcenter.QueryTaskCenterDetailService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -34,7 +34,7 @@ import java.util.List;
 public class WeComClientTaskCenterController {
 
     @Autowired
-    private WeComClientTaskCenterService weComClientTaskCenterService;
+    private QueryTaskCenterDetailService queryTaskCenterDetailService;
 
     @ApiResponses({
             @ApiResponse(code = 0, message = "ok", response = WeComTaskCenterListClientResponse.class)
@@ -62,7 +62,7 @@ public class WeComClientTaskCenterController {
             @Valid @RequestParam(value = "sort_order", required = false) String sortOrder,
             @ApiParam(value = "开始时间", required = false) @Valid @RequestParam(value = "start_time", required = false) String startTime,
             @ApiParam(value = "结束时间", required = false) @Valid @RequestParam(value = "end_time", required = false) String endTime) {
-        return ResponseEntity.ok(weComClientTaskCenterService.listTaskCenter(types, taskTypes, pageNum, pageSize,
+        return ResponseEntity.ok(queryTaskCenterDetailService.listTaskCenter(types, taskTypes, pageNum, pageSize,
                 corpId, statuses, keyword, memberId, createUserIds, sortKey, sortOrder, startTime, endTime));
     }
 
@@ -73,11 +73,13 @@ public class WeComClientTaskCenterController {
             WeComTaskCenterDetailClientResponse.class)
     @RequestMapping(value = {"/detail"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getTaskCenterDetails(
-            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
+            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
+                    true) String corpId,
             @ApiParam(value = "员工ID", required = false) @Valid @RequestParam(value = "member_id", required = false) String memberId,
             @ApiParam(value = "任务ID", required = true) @RequestParam("task_uuid") String taskUuid,
-            @ApiParam(value = "uuid", required = false) @NotNull @Valid @RequestParam(value = "uuid", required = false) String uuid) {
-        return ResponseEntity.ok(weComClientTaskCenterService.getTaskCenterDetails(corpId, memberId, taskUuid, uuid));
+            @ApiParam(value = "uuid", required = false) @NotNull @Valid @RequestParam(value = "uuid", required =
+                    false) String uuid) {
+        return ResponseEntity.ok(queryTaskCenterDetailService.getTaskCenterDetails(corpId, memberId, taskUuid, uuid));
     }
 
     @ApiResponses({
@@ -93,9 +95,8 @@ public class WeComClientTaskCenterController {
             @ApiParam(value = "任务UUID", required = true) @RequestParam("task_uuid") String taskUuid,
             @ApiParam(value = "任务状态", required = true) @RequestParam("status") String status,
             @ApiParam(value = "uuid", required = true) @NotNull @Valid @RequestParam(value = "uuid", required = true) String uuid) {
-        return ResponseEntity.ok(weComClientTaskCenterService.changeTaskCenterMemberStatus(corpId, memberId, taskUuid,
-                uuid,
-                status));
+        return ResponseEntity.ok(queryTaskCenterDetailService.changeTaskCenterMemberStatus(corpId, memberId, taskUuid
+                , uuid, status));
     }
 
     @ApiResponses({
@@ -112,7 +113,7 @@ public class WeComClientTaskCenterController {
             @ApiParam(value = "任务状态", required = true) @RequestParam("external_user_id") String externalUserId,
             @ApiParam(value = "任务状态", required = true) @RequestParam("status") String status,
             @ApiParam(value = "uuid", required = true) @NotNull @Valid @RequestParam(value = "uuid", required = true) String uuid) {
-        return ResponseEntity.ok(weComClientTaskCenterService.changeTaskCenterExternalUserStatus(corpId, memberId,
+        return ResponseEntity.ok(queryTaskCenterDetailService.changeTaskCenterExternalUserStatus(corpId, memberId,
                 taskUuid, uuid, externalUserId, status));
     }
 }

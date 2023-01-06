@@ -1,6 +1,7 @@
 package com.easy.marketgo.react.service;
 
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public interface WeComClientTaskCenterService {
                                 String startTime,
                                 String endTime);
 
-    BaseResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid);
+    WeComTaskCenterDetailResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid);
 
     BaseResponse changeTaskCenterMemberStatus(String corpId, String memberId, String taskUuid, String uuid, String status);
 
