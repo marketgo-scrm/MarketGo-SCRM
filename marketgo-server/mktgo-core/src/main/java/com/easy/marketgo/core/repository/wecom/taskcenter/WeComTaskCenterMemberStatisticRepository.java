@@ -40,6 +40,9 @@ public interface WeComTaskCenterMemberStatisticRepository extends CrudRepository
     @Query("SELECT COUNT(distinct plan_time) FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid")
     Integer countByTaskUuidAndPlanTime(String taskUuid);
 
+    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND status= :status")
+    Integer countByTaskUuidAndTaskStatus(String taskUuid, String status);
+
     @Query("SELECT * FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND status = :status")
     List<WeComTaskCenterMemberStatisticEntity> queryByTaskUuidAndStatus(String taskUuid, String status);
 

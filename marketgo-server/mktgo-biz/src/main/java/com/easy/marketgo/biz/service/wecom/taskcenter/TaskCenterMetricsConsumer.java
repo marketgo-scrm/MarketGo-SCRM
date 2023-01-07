@@ -2,29 +2,33 @@ package com.easy.marketgo.biz.service.wecom.taskcenter;
 
 import cn.hutool.core.date.DateUtil;
 import com.easy.marketgo.common.constants.RabbitMqConstants;
-import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
-import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
-import com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum;
-import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
+import com.easy.marketgo.common.enums.*;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.customer.WeComGroupChatsEntity;
 import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
+import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterExternalUserStatisticEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
+import com.easy.marketgo.core.model.bo.WeComSendMassTaskContent;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterMetrics;
+import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterExternalUserStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberStatisticRepository;
+import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum.MASS_TASK_EXTERNAL_USER_DETAIL;
 import static com.easy.marketgo.common.enums.WeComMassTaskMetricTypeEnum.MASS_TASK_MEMBER_DETAIL;
@@ -53,6 +57,12 @@ public class TaskCenterMetricsConsumer {
 
     @Autowired
     private WeComGroupChatsRepository weComGroupChatsRepository;
+
+    @Autowired
+    private WeComTaskCenterRepository weComTaskCenterRepository;
+
+    @Autowired
+    private WeComMediaResourceRepository weComMediaResourceRepository;
 
     @RabbitListener(queues = {RabbitMqConstants.QUEUE_NAME_WECOM_TASK_CENTER_STATISTIC}, containerFactory =
             "weComTaskCenterStatisticListenerContainerFactory", concurrency = "1")
@@ -100,12 +110,14 @@ public class TaskCenterMetricsConsumer {
                     entity.setMemberName(memberName);
                     entity.setStatus(item.getStatus().name());
                     entity.setExternalUserCount(item.getExternalUserCount());
-                    log.info("save change member status for task center. projectUuid={}, corpId={}, taskUuid={}, message={}",
+                    log.info("save change member status for task center. projectUuid={}, corpId={}, taskUuid={}, " +
+                                    "message={}",
                             projectUuid, corpId, taskUuid, entity);
                     weComTaskCenterMemberStatisticRepository.save(entity);
                 }
             } catch (Exception e) {
-                log.error("failed to change member status for task center. projectUuid={}, corpId={}, taskUuid={}, message={}",
+                log.error("failed to change member status for task center. projectUuid={}, corpId={}, taskUuid={}, " +
+                                "message={}",
                         projectUuid, corpId, taskUuid, message, e);
             }
         }
@@ -126,7 +138,9 @@ public class TaskCenterMetricsConsumer {
 
                     weComTaskCenterExternalUserStatisticRepository.updateExternalUserStatus(item.getStatus().name(),
                             item.getTime(), uuid, taskUuid, message.getMemberId(), item.getExternalUserId());
-                    updateMassTaskExternalMetricsCount(message.getMemberId(), taskUuid, uuid);
+                    updateExternalMetricsCount(message.getMemberId(), taskUuid, uuid);
+                    updateTaskCenterStatus(taskUuid);
+                    updateExternalMetricsCount(message.getMemberId(), taskUuid, uuid);
                 } else {
                     WeComTaskCenterExternalUserStatisticEntity entity =
                             new WeComTaskCenterExternalUserStatisticEntity();
@@ -152,7 +166,8 @@ public class TaskCenterMetricsConsumer {
                     }
 
                     entity.setReceiveTime(DateUtil.parse(item.getTime()));
-                    log.info("save change external user status for task center. projectUuid={}, corpId={}, taskUuid={}, message={}",
+                    log.info("save change external user status for task center. projectUuid={}, corpId={}, " +
+                                    "taskUuid={}, message={}",
                             projectUuid, corpId, taskUuid, entity);
                     weComTaskCenterExternalUserStatisticRepository.save(entity);
                 }
@@ -163,17 +178,80 @@ public class TaskCenterMetricsConsumer {
         }
     }
 
-    private void updateMassTaskExternalMetricsCount(String memberId, String taskUuid, String uuid) {
+    private void updateExternalMetricsCount(String memberId, String taskUuid, String uuid) {
         Integer deliveredCount = weComTaskCenterExternalUserStatisticRepository.countByTaskUuidAndStatus(taskUuid, uuid,
                 WeComMassTaskExternalUserStatusEnum.DELIVERED.getValue());
 
         Integer unFriendCount = weComTaskCenterExternalUserStatisticRepository.countByTaskUuidAndStatus(taskUuid, uuid,
                 WeComMassTaskExternalUserStatusEnum.UNFRIEND.getValue());
 
-        log.info("query external user metrics count for task center. deliveredCount={}, unFriendCount={}", deliveredCount,
+        log.info("query external user metrics count for task center. deliveredCount={}, unFriendCount={}",
+                deliveredCount,
                 unFriendCount);
 
         weComTaskCenterMemberStatisticRepository.updateMemberMetricsForExternalUser(deliveredCount == null ? 0 :
                 deliveredCount, unFriendCount == null ? 0 : unFriendCount, taskUuid, memberId);
+    }
+
+    private void updateTaskCenterStatus(String taskUuid) {
+        WeComTaskCenterEntity entity = weComTaskCenterRepository.getByTaskUUID(taskUuid);
+        if (entity == null) {
+            log.info("failed to query task center. taskUuid={}", taskUuid);
+            return;
+        }
+        if (!entity.getScheduleType().equalsIgnoreCase(WeComMassTaskScheduleType.FIXED_TIME.getValue())) {
+            changeTaskCenterFinish(entity);
+        } else {
+            if (entity.getFinishTime() != null && entity.getFinishTime().getTime() < DateUtil.date().getTime()) {
+                changeTaskCenterFinish(entity);
+            }
+        }
+    }
+
+    private void changeTaskCenterFinish(WeComTaskCenterEntity entity) {
+        Integer unsentCount = weComTaskCenterMemberStatisticRepository.countByTaskUuidAndTaskStatus(entity.getUuid(),
+                WeComMassTaskMemberStatusEnum.UNSENT.getValue());
+        if (unsentCount == null || (unsentCount != null && unsentCount > 0)) {
+            return;
+        }
+        List<String> mediaUuids = getMediaUuid(entity.getContent());
+        if (CollectionUtils.isNotEmpty(mediaUuids)) {
+            weComMediaResourceRepository.updateMediaByUuid(mediaUuids);
+        }
+        weComTaskCenterRepository.updateTaskStatusAndFinishTime(entity.getUuid(),
+                WeComMassTaskStatus.FINISHED.getValue()
+                , entity.getFinishTime() == null ? DateUtil.date() : entity.getFinishTime());
+    }
+
+    private List<String> getMediaUuid(String content) {
+        List<String> mediaUuids = new ArrayList<>();
+
+        List<WeComSendMassTaskContent> weComSendMassTaskContents = JsonUtils.toArray(content,
+                WeComSendMassTaskContent.class);
+
+        weComSendMassTaskContents.forEach(weComSendMassTaskContent -> {
+            if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.IMAGE) {
+                if (weComSendMassTaskContent.getImage() != null &&
+                        StringUtils.isNotBlank(weComSendMassTaskContent.getImage().getMediaUuid())) {
+                    mediaUuids.add(weComSendMassTaskContent.getImage().getMediaUuid());
+                }
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.LINK) {
+
+                if (weComSendMassTaskContent.getLink() != null &&
+                        StringUtils.isNotBlank(weComSendMassTaskContent.getLink().getMediaUuid())) {
+                    mediaUuids.add(weComSendMassTaskContent.getLink().getMediaUuid());
+                }
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.MINIPROGRAM) {
+                if (weComSendMassTaskContent.getMiniProgram() != null) {
+                    mediaUuids.add(weComSendMassTaskContent.getMiniProgram().getMediaUuid());
+                }
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.VIDEO) {
+                mediaUuids.add(weComSendMassTaskContent.getVideo().getMediaUuid());
+            } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.FILE) {
+                mediaUuids.add(weComSendMassTaskContent.getFile().getMediaUuid());
+            }
+        });
+
+        return mediaUuids;
     }
 }
