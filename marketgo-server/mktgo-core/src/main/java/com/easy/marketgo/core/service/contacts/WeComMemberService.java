@@ -105,8 +105,6 @@ public class WeComMemberService {
                     });
                 }
             }
-        } else {
-
         }
         return memberList.stream().distinct().collect(Collectors.toList());
     }

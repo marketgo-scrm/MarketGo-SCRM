@@ -1,12 +1,10 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import cn.hutool.core.date.DateUtil;
 import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
-import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.model.taskcenter.WeComMomentTaskCenterRequest;
@@ -81,25 +79,10 @@ public class SendMomentTaskCenterProducer extends SendBaseTaskCenterProducer {
     }
 
     private void sendMomentTaskCenter(WeComTaskCenterEntity entity) {
-        WeComAgentMessageEntity agentMessageEntity =
-                weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
-        log.info("query agent message for task center. agentMessageEntity={}", agentMessageEntity);
-        String agentId = (agentMessageEntity == null) ? "" : agentMessageEntity.getAgentId();
+        log.info("query send moment task center content. content={}", entity.getContent());
+        if (StringUtils.isNotBlank(entity.getContent())) {
+            WeComMomentTaskCenterRequest request = buildMomentTaskCenterContent(entity);
 
-        String content = entity.getContent();
-        log.info("query send moment task center content. content={}", content);
-        if (StringUtils.isNotBlank(content)) {
-            WeComMomentTaskCenterRequest request = buildMomentTaskCenterContent(content);
-            request.setCorpId(entity.getCorpId());
-            request.setAgentId(agentId);
-            request.setProjectUuid(entity.getProjectUuid());
-            request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
-                    DateUtil.formatDateTime(entity.getPlanTime()) :
-                    DateUtil.formatDateTime(entity.getScheduleTime()));
-            if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
-                request.setTargetType(entity.getTargetType());
-                request.setTargetTime(entity.getTargetTime());
-            }
             taskCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
             List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
                     weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),

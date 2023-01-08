@@ -14,9 +14,9 @@ import org.springframework.data.repository.query.Param;
  */
 public interface WeComTaskCenterExternalUserStatisticRepository extends CrudRepository<WeComTaskCenterExternalUserStatisticEntity, Long> {
     @Modifying
-    @Query("UPDATE wecom_task_center_statistic_external_user set status= :status where " +
+    @Query("UPDATE wecom_task_center_statistic_external_user set status= :status, receive_time = :receiveTime where " +
             "uuid= :uuid AND task_uuid=:task_uuid AND member_id=:member_id AND external_user_id=:external_user_id")
-    void updateExternalUserStatus(@Param("status") String status,
+    void updateExternalUserStatus(@Param("status") String status, String receiveTime,
                                   String uuid,
                                   @Param("task_uuid") String taskUuid,
                                   @Param("member_id") String memberId,
@@ -26,7 +26,8 @@ public interface WeComTaskCenterExternalUserStatisticRepository extends CrudRepo
             ":taskUuid AND status= :status")
     Integer countByTaskUuidAndStatus(String taskUuid, String uuid, String status);
 
-    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE task_uuid= :taskUuid AND status= :status " +
+    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE task_uuid= :taskUuid AND status= " +
+            ":status " +
             "AND plan_time LIKE concat('', :planTime, '%')")
     Integer countByTaskUuidAndStatusAndPlanTime(String taskUuid, String status, String planTime);
 
@@ -34,14 +35,15 @@ public interface WeComTaskCenterExternalUserStatisticRepository extends CrudRepo
             "external_user_type = :externalUserType AND status= :status")
     Integer countByTaskUuidAndStatusAndType(String taskUuid, String externalUserType, String status);
 
-    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE task_uuid= :taskUuid AND external_user_id = :externalUserId AND member_id= :memberId")
+    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_external_user WHERE task_uuid= :taskUuid AND " +
+            "external_user_id = :externalUserId AND member_id= :memberId")
     Integer countByTaskUuidAndMemberId(String taskUuid, String memberId, String externalUserId);
 
     @Modifying
     @Query("DELETE FROM wecom_task_center_statistic_external_user WHERE task_uuid = :task_uuid AND member_id = " +
             ":member_id AND status= :status")
     Integer deleteByTaskUuidAndMemberId(@Param("task_uuid") String taskUuid, @Param("member_id") String memberId,
-                                    String status);
+                                        String status);
 
     @Modifying
     @Query("DELETE FROM wecom_task_center_statistic_external_user WHERE task_uuid = :task_uuid")

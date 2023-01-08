@@ -2,16 +2,16 @@ package com.easy.marketgo.gateway.wecom.sevice;
 
 import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.common.constants.Constants;
+import com.easy.marketgo.common.constants.wecom.WeComHttpConstants;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
+import com.easy.marketgo.core.model.wecom.QueryAgentAccessTokenResponse;
+import com.easy.marketgo.core.model.wecom.QueryTokenBaseRequest;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
+import com.easy.marketgo.core.service.wecom.token.AccessTokenManagerService;
 import com.easy.marketgo.core.util.OkHttpUtils;
-import com.easy.marketgo.gateway.wecom.constants.WeComHttpConstants;
-import com.easy.marketgo.gateway.wecom.request.QueryTokenBaseRequest;
-import com.easy.marketgo.gateway.wecom.response.QueryAgentAccessTokenResponse;
 import com.easy.marketgo.gateway.wecom.response.QueryAgentDetailResponse;
-import com.easy.marketgo.gateway.wecom.sevice.token.AccessTokenManagerService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -58,17 +58,19 @@ public class AgentManagerService {
         request.setAgentId(agentId);
         request.setSecret(secret);
 
-        QueryAgentAccessTokenResponse accessTokenResponse = accessTokenManagerService.getTokenFromWeCom(request);
+        String accessTokenResponse = accessTokenManagerService.getTokenFromWeCom(request);
+        QueryAgentAccessTokenResponse queryAgentAccessTokenResponse =
+                JsonUtils.toObject(accessTokenResponse, QueryAgentAccessTokenResponse.class);
         // corpId或者secret错误
-        if (!accessTokenResponse.getErrcode().equals(ErrorCodeEnum.OK.getCode())) {
+        if (!queryAgentAccessTokenResponse.getErrcode().equals(ErrorCodeEnum.OK.getCode())) {
             log.warn("check agent params error, corpId or secret error. corpId={}, secret={}, accessTokenResponse={}",
                     corpId, secret, accessTokenResponse);
-            rpcResponse.setCode(accessTokenResponse.getErrcode());
-            rpcResponse.setMessage(accessTokenResponse.getErrmsg());
+            rpcResponse.setCode(queryAgentAccessTokenResponse.getErrcode());
+            rpcResponse.setMessage(queryAgentAccessTokenResponse.getErrmsg());
             return rpcResponse;
         }
-        accessTokenManagerService.setAccessToken(corpId, agentId, accessTokenResponse.getAccessToken(),
-                accessTokenResponse.getExpiresIn());
+        accessTokenManagerService.setAccessToken(corpId, agentId, queryAgentAccessTokenResponse.getAccessToken(),
+                queryAgentAccessTokenResponse.getExpiresIn());
         if (agentId.equalsIgnoreCase(Constants.AGENT_KEY_FOR_CONTACTS) || agentId.equalsIgnoreCase(Constants.AGENT_KEY_FOR_EXTERNALUSER)) {
             return RpcResponse.success();
         }

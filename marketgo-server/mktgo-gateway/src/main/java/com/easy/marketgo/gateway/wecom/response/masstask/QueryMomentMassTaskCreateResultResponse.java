@@ -1,6 +1,6 @@
 package com.easy.marketgo.gateway.wecom.response.masstask;
 
-import com.easy.marketgo.gateway.wecom.response.WeComBaseResponse;
+import com.easy.marketgo.core.model.wecom.WeComBaseResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 

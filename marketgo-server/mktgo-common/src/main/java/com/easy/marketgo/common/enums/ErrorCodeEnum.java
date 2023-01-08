@@ -87,10 +87,21 @@ public enum ErrorCodeEnum {
      * 内部错误码定义
      * 模块-cdp
      * 命名方式 ERROR_CDP_错误描述
-     * 错误码范围6000-7999
+     * 错误码范围6000-6999
      */
     ERROR_CDP_RESPONSE_IS_EMPTY(6000, "请求CDP的接口返回的response是空"),
     ERROR_CDP_CROWD_LIST_IS_EMPTY(6001, "请求CDP的分群列表接口返回的列表为空"),
+
+    /**
+     * 内部错误码定义
+     * 模块-react
+     * 命名方式 ERROR_REACT_错误描述
+     * 错误码范围7000-7999
+     */
+    ERROR_REACT_SDK_CONFIG_VERIFY(7000, "sdk config 验证失败"),
+    ERROR_REACT_TASK_IS_NOT_EXIST(7001, "请求的任务列表不存在，请确认任务是否存在"),
+    ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST(7002, "请求的任务的内容不存在，请确认任务是否存在"),
+    ERROR_REACT_TASK_CUSTOMER_LIST_IS_NOT_EXIST(7003, "请求的任务的客户列表不存在，请确认任务是否存在"),
     /**
      * 企微的错误码定义
      * 模块-WECOM

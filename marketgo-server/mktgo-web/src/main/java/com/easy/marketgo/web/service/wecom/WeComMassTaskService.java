@@ -1,7 +1,7 @@
 package com.easy.marketgo.web.service.wecom;
 
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.request.WeComMassTaskRequest;
-import com.easy.marketgo.web.model.response.*;
 
 import java.util.List;
 

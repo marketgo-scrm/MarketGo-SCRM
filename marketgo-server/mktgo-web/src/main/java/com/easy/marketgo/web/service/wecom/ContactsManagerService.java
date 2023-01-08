@@ -1,6 +1,6 @@
 package com.easy.marketgo.web.service.wecom;
 
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 
 import java.util.List;
 

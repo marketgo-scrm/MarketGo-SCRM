@@ -14,6 +14,7 @@ import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
 import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
 import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterBuildSqlParam;
@@ -28,7 +29,6 @@ import com.easy.marketgo.core.service.WeComAgentMessageService;
 import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComTaskCenterRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
 import com.easy.marketgo.web.model.response.masstask.WeComMassTaskCreatorsResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComMembersStatisticResponse;
 import com.easy.marketgo.web.model.response.taskcenter.WeComTaskCenterDetailResponse;
@@ -128,6 +128,12 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
             entity.setRepeatDay(weComTaskCenterRequest.getRepeatDay());
             entity.setRepeatStartTime(DateUtil.parse(weComTaskCenterRequest.getRepeatStartTime()));
             entity.setRepeatEndTime(DateUtil.parse(weComTaskCenterRequest.getRepeatEndTime()));
+            Long finishTime = computeFinishTime(weComTaskCenterRequest.getRepeatStartTime(),
+                    weComTaskCenterRequest.getRepeatEndTime(), weComTaskCenterRequest.getScheduleTime(),
+                    weComTaskCenterRequest.getRepeatType().getValue(), weComTaskCenterRequest.getRepeatDay());
+            if (finishTime != null) {
+                entity.setFinishTime(DateUtil.date(finishTime));
+            }
         }
         entity.setContent(JsonUtils.toJSONString(weComTaskCenterRequest.getContent()));
 
@@ -429,8 +435,10 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 weComTaskCenterMemberStatisticRepository.queryByTaskUuid(taskUuid);
         if (CollectionUtils.isNotEmpty(entities)) {
             for (WeComTaskCenterMemberStatisticEntity item : entities) {
-                taskCacheManagerService.delMemberCache(item.getMemberId(), item.getUuid(), item.getTaskUuid());
-                taskCacheManagerService.delCustomerCache(item.getMemberId(), item.getUuid(), item.getTaskUuid());
+                taskCacheManagerService.delMemberCache(entity.getCorpId(), item.getMemberId(), item.getUuid(),
+                        item.getTaskUuid());
+                taskCacheManagerService.delCustomerCache(entity.getCorpId(), item.getMemberId(), item.getUuid(),
+                        item.getTaskUuid());
             }
         }
 
@@ -506,6 +514,34 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String timeNow = sdf.format(item);
             log.info("compute execute time for cron string. cron={}, execute time={}", cron, timeNow);
+        }
+        return executeTimes;
+    }
+
+    private Long computeFinishTime(String startTime, String endTime, String scheduleTime, String repeatType,
+                                   String repeatDay) {
+        Long executeTimes = null;
+
+        long startOfDay = DateUtil.beginOfDay(DateUtil.parse(startTime)).getTime();
+        long endOfDay = DateUtil.endOfDay(DateUtil.parse(endTime)).getTime();
+
+        String cron = "";
+        if (repeatType.equals(PeriodEnum.DAILY.name())) {
+            cron = GenerateCronUtil.INSTANCE.generateDailyCronByPeriodAndTime(startTime, scheduleTime);
+        } else if (repeatType.equals(PeriodEnum.WEEKLY.name())) {
+            cron = GenerateCronUtil.INSTANCE.generateWeeklyCronByPeriodAndTime(startTime, scheduleTime,
+                    repeatDay);
+        } else if (repeatType.equals(PeriodEnum.MONTHLY.name())) {
+            cron = GenerateCronUtil.INSTANCE.generateMonthlyCronByPeriodAndTime(startTime, scheduleTime,
+                    repeatDay);
+        }
+
+        log.info("compute cron string. cron={}", cron);
+        CronExpressionResolver cronExpressionResolver = CronExpressionResolver.getInstance(cron);
+        long nextTime = cronExpressionResolver.nextLongTime(startOfDay);
+        while (nextTime > 0 && nextTime < endOfDay) {
+            executeTimes = nextTime;
+            nextTime = cronExpressionResolver.nextLongTime(nextTime);
         }
         return executeTimes;
     }
@@ -621,20 +657,22 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
     }
 
     private String completeRateResult(WeComTaskCenterEntity entity) {
-        List<Long> planTimes = computeTotalCount(entity.getUuid());
-        long currentTime = System.currentTimeMillis();
-        long planTime = currentTime;
-        if (CollectionUtils.isNotEmpty(planTimes)) {
-            for (Long item : planTimes) {
-                if (item < currentTime) {
-                    planTime = item;
+        String dateString = DateUtil.date(entity.getScheduleTime().getTime()).toDateStr();
+        if (entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue())) {
+            List<Long> planTimes = computeTotalCount(entity.getUuid());
+            long currentTime = System.currentTimeMillis();
+            long planTime = currentTime;
+            if (CollectionUtils.isNotEmpty(planTimes)) {
+                for (Long item : planTimes) {
+                    if (item < currentTime) {
+                        planTime = item;
+                    }
                 }
             }
+            DateTime dateTime = DateUtil.date(planTime);
+            dateString = dateTime.toDateStr();
         }
-        DateTime dateTime = DateUtil.date(planTime);
-        String dateString = dateTime.toDateStr();
         log.info("check date string. dateString={}", dateString);
-
         String result = "0%";
         Integer nonSendCount = 0;
         Integer sendCount = 0;

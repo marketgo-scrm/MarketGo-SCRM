@@ -2,7 +2,7 @@ package com.easy.marketgo.web.exception;
 
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.exception.CommonException;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.ResponseEntity;

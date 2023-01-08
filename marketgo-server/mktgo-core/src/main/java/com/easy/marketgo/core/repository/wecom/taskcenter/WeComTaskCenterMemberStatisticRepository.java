@@ -24,9 +24,10 @@ public interface WeComTaskCenterMemberStatisticRepository extends CrudRepository
 
     @Modifying
     @Query("UPDATE wecom_task_center_statistic_member set status= :status, sent_time= :sent_time where uuid= " +
-            ":uuid AND status= :old_status AND member_id= :member_id")
+            ":uuid AND status= :old_status AND member_id= :member_id AND task_uuid= :task_uuid")
     void updateMemberStatusBytaskUuid(@Param("old_status") String oldStatus, @Param("status") String status, @Param(
-            "sent_time") String sentTime, @Param("uuid") String uuid, @Param("member_id") String memberId);
+            "sent_time") String sentTime, @Param("task_uuid") String taskUuid, @Param("uuid") String uuid,
+                                      @Param("member_id") String memberId);
 
     @Query("SELECT * FROM wecom_task_center_statistic_member WHERE task_uuid= :task_uuid AND member_id= :member_id")
     WeComTaskCenterMemberStatisticEntity queryByMemberAndTaskUuid(@Param("task_uuid") String taskUuid,
@@ -38,6 +39,9 @@ public interface WeComTaskCenterMemberStatisticRepository extends CrudRepository
 
     @Query("SELECT COUNT(distinct plan_time) FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid")
     Integer countByTaskUuidAndPlanTime(String taskUuid);
+
+    @Query("SELECT COUNT(*) FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND status= :status")
+    Integer countByTaskUuidAndTaskStatus(String taskUuid, String status);
 
     @Query("SELECT * FROM wecom_task_center_statistic_member WHERE task_uuid= :taskUuid AND status = :status")
     List<WeComTaskCenterMemberStatisticEntity> queryByTaskUuidAndStatus(String taskUuid, String status);

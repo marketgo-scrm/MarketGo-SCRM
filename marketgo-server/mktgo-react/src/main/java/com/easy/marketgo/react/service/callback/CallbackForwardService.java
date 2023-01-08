@@ -1,10 +1,8 @@
 package com.easy.marketgo.react.service.callback;
 
-import com.easy.marketgo.common.constants.Constants;
-import com.easy.marketgo.core.model.callback.*;
+import com.easy.marketgo.core.model.callback.WeComForwardCallbackMsg;
 import com.easy.marketgo.core.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.common.utils.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;

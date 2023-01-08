@@ -13,19 +13,27 @@ public enum WeComMassTaskTypeEnum {
     /**
      * 群发好友
      */
-    SINGLE,
+    SINGLE("SINGLE", "客户"),
     /**
      * 群发客户群
      */
-    GROUP,
+    GROUP("SINGLE", "客户群"),
     /**
      * 群发朋友圈
      */
-    MOMENT,
+    MOMENT("SINGLE", "朋友圈"),
     /**
      * 活码
      */
-    LIVE_CODE;
+    LIVE_CODE("SINGLE", "活码");
+
+    private String name;
+    private String cname;
+
+    WeComMassTaskTypeEnum(String name, String cname) {
+        this.name = name;
+        this.cname = cname;
+    }
 
     public static boolean isSupported(String type) {
         return Arrays.stream(values()).anyMatch(WeComMassTaskTypeEnum -> WeComMassTaskTypeEnum.name().equals(type));
@@ -39,5 +47,21 @@ public enum WeComMassTaskTypeEnum {
             }
         }
         return null;
+    }
+
+    public String getCname() {
+        return cname;
+    }
+
+    public void setCname(String cname) {
+        this.cname = cname;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

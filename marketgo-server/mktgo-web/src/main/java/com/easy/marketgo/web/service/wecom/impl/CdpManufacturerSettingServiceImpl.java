@@ -8,7 +8,7 @@ import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
 import com.easy.marketgo.core.repository.cdp.CdpConfigRepository;
 import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpManufactureListResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpManufacturerMessageResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpSwitchStatusResponse;

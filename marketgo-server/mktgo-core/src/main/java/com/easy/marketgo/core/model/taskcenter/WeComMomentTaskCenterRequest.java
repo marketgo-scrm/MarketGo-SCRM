@@ -22,6 +22,7 @@ public class WeComMomentTaskCenterRequest implements Serializable {
     private String projectUuid;
     private String uuid;
     private String taskUuid;
+    private String taskName;
     private List<String> tagList;
     private String sender;
     private List<AttachmentsMessage> attachments;
@@ -60,6 +61,7 @@ public class WeComMomentTaskCenterRequest implements Serializable {
     @NoArgsConstructor
     public static class ImageAttachmentsMessage implements Serializable {
         private String mediaId;
+        private String mediaUuid;
         private String imageContent;
         private String picUrl;
     }
@@ -73,6 +75,7 @@ public class WeComMomentTaskCenterRequest implements Serializable {
     public static class LinkAttachmentsMessage implements Serializable {
         private String title;
         private String mediaId;
+        private String mediaUuid;
         private String imageContent;
         private String url;
     }
@@ -85,6 +88,7 @@ public class WeComMomentTaskCenterRequest implements Serializable {
     @NoArgsConstructor
     public static class VideoAttachmentsMessage implements Serializable {
         private String mediaId;
+        private String mediaUuid;
         private String imageContent;
     }
 }

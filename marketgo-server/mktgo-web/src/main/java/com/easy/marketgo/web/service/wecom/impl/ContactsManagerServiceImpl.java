@@ -11,7 +11,7 @@ import com.easy.marketgo.core.model.bo.QueryExternalUserBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.customer.*;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.customer.*;
 import com.easy.marketgo.web.service.wecom.ContactsManagerService;
 import lombok.extern.slf4j.Slf4j;

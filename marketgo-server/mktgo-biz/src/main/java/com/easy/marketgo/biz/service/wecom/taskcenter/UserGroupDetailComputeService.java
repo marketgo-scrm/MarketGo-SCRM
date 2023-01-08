@@ -11,7 +11,7 @@ import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterRepository;
-import com.easy.marketgo.core.service.usergroup.UserGroupMangerService;
+import com.easy.marketgo.biz.service.wecom.usergroup.UserGroupMangerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +54,7 @@ public class UserGroupDetailComputeService {
                         Arrays.asList(WeComMassTaskScheduleType.IMMEDIATE.getValue(),
                                 WeComMassTaskScheduleType.FIXED_TIME.getValue()));
         log.info("schedule task query send task center. taskType={}, entities={}", taskType, entities);
-        if (CollectionUtils.isNotEmpty(entities)) {
+        if (CollectionUtils.isEmpty(entities)) {
             log.info("schedule task query task center is empty. taskType={}", taskType);
             return;
         }

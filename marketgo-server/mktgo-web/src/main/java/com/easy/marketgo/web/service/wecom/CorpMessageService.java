@@ -3,8 +3,7 @@ package com.easy.marketgo.web.service.wecom;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
-import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 
 /**
  * @author : kevinwang

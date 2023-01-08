@@ -3,7 +3,6 @@ package com.easy.marketgo.core.model.taskcenter;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +25,7 @@ public class WeComTaskCenterRequest implements Serializable {
     private String MessageType;
     private String uuid;
     private String taskUuid;
+    private String taskName;
     private List<ExternalUserMessage> externalUserId;
     private String sender;
     private List<AttachmentsMessage> attachments;
@@ -75,6 +75,7 @@ public class WeComTaskCenterRequest implements Serializable {
     @NoArgsConstructor
     public static class ImageAttachmentsMessage implements Serializable {
         private String mediaId;
+        private String mediaUuid;
         private String imageContent;
         private String picUrl;
     }
@@ -99,6 +100,7 @@ public class WeComTaskCenterRequest implements Serializable {
     public static class MiniProgramAttachmentsMessage implements Serializable {
         private String title;
         private String picMediaId;
+        private String mediaUuid;
         private String imageContent;
         private String appId;
         private String page;
@@ -111,6 +113,7 @@ public class WeComTaskCenterRequest implements Serializable {
     @NoArgsConstructor
     public static class VideoAttachmentsMessage implements Serializable {
         private String mediaId;
+        private String mediaUuid;
         private String imageContent;
     }
 
@@ -121,6 +124,7 @@ public class WeComTaskCenterRequest implements Serializable {
     @NoArgsConstructor
     public static class FileAttachmentsMessage implements Serializable {
         private String mediaId;
+        private String mediaUuid;
         private String imageContent;
     }
 }

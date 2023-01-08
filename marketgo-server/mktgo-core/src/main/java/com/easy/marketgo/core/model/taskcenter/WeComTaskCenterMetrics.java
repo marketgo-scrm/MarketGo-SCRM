@@ -25,7 +25,6 @@ public class WeComTaskCenterMetrics {
     private WeComMassTaskMetricTypeEnum metricType;
     private MemberMessage memberMessage;
     private ExternalUserMessage externalUserMessage;
-    private MomentCommentsMessage momentCommentsMessage;
 
     @Data
     public static class MemberMessage {
@@ -37,7 +36,6 @@ public class WeComTaskCenterMetrics {
     @Data
     public static class ExternalUserMessage {
         private Boolean finish;
-        private String msgId;
         private String memberId;
         private List<ExternalUserStatus> externalUserStatus;
         private List<ChatStatus> chatStatus;
@@ -49,13 +47,6 @@ public class WeComTaskCenterMetrics {
         private WeComMassTaskMemberStatusEnum status;
         private Integer externalUserCount;
         private String time;
-    }
-
-    @Data
-    public static class MomentCommentsMessage {
-        private String memberId;
-        private String momentId;
-        private List<ExternalUserStatus> externalUserStatus;
     }
 
     @Data
