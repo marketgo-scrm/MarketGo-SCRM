@@ -9,7 +9,6 @@
               size="medium"
               icon="el-icon-circle-plus"
               round
-              disabled
               @click="toAdd"
           >
             新建任务
@@ -179,6 +178,38 @@
       />
       <el-empty :image="empty" description="暂无数据" v-else></el-empty>
     </div>
+
+    <el-dialog title="选择您要创建的任务类型" :visible.sync="dialogFormVisible">
+      <div class="typeBox">
+        <div class="item " :class="khChick ? 'active' : ''"
+             @click="khChick = true;khqChick = false;pyqChick = false">
+          <div class="icon"></div>
+          <div class="text " :class="khChick ? 'active' : ''">客户触达</div>
+        </div>
+        <div class="item" :class="khqChick ? 'active' : ''" style="margin-right: 0"
+             @click="khChick = false;khqChick = true;pyqChick = false">
+          <div class="icon khq"></div>
+          <div class="text" :class="khqChick ? 'active' : ''">客户群触达</div>
+        </div>
+        <div class="item" :class="pyqChick ? 'active' : ''" style="margin-bottom: 0"
+             @click="khChick = false;khqChick = false;pyqChick = true">
+          <div class="icon pyq"></div>
+          <div class="text" :class="pyqChick ? 'active' : ''">朋友圈任务</div>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false"
+                   icon=""
+                   size="mini"
+                   round
+        >取 消</el-button>
+        <el-button type="primary" @click="addJump()"
+                   icon=""
+                   round
+                   size="mini"
+        >创 建</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -244,6 +275,12 @@ export default {
       ],
       dataList: [],
       creators: [],//创建人
+
+      dialogFormVisible: false,
+      formLabelWidth: '120px',
+      khChick: true,
+      khqChick: false,
+      pyqChick: false,
     }
   },
   mounted() {
@@ -391,7 +428,17 @@ export default {
     },
     toAdd() {
       console.log(111)
-      this.$router.push('/index/masscustomer-add')
+      // this.$router.push('/index/masscustomer-add')
+      this.dialogFormVisible = true
+    },
+    addJump() {
+      if (this.khChick) {
+        this.$router.push('/index/task-masscustomer-add')
+      } else if (this.khqChick) {
+        this.$router.push('/index/task-masscustomerbase-add')
+      } else if (this.pyqChick) {
+        this.$router.push('/index/task-sendgroupfriends-add')
+      }
     },
     handleQuery() {
       // this.queryParams.page_num = 1
@@ -414,6 +461,74 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+::v-deep(.el-dialog) {
+  width: 664px;
+  height: 308px;
+
+  background: #FFFFFF;
+  box-shadow: 0px 5px 28px rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  .el-dialog__title {
+
+    font-family: 'PingFang SC';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    color: #252D39;
+  }
+  .el-dialog__footer {
+    padding-top: 0;
+  }
+  .typeBox {
+    .item {
+      box-sizing: border-box;
+      width: 300px;
+      height: 67px;
+      cursor: pointer;
+      background: #FFFFFF;
+      border: 1px solid #DFDFDF;
+      border-radius: 8px;
+      position: relative;
+      display: inline-block;
+      margin-right: 16px;
+      margin-bottom: 16px;
+      &.active {
+        height: 65px;
+        border: 2px solid #679BFF;
+      }
+      .icon {
+        width: 40px;
+        height: 51px;
+        background: url("../assets/imgs/taskcenter/kh.png") no-repeat top;
+        background-size: 100%;
+        position: absolute;
+        top: 16px;
+        left: 23px;
+        &.khq {
+          background: url("../assets/imgs/taskcenter/khq.png") no-repeat top;
+          background-size: 100%;
+        }
+        &.pyq {
+          background: url("../assets/imgs/taskcenter/pyq.png") no-repeat top;
+          background-size: 100%;
+        }
+      }
+      .text {
+        font-family: 'PingFang SC';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 66px;
+        color: #252D39;
+        padding-left: 80px;
+        &.active {
+          color: #679BFF;
+        }
+      }
+    }
+  }
+}
 ::v-deep(.el-table th.el-table__cell) {
   height: 46px;
   line-height: 22px;
