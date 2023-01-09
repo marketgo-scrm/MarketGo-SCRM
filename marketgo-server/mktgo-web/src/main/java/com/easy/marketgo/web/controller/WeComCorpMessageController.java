@@ -1,18 +1,20 @@
 package com.easy.marketgo.web.controller;
 
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
-import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.web.model.response.WeComForwardServerMessageResponse;
+import com.easy.marketgo.web.model.response.corp.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
 import com.easy.marketgo.web.model.response.customer.WeComGroupChatsResponse;
+import com.easy.marketgo.web.model.response.media.MediaUploadResponse;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -121,4 +123,29 @@ public class WeComCorpMessageController {
         return ResponseEntity.ok(corpMessageService.getForwardServer(projectId, corpId, configType));
     }
 
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = MediaUploadResponse.class)
+    })
+    @ApiOperation(value = "上传企微的可信文件", nickname = "verifyCredFile", notes = "", response = MediaUploadResponse.class)
+    @PostMapping("/cred/upload")
+    public ResponseEntity verifyCredFile(
+            @ApiParam(value = "企微项目uuid", required = true) @RequestParam("project_id") @NotBlank @Valid String projectId,
+            @ApiParam(value = "可信文件", required = true) @RequestParam("file") @NotNull @Valid MultipartFile multipartFile,
+            @ApiParam(value = "企业id", required = true) @RequestParam("corp_id") @NotBlank @Valid String corpId) {
+
+        return ResponseEntity.ok(corpMessageService.verifyCredFile(projectId, corpId, multipartFile));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = MediaUploadResponse.class)
+    })
+    @ApiOperation(value = "获取企微的可信域名", nickname = "queryDomainUrl", notes = "", response =
+            MediaUploadResponse.class)
+    @PostMapping("/cred/upload")
+    public ResponseEntity queryDomainUrl(
+            @ApiParam(value = "企微项目uuid", required = true) @RequestParam("project_id") @NotBlank @Valid String projectId,
+            @ApiParam(value = "企业id", required = true) @RequestParam("corp_id") @NotBlank @Valid String corpId) {
+
+        return ResponseEntity.ok(corpMessageService.queryDomainUrl(projectId, corpId));
+    }
 }

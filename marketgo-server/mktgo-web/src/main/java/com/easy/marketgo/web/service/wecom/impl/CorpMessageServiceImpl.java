@@ -19,6 +19,7 @@ import com.easy.marketgo.core.entity.ProjectConfigEntity;
 import com.easy.marketgo.core.entity.TenantConfigEntity;
 import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.WeComCorpMessageEntity;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.core.redis.RedisService;
 import com.easy.marketgo.core.repository.wecom.ProjectConfigRepository;
 import com.easy.marketgo.core.repository.wecom.TenantConfigRepository;
@@ -27,18 +28,20 @@ import com.easy.marketgo.core.repository.wecom.WeComCorpMessageRepository;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
-import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.web.model.response.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
+import com.easy.marketgo.web.model.response.corp.WeComCorpDomainResponse;
+import com.easy.marketgo.web.model.response.corp.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -316,6 +319,46 @@ public class CorpMessageServiceImpl implements CorpMessageService {
             }
         }
         log.info("get corp forward server message. response={}", response);
+        return BaseResponse.success(response);
+    }
+
+    @Override
+    public BaseResponse verifyCredFile(String projectId, String corpId, MultipartFile multipartFile) {
+        if (multipartFile.isEmpty()) {
+            return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY);
+        }
+        String fileName = multipartFile.getOriginalFilename();
+        String path = "/opt/soft/marketgo";
+        File dest = new File(new File(path).getAbsolutePath() + "/" + fileName);
+        if (!dest.getParentFile().exists()) {
+            dest.getParentFile().mkdirs();
+        }
+        try {
+            multipartFile.transferTo(dest); // 保存文件
+            return BaseResponse.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_UPLOAD_FILE_FAILED);
+        }
+    }
+
+    @Override
+    public BaseResponse queryDomainUrl(String projectId, String corpId) {
+        ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);
+        if (projectConfigEntity == null) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
+        }
+
+        TenantConfigEntity tenantConfigEntity = tenantConfigRepository.findByUuid(projectConfigEntity.getTenantUuid());
+        if (tenantConfigEntity == null) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
+        }
+        String domain = tenantConfigEntity.getServerAddress();
+        WeComCorpDomainResponse response = new WeComCorpDomainResponse();
+        if (StringUtils.isNotEmpty(domain)) {
+            domain = domain.split("/")[0];
+        }
+        response.setDomainUrl(domain);
         return BaseResponse.success(response);
     }
 
