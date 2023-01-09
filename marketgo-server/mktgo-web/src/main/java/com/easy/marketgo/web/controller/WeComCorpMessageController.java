@@ -4,11 +4,11 @@ import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
-import com.easy.marketgo.web.model.response.corp.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
+import com.easy.marketgo.web.model.response.corp.WeComCorpDomainResponse;
+import com.easy.marketgo.web.model.response.corp.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.customer.WeComGroupChatsResponse;
-import com.easy.marketgo.web.model.response.media.MediaUploadResponse;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,9 +124,9 @@ public class WeComCorpMessageController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = MediaUploadResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
-    @ApiOperation(value = "上传企微的可信文件", nickname = "verifyCredFile", notes = "", response = MediaUploadResponse.class)
+    @ApiOperation(value = "上传企微的可信文件", nickname = "verifyCredFile", notes = "", response = BaseResponse.class)
     @PostMapping("/cred/upload")
     public ResponseEntity verifyCredFile(
             @ApiParam(value = "企微项目uuid", required = true) @RequestParam("project_id") @NotBlank @Valid String projectId,
@@ -137,10 +137,10 @@ public class WeComCorpMessageController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = MediaUploadResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = WeComCorpDomainResponse.class)
     })
     @ApiOperation(value = "获取企微的可信域名", nickname = "queryDomainUrl", notes = "", response =
-            MediaUploadResponse.class)
+            WeComCorpDomainResponse.class)
     @PostMapping("/domain/query")
     public ResponseEntity queryDomainUrl(
             @ApiParam(value = "企微项目uuid", required = true) @RequestParam("project_id") @NotBlank @Valid String projectId,
