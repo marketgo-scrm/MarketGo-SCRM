@@ -141,7 +141,7 @@ public class WeComCorpMessageController {
     })
     @ApiOperation(value = "获取企微的可信域名", nickname = "queryDomainUrl", notes = "", response =
             WeComCorpDomainResponse.class)
-    @PostMapping("/domain/query")
+    @RequestMapping(value = {"/domain/query"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity queryDomainUrl(
             @ApiParam(value = "企微项目uuid", required = true) @RequestParam("project_id") @NotBlank @Valid String projectId,
             @ApiParam(value = "企业id", required = true) @RequestParam("corp_id") @NotBlank @Valid String corpId) {
