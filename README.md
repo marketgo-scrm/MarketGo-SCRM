@@ -149,25 +149,19 @@
 
 ## 3、部署流程
 
-[服务器配置](【腾讯文档】服务器配置
-https://docs.qq.com/doc/DUkNMRmVadGpOT2hD)
+[服务器配置](https://docs.qq.com/doc/DUkNMRmVadGpOT2hD)
 
-[端口配置](【腾讯文档】端口设置
-https://docs.qq.com/doc/DUnRKWGdIRlNkVU5z)
+[端口配置](https://docs.qq.com/doc/DUnRKWGdIRlNkVU5z)
 
-[环境准备](【腾讯文档】环境准备
-https://docs.qq.com/doc/DUnlkcGlWY2l2VlJq)
+[环境准备](https://docs.qq.com/doc/DUnlkcGlWY2l2VlJq)
 
-[前端部署](【腾讯文档】前端部署
-https://docs.qq.com/doc/DUmtMQllqQmVHTVpE)
+[前端部署](https://docs.qq.com/doc/DUmtMQllqQmVHTVpE)
 
-[后端部署](【腾讯文档】后端部署
-https://docs.qq.com/doc/DUnBnb0FpWUpPd0dT)
+[后端部署](https://docs.qq.com/doc/DUnBnb0FpWUpPd0dT)
 
 ## 4、版本说明
 
-[发布版本列表](【腾讯文档】版本说明
-https://docs.qq.com/doc/DUk9hSlhxUlRXb0RV)
+[发布版本列表](https://docs.qq.com/doc/DUk9hSlhxUlRXb0RV)
 
 ## 5、演示环境
 
