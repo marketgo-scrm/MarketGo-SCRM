@@ -5,10 +5,7 @@ import com.easy.marketgo.gateway.wecom.request.client.WeComUserVerifyRequest;
 import com.easy.marketgo.gateway.wecom.request.client.WeComVerifySdkConfigRequest;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
 import com.easy.marketgo.react.service.client.WeComClientVerifyService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +21,7 @@ import javax.validation.constraints.NotNull;
  * @data : 6/21/22 3:01 PM
  * Describe:
  */
+@Api(value = "客户端验证管理", tags = "客户端验证管理")
 @RestController
 @RequestMapping(value = "/mktgo/client/wecom")
 @Slf4j
