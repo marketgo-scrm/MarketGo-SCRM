@@ -53,7 +53,7 @@ public class SwaggerGateWayConfig {
                 .apiInfo(apiInfo)
                 .groupName("GatewayOpenAPI")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo.gateway"))
+                .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo"))
                 .paths(PathSelectors.any())
                 .build()
                 .globalRequestParameters(requestParameters)

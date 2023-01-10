@@ -51,9 +51,9 @@ public class SwaggerConfig {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
-                .groupName("SwaggerGroupOneAPI")
+                .groupName("WebOpenAPI")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo.web"))
+                .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo"))
                 .paths(PathSelectors.any())
                 .build()
                 .globalRequestParameters(requestParameters)
