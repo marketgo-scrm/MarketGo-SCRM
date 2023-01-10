@@ -60,6 +60,39 @@ public class SwaggerConfig {
                 ;
     }
 
+    /**
+     * 配置基本信息
+     * @return
+     */
+    @Bean
+    public ApiInfo gatewayApiInfo() {
+        return new ApiInfoBuilder()
+                .title("Swagger Test App Restful API")
+                .description("swagger test app restful api")
+                .termsOfServiceUrl("")
+                .contact(new Contact("ssk","http://127.0.0,1","shang.shi.kun@hotmail.com"))
+                .version("1.0")
+                .build();
+    }
+    /**
+     * 配置文档生成最佳实践
+     * @param apiInfo
+     * @return
+     */
+    @Bean
+    public Docket createGatewayRestApi(ApiInfo apiInfo) {
 
+        List<RequestParameter> requestParameters = new ArrayList<>() ;
+
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo)
+                .groupName("GatewayOpenAPI")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo"))
+                .paths(PathSelectors.any())
+                .build()
+                .globalRequestParameters(requestParameters)
+                ;
+    }
 
 }
