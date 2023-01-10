@@ -51,7 +51,7 @@ public class SwaggerGateWayConfig {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
-                .groupName("SwaggerGroupOneAPI")
+                .groupName("GatewayOpenAPI")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo.gateway"))
                 .paths(PathSelectors.any())
