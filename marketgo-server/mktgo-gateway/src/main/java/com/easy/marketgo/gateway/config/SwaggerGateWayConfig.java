@@ -2,6 +2,7 @@ package com.easy.marketgo.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -53,6 +54,7 @@ public class SwaggerGateWayConfig {
                 .apiInfo(apiInfo)
                 .groupName("GatewayOpenAPI")
                 .select()
+                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo.gateway"))
                 .paths(PathSelectors.any())
                 .build()
