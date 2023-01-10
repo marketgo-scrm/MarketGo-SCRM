@@ -61,7 +61,4 @@ public class SwaggerGateWayConfig {
                 .globalRequestParameters(requestParameters)
                 ;
     }
-
-
-
 }
