@@ -30,7 +30,7 @@ public class SwaggerGateWayConfig {
      * @return
      */
     @Bean
-    public ApiInfo apiInfo() {
+    public ApiInfo gatewayApiInfo() {
         return new ApiInfoBuilder()
                 .title("Swagger Test App Restful API")
                 .description("swagger test app restful api")
@@ -45,7 +45,7 @@ public class SwaggerGateWayConfig {
      * @return
      */
     @Bean
-    public Docket createRestApi(ApiInfo apiInfo) {
+    public Docket createGatewayRestApi(ApiInfo apiInfo) {
 
         List<RequestParameter> requestParameters = new ArrayList<>() ;
 
