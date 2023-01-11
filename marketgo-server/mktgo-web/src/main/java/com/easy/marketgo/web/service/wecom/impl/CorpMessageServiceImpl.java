@@ -342,7 +342,6 @@ public class CorpMessageServiceImpl implements CorpMessageService {
             return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_UPLOAD_FILE_FAILED);
         }
 
-
         return BaseResponse.success();
     }
 
@@ -363,7 +362,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         WeComCorpDomainResponse response = new WeComCorpDomainResponse();
         if (StringUtils.isNotEmpty(domain)) {
             String[] splitString = domain.split("/");
-            domain = splitString[0] + "//" + splitString[1];
+            domain = splitString[0] + "//" + splitString[2];
         }
         response.setDomainUrl(domain);
         if (StringUtils.isNotEmpty(entity.getCredFileName())) {
