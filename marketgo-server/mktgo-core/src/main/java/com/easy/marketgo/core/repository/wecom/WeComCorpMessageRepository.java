@@ -19,7 +19,7 @@ public interface WeComCorpMessageRepository extends CrudRepository<WeComCorpMess
     @Query("UPDATE wecom_corp_config SET contacts_secret = :contacts_secret, contacts_token = :contacts_token, " +
             "contacts_encoding_aes_key = :contacts_encoding_aes_key WHERE " +
             "corp_id = :corp_id AND project_uuid = :project_uuid")
-    int updateSecretByCorpId(@Param("corp_id") String corpId,
+    Integer updateSecretByCorpId(@Param("corp_id") String corpId,
                              @Param("project_uuid") String projectUuid,
                              @Param("contacts_secret") String contactsSecret,
                              @Param("contacts_token") String contactsToken,
@@ -29,7 +29,7 @@ public interface WeComCorpMessageRepository extends CrudRepository<WeComCorpMess
     @Query("UPDATE wecom_corp_config SET external_user_secret = :external_user_secret, external_user_token = " +
             ":external_user_token, external_user_encoding_aes_key = :external_user_encoding_aes_key WHERE " +
             "corp_id = :corp_id AND project_uuid = :project_uuid")
-    int updateExternalUserSecretByCorpId(@Param("corp_id") String corpId,
+    Integer updateExternalUserSecretByCorpId(@Param("corp_id") String corpId,
                                          @Param("project_uuid") String projectUuid,
                                          @Param("external_user_secret") String externalUserSecret,
                                          @Param("external_user_token") String externalUserToken,
@@ -51,10 +51,15 @@ public interface WeComCorpMessageRepository extends CrudRepository<WeComCorpMess
     @Modifying
     @Query("UPDATE wecom_corp_config SET forward_address = :forwardAddress WHERE " +
             "corp_id = :corpId AND project_uuid = :projectUuid")
-    int updateForwardAddressByCorpId(String projectUuid, String corpId, String forwardAddress);
+    Integer updateForwardAddressByCorpId(String projectUuid, String corpId, String forwardAddress);
 
     @Modifying
     @Query("UPDATE wecom_corp_config SET forward_customer_address = :forwardAddress WHERE " +
             "corp_id = :corpId AND project_uuid = :projectUuid")
-    int updateForwardCustomerAddressByCorpId(String projectUuid, String corpId, String forwardAddress);
+    Integer updateForwardCustomerAddressByCorpId(String projectUuid, String corpId, String forwardAddress);
+
+    @Modifying
+    @Query("UPDATE wecom_corp_config SET cred_file_name = :fileName, cred_file_content = :fileContent WHERE " +
+            "corp_id = :corpId AND project_uuid = :projectUuid")
+    Integer updateCredFileMessageByCorpId(String projectUuid, String corpId, String fileName, String fileContent);
 }

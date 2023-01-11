@@ -41,7 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -328,18 +328,22 @@ public class CorpMessageServiceImpl implements CorpMessageService {
             return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY);
         }
         String fileName = multipartFile.getOriginalFilename();
-        String path = "/opt/soft/marketgo";
-        File dest = new File(new File(path).getAbsolutePath() + "/" + fileName);
-        if (!dest.getParentFile().exists()) {
-            dest.getParentFile().mkdirs();
-        }
+
+        String type = multipartFile.getContentType();
+
         try {
-            multipartFile.transferTo(dest); // 保存文件
-            return BaseResponse.success();
-        } catch (Exception e) {
-            e.printStackTrace();
+            byte[] content = multipartFile.getBytes();
+            if (content.length > 0) {
+                weComCorpMessageRepository.updateCredFileMessageByCorpId(projectId, corpId, fileName,
+                        new String(content));
+            }
+        } catch (IOException e) {
+            log.error("failed to upload corp cred file message. corpId={}", corpId, e);
             return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_UPLOAD_FILE_FAILED);
         }
+
+
+        return BaseResponse.success();
     }
 
     @Override
@@ -353,13 +357,29 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         if (tenantConfigEntity == null) {
             throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
         }
+
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorpId(corpId);
         String domain = tenantConfigEntity.getServerAddress();
         WeComCorpDomainResponse response = new WeComCorpDomainResponse();
         if (StringUtils.isNotEmpty(domain)) {
-            domain = domain.split("/")[0];
+            String[] splitString = domain.split("/");
+            domain = splitString[0] + "//" + splitString[1];
         }
         response.setDomainUrl(domain);
+        if (StringUtils.isNotEmpty(entity.getCredFileName())) {
+            response.setCredFileName(entity.getCredFileName());
+        }
         return BaseResponse.success(response);
+    }
+
+    @Override
+    public BaseResponse deleteCredFile(String projectId, String corpId, String fileName) {
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorpId(corpId);
+        if (entity.getCredFileName().equals(fileName)) {
+            weComCorpMessageRepository.updateCredFileMessageByCorpId(projectId, corpId, "",
+                    "");
+        }
+        return BaseResponse.success();
     }
 
 }

@@ -34,4 +34,6 @@ public interface CorpMessageService {
     BaseResponse verifyCredFile(String projectId, String corpId, MultipartFile multipartFile);
 
     BaseResponse queryDomainUrl(String projectId, String corpId);
+
+    BaseResponse deleteCredFile(String projectId, String corpId, String fileName);
 }

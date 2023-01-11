@@ -16,4 +16,6 @@ public class WeComCorpDomainResponse {
     @ApiModelProperty(value = "域名信息")
     private String domainUrl;
 
+    @ApiModelProperty(value = "可信文件名称")
+    private String credFileName;
 }

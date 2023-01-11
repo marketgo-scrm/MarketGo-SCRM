@@ -919,3 +919,7 @@ CREATE TABLE `wecom_task_center_member` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微任务中心的员工对应的客户统计';
 
 ALTER TABLE wecom_group_chats ADD user_count INT(11) DEFAULT NULL COMMENT '客户群的人数';
+
+ALTER TABLE wecom_corp_config ADD cred_file_name VARCHAR(128) DEFAULT NULL COMMENT '可信文件名称';
+
+ALTER TABLE wecom_corp_config ADD cred_file_content VARCHAR(256) DEFAULT NULL COMMENT '可信文件内容';
