@@ -210,7 +210,11 @@
                     </el-upload>
                     <span style="display: inline">
                       <el-progress v-if="progressFlag" :percentage="loadProgress" color="#92E780"></el-progress>
-                      <em v-if="!progressFlag">{{ fileName }}</em>
+                      
+                      <em v-if="!progressFlag && fileName.length">
+                        <img style="width:12px;height:10px; margin-left: 10px" src="../assets/file_icon.png" alt="">
+                        {{ fileName }}
+                      </em>
                       <span class="close" v-if="fileName.length > 0 || progressFlag" @click="deleteFile">
                         <i class="el-icon-close"></i>
                       </span>
