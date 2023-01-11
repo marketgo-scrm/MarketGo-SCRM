@@ -330,12 +330,13 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         String fileName = multipartFile.getOriginalFilename();
 
         String type = multipartFile.getContentType();
-
+        log.info("start to upload cred file message. fileName={}, type={}", fileName, type);
         try {
             byte[] content = multipartFile.getBytes();
             if (content.length > 0) {
-                weComCorpMessageRepository.updateCredFileMessageByCorpId(projectId, corpId, fileName,
-                        new String(content));
+                String fileContent = new String(content);
+                log.info("upload cred file message. fileName={}, fileContent={}", fileName, fileContent);
+                weComCorpMessageRepository.updateCredFileMessageByCorpId(projectId, corpId, fileName, fileContent);
             }
         } catch (IOException e) {
             log.error("failed to upload corp cred file message. corpId={}", corpId, e);
