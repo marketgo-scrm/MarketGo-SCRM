@@ -364,9 +364,12 @@ public class CorpMessageServiceImpl implements CorpMessageService {
             String[] splitString = domain.split("/");
             domain = splitString[0] + "//" + splitString[2];
         }
+
         response.setDomainUrl(domain);
         if (StringUtils.isNotEmpty(entity.getCredFileName())) {
             response.setCredFileName(entity.getCredFileName());
+        } else {
+            response.setCredFileName("");
         }
         return BaseResponse.success(response);
     }
