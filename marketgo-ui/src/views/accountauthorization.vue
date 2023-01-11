@@ -697,7 +697,7 @@ export default {
     },
     async deleteFilePost() {
       let data = await this.$http.post(
-            `/mktgo/wecom/corp/cred_file/delete=?project_id=${this.project_id}&corp_id=${this.$store.state.corpId}&file_name=${this.fileName}`
+            `/mktgo/wecom/corp/cred_file/delete?project_id=${this.project_id}&corp_id=${this.$store.state.corpId}&file_name=${this.fileName}`
           );
           if (data.code === 0) {
             this.$message.success('删除成功')
