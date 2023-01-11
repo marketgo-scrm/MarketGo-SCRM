@@ -190,16 +190,16 @@
                 </template>
               </el-form>
               <el-form label-position="left" v-show="nowtype == 9" :model="domain" size="small" ref="domain"
-                :rules="contactsrules" label-width="110px">
+                label-width="110px">
                 <template v-if="nowtype == 9">
                   <div v-for="(item, index) in this.domainInfo" :key="index">
-                    <p class="callbackTip"> 可作为应用OAuth2.0网页授权功能的回调域名：</p>
+                    <p class="callback_tip"> 可作为应用OAuth2.0网页授权功能的回调域名：</p>
                     <el-form-item label="可用域名" prop="secret">
                       <el-input v-model="item.domainUrl" disabled placeholder="" clearable />
                       <el-button type="primary" round class='copys' @click="copytext(item.domainUrl)">复制</el-button>
                     </el-form-item>
                   </div>
-                  <p class="callbackTip"> 请上传下载的验证归属文件【.txt】</p>
+                  <p class="callback_tip"> 请上传下载的验证归属文件【.txt】</p>
                   <el-form-item label="上传文件">
                     <el-upload ref="upfile" :action="uploadUrl" style="display: inline" :auto-upload="true"
                       :show-file-list="false" :file-list="fileList" :on-change="handleChange"
@@ -209,7 +209,7 @@
                       <el-button style="margin-right:10px">选择本地文件</el-button>
                     </el-upload>
                     <span style="display: inline">
-                      <el-progress v-if="progressFlag" :percentage="loadProgress"></el-progress>
+                      <el-progress v-if="progressFlag" :percentage="loadProgress" color="#92E780"></el-progress>
                       <em v-if="!progressFlag">{{ fileName }}</em>
                       <span class="close" v-if="fileName.length > 0 || progressFlag" @click="deleteFile">
                         <i class="el-icon-close"></i>
@@ -666,7 +666,7 @@ export default {
       this.loadProgress = parseInt(event.percent); // 动态获取文件上传进度
       if (this.loadProgress >= 100) {
         this.loadProgress = 100
-        setTimeout(() => { this.progressFlag = false }, 1000) // 一秒后关闭进度条
+        setTimeout(() => { this.progressFlag = false }, 500) // 一秒后关闭进度条
       }
     },
     // 删除文件
@@ -1094,7 +1094,7 @@ export default {
   cursor: pointer;
 }
 
-.callbackTip {
+.callback_tip {
   font-size: 12px;
   line-height: 16.8px;
   color: #333333;
