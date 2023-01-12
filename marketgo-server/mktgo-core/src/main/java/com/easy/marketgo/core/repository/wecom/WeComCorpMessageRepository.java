@@ -42,6 +42,9 @@ public interface WeComCorpMessageRepository extends CrudRepository<WeComCorpMess
     @Query("SELECT * FROM wecom_corp_config WHERE corp_id = :corp_id")
     WeComCorpMessageEntity getCorpConfigByCorpId(@Param("corp_id") String corpId);
 
+    @Query("SELECT * FROM wecom_corp_config WHERE cred_file_name = :fileName")
+    WeComCorpMessageEntity getCorpConfigByCredFileName(String fileName);
+
     @Query("SELECT * FROM wecom_corp_config WHERE corp_id is not null")
     List<WeComCorpMessageEntity> getCorpConfigList();
 

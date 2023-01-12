@@ -5,7 +5,9 @@ import com.easy.marketgo.common.crypto.SHA1;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.SdkConfigSignatureTyeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.core.entity.WeComCorpMessageEntity;
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.core.repository.wecom.WeComCorpMessageRepository;
 import com.easy.marketgo.core.service.wecom.token.AccessTokenManagerService;
 import com.easy.marketgo.core.util.OkHttpUtils;
 import com.easy.marketgo.react.model.QuerySignatureResponse;
@@ -16,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 import static com.easy.marketgo.common.constants.wecom.WeComHttpConstants.NONCESTR;
@@ -35,6 +38,9 @@ public class WeComClientVerifyService {
 
     @Autowired
     private ApiTicketManagerService apiTicketManagerService;
+
+    @Resource
+    private WeComCorpMessageRepository weComCorpMessageRepository;
 
     public BaseResponse userVerify(final String corpId, final String agentId, final String code,
                                    final String memberId) {
@@ -161,5 +167,14 @@ public class WeComClientVerifyService {
             return url;
         }
         return url.substring(0, index);
+    }
+
+    public byte[] checkCredFile(String fileName) {
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCredFileName(fileName);
+        if (entity == null) {
+            return new byte[0];
+        }
+        byte[] data = entity.getCredFileContent().getBytes();
+        return data;
     }
 }
