@@ -19,6 +19,7 @@ import com.easy.marketgo.core.entity.ProjectConfigEntity;
 import com.easy.marketgo.core.entity.TenantConfigEntity;
 import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.WeComCorpMessageEntity;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.core.redis.RedisService;
 import com.easy.marketgo.core.repository.wecom.ProjectConfigRepository;
 import com.easy.marketgo.core.repository.wecom.TenantConfigRepository;
@@ -27,18 +28,20 @@ import com.easy.marketgo.core.repository.wecom.WeComCorpMessageRepository;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
-import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.web.model.response.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
+import com.easy.marketgo.web.model.response.corp.WeComCorpDomainResponse;
+import com.easy.marketgo.web.model.response.corp.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -317,6 +320,69 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         }
         log.info("get corp forward server message. response={}", response);
         return BaseResponse.success(response);
+    }
+
+    @Override
+    public BaseResponse verifyCredFile(String projectId, String corpId, MultipartFile multipartFile) {
+        if (multipartFile.isEmpty()) {
+            return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY);
+        }
+        String fileName = multipartFile.getOriginalFilename();
+
+        String type = multipartFile.getContentType();
+        log.info("start to upload cred file message. fileName={}, type={}", fileName, type);
+        try {
+            byte[] content = multipartFile.getBytes();
+            if (content.length > 0) {
+                String fileContent = new String(content);
+                log.info("upload cred file message. fileName={}, fileContent={}", fileName, fileContent);
+                weComCorpMessageRepository.updateCredFileMessageByCorpId(projectId, corpId, fileName, fileContent);
+            }
+        } catch (IOException e) {
+            log.error("failed to upload corp cred file message. corpId={}", corpId, e);
+            return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_UPLOAD_FILE_FAILED);
+        }
+
+        return BaseResponse.success();
+    }
+
+    @Override
+    public BaseResponse queryDomainUrl(String projectId, String corpId) {
+        ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);
+        if (projectConfigEntity == null) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
+        }
+
+        TenantConfigEntity tenantConfigEntity = tenantConfigRepository.findByUuid(projectConfigEntity.getTenantUuid());
+        if (tenantConfigEntity == null) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
+        }
+
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorpId(corpId);
+        String domain = tenantConfigEntity.getServerAddress();
+        WeComCorpDomainResponse response = new WeComCorpDomainResponse();
+        if (StringUtils.isNotEmpty(domain)) {
+            String[] splitString = domain.split("/");
+            domain = splitString[0] + "//" + splitString[2];
+        }
+
+        response.setDomainUrl(domain);
+        if (StringUtils.isNotEmpty(entity.getCredFileName())) {
+            response.setCredFileName(entity.getCredFileName());
+        } else {
+            response.setCredFileName("");
+        }
+        return BaseResponse.success(response);
+    }
+
+    @Override
+    public BaseResponse deleteCredFile(String projectId, String corpId, String fileName) {
+        WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCorpId(corpId);
+        if (entity.getCredFileName().equals(fileName)) {
+            weComCorpMessageRepository.updateCredFileMessageByCorpId(projectId, corpId, "",
+                    "");
+        }
+        return BaseResponse.success();
     }
 
 }

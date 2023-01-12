@@ -5,10 +5,7 @@ import com.easy.marketgo.gateway.wecom.request.client.WeComChangeStatusRequest;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterListClientResponse;
 import com.easy.marketgo.gateway.wecom.sevice.taskcenter.QueryTaskCenterDetailService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +23,7 @@ import java.util.List;
  * @data : 6/21/22 3:01 PM
  * Describe:
  */
+@Api(value = "客户端任务管理", tags = "客户端任务管理")
 @RestController
 @RequestMapping(value = "/mktgo/client/wecom/task_center")
 @Slf4j
