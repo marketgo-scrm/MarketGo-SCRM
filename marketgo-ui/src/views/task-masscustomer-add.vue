@@ -23,7 +23,7 @@
               <el-radio v-model="baseForm.checkType" label="2">离线导入</el-radio>
             </div>
             <div class="style-item">
-              <el-radio v-model="baseForm.checkType" label="3">第三方CDP人群包</el-radio>
+              <el-radio v-model="baseForm.checkType" label="3" :disabled="!cdpStatus">第三方CDP人群包</el-radio>
             </div>
           </div>
         </el-form-item>
@@ -344,6 +344,7 @@
                           format="yyyy-MM-dd HH:mm:ss"
                           value-format="yyyy-MM-dd HH:mm:ss"
                           type="datetime"
+                          :picker-options="pickerOptions2"
                           placeholder="选择日期">
           </el-date-picker>
 
@@ -578,6 +579,11 @@ export default {
           value:'DAY',
         },
       ],
+      pickerOptions2: {
+        disabledDate: time => {
+          return time.getTime() < Date.now() - 8.64e7
+        }
+      },
       pickerOptions: {
         shortcuts: [
           {
@@ -608,6 +614,9 @@ export default {
             },
           },
         ],
+        disabledDate: time => {
+          return time.getTime() < Date.now() - 8.64e7
+        }
       },
       timeTypeOptions: [
         {
@@ -879,6 +888,7 @@ export default {
       ],
       checkListCdp: [],
       checkListCdpShow: [],
+      cdpStatus: false,
     }
   },
   watch: {
@@ -937,8 +947,15 @@ export default {
   },
   mounted() {
     this.getCDP()
+    this.getCdpStatus()
   },
   methods: {
+    getCdpStatus() {
+      let _this = this
+      this.$http.get(`mktgo/wecom/cdp/switch/status?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`,{}).then(function (res) {
+        _this.cdpStatus = res.switchStatus
+      })
+    },
     textAdd() {
       this.formDataTextList.push({
         text: {
@@ -1344,6 +1361,7 @@ export default {
                 "repeatEndTime": this.setForm.radioFs == 3 ? this.setForm.times[1] : null,
                 "targetTime": this.setForm.targetTime,
                 "targetType": this.setForm.targetType,
+                "messageType": this.setForm.radioNr == 1 ? 'SEND_MESSAGE' : 'ASSIGN_TASK',
                 "taskStatus": null,
                 "userGroupUuid": this.set_userGroupUuid/*"ca023c0d4b654812aff1504d0f16eadf"*/,
                 "uuid": null
@@ -1390,10 +1408,15 @@ export default {
       console.log(data)
       this.fjList = data
       const list = JSON.parse(JSON.stringify(this.formData.welcomeContent))
-      let textData = list.find((item) => {
+      for(let i = 0; i < list.length; i++) {
+        if (list[i].type === "TEXT") {
+          data.unshift(list[i]);
+        }
+      }
+      /*let textData = list.find((item) => {
         return item.type === "TEXT";
       });
-      data.unshift(textData);
+      data.unshift(textData);*/
       this.formData.welcomeContent = data;
     }
   }
