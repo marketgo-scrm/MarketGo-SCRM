@@ -91,6 +91,16 @@ export const constantRoutes = [
                 name: 'task-masscustomer-add',
                 title: '新建客户触达任务',
                 component: (resolve) => require(['@/views/task-masscustomer-add'], resolve),
+            },{
+                path: 'task-masscustomerbase-add',
+                name: 'task-masscustomerbase-add',
+                title: '新建客户群触达任务',
+                component: (resolve) => require(['@/views/task-masscustomerbase-add'], resolve),
+            },{
+                path: 'task-sendgroupfriends-add',
+                name: 'task-sendgroupfriends-add',
+                title: '新建朋友圈触达任务',
+                component: (resolve) => require(['@/views/task-sendgroupfriends-add'], resolve),
             },
             {
                 path: 'masscustomer',

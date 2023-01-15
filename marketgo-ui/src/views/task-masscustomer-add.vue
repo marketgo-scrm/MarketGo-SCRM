@@ -22,8 +22,12 @@
             <div class="style-item">
               <el-radio v-model="baseForm.checkType" label="2">离线导入</el-radio>
             </div>
-            <div class="style-item">
-              <el-radio v-model="baseForm.checkType" label="3" :disabled="!cdpStatus">第三方CDP人群包</el-radio>
+            <div class="style-item" v-show="!cdpStatus">
+<!--              <el-radio v-model="baseForm.checkType" label="3" :disabled="!cdpStatus">第三方CDP人群包</el-radio>-->
+              <el-radio v-model="baseForm.checkType" label="3" disabled>第三方CDP人群包</el-radio>
+            </div>
+            <div class="style-item" v-show="cdpStatus">
+              <el-radio v-model="baseForm.checkType" label="3">第三方CDP人群包</el-radio>
             </div>
           </div>
         </el-form-item>
@@ -953,7 +957,8 @@ export default {
     getCdpStatus() {
       let _this = this
       this.$http.get(`mktgo/wecom/cdp/switch/status?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`,{}).then(function (res) {
-        _this.cdpStatus = res.switchStatus
+        _this.cdpStatus = res.data.switchStatus
+        // console.log('_this.cdpStatus',_this.cdpStatus)
       })
     },
     textAdd() {
