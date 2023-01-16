@@ -1,8 +1,8 @@
 <template>
   <div class="masscustomer-add">
-    <main-head title="新建群发朋友圈" :back="true"></main-head>
+    <main-head title="新建朋友圈任务" :back="true"></main-head>
     <div class="base-content">
-      <div class="content-title">基础信息</div>
+      <div class="content-title">配置任务基础必要信息</div>
       <el-form :model="baseForm" :rules="baseRules" ref="baseForm" label-width="100px" class="demo-baseForm">
         <el-form-item label="任务名称：" prop="name">
           <el-input v-model="baseForm.name"
@@ -14,14 +14,6 @@
           ></el-input>
         </el-form-item>
 
-<!--        <el-form-item label="群发员工：" prop="members">
-&lt;!&ndash;          <i class="el-icon-circle-plus-outline"></i>&ndash;&gt;
-          <el-button
-              size="mini"
-              icon="el-icon-plus"
-              circle
-          ></el-button>
-        </el-form-item>-->
         <el-form-item label="发送范围：" prop="radioXz">
           <div class="style-tab-radio">
             <div class="style-item">
@@ -160,33 +152,37 @@
       </el-form>
     </div>
 
-    <div class="set-content">
-      <el-row :gutter="50">
-        <el-col :sm="18" :md="14" :xs="24">
-          <div class="content-title">设置群发消息</div>
-          <el-form :model="setForm" :rules="setRules" ref="setForm" label-width="100px" class="demo-baseForm">
+    <el-form :model="setForm" :rules="setRules" ref="setForm" label-width="100px" class="demo-baseForm">
+      <div class="set-content">
+        <el-row :gutter="50">
+          <el-col :sm="18" :md="14" :xs="24">
+            <div class="content-title">配置任务内容</div>
+<!--            <el-form :model="setForm" :rules="setRules" ref="setForm" label-width="100px" class="demo-baseForm">-->
+            <el-form-item label="内容类型：">
+              <div class="style-tab-radio">
+                <div class="style-item">
+                  <el-radio v-model="setForm.radioNr" label="1">发送指定内容</el-radio>
+                </div>
+                <div class="style-item">
+                  <el-radio v-model="setForm.radioNr" label="2">指派任务说明</el-radio>
+                </div>
+              </div>
+            </el-form-item>
             <el-form-item label="文字消息：" prop="text">
-              <!--          <el-input v-model="setForm.text"
-                                  type="textarea"
-                                  maxlength="600"
-                                  show-word-limit
-                                  style="width: 610px;"
-                                  rows="6"
-                                  placeholder="请填写文字消息"
-                        ></el-input>-->
+
               <div style="width: 100%">
                 <CustomMessageInput
                     :value="
-                    formData.welcomeContent.find((item) => {
-                      return item.type === 'TEXT';
-                    })?.text?.content
-                  "
+                  formData.welcomeContent.find((item) => {
+                    return item.type === 'TEXT';
+                  })?.text?.content
+                "
                     @change="descChange"
                     :nameBtnShow="false"
                 />
               </div>
             </el-form-item>
-            <el-form-item label="附件消息：" prop="radioFj">
+            <el-form-item label="附件消息：" prop="radioFj" v-show="setForm.radioNr == 1">
               <EnclosureList ref="EnclosureList" :dataIn="EnclosureListIn" :isPyq="true" :limit="1" :callback="enclosureListCallback" :type="'MOMENT'"></EnclosureList>
 
 
@@ -194,7 +190,7 @@
                         <el-radio disabled v-model="setForm.radioFj" label="2">网页</el-radio>
                         <el-radio disabled v-model="setForm.radioFj" label="3">小程序</el-radio>-->
             </el-form-item>
-            <el-form-item label="发送方式：" prop="radioFs">
+<!--            <el-form-item label="发送方式：" prop="radioFs">
               <div class="style-tab-radio">
                 <div class="style-item">
                   <el-radio v-model="setForm.radioFs" label="1">立即发送</el-radio>
@@ -211,8 +207,8 @@
                               placeholder="选择日期">
               </el-date-picker>
 
-              <!--          <el-radio disabled v-model="setForm.radioFs" label="1">立即发送</el-radio>
-                        <el-radio disabled v-model="setForm.radioFs" label="2">定时发送</el-radio>-->
+              &lt;!&ndash;          <el-radio disabled v-model="setForm.radioFs" label="1">立即发送</el-radio>
+                        <el-radio disabled v-model="setForm.radioFs" label="2">定时发送</el-radio>&ndash;&gt;
             </el-form-item>
             <el-form-item>
               <el-button
@@ -232,23 +228,138 @@
                   @click="submitForm"
               >创 建
               </el-button>
-            </el-form-item>
-          </el-form>
-        </el-col>
-        <el-col
-            :sm="6"
-            :md="10"
-            :xs="24"
-        >
-          <div class="preview">
-            <PreviewPhone :list="formData.welcomeContent"></PreviewPhone>
+            </el-form-item>-->
+<!--            </el-form>-->
+          </el-col>
+          <el-col
+              :sm="6"
+              :md="10"
+              :xs="24"
+          >
+            <div class="preview">
+              <PreviewPhone :list="formData.welcomeContent"></PreviewPhone>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+
+      <div class="set-content">
+        <div class="content-title">配置任务时间</div>
+        <el-form-item label="发送方式：" prop="radioFs">
+          <div class="style-tab-radio">
+            <div class="style-item">
+              <el-radio v-model="setForm.radioFs" label="1">立即发送</el-radio>
+            </div>
+            <div class="style-item">
+              <el-radio v-model="setForm.radioFs" label="2">定时单次</el-radio>
+            </div>
+            <div class="style-item">
+              <el-radio v-model="setForm.radioFs" label="3">定时重复</el-radio>
+            </div>
           </div>
+          <el-date-picker v-show="setForm.radioFs == 2"
+                          v-model="postDataSet.weComMassTaskRequest.scheduleTime"
+                          format="yyyy-MM-dd HH:mm:ss"
+                          value-format="yyyy-MM-dd HH:mm:ss"
+                          type="datetime"
+                          :picker-options="pickerOptions2"
+                          placeholder="选择日期">
+          </el-date-picker>
 
-        </el-col>
-      </el-row>
+          <!--          <el-radio disabled v-model="setForm.radioFs" label="1">立即发送</el-radio>
+                    <el-radio disabled v-model="setForm.radioFs" label="2">定时发送</el-radio>-->
+        </el-form-item>
+        <div v-show="setForm.radioFs == 3">
+          <el-form-item label="起止时间：">
+            <el-date-picker
+                style="width: 372px"
+                type="daterange"
+                v-model="setForm.times"
+                align="right"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd"
+                :picker-options="pickerOptions"
+            >
+            </el-date-picker>
+            <br>
+            <el-select v-model="setForm.timeType" placeholder="请选择" style="margin-top: 20px;width: 110px">
+              <el-option
+                  v-for="item in timeTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+            <el-select v-show="setForm.timeType == 'WEEKLY'" v-model="setForm.ws" placeholder="请选择" style="margin-top: 20px;margin-left:8px;width: 110px">
+              <el-option
+                  v-for="item in wsOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+            <el-select v-show="setForm.timeType == 'MONTHLY'" v-model="setForm.ms" placeholder="请选择" style="margin-top: 20px;margin-left:8px;width: 110px">
+              <el-option
+                  v-for="item in msOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+            <el-time-picker style="margin-top: 20px;margin-left:8px;margin-right:5px;width: 120px"
+                            v-model="setForm.clock"
+                            value-format="HH:mm:ss"
+                            placeholder="任意时间点">
+            </el-time-picker>
+            定时发送
+          </el-form-item>
+
+        </div>
+
+      </div>
+      <div class="set-content">
+        <div class="content-title">目标设置</div>
+        <el-form-item label="员工收到任务后，在" required label-width="145px">
+          <el-input placeholder="请输入" v-model="setForm.targetTime" type="number" style="width: 110px"></el-input>
+          <el-select v-model="setForm.targetType" placeholder="请选择" style="margin-left:8px;margin-right:5px;width: 110px">
+            <el-option
+                v-for="item in targetTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+          </el-select>
+          内完成，则认为完成目标
+        </el-form-item>
 
 
-    </div>
+        <el-form-item>
+          <el-button
+              icon=""
+              round
+              size="mini"
+              style="width: 92px;height: 32px;"
+              @click="resetForm"
+          >取 消
+          </el-button>
+          <el-button
+              type="primary"
+              icon=""
+              size="mini"
+              round
+              style="width: 116px;height: 32px;"
+              @click="submitForm"
+          >创 建
+          </el-button>
+        </el-form-item>
+
+      </div>
+
+    </el-form>
+
 
     <!-- 添加员工 -->
     <SelectStaff ref="selectstaffRef" @change="usersChange" />
@@ -274,6 +385,13 @@ export default {
   name: "masscustomer-add",
   components: {EnclosureList,SelectStaff,CustomMessageInput,ActionTag,PreviewPhone},
   data() {
+    let mList = []
+    for (let i = 1; i <= 31; i++) {
+      mList.push({
+        label:i+'号',
+        value:i+'',
+      })
+    }
     return {
       checkAll: false,
       formData: {
@@ -343,7 +461,113 @@ export default {
         text: '',
         radioFj: '1',
         radioFs: '1',
+        radioNr: '1',
+        times: ['',''],
+        timeType: 'DAILY',
+        ws: '1',
+        ms: '1',
+        clock:'00:00:00',
+        targetTime: 15,
+        targetType: 'MINUTE',
       },
+      targetTypeOptions: [
+        {
+          label:'分钟',
+          value:'MINUTE',
+        },
+        {
+          label:'小时',
+          value:'HOUR',
+        },
+        {
+          label:'天',
+          value:'DAY',
+        },
+      ],
+      pickerOptions2: {
+        disabledDate: time => {
+          return time.getTime() < Date.now() - 8.64e7
+        }
+      },
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+        ],
+        disabledDate: time => {
+          return time.getTime() < Date.now() - 8.64e7
+        }
+      },
+      timeTypeOptions: [
+        {
+          label:'每天',
+          value:'DAILY',
+        },
+        {
+          label:'每周',
+          value:'WEEKLY',
+        },
+        {
+          label:'每月',
+          value:'MONTHLY',
+        },
+      ],
+      wsOptions: [
+        {
+          label:'一',
+          value:'1',
+        },
+        {
+          label:'二',
+          value:'2',
+        },
+        {
+          label:'三',
+          value:'3',
+        },
+        {
+          label:'四',
+          value:'4',
+        },
+        {
+          label:'五',
+          value:'5',
+        },
+        {
+          label:'六',
+          value:'6',
+        },
+        {
+          label:'日',
+          value:'7',
+        },
+      ],
+      msOptions:mList,
       setRules: {
         text: [
           { required: true, message: '请输入文字消息', trigger: 'blur' },
@@ -727,8 +951,23 @@ export default {
         this.$message.error('人群条件已修改，请选重新计算人群');
         return false
       }
+      if (this.setForm.radioFs == 3 && (!this.setForm.times[0] || !this.setForm.times[1])) {
+        this.$message({
+          message: '请配置任务起止时间',
+          type: 'warning'
+        });
+        return false
+      }
+      if (!this.setForm.targetTime) {
+        this.$message({
+          message: '请填写目标设置时间',
+          type: 'warning'
+        });
+        return false
+      }
+
       await this.$refs['baseForm'].validate((valid) => {
-        if (valid) {
+        if (valid || !valid) {
           // alert('submit!');
 
           this.$refs['setForm'].validate(async (valid) => {
@@ -752,8 +991,15 @@ export default {
                 "description": null,
                 "id": null,
                 "name": this.baseForm.name,
-                "scheduleTime": this.setForm.radioFs == 1 ? null : this.postDataSet.weComMassTaskRequest.scheduleTime,
-                "scheduleType": this.setForm.radioFs == 1 ? "IMMEDIATE" : 'FIXED_TIME',// IMMEDIATE 立即；FIXED_TIME 定时
+                "scheduleTime": this.setForm.radioFs == 2 ? this.postDataSet.weComMassTaskRequest.scheduleTime : (this.setForm.radioFs == 3 ? this.setForm.clock:null) ,
+                "repeatType": this.setForm.timeType,
+                "repeatDay": this.setForm.timeType == 'DAILY' ? 0 : (this.setForm.timeType == 'WEEKLY' ? this.setForm.ws:this.setForm.ms),
+                "scheduleType": this.setForm.radioFs == 1 ? "IMMEDIATE" : (this.setForm.radioFs == 3 ? "REPEAT_TIME" : 'FIXED_TIME'),// IMMEDIATE 立即；FIXED_TIME 定时;周期发送 REPEAT_TIME
+                "repeatStartTime": this.setForm.radioFs == 3 ? this.setForm.times[0] : null,
+                "repeatEndTime": this.setForm.radioFs == 3 ? this.setForm.times[1] : null,
+                "targetTime": this.setForm.targetTime,
+                "targetType": this.setForm.targetType,
+                "messageType": this.setForm.radioNr == 1 ? 'SEND_MESSAGE' : 'ASSIGN_TASK',
                 "taskStatus": null,
                 "userGroupUuid": this.set_userGroupUuid/*"ca023c0d4b654812aff1504d0f16eadf"*/,
                 "uuid": null
@@ -768,7 +1014,7 @@ export default {
               // console.log(params)
               // return false
 
-              let data = await this.$http.post(`mktgo/wecom/mass_task/save?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=MOMENT`,
+              let data = await this.$http.post(`mktgo/wecom/task_center/save?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=MOMENT`,
                   params);
               console.log(data)
               if (data.code == 0 && data.message == 'success') {
@@ -790,7 +1036,7 @@ export default {
       history.back()
     },
     async checkName() {
-      let data = await this.$http.get(`mktgo/wecom/mass_task/check_name?project_id=${this.$store.state.projectUuid}&task_name=${this.baseForm.name}&task_type=MOMENT`,
+      let data = await this.$http.get(`mktgo/wecom/task_center/check_name?project_id=${this.$store.state.projectUuid}&task_name=${this.baseForm.name}&task_type=MOMENT`,
           {});
       console.log(data)
       return data
@@ -896,6 +1142,7 @@ export default {
     padding: 24px 12px;
     background-color: white;
     border-radius: 8px;
+    width: calc(100% - 24px);
     position: relative;
     .preview {
       //position: absolute;
