@@ -159,7 +159,7 @@
             <el-button size="small" type="text" :disabled="!row.canRemind" @click="remind(row)">提醒发送</el-button>
 <!--            <el-divider direction="vertical" v-if="row.canRemind"></el-divider>-->
 <!--            <el-divider direction="vertical"></el-divider>-->
-<!--            <el-button @click="openDetails(row)" size="small" type="text">详情</el-button>-->
+            <el-button @click="openDetails(row)" size="small" type="text">详情</el-button>
             <el-divider direction="vertical"></el-divider>
             <el-button size="small" type="text" @click="del(row)">删除</el-button>
           </template>
@@ -417,8 +417,15 @@ export default {
     },
     openDetails(row) {
       console.log(row)
+      let url = '/index/task-masscustomer-detail'
+      if (row.taskType == 'GROUP') {
+        url = '/index/task-masscustomerbase-detail'
+      }
+      if (row.taskType == 'MOMENT') {
+        url = '/index/task-sendgroupfriends-detail'
+      }
       this.$router.push({
-        path: '/index/masscustomer-detail',
+        path: url,
         query: {
           uuid: row.id,
           task_uuid: row.uuid,

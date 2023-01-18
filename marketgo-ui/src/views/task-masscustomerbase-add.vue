@@ -429,7 +429,7 @@ export default {
       first: true,
       baseForm: {
         name: '',
-        members: 'ALL',
+        members: '',
         radioXz: '1',
         radioPc: '1',
       },
@@ -875,7 +875,7 @@ export default {
       }
       this.needReBase = false
       this.$refs['baseForm'].validate(async (valid) => {
-        if (valid || !valid) {
+        if (valid /*|| !valid*/) {
           // alert('submit!');
           this.first = false
 
@@ -1001,7 +1001,7 @@ export default {
       }
 
       await this.$refs['baseForm'].validate((valid) => {
-        if (valid || !valid) {
+        if (valid /*|| !valid*/) {
           // alert('submit!');
 
           this.$refs['setForm'].validate(async (valid) => {
@@ -1071,6 +1071,9 @@ export default {
       history.back()
     },
     async checkName() {
+      if (!this.baseForm.name) {
+        this.$message.error('请填写任务名称');
+      }
       let data = await this.$http.get(`mktgo/wecom/task_center/check_name?project_id=${this.$store.state.projectUuid}&task_name=${this.baseForm.name}&task_type=GROUP`,
           {});
       console.log(data)
