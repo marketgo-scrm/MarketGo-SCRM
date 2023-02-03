@@ -1,4 +1,4 @@
-package com.easy.marketgo.web.model.response;
+package com.easy.marketgo.web.model.response.corp;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

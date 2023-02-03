@@ -21,13 +21,15 @@
               </div>
             </div>
           </div>
-          <div class="listone" v-for="(item, index) in list" :key="index">
+          <div class="listone" v-for="(item, index) in list" :key="index" @click="jumpUrl(item)">
             {{ item.name }}
           </div>
         </div>
         <div class="navbar-operation">
-          <div class="vips">
-            升级至VIP尊享版
+          <div class="vips" @click="jumpUrl({name:'升级'})">
+            <span>
+              升级至VIP尊享版
+          </span>
             <img src="../assets/imgs/Group.png" alt="" />
           </div>
           <div class="navbar-operation-userinfo">
@@ -110,6 +112,7 @@
 <script>
 // import constantRoutes from "../router/menu";
 import UserInfo from "@/components/UserInfo.vue";
+import constants from '@/constants/constants.js'
 export default {
   components: {
     UserInfo,
@@ -147,6 +150,21 @@ export default {
       this.$router.push({
         name: "home",
       });
+    },
+    // 顶部导航栏 URL跳转
+    jumpUrl(item) {
+      if (item.name === '更新日志') {
+        window.open(constants.UPDATE_LOG_URL, "_blank")
+      }
+      else if (item.name === '帮助文档') {
+        window.open(constants.HELP_URL, "_blank")
+      }
+      else if (item.name === '价格') {
+        window.open(constants.PRICE_URL, "_blank")
+      }
+      else if (item.name === '升级') {
+        window.open(constants.PRICE_URL, "_blank")
+      }
     },
     async getmenu() {
       let params = {

@@ -35,7 +35,7 @@ public class SwaggerConfig {
                 .title("Swagger Test App Restful API")
                 .description("swagger test app restful api")
                 .termsOfServiceUrl("")
-                .contact(new Contact("ssk","http://127.0.0,1","shang.shi.kun@hotmail.com"))
+                .contact(new Contact("ssk","http://127.0.0.1","shang.shi.kun@hotmail.com"))
                 .version("1.0")
                 .build();
     }
@@ -51,7 +51,7 @@ public class SwaggerConfig {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
-                .groupName("SwaggerGroupOneAPI")
+                .groupName("WebOpenAPI")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo.web"))
                 .paths(PathSelectors.any())

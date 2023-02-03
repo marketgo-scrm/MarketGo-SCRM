@@ -86,6 +86,36 @@ export const constantRoutes = [
                 name: 'taskcenter',
                 title: '任务中心',
                 component: (resolve) => require(['@/views/taskcenter'], resolve),
+            },{
+                path: 'task-masscustomer-add',
+                name: 'task-masscustomer-add',
+                title: '新建客户触达任务',
+                component: (resolve) => require(['@/views/task-masscustomer-add'], resolve),
+            },{
+                path: 'task-masscustomerbase-add',
+                name: 'task-masscustomerbase-add',
+                title: '新建客户群触达任务',
+                component: (resolve) => require(['@/views/task-masscustomerbase-add'], resolve),
+            },{
+                path: 'task-sendgroupfriends-add',
+                name: 'task-sendgroupfriends-add',
+                title: '新建朋友圈触达任务',
+                component: (resolve) => require(['@/views/task-sendgroupfriends-add'], resolve),
+            },{
+                path: 'task-masscustomer-detail',
+                name: 'task-masscustomer-detail',
+                title: '客户触达任务详情',
+                component: (resolve) => require(['@/views/task-masscustomer-detail'], resolve),
+            },{
+                path: 'task-masscustomerbase-detail',
+                name: 'task-masscustomerbase-detail',
+                title: '客户群触达任务详情',
+                component: (resolve) => require(['@/views/task-masscustomerbase-detail'], resolve),
+            },{
+                path: 'task-sendgroupfriends-detail',
+                name: 'task-sendgroupfriends-detail',
+                title: '朋友圈触达任务详情',
+                component: (resolve) => require(['@/views/task-sendgroupfriends-detail'], resolve),
             },
             {
                 path: 'masscustomer',

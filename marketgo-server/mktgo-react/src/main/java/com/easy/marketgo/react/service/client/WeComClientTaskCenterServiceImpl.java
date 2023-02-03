@@ -113,7 +113,6 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
             keys.forEach(item -> {
                 taskCacheManagerService.setCustomerCache(item, status);
             });
-
         }
 
         return BaseResponse.success();

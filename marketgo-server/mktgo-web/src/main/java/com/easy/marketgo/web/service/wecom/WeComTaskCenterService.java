@@ -41,7 +41,6 @@ public interface WeComTaskCenterService {
                              String keyword,
                              String status, String planTime);
 
-
     BaseResponse getTaskCenterDetails(String projectUuid, Integer taskId);
 
     BaseResponse getTaskCenterStatistic(String taskUuid, String metricsType, String planTime);

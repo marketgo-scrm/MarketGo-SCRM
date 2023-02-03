@@ -1,18 +1,20 @@
 package com.easy.marketgo.web.controller;
 
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
-import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.web.model.response.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
 import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
+import com.easy.marketgo.web.model.response.corp.WeComCorpDomainResponse;
+import com.easy.marketgo.web.model.response.corp.WeComForwardServerMessageResponse;
 import com.easy.marketgo.web.model.response.customer.WeComGroupChatsResponse;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -101,7 +103,7 @@ public class WeComCorpMessageController {
             @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
             @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
                     required = true, allowableValues =
-                    "CONTACTS, EXTERNAL_USER") @RequestParam(value ="config_type", defaultValue = "CONTACTS") @NotBlank @Valid String configType,
+                    "CONTACTS, EXTERNAL_USER") @RequestParam(value = "config_type", defaultValue = "CONTACTS") @NotBlank @Valid String configType,
             @ApiParam(value = "企微配置转发服务信息", required = true) @RequestBody @Valid WeComForwardServerMessageRequest request) {
         return ResponseEntity.ok(corpMessageService.updateOrInsertForwardServer(projectId, corpId, configType,
                 request));
@@ -117,8 +119,47 @@ public class WeComCorpMessageController {
                                            @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId,
                                            @ApiParam(value = "callback类型; CONTACTS 通讯录; EXTERNAL_USER 客户",
                                                    required = true, allowableValues =
-                                                   "CONTACTS, EXTERNAL_USER") @RequestParam(value ="config_type", defaultValue = "CONTACTS") @NotBlank @Valid String configType) {
+                                                   "CONTACTS, EXTERNAL_USER") @RequestParam(value = "config_type",
+                                                   defaultValue = "CONTACTS") @NotBlank @Valid String configType) {
         return ResponseEntity.ok(corpMessageService.getForwardServer(projectId, corpId, configType));
     }
 
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
+    })
+    @ApiOperation(value = "上传企微的可信文件", nickname = "verifyCredFile", notes = "", response = BaseResponse.class)
+    @PostMapping("/cred/upload")
+    public ResponseEntity verifyCredFile(
+            @ApiParam(value = "企微项目uuid", required = true) @RequestParam("project_id") @NotBlank @Valid String projectId,
+            @ApiParam(value = "可信文件", required = true) @RequestParam("file") @NotNull @Valid MultipartFile multipartFile,
+            @ApiParam(value = "企业id", required = true) @RequestParam("corp_id") @NotBlank @Valid String corpId) {
+
+        return ResponseEntity.ok(corpMessageService.verifyCredFile(projectId, corpId, multipartFile));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = WeComCorpDomainResponse.class)
+    })
+    @ApiOperation(value = "获取企微的可信域名", nickname = "queryDomainUrl", notes = "", response =
+            WeComCorpDomainResponse.class)
+    @RequestMapping(value = {"/domain/query"}, produces = {"application/json"}, method = RequestMethod.GET)
+    public ResponseEntity queryDomainUrl(
+            @ApiParam(value = "企微项目uuid", required = true) @RequestParam("project_id") @NotBlank @Valid String projectId,
+            @ApiParam(value = "企业id", required = true) @RequestParam("corp_id") @NotBlank @Valid String corpId) {
+
+        return ResponseEntity.ok(corpMessageService.queryDomainUrl(projectId, corpId));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
+    })
+    @ApiOperation(value = "删除可信文件", nickname = "deleteCredFile", notes = "", response = BaseResponse.class)
+    @RequestMapping(value = {"/cred_file/delete"}, produces = {"application/json"}, method = RequestMethod.POST)
+    public ResponseEntity deleteCredFile(
+            @ApiParam(value = "企微项目uuid", required = true) @NotNull @Valid @RequestParam(value = "project_id",
+                    required = true) String projectId,
+            @ApiParam(value = "企业id", required = true) @RequestParam("corp_id") @NotBlank @Valid String corpId,
+            @ApiParam(value = "可信文件名称", required = true) @RequestParam("file_name") @NotBlank @Valid String fileName) {
+        return ResponseEntity.ok(corpMessageService.deleteCredFile(projectId, corpId, fileName));
+    }
 }

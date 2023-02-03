@@ -30,12 +30,12 @@ public class SwaggerGateWayConfig {
      * @return
      */
     @Bean
-    public ApiInfo apiInfo() {
+    public ApiInfo gatewayApiInfo() {
         return new ApiInfoBuilder()
                 .title("Swagger Test App Restful API")
                 .description("swagger test app restful api")
                 .termsOfServiceUrl("")
-                .contact(new Contact("ssk","http://127.0.0,1","shang.shi.kun@hotmail.com"))
+                .contact(new Contact("ssk","http://127.0.0.1","shang.shi.kun@hotmail.com"))
                 .version("1.0")
                 .build();
     }
@@ -45,13 +45,13 @@ public class SwaggerGateWayConfig {
      * @return
      */
     @Bean
-    public Docket createRestApi(ApiInfo apiInfo) {
+    public Docket createGatewayRestApi(ApiInfo apiInfo) {
 
         List<RequestParameter> requestParameters = new ArrayList<>() ;
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
-                .groupName("SwaggerGroupOneAPI")
+                .groupName("GatewayOpenAPI")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo.gateway"))
                 .paths(PathSelectors.any())
@@ -59,7 +59,4 @@ public class SwaggerGateWayConfig {
                 .globalRequestParameters(requestParameters)
                 ;
     }
-
-
-
 }
