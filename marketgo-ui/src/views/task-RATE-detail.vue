@@ -1,6 +1,6 @@
 <template>
   <div class="masscustomer-detail">
-    <main-head title="群发客户群详情" :back="true"></main-head>
+    <main-head title="群发客户详情" :back="true"></main-head>
     <div class="top-content">
       <el-form label-width="100px" class="demo-baseForm" size="mini">
         <el-form-item label="创建人：" prop="name">
@@ -13,13 +13,13 @@
           {{ resData.createTime }}
         </el-form-item>
         <el-form-item label="任务时间：" prop="name">
-          {{ resData.scheduleTime }}
+          {{ resData.repeatStartTime }}&nbsp;至&nbsp;{{ resData.repeatEndTime }}
         </el-form-item>
         <el-form-item label="发送范围：" prop="name">
-          满足筛选条件的 {{ detailNum }} 个客户群 <span style="color: #678FF4;cursor: pointer;" @mouseover="rqShow = true" @mouseout="rqShow = false">详情</span>
+          满足筛选条件的 {{ detailNum }} 名客户 <span style="color: #678FF4;cursor: pointer;" @mouseover="rqShow = true" @mouseout="rqShow = false">详情</span>
           <div v-if="rqShow" style="display: inline-block;position: relative">
             <div class="fjBox" style="padding: 0">
-              <PreviewMemberDE :userGroupUuid="resData.userGroupUuid" :count="detailNum" :type="'GROUP'"></PreviewMemberDE>
+              <PreviewMemberDE :userGroupUuid="resData.userGroupUuid" :count="detailNum" :type="$route.query.taskType"></PreviewMemberDE>
             </div>
           </div>
         </el-form-item>
@@ -32,14 +32,14 @@
           </div>
         </el-form-item>
       </el-form>
-      <el-tabs
+<!--      <el-tabs
           @tab-click="typeChange()"
           v-model="tabsType"
       >
         <el-tab-pane label="员工统计" name="yg"></el-tab-pane>
         <el-tab-pane label="客户统计" name="kh"></el-tab-pane>
-      </el-tabs>
-      <div class="cardBox">
+      </el-tabs>-->
+<!--      <div class="cardBox">
         <el-row v-show="tabsType == 'yg'">
           <el-col :span="8">
             <div class="card">
@@ -70,49 +70,90 @@
         <el-row v-show="tabsType == 'kh'">
           <el-col :span="5">
             <div class="card">
-              <div class="title">预计送达客户群</div>
+              <div class="title">预计送达客户</div>
               <div class="text">
-                {{ cardData.externalUserTotalCount ? cardData.externalUserTotalCount : 0}}<span>&nbsp;&nbsp;个</span>
+                {{ cardData.externalUserTotalCount ? cardData.externalUserTotalCount : 0}}<span>&nbsp;&nbsp;人</span>
               </div>
             </div>
           </el-col>
           <el-col :span="5">
             <div class="card">
-              <div class="title">未送达客户群</div>
+              <div class="title">未送达客户</div>
               <div class="text">
-                {{ cardData.nonDeliveredCount ? cardData.nonDeliveredCount : 0}}<span>&nbsp;&nbsp;个</span>
+                {{ cardData.nonDeliveredCount ? cardData.nonDeliveredCount : 0}}<span>&nbsp;&nbsp;人</span>
               </div>
             </div>
           </el-col>
           <el-col :span="5">
             <div class="card">
-              <div class="title">已送达客户群</div>
+              <div class="title">已送达客户</div>
               <div class="text">
-                {{ cardData.deliveredCount ? cardData.deliveredCount : 0}}<span>&nbsp;&nbsp;个</span>
+                {{ cardData.deliveredCount ? cardData.deliveredCount : 0}}<span>&nbsp;&nbsp;人</span>
               </div>
             </div>
           </el-col>
           <el-col :span="5">
             <div class="card">
-              <div class="title">送达失败客户群</div>
+              <div class="title">送达失败客户</div>
               <div class="text">
-                {{ cardData.unfriendCount ? cardData.unfriendCount : 0}}<span>&nbsp;&nbsp;个</span>
+                {{ cardData.unfriendCount ? cardData.unfriendCount : 0}}<span>&nbsp;&nbsp;人</span>
               </div>
             </div>
           </el-col>
           <el-col :span="5">
             <div class="card">
-              <div class="title">接收达上限客户群</div>
+              <div class="title">接收达上限客户</div>
               <div class="text">
-                {{ cardData.receiveLimitCount ? cardData.receiveLimitCount : 0}}<span>&nbsp;&nbsp;个</span>
+                {{ cardData.receiveLimitCount ? cardData.receiveLimitCount : 0}}<span>&nbsp;&nbsp;人</span>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>-->
+    </div>
+
+    <div class="foot-content" style="margin-top: -6px">
+      <div class="cardBox">
+        <el-row v-show="tabsType == 'yg'">
+          <el-col :span="6">
+            <div class="card">
+              <div class="title">预计任务发送次数</div>
+              <div class="text">
+                {{ cardData.totalSendCount ? cardData.totalSendCount : 0}}<span>&nbsp;&nbsp;次</span>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="card">
+              <div class="title">已发送次数</div>
+              <div class="text">
+                {{ cardData.sentCount ? cardData.sentCount : 0}}<span>&nbsp;&nbsp;次</span>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="card">
+              <div class="title">未发送次数</div>
+              <div class="text">
+                {{ cardData.unsentCount ? cardData.unsentCount : 0}}<span>&nbsp;&nbsp;次</span>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="card">
+              <div class="title">发送失败次数</div>
+              <div class="text">
+                {{ cardData.failedCount ? cardData.failedCount : 0}}<span>&nbsp;&nbsp;次</span>
               </div>
             </div>
           </el-col>
         </el-row>
       </div>
     </div>
+
+
     <div class="foot-content">
-      <el-row >
+<!--      <el-row >
         <el-col :span="4" style="padding-left: 20px">
           <el-button
               type="primary"
@@ -143,8 +184,35 @@
           </el-form>
 
         </el-col>
-      </el-row>
-      <div v-if="tabsType == 'yg'">
+      </el-row>-->
+      <div>
+        <el-table :data="ygfootList" v-if="ygfootList.length">
+          <el-table-column  label="日期" prop="planTime"></el-table-column>
+          <el-table-column  label="状态" prop="status"></el-table-column>
+          <el-table-column  label="完成率" prop="completeRate"></el-table-column>
+          <el-table-column  label="预计执行员工（人）" prop="memberCount"></el-table-column>
+          <el-table-column  label="预计送达客户（人）" prop="externalUserCount"></el-table-column>
+          <el-table-column  label="操作" align="right">
+            <template #default="{ row }">
+              <el-button @click="openDetails(row)" size="small" type="text">详情</el-button>
+            </template>
+          </el-table-column>
+
+        </el-table>
+        <el-pagination
+            v-if="ygfootList.length"
+            :current-page="page_num"
+            :page-size="page_size"
+            :total="total"
+            background
+            layout="total,  prev, pager, next, sizes, jumper"
+            :page-sizes="[10, 20, 30]"
+            @size-change="pageSizeChange"
+            @current-change="getMembers"
+        />
+        <el-empty :image="empty" description="暂无数据" v-else></el-empty>
+      </div>
+<!--      <div v-if="tabsType == 'yg'">
         <el-tabs
             @tab-click="ygtabsTypeChange()"
             v-model="ygtabsType"
@@ -156,10 +224,10 @@
         <el-table :data="ygfootList" v-if="ygfootList.length">
           <el-table-column  label="员工" prop="memberName">
           </el-table-column>
-          <el-table-column  :label="ygtabsType == 'wzx' ? `预计送达客户群`: '送达客户群'" prop="externalUserCount">
-<!--            <template slot-scope="scope">
+          <el-table-column  :label="ygtabsType == 'wzx' ? `预计送达客户`: '送达客户'" prop="externalUserCount">
+&lt;!&ndash;            <template slot-scope="scope">
               {{ ygtabsType == 'wzx' ? scope.memberTotalCount : scope.sendCount }}
-            </template>-->
+            </template>&ndash;&gt;
           </el-table-column>
         </el-table>
         <el-pagination
@@ -204,14 +272,14 @@
             @current-change="getMembers"
         />
         <el-empty :image="empty" description="暂无数据" v-else></el-empty>
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
 
 <script>
 import PreviewPhone from "@/components/PreviewPhoneDE.vue";
-import PreviewMemberDE from "@/components/PreviewMemberDE-task.vue";
+import PreviewMemberDE from "@/components/PreviewMemberDE.vue";
 export default {
   name: "masscustomer-detail",
   components: {PreviewPhone,PreviewMemberDE},
@@ -280,13 +348,14 @@ export default {
       ygtabsType: 'all',
       ygfootList:[],
       khtabsType: 'all',
-      khtableCalName: '送达客户群数',
+      khtableCalName: '送达客户',
       khfootList:[],
       detailNum: 0,
       //附件预览
       fjShow: false,
       //人群预览
       rqShow: false,
+      // welcomeContent: [],
     }
   },
   mounted() {
@@ -309,21 +378,39 @@ export default {
     'khtabsType': function f(n,o) {
       console.log(n,o)
       if (n == 'all') {
-        this.khtableCalName = '送达客户群数';
+        this.khtableCalName = '送达客户';
       } else if (n == 'A') {
-        this.khtableCalName = '未送达客户群数';
+        this.khtableCalName = '未送达客户';
       } else if (n == 'B') {
-        this.khtableCalName = '已送达客户群数';
+        this.khtableCalName = '已送达客户';
       } else if (n == 'C') {
-        this.khtableCalName = '接收达上限客户群数';
+        this.khtableCalName = '接收达上限客户';
       } else if (n == 'D') {
-        this.khtableCalName = '送达失败客户群数';
+        this.khtableCalName = '送达失败客户';
       }
       this.getMembers()
 
     }
   },
   methods: {
+    openDetails(row) {
+      let url = '/index/task-masscustomer-detail'
+      if (this.$route.query.taskType == 'GROUP') {
+        url = '/index/task-masscustomerbase-detail'
+      }
+      if (this.$route.query.taskType == 'MOMENT') {
+        url = '/index/task-sendgroupfriends-detail'
+      }
+      this.$router.push({
+        path: url,
+        query: {
+          uuid: row.id,
+          task_uuid: row.uuid,
+          plan_date: row.planTime,
+          canRemind: row.canRemind ? 1 : 0,
+        },
+      })
+    },
     pageSizeChange(e) {
       this.page_size = Number(e);
       this.getMembers(1)
@@ -347,11 +434,12 @@ export default {
       let userGroupUuid = this.resData.userGroupUuid
       let _this = this
       this.$http.get(
-          `mktgo/wecom/user_group/query?group_uuid=${userGroupUuid}&corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=GROUP`,
+          `mktgo/wecom/user_group/query?group_uuid=${userGroupUuid}&corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=SINGLE`,
           {}).then(function (res) {
         console.log(res)
         _this.detailNum = res.data.externalUserCount
       })
+
     },
     //mktgo/wecom/task_center/statistic
     async getStatistic() {
@@ -361,13 +449,15 @@ export default {
         task_uuid: this.$route.query.task_uuid
       }*/
       let data = await this.$http.get(
-          `mktgo/wecom/task_center/statistic?plan_date=${this.$route.query.plan_date ? this.$route.query.plan_date : ''}&metrics_type=${this.tabsType == 'yg' ? 'MEMBER' : 'EXTERNAL_USER'}&project_id=${this.$store.state.projectUuid}&task_uuid=${this.$route.query.task_uuid}`,
+          `mktgo/wecom/task_center/statistic?metrics_type=RATE&project_id=${this.$store.state.projectUuid}&task_uuid=${this.$route.query.task_uuid}`,
           {});
       console.log(data)
       if (data.data && data.data.memberDetail) {
         this.cardData = data.data.memberDetail
       } else if (data.data && data.data.externalUserDetail) {
         this.cardData = data.data.externalUserDetail
+      } else if (data.data && data.data.statisticDetail) {
+        this.cardData = data.data.statisticDetail
       }
     },
     //mktgo/wecom/task_center/members 获取群发任务统计的员工列表
@@ -378,19 +468,16 @@ export default {
         task_uuid: this.$route.query.task_uuid
       }*/
       let data = await this.$http.get(
-          `mktgo/wecom/task_center/members?plan_date=${this.$route.query.plan_date ? this.$route.query.plan_date : ''}&corp_id=${this.$store.state.corpId}&keyword=${this.cName}&metrics_type=${this.tabsType == 'yg' ? 'MEMBER' : 'EXTERNAL_USER'}&page_num=${page_num ? page_num : this.page_num}&page_size=${this.page_size}&project_id=${this.$store.state.projectUuid}&status=${this.getParStatus()}&task_type=GROUP&task_uuid=${this.$route.query.task_uuid}`,
+          `mktgo/wecom/task_center/members?corp_id=${this.$store.state.corpId}&keyword=${this.cName}&metrics_type=RATE&page_num=${page_num ? page_num : this.page_num}&page_size=${this.page_size}&project_id=${this.$store.state.projectUuid}&status=${this.getParStatus()}&task_type=${this.$route.query.taskType}&task_uuid=${this.$route.query.task_uuid}`,
           {});
       console.log(data)
       if (data.data && data.data.members) {
-        /*for (let i = 0; i < data.data.members.length; i++) {
-          this.ygfootList.push({
-
-          })
-        }*/
         this.ygfootList = data.data.members
         this.khfootList = data.data.members
       } else if (data.data && data.data.externalUserDetail) {
         this.cardData = data.data.externalUserDetail
+      } else if (data.data && data.data.dayDetails) {
+        this.ygfootList = data.data.dayDetails
       }
       this.total = data.data.count
     },
@@ -407,9 +494,9 @@ export default {
     remind() {
       let _this = this
       this.$http.post(
-          `mktgo/wecom/task_center/remind?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=GROUP&task_uuid=${this.$route.query.task_uuid}`,
+          `mktgo/wecom/task_center/remind?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=SINGLE&task_uuid=${this.$route.query.task_uuid}`,
           {}).then(function (res) {
-        console.log(res)
+            console.log(res)
         if (res.code == 0) {
           _this.$message({
             message: '提醒成功',

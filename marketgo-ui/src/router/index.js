@@ -102,6 +102,11 @@ export const constantRoutes = [
                 title: '新建朋友圈触达任务',
                 component: (resolve) => require(['@/views/task-sendgroupfriends-add'], resolve),
             },{
+                path: 'task-RATE-detail',
+                name: 'task-RATE-detail',
+                title: '群发客户详情',
+                component: (resolve) => require(['@/views/task-RATE-detail'], resolve),
+            },{
                 path: 'task-masscustomer-detail',
                 name: 'task-masscustomer-detail',
                 title: '客户触达任务详情',

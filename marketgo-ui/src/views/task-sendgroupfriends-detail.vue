@@ -430,7 +430,7 @@ export default {
         task_uuid: this.$route.query.task_uuid
       }*/
       let data = await this.$http.get(
-          `mktgo/wecom/task_center/statistic?metrics_type=${this.tabsType == 'yg' ? 'MEMBER' : (this.tabsType == 'hd' ? 'COMMENTS' : 'EXTERNAL_USER')}&project_id=${this.$store.state.projectUuid}&task_uuid=${this.$route.query.task_uuid}`,
+          `mktgo/wecom/task_center/statistic?plan_date=${this.$route.query.plan_date ? this.$route.query.plan_date : ''}&metrics_type=${this.tabsType == 'yg' ? 'MEMBER' : (this.tabsType == 'hd' ? 'COMMENTS' : 'EXTERNAL_USER')}&project_id=${this.$store.state.projectUuid}&task_uuid=${this.$route.query.task_uuid}`,
           {});
       console.log(data)
       if (data.data && data.data.memberDetail) {
@@ -449,7 +449,7 @@ export default {
         task_uuid: this.$route.query.task_uuid
       }*/
       let data = await this.$http.get(
-          `mktgo/wecom/task_center/members?corp_id=${this.$store.state.corpId}&keyword=${this.cName}&metrics_type=${this.tabsType == 'yg' ? 'MEMBER' : (this.tabsType == 'hd' ? 'COMMENTS' : 'EXTERNAL_USER')}&page_num=${page_num ? page_num : this.page_num}&page_size=${this.page_size}&project_id=${this.$store.state.projectUuid}&status=${this.getParStatus()}&task_type=MOMENT&task_uuid=${this.$route.query.task_uuid}`,
+          `mktgo/wecom/task_center/members?plan_date=${this.$route.query.plan_date ? this.$route.query.plan_date : ''}&corp_id=${this.$store.state.corpId}&keyword=${this.cName}&metrics_type=${this.tabsType == 'yg' ? 'MEMBER' : (this.tabsType == 'hd' ? 'COMMENTS' : 'EXTERNAL_USER')}&page_num=${page_num ? page_num : this.page_num}&page_size=${this.page_size}&project_id=${this.$store.state.projectUuid}&status=${this.getParStatus()}&task_type=MOMENT&task_uuid=${this.$route.query.task_uuid}`,
           {});
       console.log(data)
       if (data.data && data.data.members) {

@@ -417,6 +417,18 @@ export default {
     },
     openDetails(row) {
       console.log(row)
+      if (row.scheduleType == 'REPEAT_TIME') {
+        this.$router.push({
+          path: '/index/task-RATE-detail',
+          query: {
+            uuid: row.id,
+            task_uuid: row.uuid,
+            canRemind: row.canRemind ? 1 : 0,
+            taskType: row.taskType
+          },
+        })
+        return
+      }
       let url = '/index/task-masscustomer-detail'
       if (row.taskType == 'GROUP') {
         url = '/index/task-masscustomerbase-detail'
