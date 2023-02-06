@@ -405,6 +405,8 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
     @Override
     public BaseResponse deleteTaskCenter(String taskType, String taskUuid) {
+        log.info("start to delete weCom task center. taskType={}, taskUuid={}",
+                taskType, taskUuid);
         WeComTaskCenterEntity entity = weComTaskCenterRepository.getByTaskUUID(taskUuid);
         if (entity == null) {
             return BaseResponse.success();
@@ -457,7 +459,8 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
         weComTaskCenterExternalUserStatisticRepository.deleteByTaskUuid(taskUuid);
         weComTaskCenterMemberRepository.deleteByUuid(taskUuid);
         weComTaskCenterRepository.deleteById(Long.valueOf(entity.getId()));
-
+        log.info("finish to delete weCom task center. taskType={}, taskUuid={}",
+                taskType, taskUuid);
         return BaseResponse.success();
     }
 
@@ -606,9 +609,9 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
         List<Long> planTimes = computeTotalCount(taskUuid);
         long currentTime = System.currentTimeMillis();
         planTimes = planTimes.stream().filter(e -> e < currentTime).sorted().collect(Collectors.toList());
-        if (pageNum * pageSize > planTimes.size()) {
+        if ((pageNum - 1) * pageSize > planTimes.size()) {
             response.setDayDetails(dayDetails);
-            log.info("finish to task center statistic for rate response. corpId={}, response={}", corpId,
+            log.info("finish to query empty task center statistic for rate response. corpId={}, response={}", corpId,
                     JsonUtils.toJSONString(response));
             return BaseResponse.success(response);
         }
