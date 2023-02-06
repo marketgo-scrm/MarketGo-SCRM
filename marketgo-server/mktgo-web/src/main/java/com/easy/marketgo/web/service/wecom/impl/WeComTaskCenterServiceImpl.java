@@ -427,7 +427,9 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                         mediaUuidList.add(item.getLink().getMediaUuid());
                     }
                 });
-                weComMediaResourceRepository.deleteByUuids(mediaUuidList);
+                if (CollectionUtils.isNotEmpty(mediaUuidList)) {
+                    weComMediaResourceRepository.deleteByUuids(mediaUuidList);
+                }
             }
         }
 
