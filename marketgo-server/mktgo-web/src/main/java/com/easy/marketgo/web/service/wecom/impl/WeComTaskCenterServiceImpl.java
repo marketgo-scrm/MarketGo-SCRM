@@ -437,15 +437,22 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 weComTaskCenterMemberStatisticRepository.queryByTaskUuid(taskUuid);
         if (CollectionUtils.isNotEmpty(entities)) {
             for (WeComTaskCenterMemberStatisticEntity item : entities) {
-                taskCacheManagerService.delMemberCache(entity.getCorpId(), item.getMemberId(), item.getUuid(),
-                        item.getTaskUuid());
-                taskCacheManagerService.delCustomerCache(entity.getCorpId(), item.getMemberId(), item.getUuid(),
-                        item.getTaskUuid());
+                try {
+                    taskCacheManagerService.delMemberCache(entity.getCorpId(), item.getMemberId(), item.getTaskUuid(),
+                            item.getUuid());
+                    taskCacheManagerService.delCustomerCache(entity.getCorpId(), item.getMemberId(), item.getTaskUuid(),
+                            item.getUuid());
+                } catch (Exception e) {
+                    log.error("failed to delete weCom task center, memberId={}, taskUuid={}, uuid={}",
+                            item.getMemberId(), item.getTaskUuid(), item.getUuid(), e);
+                }
             }
         }
-
-        taskCacheManagerService.delCacheContent(taskUuid);
-
+        try {
+            taskCacheManagerService.delCacheContent(taskUuid);
+        } catch (Exception e) {
+            log.error("failed to delete content weCom task center, taskUuid={}", taskUuid, e);
+        }
         weComTaskCenterMemberStatisticRepository.deleteByTaskUuid(taskUuid);
         weComTaskCenterExternalUserStatisticRepository.deleteByTaskUuid(taskUuid);
         weComTaskCenterMemberRepository.deleteByUuid(taskUuid);
