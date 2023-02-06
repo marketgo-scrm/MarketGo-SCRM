@@ -60,7 +60,7 @@ public class SendSingleTaskCenterConsumer extends SendTaskCenterBaseConsumer {
         String taskUuid = sendData.getTaskUuid();
         WeComMassTaskSendQueueEntity entity = weComMassTaskSendQueueRepository.queryByTaskUuidAndMember(taskUuid,
                 memberId, WeComMassTaskSendStatusEnum.UNSEND.name());
-        log.info("query send queue for single task center . entity={}", entity);
+        log.info("query send queue for single task center. entity={}", entity);
         if (entity != null) {
             weComMassTaskSendQueueRepository.updateStatusByTaskUuidAndMember(WeComMassTaskSendStatusEnum.UNSEND.name(),
                     WeComMassTaskSendStatusEnum.SEND.name(), taskUuid, memberId);
