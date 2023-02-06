@@ -615,8 +615,8 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                     JsonUtils.toJSONString(response));
             return BaseResponse.success(response);
         }
-        for (int i = pageNum * pageSize; i < (planTimes.size() < ((pageNum + 1) * pageSize) ? planTimes.size() :
-                ((pageNum + 1) * pageSize)); i++) {
+        for (int i = (pageNum - 1) * pageSize; i < (planTimes.size() < (pageNum * pageSize) ? planTimes.size() :
+                (pageNum * pageSize)); i++) {
             Long time = planTimes.get(i);
             DateTime dateTime = DateUtil.date(time);
             String dateString = dateTime.toDateStr();
