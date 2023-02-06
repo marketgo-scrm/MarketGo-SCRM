@@ -456,7 +456,7 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
         weComTaskCenterMemberStatisticRepository.deleteByTaskUuid(taskUuid);
         weComTaskCenterExternalUserStatisticRepository.deleteByTaskUuid(taskUuid);
         weComTaskCenterMemberRepository.deleteByUuid(taskUuid);
-        weComTaskCenterRepository.deleteByIdAndTaskType(entity.getId(), taskType);
+        weComTaskCenterRepository.deleteById(Long.valueOf(entity.getId()));
 
         return BaseResponse.success();
     }
