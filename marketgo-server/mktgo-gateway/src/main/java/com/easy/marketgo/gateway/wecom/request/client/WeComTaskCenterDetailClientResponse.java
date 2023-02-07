@@ -26,6 +26,8 @@ public class WeComTaskCenterDetailClientResponse {
     private String MessageType;
     @ApiModelProperty(value = "任务的uuid")
     private String taskUuid;
+    @ApiModelProperty(value = "任务的名称")
+    private String taskName;
     @ApiModelProperty(value = "发送的内容list")
     private List<AttachmentsMessage> attachments;
     @ApiModelProperty(value = "任务组list")

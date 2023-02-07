@@ -101,6 +101,8 @@ public class QueryTaskCenterDetailService {
             attachmentsMessageList.add(message);
         }
         clientResponse.setAttachments(attachmentsMessageList);
+        clientResponse.setTaskName(response.getTaskName());
+        clientResponse.setTaskUuid(response.getTaskUuid());
         List<WeComTaskCenterDetailClientResponse.WeComTaskCenterMessage> taskList = new ArrayList<>();
         WeComTaskCenterDetailClientResponse.WeComTaskCenterMessage taskMessage =
                 new WeComTaskCenterDetailClientResponse.WeComTaskCenterMessage();
