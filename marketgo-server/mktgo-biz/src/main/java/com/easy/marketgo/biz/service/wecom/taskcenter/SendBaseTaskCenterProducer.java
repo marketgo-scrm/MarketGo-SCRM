@@ -173,7 +173,7 @@ public class SendBaseTaskCenterProducer {
         request.setAgentId(agentId);
         request.setProjectUuid(entity.getProjectUuid());
         request.setTaskName(entity.getName());
-        request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
+        request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue()) ?
                 DateUtil.formatDateTime(entity.getPlanTime()) :
                 DateUtil.formatDateTime(entity.getScheduleTime()));
         if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
