@@ -314,6 +314,7 @@ export default {
               message: '删除成功',
               type: 'success'
             });
+            _this.searchData()
           } else {
             _this.$message(res.message);
           }

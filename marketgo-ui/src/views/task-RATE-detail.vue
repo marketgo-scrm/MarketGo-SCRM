@@ -404,8 +404,10 @@ export default {
       this.$router.push({
         path: url,
         query: {
-          uuid: row.id,
-          task_uuid: row.uuid,
+          // uuid: row.id,
+          uuid: this.$route.query.uuid,
+          // task_uuid: row.uuid,
+          task_uuid: this.$route.query.task_uuid,
           plan_date: row.planTime,
           canRemind: row.canRemind ? 1 : 0,
         },
