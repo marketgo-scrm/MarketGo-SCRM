@@ -2,6 +2,7 @@ package com.easy.marketgo.gateway.controller;
 
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComChangeStatusRequest;
+import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterContentClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterListClientResponse;
 import com.easy.marketgo.gateway.wecom.sevice.taskcenter.QueryTaskCenterDetailService;
@@ -89,5 +90,19 @@ public class WeComClientTaskCenterController {
                     true) String corpId,
             @ApiParam(value = "修改任务的状态", required = true) @RequestBody @Valid WeComChangeStatusRequest request) {
         return ResponseEntity.ok(queryTaskCenterDetailService.changeTaskCenterMemberStatus(corpId, request));
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = WeComTaskCenterContentClientResponse.class)
+    })
+    @ApiOperation(value = "获取员工任务发送内容", nickname = "getTaskCenterDetails", notes = "", response =
+            WeComTaskCenterDetailClientResponse.class)
+    @RequestMapping(value = {"/content"}, produces = {"application/json"}, method = RequestMethod.GET)
+    public ResponseEntity getTaskCenterContent(
+            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
+                    true) String corpId,
+            @ApiParam(value = "员工ID", required = false) @Valid @RequestParam(value = "member_id", required = false) String memberId,
+            @ApiParam(value = "任务ID", required = true) @RequestParam("task_uuid") String taskUuid) {
+        return ResponseEntity.ok(queryTaskCenterDetailService.getTaskCenterContent(corpId, memberId, taskUuid));
     }
 }
