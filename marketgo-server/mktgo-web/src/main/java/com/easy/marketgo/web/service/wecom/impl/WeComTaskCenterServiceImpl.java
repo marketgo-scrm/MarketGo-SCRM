@@ -15,7 +15,7 @@ import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
 import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
+import com.easy.marketgo.core.model.bo.QueryTaskCenterMemberMetricsBuildSqlParam;
 import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
 import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterBuildSqlParam;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
@@ -238,13 +238,13 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 "taskUuid={}, status={}", corpId, taskType, pageNum, pageSize, taskUuid, status);
         if (metricsType.equals(WeComMassTaskMetricsType.MASS_TASK_EXTERNAL_USER.getValue())) {
             return listMembersForExternalUser(projectId, corpId, metricsType, pageNum, pageSize, taskUuid,
-                    keyword, status);
+                    keyword, status, planTime);
         } else if (metricsType.equals(WeComMassTaskMetricsType.MASS_TASK_RATE.getValue())) {
             return listMembersForRate(corpId, metricsType, pageNum, pageSize, taskUuid);
         }
         WeComMembersStatisticResponse response = new WeComMembersStatisticResponse();
-        QueryMassTaskMemberMetricsBuildSqlParam param =
-                QueryMassTaskMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).
+        QueryTaskCenterMemberMetricsBuildSqlParam param =
+                QueryTaskCenterMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).planDate(planTime).
                         pageNum(pageNum).pageSize(pageSize).status(status).build();
         Integer count = weComTaskCenterMemberStatisticRepository.countByBuildSqlParam(param);
         log.info("query task center member list count. count={}", count);
@@ -559,14 +559,14 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
     }
 
     private BaseResponse listMembersForExternalUser(String projectId, String corpId, String taskType, Integer pageNum
-            , Integer pageSize, String taskUuid, String keyword, String status) {
+            , Integer pageSize, String taskUuid, String keyword, String status, String planTime) {
         log.info("start to query task center statistic for external user. corpId={}, taskType={}, pageNum={}, " +
                 "pageSize={},taskUuid={}, status={}", corpId, taskType, pageNum, pageSize, taskUuid, status);
 
         WeComMembersStatisticResponse response = new WeComMembersStatisticResponse();
 
-        QueryMassTaskMemberMetricsBuildSqlParam param =
-                QueryMassTaskMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).
+        QueryTaskCenterMemberMetricsBuildSqlParam param =
+                QueryTaskCenterMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).planDate(planTime).
                         pageNum(pageNum).pageSize(pageSize).build();
 
         Integer count = weComTaskCenterMemberStatisticRepository.countByBuildSqlParam(param);
