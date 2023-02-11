@@ -15,7 +15,7 @@ import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
 import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
+import com.easy.marketgo.core.model.bo.QueryTaskCenterMemberMetricsBuildSqlParam;
 import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
 import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterBuildSqlParam;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
@@ -238,13 +238,13 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 "taskUuid={}, status={}", corpId, taskType, pageNum, pageSize, taskUuid, status);
         if (metricsType.equals(WeComMassTaskMetricsType.MASS_TASK_EXTERNAL_USER.getValue())) {
             return listMembersForExternalUser(projectId, corpId, metricsType, pageNum, pageSize, taskUuid,
-                    keyword, status);
+                    keyword, status, planTime);
         } else if (metricsType.equals(WeComMassTaskMetricsType.MASS_TASK_RATE.getValue())) {
             return listMembersForRate(corpId, metricsType, pageNum, pageSize, taskUuid);
         }
         WeComMembersStatisticResponse response = new WeComMembersStatisticResponse();
-        QueryMassTaskMemberMetricsBuildSqlParam param =
-                QueryMassTaskMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).
+        QueryTaskCenterMemberMetricsBuildSqlParam param =
+                QueryTaskCenterMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).planDate(planTime).
                         pageNum(pageNum).pageSize(pageSize).status(status).build();
         Integer count = weComTaskCenterMemberStatisticRepository.countByBuildSqlParam(param);
         log.info("query task center member list count. count={}", count);
@@ -405,6 +405,8 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
 
     @Override
     public BaseResponse deleteTaskCenter(String taskType, String taskUuid) {
+        log.info("start to delete weCom task center. taskType={}, taskUuid={}",
+                taskType, taskUuid);
         WeComTaskCenterEntity entity = weComTaskCenterRepository.getByTaskUUID(taskUuid);
         if (entity == null) {
             return BaseResponse.success();
@@ -427,7 +429,9 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                         mediaUuidList.add(item.getLink().getMediaUuid());
                     }
                 });
-                weComMediaResourceRepository.deleteByUuids(mediaUuidList);
+                if (CollectionUtils.isNotEmpty(mediaUuidList)) {
+                    weComMediaResourceRepository.deleteByUuids(mediaUuidList);
+                }
             }
         }
 
@@ -435,20 +439,28 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
                 weComTaskCenterMemberStatisticRepository.queryByTaskUuid(taskUuid);
         if (CollectionUtils.isNotEmpty(entities)) {
             for (WeComTaskCenterMemberStatisticEntity item : entities) {
-                taskCacheManagerService.delMemberCache(entity.getCorpId(), item.getMemberId(), item.getUuid(),
-                        item.getTaskUuid());
-                taskCacheManagerService.delCustomerCache(entity.getCorpId(), item.getMemberId(), item.getUuid(),
-                        item.getTaskUuid());
+                try {
+                    taskCacheManagerService.delMemberCache(entity.getCorpId(), item.getMemberId(), item.getTaskUuid(),
+                            item.getUuid());
+                    taskCacheManagerService.delCustomerCache(entity.getCorpId(), item.getMemberId(), item.getTaskUuid(),
+                            item.getUuid());
+                } catch (Exception e) {
+                    log.error("failed to delete weCom task center, memberId={}, taskUuid={}, uuid={}",
+                            item.getMemberId(), item.getTaskUuid(), item.getUuid(), e);
+                }
             }
         }
-
-        taskCacheManagerService.delCacheContent(taskUuid);
-
+        try {
+            taskCacheManagerService.delCacheContent(taskUuid);
+        } catch (Exception e) {
+            log.error("failed to delete content weCom task center, taskUuid={}", taskUuid, e);
+        }
         weComTaskCenterMemberStatisticRepository.deleteByTaskUuid(taskUuid);
         weComTaskCenterExternalUserStatisticRepository.deleteByTaskUuid(taskUuid);
         weComTaskCenterMemberRepository.deleteByUuid(taskUuid);
-        weComTaskCenterRepository.deleteByIdAndTaskType(entity.getId(), taskType);
-
+        weComTaskCenterRepository.deleteById(Long.valueOf(entity.getId()));
+        log.info("finish to delete weCom task center. taskType={}, taskUuid={}",
+                taskType, taskUuid);
         return BaseResponse.success();
     }
 
@@ -547,14 +559,14 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
     }
 
     private BaseResponse listMembersForExternalUser(String projectId, String corpId, String taskType, Integer pageNum
-            , Integer pageSize, String taskUuid, String keyword, String status) {
+            , Integer pageSize, String taskUuid, String keyword, String status, String planTime) {
         log.info("start to query task center statistic for external user. corpId={}, taskType={}, pageNum={}, " +
                 "pageSize={},taskUuid={}, status={}", corpId, taskType, pageNum, pageSize, taskUuid, status);
 
         WeComMembersStatisticResponse response = new WeComMembersStatisticResponse();
 
-        QueryMassTaskMemberMetricsBuildSqlParam param =
-                QueryMassTaskMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).
+        QueryTaskCenterMemberMetricsBuildSqlParam param =
+                QueryTaskCenterMemberMetricsBuildSqlParam.builder().taskUuid(taskUuid).keyword(keyword).projectUuid(projectId).planDate(planTime).
                         pageNum(pageNum).pageSize(pageSize).build();
 
         Integer count = weComTaskCenterMemberStatisticRepository.countByBuildSqlParam(param);
@@ -597,14 +609,14 @@ public class WeComTaskCenterServiceImpl implements WeComTaskCenterService {
         List<Long> planTimes = computeTotalCount(taskUuid);
         long currentTime = System.currentTimeMillis();
         planTimes = planTimes.stream().filter(e -> e < currentTime).sorted().collect(Collectors.toList());
-        if (pageNum * pageSize > planTimes.size()) {
+        if ((pageNum - 1) * pageSize > planTimes.size()) {
             response.setDayDetails(dayDetails);
-            log.info("finish to task center statistic for rate response. corpId={}, response={}", corpId,
+            log.info("finish to query empty task center statistic for rate response. corpId={}, response={}", corpId,
                     JsonUtils.toJSONString(response));
             return BaseResponse.success(response);
         }
-        for (int i = pageNum * pageSize; i < (planTimes.size() < ((pageNum + 1) * pageSize) ? planTimes.size() :
-                ((pageNum + 1) * pageSize)); i++) {
+        for (int i = (pageNum - 1) * pageSize; i < (planTimes.size() < (pageNum * pageSize) ? planTimes.size() :
+                (pageNum * pageSize)); i++) {
             Long time = planTimes.get(i);
             DateTime dateTime = DateUtil.date(time);
             String dateString = dateTime.toDateStr();

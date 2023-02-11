@@ -4,6 +4,7 @@ import com.easy.marketgo.common.enums.WeComMassTaskMetricsType;
 import com.easy.marketgo.common.enums.WeComMediaTypeEnum;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComChangeStatusRequest;
+import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterContentClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
@@ -64,43 +65,46 @@ public class QueryTaskCenterDetailService {
             } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
                 WeComTaskCenterDetailClientResponse.ImageAttachmentsMessage imageMessage =
                         new WeComTaskCenterDetailClientResponse.ImageAttachmentsMessage();
-                BeanUtils.copyProperties(item.getText(), imageMessage);
+                BeanUtils.copyProperties(item.getImage(), imageMessage);
                 message.setImage(imageMessage);
 
             } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
                 WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage videoMessage =
                         new WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage();
-                BeanUtils.copyProperties(item.getText(), videoMessage);
+                BeanUtils.copyProperties(item.getVideo(), videoMessage);
                 message.setVideo(videoMessage);
 
             } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
                 WeComTaskCenterDetailClientResponse.FileAttachmentsMessage fileMessage =
                         new WeComTaskCenterDetailClientResponse.FileAttachmentsMessage();
-                BeanUtils.copyProperties(item.getText(), fileMessage);
+                BeanUtils.copyProperties(item.getFile(), fileMessage);
                 message.setFile(fileMessage);
 
             } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
                 WeComTaskCenterDetailClientResponse.MiniProgramAttachmentsMessage miniMessage =
                         new WeComTaskCenterDetailClientResponse.MiniProgramAttachmentsMessage();
-                BeanUtils.copyProperties(item.getText(), miniMessage);
+                BeanUtils.copyProperties(item.getMiniProgram(), miniMessage);
                 message.setMiniProgram(miniMessage);
 
             } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
                 WeComTaskCenterDetailClientResponse.LinkAttachmentsMessage linkMessage =
                         new WeComTaskCenterDetailClientResponse.LinkAttachmentsMessage();
-                BeanUtils.copyProperties(item.getText(), linkMessage);
+                BeanUtils.copyProperties(item.getLink(), linkMessage);
                 message.setLink(linkMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VOICE.getType())) {
-                WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage videoAttachmentsMessage =
-                        new WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage();
-                BeanUtils.copyProperties(item.getText(), videoAttachmentsMessage);
-                message.setVideo(videoAttachmentsMessage);
-
             }
+//            else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VOICE.getType())) {
+//                WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage videoAttachmentsMessage =
+//                        new WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage();
+//                BeanUtils.copyProperties(item.get(), videoAttachmentsMessage);
+//                message.setVideo(videoAttachmentsMessage);
+//
+//            }
             attachmentsMessageList.add(message);
         }
         clientResponse.setAttachments(attachmentsMessageList);
+        clientResponse.setTaskName(response.getTaskName());
+        clientResponse.setTaskUuid(response.getTaskUuid());
         List<WeComTaskCenterDetailClientResponse.WeComTaskCenterMessage> taskList = new ArrayList<>();
         WeComTaskCenterDetailClientResponse.WeComTaskCenterMessage taskMessage =
                 new WeComTaskCenterDetailClientResponse.WeComTaskCenterMessage();
@@ -131,6 +135,59 @@ public class QueryTaskCenterDetailService {
                     request.getStatus());
         }
         return BaseResponse.success();
+    }
+
+    public BaseResponse getTaskCenterContent(String corpId, String memberId, String taskUuid) {
+        WeComTaskCenterDetailResponse response = weComClientTaskCenterService.getTaskCenterContent(corpId, memberId,
+                taskUuid);
+        WeComTaskCenterContentClientResponse clientResponse = new WeComTaskCenterContentClientResponse();
+        BeanUtils.copyProperties(response, clientResponse);
+        List<WeComTaskCenterContentClientResponse.AttachmentsMessage> attachmentsMessageList = new ArrayList<>();
+        for (WeComTaskCenterDetailResponse.AttachmentsMessage item : response.getAttachments()) {
+            WeComTaskCenterContentClientResponse.AttachmentsMessage message =
+                    new WeComTaskCenterContentClientResponse.AttachmentsMessage();
+            BeanUtils.copyProperties(item, message);
+            if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
+                WeComTaskCenterContentClientResponse.TextMessage textMessage =
+                        new WeComTaskCenterContentClientResponse.TextMessage();
+                BeanUtils.copyProperties(item.getText(), textMessage);
+                message.setText(textMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
+                WeComTaskCenterContentClientResponse.ImageAttachmentsMessage imageMessage =
+                        new WeComTaskCenterContentClientResponse.ImageAttachmentsMessage();
+                BeanUtils.copyProperties(item.getImage(), imageMessage);
+                message.setImage(imageMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
+                WeComTaskCenterContentClientResponse.VideoAttachmentsMessage videoMessage =
+                        new WeComTaskCenterContentClientResponse.VideoAttachmentsMessage();
+                BeanUtils.copyProperties(item.getVideo(), videoMessage);
+                message.setVideo(videoMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
+                WeComTaskCenterContentClientResponse.FileAttachmentsMessage fileMessage =
+                        new WeComTaskCenterContentClientResponse.FileAttachmentsMessage();
+                BeanUtils.copyProperties(item.getFile(), fileMessage);
+                message.setFile(fileMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
+                WeComTaskCenterContentClientResponse.MiniProgramAttachmentsMessage miniMessage =
+                        new WeComTaskCenterContentClientResponse.MiniProgramAttachmentsMessage();
+                BeanUtils.copyProperties(item.getMiniProgram(), miniMessage);
+                message.setMiniProgram(miniMessage);
+
+            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
+                WeComTaskCenterContentClientResponse.LinkAttachmentsMessage linkMessage =
+                        new WeComTaskCenterContentClientResponse.LinkAttachmentsMessage();
+                BeanUtils.copyProperties(item.getLink(), linkMessage);
+                message.setLink(linkMessage);
+
+            }
+            attachmentsMessageList.add(message);
+        }
+        clientResponse.setAttachments(attachmentsMessageList);
+        return BaseResponse.success(clientResponse);
     }
 
 }

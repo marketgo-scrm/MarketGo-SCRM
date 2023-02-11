@@ -22,7 +22,11 @@
             <div class="style-item">
               <el-radio v-model="baseForm.checkType" label="2">离线导入</el-radio>
             </div>
-            <div class="style-item">
+            <div class="style-item" v-show="!cdpStatus">
+              <!--              <el-radio v-model="baseForm.checkType" label="3" :disabled="!cdpStatus">第三方CDP人群包</el-radio>-->
+              <el-radio v-model="baseForm.checkType" label="3" disabled>第三方CDP人群包</el-radio>
+            </div>
+            <div class="style-item" v-show="cdpStatus">
               <el-radio v-model="baseForm.checkType" label="3">第三方CDP人群包</el-radio>
             </div>
           </div>
@@ -655,6 +659,7 @@ export default {
       ],
       checkListCdp: [],
       checkListCdpShow: [],
+      cdpStatus: false,
     }
   },
   watch: {
@@ -699,8 +704,16 @@ export default {
   },
   mounted() {
     this.getCDP()
+    this.getCdpStatus()
   },
   methods: {
+    getCdpStatus() {
+      let _this = this
+      this.$http.get(`mktgo/wecom/cdp/switch/status?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`,{}).then(function (res) {
+        _this.cdpStatus = res.data.switchStatus
+        // console.log('_this.cdpStatus',_this.cdpStatus)
+      })
+    },
     cdpSearchTextChange() {
       if (this.cdpSearchText == '') {
         this.showCdpList = this.getCdpList
@@ -724,7 +737,7 @@ export default {
       this.$http.get(`mktgo/wecom/user_group/crowd?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&refresh=${0}`,{}).then(function (res) {
         console.log(99,res)
         _this.cdpGeting = false
-        if (res.data.crowds) {
+        if (res.data && res.data.crowds) {
           _this.cdpType = res.cdpType
           _this.getCdpList = res.data.crowds
           _this.showCdpList = res.data.crowds

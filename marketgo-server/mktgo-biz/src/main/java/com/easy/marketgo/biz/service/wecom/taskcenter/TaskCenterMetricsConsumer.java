@@ -95,7 +95,7 @@ public class TaskCenterMetricsConsumer {
                 projectUuid, corpId, taskUuid, message);
         for (WeComTaskCenterMetrics.MemberStatus item : message.getMemberState()) {
             try {
-                if (!item.getStatus().equals(WeComMassTaskMemberStatusEnum.UNSENT)) {
+                if (item.getStatus() != WeComMassTaskMemberStatusEnum.UNSENT) {
                     weComTaskCenterMemberStatisticRepository.updateMemberStatusBytaskUuid(
                             WeComMassTaskMemberStatusEnum.UNSENT.getValue(), item.getStatus().getValue(),
                             item.getTime(), taskUuid, uuid, item.getMemberId());

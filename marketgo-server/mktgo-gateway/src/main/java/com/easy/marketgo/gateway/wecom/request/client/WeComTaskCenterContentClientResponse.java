@@ -13,8 +13,8 @@ import java.util.List;
  * Describe:
  */
 @Data
-@ApiModel(description = "任务中心的详情response")
-public class WeComTaskCenterDetailClientResponse {
+@ApiModel(description = "任务中心的任务内容response")
+public class WeComTaskCenterContentClientResponse {
 
     @ApiModelProperty(value = "企业ID")
     private String corpId;

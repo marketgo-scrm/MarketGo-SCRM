@@ -99,7 +99,7 @@ public class TaskCacheManagerService {
     }
 
     public void delCustomerCache(String corpId, String memberId, String taskUuid, String uuid) {
-        String key = String.format(CACHE_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
+        String key = String.format(CACHE_SCAN_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid);
         List<String> keys = redisService.cursorPatternKeys(key);
         log.info("scan external user message for task center from cache . scanKey={}, keys size={}", key, keys.size());
         if (CollectionUtils.isNotEmpty(keys)) {
