@@ -56,7 +56,7 @@ public interface WeComTaskCenterMemberStatisticCustomizedRepository {
                 sql.append(")");
             }
             if (StringUtils.isNotEmpty(param.getPlanDate())) {
-                sql.append(" AND (plan_time LIKE CONCAT('%', :keyword, '')");
+                sql.append(" AND (plan_time LIKE CONCAT('%', :planDate, '')");
 
                 sql.append(")");
             }
