@@ -635,7 +635,9 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
                         mediaUuidList.add(item.getLink().getMediaUuid());
                     }
                 });
-                weComMediaResourceRepository.deleteByUuids(mediaUuidList);
+                if(CollectionUtils.isNotEmpty(mediaUuidList)) {
+                    weComMediaResourceRepository.deleteByUuids(mediaUuidList);
+                }
             }
         }
         weComMassTaskRepository.deleteByIdAndTaskType(entity.getId(), taskType);
