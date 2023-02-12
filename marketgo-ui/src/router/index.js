@@ -87,6 +87,12 @@ export const constantRoutes = [
                 title: '任务中心',
                 component: (resolve) => require(['@/views/taskcenter'], resolve),
             },{
+                
+                path: 'task-side-guide',
+                name: 'task-side-guide',
+                title: '如何配置待办任务侧边栏',
+                component: (resolve) => require(['@/views/task-side-guide'], resolve),
+            },{  
                 path: 'task-masscustomer-add',
                 name: 'task-masscustomer-add',
                 title: '新建客户触达任务',
