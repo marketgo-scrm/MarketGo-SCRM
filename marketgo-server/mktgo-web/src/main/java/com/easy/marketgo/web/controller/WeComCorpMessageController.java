@@ -4,10 +4,7 @@ import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
-import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
-import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
-import com.easy.marketgo.web.model.response.corp.WeComCorpDomainResponse;
-import com.easy.marketgo.web.model.response.corp.WeComForwardServerMessageResponse;
+import com.easy.marketgo.web.model.response.corp.*;
 import com.easy.marketgo.web.model.response.customer.WeComGroupChatsResponse;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
 import io.swagger.annotations.*;
@@ -125,9 +122,9 @@ public class WeComCorpMessageController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = WeComForwardServerMessageResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = WeComSidebarMessageResponse.class)
     })
-    @ApiOperation(value = "获取企业微信转发服务配置信息", nickname = "getSidebarServer", notes = "", response =
+    @ApiOperation(value = "获取企业微信侧边栏配置信息", nickname = "getSidebarServer", notes = "", response =
             WeComForwardServerMessageResponse.class)
     @RequestMapping(value = {"/sidebar/config"}, produces = {"application/json"}, method = RequestMethod.GET)
     public ResponseEntity getSidebarServer(@NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
