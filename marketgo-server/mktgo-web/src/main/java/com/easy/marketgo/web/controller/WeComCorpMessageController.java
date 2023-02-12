@@ -125,6 +125,17 @@ public class WeComCorpMessageController {
     }
 
     @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = WeComForwardServerMessageResponse.class)
+    })
+    @ApiOperation(value = "获取企业微信转发服务配置信息", nickname = "getSidebarServer", notes = "", response =
+            WeComForwardServerMessageResponse.class)
+    @RequestMapping(value = {"/sidebar/config"}, produces = {"application/json"}, method = RequestMethod.GET)
+    public ResponseEntity getSidebarServer(@NotNull @Valid @RequestParam(value = "project_id", required = true) String projectId,
+                                           @NotNull @Valid @RequestParam(value = "corp_id", required = true) String corpId) {
+        return ResponseEntity.ok(corpMessageService.getSidebarServer(projectId, corpId));
+    }
+
+    @ApiResponses({
             @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
     @ApiOperation(value = "上传企微的可信文件", nickname = "verifyCredFile", notes = "", response = BaseResponse.class)
