@@ -86,12 +86,12 @@ public class WeComAgentMessageService {
         }
 
         String target = targetTime + WeComTaskCenterTargetTypeEnum.fromValue(targetType).getCname();
-        String desc = String.format(TEXTCARD_DESCRIPTION, LocalDateTime.parse(planTime, DATE_TIME_FORMATTER1).format(DATE_TIME_FORMATTER),
+        String desc = String.format(TEXTCARD_DESCRIPTION,
+                LocalDateTime.parse(planTime, DATE_TIME_FORMATTER1).format(DATE_TIME_FORMATTER),
                 taskName, target);
-        String url = String.format("%s/mktgo/client/wecom/task_center/detail?member_id=%s&task_uuid=%s%s",
-                tenantConfigEntity.getServerAddress().replace("/api", "/client"), members.get(0), taskUuid,
-                StringUtils.isNotBlank(uuid) ?
-                        "&uuid=" + uuid : "");
+        String url = String.format("%s/mktgo/client/wecom/task_center/detail?corp_id=%s&member_id=%s&task_uuid=%s%s",
+                tenantConfigEntity.getServerAddress().replace("/api", "/client"), corpId, members.get(0), taskUuid,
+                StringUtils.isNotBlank(uuid) ? "&uuid=" + uuid : "");
 
         Map<String, String> textMessage = new HashMap<>();
         textMessage.put("title", String.format("%s任务通知", WeComMassTaskTypeEnum.fromValue(taskType).getCname()));

@@ -2,10 +2,12 @@ package com.easy.marketgo.gateway.wecom.sevice.taskcenter;
 
 import com.easy.marketgo.common.enums.WeComMassTaskMetricsType;
 import com.easy.marketgo.common.enums.WeComMediaTypeEnum;
+import com.easy.marketgo.common.enums.WeComSidebarTypeEnum;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComChangeStatusRequest;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterContentClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
+import com.easy.marketgo.gateway.wecom.sevice.SidebarManagerService;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,26 +27,10 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class QueryTaskCenterDetailService {
+public class SidebarManagerServiceImpl implements SidebarManagerService {
 
     @Autowired
     private WeComClientTaskCenterService weComClientTaskCenterService;
-
-    public BaseResponse listTaskCenter(List<String> type,
-                                       List<String> taskTypes,
-                                       Integer pageNum,
-                                       Integer pageSize,
-                                       String corpId,
-                                       List<String> statuses,
-                                       String keyword,
-                                       String memberId,
-                                       List<String> createUserIds,
-                                       String sortKey,
-                                       String sortOrder,
-                                       String startTime,
-                                       String endTime) {
-        return null;
-    }
 
     public BaseResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid) {
         WeComTaskCenterDetailResponse response = weComClientTaskCenterService.getTaskCenterDetails(corpId, memberId,
@@ -190,4 +176,11 @@ public class QueryTaskCenterDetailService {
         return BaseResponse.success(clientResponse);
     }
 
+    @Override
+    public BaseResponse getSidebarContent(String corpId, String contentType, String memberId, String taskUuid) {
+        if (contentType.equals(WeComSidebarTypeEnum.TASK_CENTER_SEND_CONTENT.getValue())) {
+            return BaseResponse.success(weComClientTaskCenterService.getTaskCenterContent(corpId, memberId, taskUuid));
+        }
+        return BaseResponse.success();
+    }
 }

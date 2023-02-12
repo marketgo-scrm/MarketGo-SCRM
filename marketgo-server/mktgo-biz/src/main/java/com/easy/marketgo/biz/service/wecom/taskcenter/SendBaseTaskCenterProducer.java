@@ -59,7 +59,7 @@ public class SendBaseTaskCenterProducer {
         request.setTaskUuid(entity.getUuid());
         request.setCorpId(entity.getCorpId());
         request.setAgentId(agentId);
-        request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
+        request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue()) ?
                 DateUtil.formatDateTime(entity.getPlanTime()) :
                 DateUtil.formatDateTime(entity.getScheduleTime()));
         if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
@@ -173,14 +173,13 @@ public class SendBaseTaskCenterProducer {
         request.setAgentId(agentId);
         request.setProjectUuid(entity.getProjectUuid());
         request.setTaskName(entity.getName());
-        request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME) ?
+        request.setPlanTime(entity.getScheduleType().equals(WeComMassTaskScheduleType.REPEAT_TIME.getValue()) ?
                 DateUtil.formatDateTime(entity.getPlanTime()) :
                 DateUtil.formatDateTime(entity.getScheduleTime()));
         if (StringUtils.isNotBlank(entity.getTaskType()) && entity.getTargetTime() != null) {
             request.setTargetType(entity.getTargetType());
             request.setTargetTime(entity.getTargetTime());
         }
-
         List<WeComSendMassTaskContent> weComSendMassTaskContents = JsonUtils.toArray(entity.getContent(),
                 WeComSendMassTaskContent.class);
         List<WeComMomentTaskCenterRequest.AttachmentsMessage> attachments = new ArrayList<>();
@@ -244,7 +243,7 @@ public class SendBaseTaskCenterProducer {
 
     protected String saveMemberTask(WeComTaskCenterEntity entity, String memberId) {
         WeComTaskCenterMemberEntity memberEntity = new WeComTaskCenterMemberEntity();
-        String[] IGNORE_ISOLATOR_PROPERTIES = new String[]{"id",  "createTime", "updateTime"};
+        String[] IGNORE_ISOLATOR_PROPERTIES = new String[]{"id", "createTime", "updateTime"};
         BeanUtils.copyProperties(entity, memberEntity, IGNORE_ISOLATOR_PROPERTIES);
         memberEntity.setUuid(IdUtil.simpleUUID());
         memberEntity.setMemberId(memberId);

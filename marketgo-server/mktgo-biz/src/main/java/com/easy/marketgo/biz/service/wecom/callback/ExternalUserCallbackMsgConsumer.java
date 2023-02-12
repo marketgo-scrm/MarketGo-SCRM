@@ -89,6 +89,5 @@ public class ExternalUserCallbackMsgConsumer extends SendMassTaskBaseConsumer {
                     sendData.getMemberId(), sendData.getExternalUserId(),
                     WeComRelationType.EXTERNAL_USER_DEL.ordinal());
         }
-
     }
 }

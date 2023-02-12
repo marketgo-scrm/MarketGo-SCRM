@@ -1,7 +1,7 @@
 package com.easy.marketgo.core.repository.wecom.taskcenter;
 
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberStatisticEntity;
-import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
+import com.easy.marketgo.core.model.bo.QueryTaskCenterMemberMetricsBuildSqlParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,9 +20,9 @@ import java.util.List;
  */
 public interface WeComTaskCenterMemberStatisticCustomizedRepository {
 
-    List<WeComTaskCenterMemberStatisticEntity> listByBuildSqlParam(QueryMassTaskMemberMetricsBuildSqlParam param);
+    List<WeComTaskCenterMemberStatisticEntity> listByBuildSqlParam(QueryTaskCenterMemberMetricsBuildSqlParam param);
 
-    Integer countByBuildSqlParam(QueryMassTaskMemberMetricsBuildSqlParam param);
+    Integer countByBuildSqlParam(QueryTaskCenterMemberMetricsBuildSqlParam param);
 
     @Slf4j
     class WeComTaskCenterMemberStatisticCustomizedRepositoryImpl implements WeComTaskCenterMemberStatisticCustomizedRepository {
@@ -30,20 +30,20 @@ public interface WeComTaskCenterMemberStatisticCustomizedRepository {
         private DataSource dataSource;
 
         @Override
-        public List<WeComTaskCenterMemberStatisticEntity> listByBuildSqlParam(QueryMassTaskMemberMetricsBuildSqlParam param) {
+        public List<WeComTaskCenterMemberStatisticEntity> listByBuildSqlParam(QueryTaskCenterMemberMetricsBuildSqlParam param) {
             BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
             return new NamedParameterJdbcTemplate(this.dataSource).query(getSelectByCndSql(param, false),
                     paramSource, new BeanPropertyRowMapper(WeComTaskCenterMemberStatisticEntity.class));
         }
 
         @Override
-        public Integer countByBuildSqlParam(QueryMassTaskMemberMetricsBuildSqlParam param) {
+        public Integer countByBuildSqlParam(QueryTaskCenterMemberMetricsBuildSqlParam param) {
             BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
             return new NamedParameterJdbcTemplate(this.dataSource).queryForObject(getSelectByCndSql(param,
                     true), paramSource, Integer.class);
         }
 
-        private String getSelectByCndSql(QueryMassTaskMemberMetricsBuildSqlParam param, boolean isCount) {
+        private String getSelectByCndSql(QueryTaskCenterMemberMetricsBuildSqlParam param, boolean isCount) {
             StringBuilder sql = new StringBuilder(
                     String.format("SELECT %s FROM wecom_task_center_statistic_member WHERE project_uuid = :projectUuid"
                             , isCount ? "COUNT(*)" : "*"));
@@ -54,6 +54,9 @@ public interface WeComTaskCenterMemberStatisticCustomizedRepository {
                     sql.append(" OR id = ").append(param.getKeyword());
                 }
                 sql.append(")");
+            }
+            if (StringUtils.isNotEmpty(param.getPlanDate())) {
+                sql.append(" AND date(plan_time) = :planDate");
             }
             if (StringUtils.isNotEmpty(param.getTaskUuid())) {
                 sql.append(" AND task_uuid = :taskUuid");

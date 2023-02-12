@@ -75,7 +75,7 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
             String[] values =
                     item.replace(TaskCacheManagerService.CACHE_CUSTOMER_REPLACE_KEY, "").split(TaskCacheManagerService.CACHE_KEY_SPLIT_CHARACTER);
             log.info("parse customer key. item={}, values size={}", item, values.length);
-            if (values.length == 6) {
+            if (6 == values.length) {
                 message.setExternalUserId(values[4]);
                 message.setName(Base64.decodeStr(values[5]));
 
@@ -87,6 +87,19 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
         detailClientResponse.setUuid(uuid);
         detailClientResponse.setExternalUserId(users);
         log.info("finish to query task center detail. response={}", detailClientResponse);
+        return detailClientResponse;
+    }
+
+    @Override
+    public WeComTaskCenterDetailResponse getTaskCenterContent(String corpId, String memberId, String taskUuid) {
+        log.info("query task center cache content. corpId={}, taskUuid={}, memberId={}", corpId, taskUuid, memberId);
+        String content = taskCacheManagerService.getCacheContent(taskUuid);
+        if (StringUtils.isBlank(content)) {
+            throw new CommonException(ErrorCodeEnum.ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST);
+        }
+        log.info("query content cache message. content={}", content);
+        WeComTaskCenterDetailResponse detailClientResponse = JsonUtils.toObject(content,
+                WeComTaskCenterDetailResponse.class);
         return detailClientResponse;
     }
 
