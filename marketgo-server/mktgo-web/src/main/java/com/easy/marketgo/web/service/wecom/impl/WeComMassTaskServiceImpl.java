@@ -396,12 +396,12 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
             detail.setMemberId(entity.getMemberId());
             if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue())) {
                 detail.setExternalUserCount(entity.getExternalUserCount() == null ? 0 : entity.getExternalUserCount());
-            } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.DELIVERED.getValue())) {
-                detail.setExternalUserCount(entity.getDeliveredCount() == null ? 0 : entity.getDeliveredCount());
             } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNFRIEND.getValue())) {
                 detail.setExternalUserCount(entity.getNonFriendCount() == null ? 0 : entity.getNonFriendCount());
             } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.EXCEED_LIMIT.getValue())) {
                 detail.setExternalUserCount(entity.getExceedLimitCount() == null ? 0 : entity.getExceedLimitCount());
+            } else {
+                detail.setExternalUserCount(entity.getDeliveredCount() == null ? 0 : entity.getDeliveredCount());
             }
             members.add(detail);
         });
@@ -635,7 +635,7 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
                         mediaUuidList.add(item.getLink().getMediaUuid());
                     }
                 });
-                if(CollectionUtils.isNotEmpty(mediaUuidList)) {
+                if (CollectionUtils.isNotEmpty(mediaUuidList)) {
                     weComMediaResourceRepository.deleteByUuids(mediaUuidList);
                 }
             }

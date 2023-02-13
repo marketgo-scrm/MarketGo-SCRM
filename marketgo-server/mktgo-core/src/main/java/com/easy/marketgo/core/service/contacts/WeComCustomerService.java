@@ -144,9 +144,6 @@ public class WeComCustomerService {
 
     public QueryGroupChatsBuildSqlParam buildQueryGroupChatsSqlParam(String corpId, List<String> memberList,
                                                                      WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
-        if(weComUserGroupAudienceRule.getGroupChats() == null && weComUserGroupAudienceRule.getExcludeGroupChats() == null) {
-            return null;
-        }
         QueryGroupChatsBuildSqlParam paramBuilder =
                 QueryGroupChatsBuildSqlParam.builder().corpId(corpId).memberIds(memberList).build();
 

@@ -2,11 +2,13 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 
 const routes = [
   {
+    path: '/',
+    redirect: '/welcom/detail',
+  },
+  {
     name: 'notFound',
     path: '/:path(.*)+',
-    redirect: {
-      name: 'goods',
-    },
+    redirect: '/welcom/detail',
   },
   {
     name: 'welcom',
@@ -47,14 +49,6 @@ const routes = [
     component: () => import('./view/cart/index.vue'),
     meta: {
       title: '购物车',
-    },
-  },
-  {
-    name: 'goods',
-    path: '/goods',
-    component: () => import('./view/goods/index.vue'),
-    meta: {
-      title: '商品详情',
     },
   },
 ];

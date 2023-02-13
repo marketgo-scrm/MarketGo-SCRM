@@ -28,10 +28,7 @@ import com.easy.marketgo.core.repository.wecom.WeComCorpMessageRepository;
 import com.easy.marketgo.web.model.request.WeComAgentMessageRequest;
 import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
-import com.easy.marketgo.web.model.response.corp.WeComCorpCallbackResponse;
-import com.easy.marketgo.web.model.response.corp.WeComCorpConfigResponse;
-import com.easy.marketgo.web.model.response.corp.WeComCorpDomainResponse;
-import com.easy.marketgo.web.model.response.corp.WeComForwardServerMessageResponse;
+import com.easy.marketgo.web.model.response.corp.*;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
@@ -319,6 +316,27 @@ public class CorpMessageServiceImpl implements CorpMessageService {
             }
         }
         log.info("get corp forward server message. response={}", response);
+        return BaseResponse.success(response);
+    }
+
+    @Override
+    public BaseResponse getSidebarServer(String projectId, String corpId) {
+        log.info("start to get corp sidebar message. corpId={}", corpId);
+
+        ProjectConfigEntity projectConfigEntity = projectConfigRepository.findAllByUuid(projectId);
+        if (projectConfigEntity == null) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_PROJECT_IS_ILLEGAL);
+        }
+
+        TenantConfigEntity tenantConfigEntity = tenantConfigRepository.findByUuid(projectConfigEntity.getTenantUuid());
+        if (tenantConfigEntity == null) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_ILLEGAL);
+        }
+
+        WeComSidebarMessageResponse response = new WeComSidebarMessageResponse();
+
+        response.setSidebarUrl(tenantConfigEntity.getServerAddress() + Constants.WECOM_SIDEBAR_MESSAGE + corpId);
+        log.info("get corp sidebar message. response={}", response);
         return BaseResponse.success(response);
     }
 

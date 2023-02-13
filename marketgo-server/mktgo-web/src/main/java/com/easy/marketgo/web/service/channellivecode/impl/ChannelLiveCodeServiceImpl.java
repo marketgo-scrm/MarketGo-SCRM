@@ -357,6 +357,11 @@ public class ChannelLiveCodeServiceImpl implements ChannelLiveCodeService {
 
         response.setMembers(JsonUtils.toObject(weComChannelLiveCodeEntity.getMembers(),
                 ChannelLiveCodeCreateRequest.MembersMessage.class));
+
+        response.setAddExtUserLimitStatus(weComChannelLiveCodeEntity.getAddLimitStatus());
+        response.setAddExtUserLimit(StringUtils.isBlank(weComChannelLiveCodeEntity.getAddLimitMembers()) ? null :
+                JsonUtils.toArray(weComChannelLiveCodeEntity.getAddLimitMembers(),
+                        ChannelLiveCodeCreateRequest.MemberInfo.class));
         response.setBackupMembers(StringUtils.isBlank(weComChannelLiveCodeEntity.getBackupMembers()) ? null :
                 JsonUtils.toObject(weComChannelLiveCodeEntity.getBackupMembers(),
                         ChannelLiveCodeCreateRequest.MembersMessage.class));
@@ -372,7 +377,7 @@ public class ChannelLiveCodeServiceImpl implements ChannelLiveCodeService {
             response.setLogoMedia(logo);
         }
         baseResponse.setData(response);
-        log.info("end to  get weCom channel live code detail response. projectUuid={}, corpId={} channelId={}, " +
+        log.info("finish to get weCom channel live code detail response. projectUuid={}, corpId={} channelId={}, " +
                 "baseResponse={}", projectId, corpId, channelId, baseResponse);
         return baseResponse;
     }
