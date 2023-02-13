@@ -923,10 +923,9 @@ export default {
     },
     ruleCheck() {
       let bool = true;
-      if (this.formData.name === "" || !this.formData.name) {
+      if (!this.formData.name || this.formData.name.trim() ==="") {
         bool = false;
         this.$message("请输入二维码名称");
-        return;
       }
       if (
         !this.formData.members.departments.length &&
@@ -934,12 +933,13 @@ export default {
       ) {
         this.$message("请选择员工");
         bool = false;
-        return;
       }
       return bool;
     },
     liveCodeCheckName() {
-      if (!this.formData.name) {
+      
+      if (!this.formData.name || this.formData.name.trim().length ==0) {
+
         return;
       }
       let data = {
