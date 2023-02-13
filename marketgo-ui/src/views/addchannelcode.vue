@@ -23,7 +23,7 @@
                 maxlength="30"
               ></el-input>
             </el-form-item>
-            <el-form-item label="群发员工：" prop="onlineType">
+            <el-form-item label="在线类型：" prop="onlineType">
               <el-radio v-model="formData.onlineType" :label="1" border
                 >全天在线</el-radio
               >
@@ -302,7 +302,7 @@
         <el-row :gutter="50">
           <el-col :sm="18" :md="14" :xs="24">
             <div class="custom-title">设置欢迎语</div>
-            <el-form-item label="群发员工：">
+            <el-form-item label="类型：">
               <!-- // 开启的欢迎语类型： ALL(-1,"全部"),
               // CLOSED(0,"不开启欢迎语"),
               // CHANNEL(1,"渠道欢迎语"),
@@ -699,7 +699,7 @@ export default {
           channel_uuid: this.$route.query.uuid,
         })
         .then((res) => {
-          console.log(1111, res);
+          console.log(1111, JSON.stringify( res));
           if (res.code === 0) {
             this.formData = {
               id: res.data.id ? res.data.id : "",
@@ -989,6 +989,7 @@ export default {
       });
     },
     liveCodeCreate() {
+      console.log(JSON.stringify(this.formData))
       this.$api
         .liveCodeCreate(this.formData)
         .then((res) => {
