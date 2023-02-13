@@ -664,8 +664,8 @@ export default {
     extUserLimitStatusChange(e) {
       console.log(e);
       if (!e) {
-        this.formData.addExtUserLimit = [];
-        this.addExtUserCeilings = []
+        // this.formData.addExtUserLimit = [];
+        // this.addExtUserCeilings = []
       }
     },
     enclosureListCallback(data) {
@@ -824,6 +824,7 @@ export default {
       this.checkAll = false;
     },
     extUserCeilingConfirm() {
+
       for (let item of this.formData.addExtUserLimit) {
         if (this.addExtUserCeilings.includes(item.memberId)) {
           item.addExtUserCeiling = this.addExtUserCeiling;
@@ -834,11 +835,14 @@ export default {
       console.log(this.formData.addExtUserLimit);
     },
     handleCheckAllChange(val) {
+    
       this.addExtUserCeilings = val
         ? this.formData.addExtUserLimit.map((item) => item.memberId)
         : [];
+       
       this.isIndeterminate = false;
     },
+    // 添加客户上限 选中某个员工事件
     handleCheckedCitiesChange(value) {
       let checkedCount = value.length;
       this.checkAll =
@@ -859,6 +863,7 @@ export default {
     extUserCeilingClose() {
       this.extUserCeilingVisible = false;
     },
+    // 修改每日添加客户上线
     ceilingChange(e, index) {
       this.$set(this.formData.addExtUserLimit[index], "addExtUserCeiling", e);
       console.log(this.formData.addExtUserLimit[index]);
