@@ -34,6 +34,7 @@ public class ChannelLiveCodeDetailResponse {
     private String qrCode;
     @ApiModelProperty(name = "名称", notes = "名称")
     private String name;
+
     @ApiModelProperty(name = "添加客户数", notes = "添加客户数")
     private Integer addExtCount;
     @ApiModelProperty(name = "客户标签", notes = "客户标签")
@@ -46,6 +47,8 @@ public class ChannelLiveCodeDetailResponse {
     private Integer onlineType;
     @ApiModelProperty(name = "添加客户上限", notes = "添加客户上限")
     private Boolean addExtUserLimitStatus;
+    @ApiModelProperty(name = "addExtUserLimit", notes = "员工添加外部联系人的上限明细")
+    private List<ChannelLiveCodeCreateRequest.MemberInfo> addExtUserLimit;
     @ApiModelProperty(name = "自动通过好友", notes = "自动通过好友")
     private Boolean skipVerify;
     @ApiModelProperty(name = "欢迎语的类型", notes = "欢迎语的类型")
@@ -79,5 +82,4 @@ public class ChannelLiveCodeDetailResponse {
         private String thumbAvatar;
 
     }
-
 }
