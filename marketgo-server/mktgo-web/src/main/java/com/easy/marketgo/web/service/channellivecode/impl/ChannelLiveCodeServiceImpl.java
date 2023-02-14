@@ -398,7 +398,8 @@ public class ChannelLiveCodeServiceImpl implements ChannelLiveCodeService {
         request.setConfigId(weComChannelLiveCodeEntity.getConfigId());
         RpcResponse rpcResponse = weComContactWayRpcService.deleteContactWay(request);
         log.info("delete live code from configId rpcResponse. rpcResponse={}", rpcResponse);
-        if (rpcResponse.getCode().equals(ErrorCodeEnum.OK.getCode()) || rpcResponse.getCode().equals(ErrorCodeEnum.ERROR_WECOM_INVALID_CONFIG_ID.getCode())) {
+        if (rpcResponse.getCode().equals(ErrorCodeEnum.OK.getCode()) ||
+                rpcResponse.getCode().equals(ErrorCodeEnum.ERROR_WECOM_INVALID_CONFIG_ID.getCode())) {
             weComChannelLiveCodeStatisticRepository.deleteByUuid(channelId);
             weComChannelLiveCodeMembersRepository.deleteByUuid(channelId);
 
@@ -409,15 +410,25 @@ public class ChannelLiveCodeServiceImpl implements ChannelLiveCodeService {
                 if (CollectionUtils.isNotEmpty(contentList)) {
                     List<String> mediaUuidList = new ArrayList<>();
                     contentList.forEach(item -> {
-                        if (item.getType() == WeComMassTaskSendMsg.TypeEnum.VIDEO && item.getVideo() != null && StringUtils.isNotBlank(item.getVideo().getMediaUuid())) {
+                        if (item.getType() == WeComMassTaskSendMsg.TypeEnum.VIDEO &&
+                                item.getVideo() != null &&
+                                StringUtils.isNotBlank(item.getVideo().getMediaUuid())) {
                             mediaUuidList.add(item.getVideo().getMediaUuid());
-                        } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.IMAGE && item.getImage() != null && StringUtils.isNotBlank(item.getImage().getMediaUuid())) {
+                        } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.IMAGE &&
+                                item.getImage() != null &&
+                                StringUtils.isNotBlank(item.getImage().getMediaUuid())) {
                             mediaUuidList.add(item.getImage().getMediaUuid());
-                        } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.FILE && item.getFile() != null && StringUtils.isNotBlank(item.getFile().getMediaUuid())) {
+                        } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.FILE &&
+                                item.getFile() != null &&
+                                StringUtils.isNotBlank(item.getFile().getMediaUuid())) {
                             mediaUuidList.add(item.getFile().getMediaUuid());
-                        } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.MINIPROGRAM && item.getMiniProgram() != null && StringUtils.isNotBlank(item.getMiniProgram().getMediaUuid())) {
+                        } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.MINIPROGRAM &&
+                                item.getMiniProgram() != null &&
+                                StringUtils.isNotBlank(item.getMiniProgram().getMediaUuid())) {
                             mediaUuidList.add(item.getMiniProgram().getMediaUuid());
-                        } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.LINK && item.getLink() != null && StringUtils.isNotBlank(item.getLink().getMediaUuid())) {
+                        } else if (item.getType() == WeComMassTaskSendMsg.TypeEnum.LINK &&
+                                item.getLink() != null &&
+                                StringUtils.isNotBlank(item.getLink().getMediaUuid())) {
                             mediaUuidList.add(item.getLink().getMediaUuid());
                         }
                     });
@@ -479,9 +490,7 @@ public class ChannelLiveCodeServiceImpl implements ChannelLiveCodeService {
     private void saveMembersMessage(String uuid, List<String> members, Boolean isBackup, Boolean isOnline) {
         List<WeComChannelLiveCodeMembersEntity> entities = new ArrayList<>();
 
-
         for (String member : members) {
-
             WeComChannelLiveCodeMembersEntity saveEntity =
                     weComChannelLiveCodeMembersRepository.queryByMemberIdAndIsBackup(uuid, member, isBackup);
             if (saveEntity != null) {
