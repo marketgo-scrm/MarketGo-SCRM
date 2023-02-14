@@ -109,7 +109,7 @@ public class SendMomentTaskCenterConsumer extends SendTaskCenterBaseConsumer {
             List<String> externalUserList = new ArrayList<>();
             entities.forEach(entity -> {
                 taskCacheManagerService.setCustomerCache(corpId, memberId, taskUuid, uuid,
-                        entity.getExternalUserId(), entity.getExternalUserName());
+                        entity.getExternalUserId(), entity.getExternalUserName(), entity.getAvatar());
                 externalUserList.add(entity.getExternalUserId());
             });
             List<String> externalUsers = externalUserList.stream().distinct().collect(Collectors.toList());

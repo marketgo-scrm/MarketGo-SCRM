@@ -38,6 +38,7 @@ public class WeComTaskCenterDetailResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ExternalUserMessage {
+        private String avatar;
         private String name;
         private String externalUserId;
         private String status;

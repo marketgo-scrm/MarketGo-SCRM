@@ -75,10 +75,12 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
             String[] values =
                     item.replace(TaskCacheManagerService.CACHE_CUSTOMER_REPLACE_KEY, "").split(TaskCacheManagerService.CACHE_KEY_SPLIT_CHARACTER);
             log.info("parse customer key. item={}, values size={}", item, values.length);
-            if (6 == values.length) {
+            if (values.length >= 6) {
                 message.setExternalUserId(values[4]);
                 message.setName(Base64.decodeStr(values[5]));
-
+                if (values.length == 7) {
+                    message.setAvatar(Base64.decodeStr(values[6]));
+                }
             }
             String status = taskCacheManagerService.getCustomerCache(item);
             message.setStatus(status);
