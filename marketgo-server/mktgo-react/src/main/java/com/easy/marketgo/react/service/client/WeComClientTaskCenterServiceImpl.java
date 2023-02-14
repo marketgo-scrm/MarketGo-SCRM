@@ -78,6 +78,7 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
             if (values.length >= 6) {
                 message.setExternalUserId(values[4]);
                 message.setName(Base64.decodeStr(values[5]));
+                message.setAvatar("");
                 if (values.length == 7) {
                     message.setAvatar(Base64.decodeStr(values[6]));
                 }
