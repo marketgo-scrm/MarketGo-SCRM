@@ -57,6 +57,8 @@ public class WeComTaskCenterDetailClientResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ExternalUserMessage {
+        @ApiModelProperty(value = "客户头像")
+        private String avatar;
         @ApiModelProperty(value = "客户名称")
         private String name;
         @ApiModelProperty(value = "客户ID")
