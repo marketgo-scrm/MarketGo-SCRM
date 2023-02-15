@@ -1,5 +1,7 @@
 package com.easy.marketgo.web.service.project;
 
+import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.web.model.request.ProjectCreateRequest;
 import com.easy.marketgo.web.model.response.ProjectFetchResponse;
 
 /**
@@ -11,5 +13,7 @@ import com.easy.marketgo.web.model.response.ProjectFetchResponse;
 public interface IProjectService {
 
     ProjectFetchResponse fetchProjects();
+
+    BaseResponse createProject(ProjectCreateRequest projectCreateRequest);
 
 }
