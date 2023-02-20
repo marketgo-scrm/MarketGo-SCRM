@@ -33,4 +33,13 @@ public interface WeComMassTaskRpcService {
 
     //获取客户朋友圈的互动数据
     RpcResponse queryMomentMassTaskForCommentsResult(WeComMomentMassTaskCommentsClientRequest request);
+
+    //提醒成员群发
+    RpcResponse remindMemberMessage(WeComRemindMemberMessageClientRequest request);
+
+    //停止企业群发
+    RpcResponse stopMassTask(WeComRemindMemberMessageClientRequest request);
+
+    //停止朋友圈群发
+    RpcResponse stopMomentMassTask(WeComStopMomentMassTaskClientRequest request);
 }

@@ -219,8 +219,8 @@
           <el-tab-pane label="全部" name="all"></el-tab-pane>
           <el-tab-pane label="未送达" name="A"></el-tab-pane>
           <el-tab-pane label="已送达" name="B"></el-tab-pane>
-          <el-tab-pane label="接收达上限" name="C"></el-tab-pane>
-          <el-tab-pane label="送达失败" name="D"></el-tab-pane>
+<!--          <el-tab-pane label="接收达上限" name="C"></el-tab-pane>-->
+<!--          <el-tab-pane label="送达失败" name="D"></el-tab-pane>-->
         </el-tabs>
         <el-table :data="khfootList" v-if="khfootList.length">
           <el-table-column  label="员工" prop="memberName">

@@ -114,6 +114,17 @@ public class WeComHttpConstants {
 
     // 企微通知接口
     public final String SEND_AGNET_MESSAGE_URL = REQUEST_PREFIX_URL + "cgi-bin/message/send";
+
+    // 提醒成员群发
+    public final String REMIND_MESSAGE_URL = REQUEST_PREFIX_URL + "cgi-bin/externalcontact/remind_groupmsg_send";
+
+    // 停止企业群发
+    public final String STOP_MASS_TASK_MESSAGE_URL = REQUEST_PREFIX_URL + "cgi-bin/externalcontact/cancel_groupmsg_send";
+
+    // 停止朋友圈群发
+    public final String STOP_MOMENT_MASS_TASK_MESSAGE_URL = REQUEST_PREFIX_URL + "cgi-bin/externalcontact" +
+            "/cancel_moment_task";
+
     /**
      *
      */

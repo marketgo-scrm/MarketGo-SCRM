@@ -51,4 +51,6 @@ public interface WeComMassTaskService {
     BaseResponse deleteMassTask(String taskType, String taskUuid);
 
     BaseResponse checkMassTaskName(String projectId, String taskType, Integer taskId, String name);
+
+    BaseResponse stopMassTaskMessage(String projectId, String corpId, String taskType, String taskUuid);
 }
