@@ -300,6 +300,7 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
             detail.setCanRemind(canRemind(entity));
             String result = completeRateResult(entity);
             detail.setCompleteRate(result);
+            detail.setCanStop(checkCanStopTask(entity));
             if (result.equals("100%")) {
                 detail.setCanRemind(Boolean.FALSE);
             }
@@ -362,6 +363,14 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
         log.info("query mass task statistic for member response. corpId={}, response={}", corpId,
                 JsonUtils.toJSONString(response));
         return BaseResponse.success(response);
+    }
+
+    private Boolean checkCanStopTask(WeComMassTaskEntity entity) {
+        if (entity.getTaskStatus().equals(WeComMassTaskStatus.SENT.getValue())) {
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
     }
 
     private BaseResponse listMembersForExternalUser(String projectId, String corpId, String taskType,
