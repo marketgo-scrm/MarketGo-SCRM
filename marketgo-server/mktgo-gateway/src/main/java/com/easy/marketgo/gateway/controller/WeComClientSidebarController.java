@@ -3,7 +3,6 @@ package com.easy.marketgo.gateway.controller;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterContentClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
 import com.easy.marketgo.gateway.wecom.sevice.SidebarManagerService;
-import com.easy.marketgo.gateway.wecom.sevice.taskcenter.QueryTaskCenterDetailService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +39,9 @@ public class WeComClientSidebarController {
     public ResponseEntity getSideBarDetail(
             @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
                     true) String corpId,
-            @ApiParam(value = "内容类型; TASK_CENTER_SEND_CONTENT 任务中心的发送内容;", required = false) @Valid @RequestParam(value =
-                    "content_type", required = false) String contentType,
+            @ApiParam(value = "内容类型; TASK_CENTER_SEND_CONTENT 任务中心的发送内容;", required = true, allowableValues =
+                    "TASK_CENTER_SEND_CONTENT") @Valid @RequestParam(value =
+                    "content_type", required = true, defaultValue = "TASK_CENTER_SEND_CONTENT") String contentType,
             @ApiParam(value = "员工ID", required = false) @Valid @RequestParam(value = "member_id", required = false) String memberId,
             @ApiParam(value = "任务ID", required = true) @RequestParam("task_uuid") String taskUuid) {
         return ResponseEntity.ok(sidebarManagerService.getSidebarContent(corpId, contentType, memberId, taskUuid));

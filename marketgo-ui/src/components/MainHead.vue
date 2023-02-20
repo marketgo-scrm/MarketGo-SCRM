@@ -10,7 +10,7 @@
       ></el-button>
       <span>{{ title }}</span>
 
-      <el-button type="text" style="margin-left: 10px;" v-if="subtitle" @click="send">{{ subtitle }}</el-button>
+      <el-button type="text" class="sub-title" v-if="subtitle" @click="send">{{ subtitle }}</el-button>
     </div>
     <div class="main-title-operation">
       <slot></slot>
@@ -69,6 +69,12 @@ export default {
     .el-button {
       flex: none;
       margin-right: 6px;
+    }
+    .sub-title {
+      margin-left: 10px;
+       margin-top:3px;
+       font-size: 12px;
+       font-weight:normal;
     }
   }
   .main-title-operation {
