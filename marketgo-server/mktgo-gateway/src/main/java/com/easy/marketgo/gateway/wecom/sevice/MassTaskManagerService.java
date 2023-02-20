@@ -1,14 +1,18 @@
 package com.easy.marketgo.gateway.wecom.sevice;
 
+import com.alibaba.fastjson.JSON;
 import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.api.model.response.masstask.*;
 import com.easy.marketgo.common.constants.wecom.WeComHttpConstants;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.core.model.wecom.WeComBaseResponse;
 import com.easy.marketgo.core.service.wecom.token.AccessTokenManagerService;
 import com.easy.marketgo.core.util.OkHttpUtils;
 import com.easy.marketgo.gateway.wecom.request.masstask.*;
+import com.easy.marketgo.gateway.wecom.response.SendAgentMessageResponse;
 import com.easy.marketgo.gateway.wecom.response.masstask.*;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
@@ -522,6 +526,131 @@ public class MassTaskManagerService {
 
         rpcResponse.setData(clientResponse);
         log.info("return query moment mass task comments result. rpcResponse={}", rpcResponse);
+        return rpcResponse;
+    }
+
+    /**
+     * 提醒成员群发
+     * https://developer.work.weixin.qq.com/document/path/97610
+     *
+     * @param corpId
+     * @param agentId
+     * @param request
+     * @return
+     */
+    public RpcResponse memberRemindMessage(String corpId, String agentId, RemindMemberMessageRequest request) {
+        RpcResponse rpcResponse = RpcResponse.success();
+        try {
+            String accessToken = accessTokenManagerService.getAgentAccessToken(corpId, agentId);
+
+            Map<String, String> params = Maps.newHashMap();
+            params.put(WeComHttpConstants.AGENT_ACCESS_TOKEN, accessToken);
+            String requestBody = JsonUtils.toJSONString(request);
+            log.info("send remind message. headerParams={}, requestBody={}", JSON.toJSONString(params), requestBody);
+            String response = null;
+            response = OkHttpUtils.getInstance().postJsonSync(WeComHttpConstants.REMIND_MESSAGE_URL, params,
+                    requestBody);
+            if (StringUtils.isBlank(response)) {
+                log.error("failed to send remind message is empty. corpId={}, request={}", corpId, request);
+                return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_REQUEST_WECOM);
+            }
+            log.info("send remind message response from weCom. response={}", response);
+            WeComBaseResponse weComBaseResponse = JsonUtils.toObject(response,
+                    WeComBaseResponse.class);
+            if (weComBaseResponse != null) {
+                rpcResponse.setCode(weComBaseResponse.getErrcode());
+                rpcResponse.setMessage(weComBaseResponse.getErrmsg());
+            }
+
+        } catch (Exception e) {
+            log.error("failed to send remind msg. corpId={}, request={}", corpId, request
+                    , e);
+            return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_INTERNAL_SERVICE);
+        }
+        log.info("return send remind msg rpc result. rpcResponse={}", rpcResponse);
+        return rpcResponse;
+    }
+
+    /**
+     * 停止企业群发
+     * https://developer.work.weixin.qq.com/document/path/97611
+     *
+     * @param corpId
+     * @param agentId
+     * @param request
+     * @return
+     */
+    public RpcResponse stopMassTask(String corpId, String agentId, RemindMemberMessageRequest request) {
+        RpcResponse rpcResponse = RpcResponse.success();
+        try {
+            String accessToken = accessTokenManagerService.getAgentAccessToken(corpId, agentId);
+
+            Map<String, String> params = Maps.newHashMap();
+            params.put(WeComHttpConstants.AGENT_ACCESS_TOKEN, accessToken);
+            String requestBody = JsonUtils.toJSONString(request);
+            log.info("stop mass task message. headerParams={}, requestBody={}", JSON.toJSONString(params), requestBody);
+            String response = null;
+            response = OkHttpUtils.getInstance().postJsonSync(WeComHttpConstants.STOP_MASS_TASK_MESSAGE_URL, params,
+                    requestBody);
+            if (StringUtils.isBlank(response)) {
+                log.error("failed to stop mass task message is empty. corpId={}, request={}", corpId, request);
+                return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_REQUEST_WECOM);
+            }
+            log.info("send stop mass task message response from weCom. response={}", response);
+            WeComBaseResponse weComBaseResponse = JsonUtils.toObject(response,
+                    SendAgentMessageResponse.class);
+            if (weComBaseResponse != null) {
+                rpcResponse.setCode(weComBaseResponse.getErrcode());
+                rpcResponse.setMessage(weComBaseResponse.getErrmsg());
+            }
+        } catch (Exception e) {
+            log.error("failed to send stop mass task message. corpId={}, request={}", corpId, request
+                    , e);
+            return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_INTERNAL_SERVICE);
+        }
+        log.info("finish to stop mass task message rpc result. rpcResponse={}", rpcResponse);
+        return rpcResponse;
+    }
+
+    /**
+     * 停止朋友圈
+     * https://developer.work.weixin.qq.com/document/path/97612
+     *
+     * @param corpId
+     * @param agentId
+     * @param request
+     * @return
+     */
+    public RpcResponse stopMomentMassTask(String corpId, String agentId, StopMomentMassTaskRequest request) {
+        RpcResponse rpcResponse = RpcResponse.success();
+        try {
+            String accessToken = accessTokenManagerService.getAgentAccessToken(corpId, agentId);
+
+            Map<String, String> params = Maps.newHashMap();
+            params.put(WeComHttpConstants.AGENT_ACCESS_TOKEN, accessToken);
+            String requestBody = JsonUtils.toJSONString(request);
+            log.info("stop moment mass task message. headerParams={}, requestBody={}", JSON.toJSONString(params),
+                    requestBody);
+            String response = null;
+            response = OkHttpUtils.getInstance().postJsonSync(WeComHttpConstants.STOP_MOMENT_MASS_TASK_MESSAGE_URL, params,
+                    requestBody);
+            if (StringUtils.isBlank(response)) {
+                log.error("failed to stop moment mass task message is empty. corpId={}, request={}", corpId, request);
+                return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_REQUEST_WECOM);
+            }
+            log.info("send stop moment mass task message response from weCom. response={}", response);
+            WeComBaseResponse weComBaseResponse = JsonUtils.toObject(response,
+                    SendAgentMessageResponse.class);
+            if (weComBaseResponse != null) {
+                rpcResponse.setCode(weComBaseResponse.getErrcode());
+                rpcResponse.setMessage(weComBaseResponse.getErrmsg());
+            }
+        } catch (Exception e) {
+            log.error("failed to send stop moment mass task message. corpId={}, request={}", corpId, request
+                    , e);
+            return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_INTERNAL_SERVICE);
+        }
+        log.info("finish to stop moment mass task message rpc result. rpcResponse={}", rpcResponse);
         return rpcResponse;
     }
 }

@@ -46,7 +46,7 @@ import static com.google.common.util.concurrent.MoreExecutors.getExitingExecutor
 @Service
 public class QueryMassTaskMetricsService {
 
-    private static final int CREATE_MOMENT_STATUE_COMPLETE = 3;
+    public static final int CREATE_MOMENT_STATUE_COMPLETE = 3;
 
     private static final int MEMBER_STATUS_UNSENT = 0;
     private static final int MEMBER_STATUS_SENT = 2;

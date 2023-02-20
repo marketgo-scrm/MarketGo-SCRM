@@ -204,4 +204,43 @@ public class WeComMassTaskRpcServiceImpl implements WeComMassTaskRpcService {
         return massTaskManagerService.queryMomentMassTaskCommentsResult(request.getCorpId(), request.getAgentId(),
                 requestBody);
     }
+
+    @Override
+    public RpcResponse remindMemberMessage(WeComRemindMemberMessageClientRequest request) {
+        if (request == null) {
+            log.error("send remind member message for mass task param is null");
+            return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_PARAM_IS_EMPTY);
+        }
+        log.info("rpc request query mass task remind member message param. request={}", request);
+        RemindMemberMessageRequest requestBody = new RemindMemberMessageRequest();
+        BeanUtils.copyProperties(request, requestBody);
+        return massTaskManagerService.memberRemindMessage(request.getCorpId(), request.getAgentId(),
+                requestBody);
+    }
+
+    @Override
+    public RpcResponse stopMassTask(WeComRemindMemberMessageClientRequest request) {
+        if (request == null) {
+            log.error("send stop message for mass task param is null");
+            return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_PARAM_IS_EMPTY);
+        }
+        log.info("rpc request query stop message param. request={}", request);
+        RemindMemberMessageRequest requestBody = new RemindMemberMessageRequest();
+        BeanUtils.copyProperties(request, requestBody);
+        return massTaskManagerService.stopMassTask(request.getCorpId(), request.getAgentId(),
+                requestBody);
+    }
+
+    @Override
+    public RpcResponse stopMomentMassTask(WeComStopMomentMassTaskClientRequest request) {
+        if (request == null) {
+            log.error("send stop moment message for mass task param is null");
+            return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_PARAM_IS_EMPTY);
+        }
+        log.info("rpc request query stop moment message param. request={}", request);
+        StopMomentMassTaskRequest requestBody = new StopMomentMassTaskRequest();
+        BeanUtils.copyProperties(request, requestBody);
+        return massTaskManagerService.stopMomentMassTask(request.getCorpId(), request.getAgentId(),
+                requestBody);
+    }
 }
