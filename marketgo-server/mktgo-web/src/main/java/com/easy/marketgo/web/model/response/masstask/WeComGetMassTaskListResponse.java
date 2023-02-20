@@ -45,6 +45,9 @@ public class WeComGetMassTaskListResponse {
         @ApiModelProperty(value = "是否可以发送提醒")
         private Boolean canRemind;
 
+        @ApiModelProperty(value = "是否可以停止发送")
+        private Boolean canStop;
+
         @ApiModelProperty(value = "任务完成率")
         private String completeRate;
     }
