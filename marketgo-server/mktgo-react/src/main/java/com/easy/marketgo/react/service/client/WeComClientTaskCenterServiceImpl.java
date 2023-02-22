@@ -1,6 +1,7 @@
 package com.easy.marketgo.react.service.client;
 
 import cn.hutool.core.codec.Base64;
+import cn.hutool.core.date.DateUtil;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
@@ -8,6 +9,7 @@ import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterMemberBuildSqlParam;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberRepository;
 import com.easy.marketgo.core.service.taskcenter.SendTaskCenterBaseConsumer;
 import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
@@ -45,6 +47,12 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
     @Override
     public BaseResponse listTaskCenter(String corpId, String memberId, List<String> taskTypes, List<String> statuses,
                                        String startTime, String endTime, Integer pageNum, Integer pageSize) {
+
+        QueryTaskCenterMemberBuildSqlParam param =
+                QueryTaskCenterMemberBuildSqlParam.builder().corpId(corpId)
+                        .memberId(memberId).endTime(DateUtil.parse(endTime)).startTime(DateUtil.parse(startTime))
+                        .pageNum(pageNum).pageSize(pageSize).sortOrderKey("DESC").build();
+        Integer count = weComTaskCenterMemberRepository.countByBuildSqlParam(param);
 
         return null;
     }
