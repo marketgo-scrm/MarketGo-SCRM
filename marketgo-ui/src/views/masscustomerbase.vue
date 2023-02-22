@@ -134,6 +134,9 @@
                          align="right"
         >
           <template #default="{ row }">
+
+            <el-button size="small" type="text" :disabled="!row.canStop" @click="stop(row)">{{ row.canStop || row.taskStatus !=='FINISHED'? '停止' : '已停止'}}</el-button>
+            <el-divider direction="vertical"></el-divider>
             <el-button size="small" type="text" :disabled="!row.canRemind" @click="remind(row)">提醒发送</el-button>
             <el-divider direction="vertical"></el-divider>
             <el-button @click="openDetails(row)" size="small" type="text">详情</el-button>
@@ -250,19 +253,59 @@ export default {
         console.log(action)
       });
     },
+    stop(row) {
+      let _this = this
+      this.$confirm('确定后未发送的员工将无法发送？', '停止提示', {
+        distinguishCancelAndClose: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      }).then(() => {
+        console.log(row)
+        this.$http.post(
+          `mktgo/wecom/mass_task/stop?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=GROUP&task_uuid=${row.uuid}`,
+          {}).then(function (res) {
+            console.log(res)
+            if (res.code == 0) {
+              _this.$message({
+                message: '停止成功',
+                type: 'success'
+              });
+              _this.searchData()
+            } else {
+              _this.$message(res.message);
+            }
+          });
+      }).catch(action => {
+        console.log(action)
+      });
+
+    },
     remind(row) {
       let _this = this
-      this.$http.post(
+      this.$confirm('确认后将重新触发通知, 提醒员工完成群发任务,24小时内每个任务最多触发三次提醒？', '提醒发送', {
+        distinguishCancelAndClose: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      }).then(() => {
+        console.log(row)
+        this.$http.post(
           `mktgo/wecom/mass_task/remind?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&task_type=GROUP&task_uuid=${row.uuid}`,
           {}).then(function (res) {
-        console.log(res)
-        if (res.code == 0) {
-          _this.$message({
-            message: '提醒成功',
-            type: 'success'
+            console.log(res)
+            if (res.code == 0) {
+              _this.$message({
+                message: '提醒成功',
+                type: 'success'
+              });
+                 _this.searchData()
+            } else {
+              _this.$message(res.message);
+            }
           });
-        }
+      }).catch(action => {
+        console.log(action)
       });
+
     },
     getCreators() {
       let _this = this
