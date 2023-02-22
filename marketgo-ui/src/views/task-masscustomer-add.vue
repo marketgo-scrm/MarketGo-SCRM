@@ -14,7 +14,7 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="筛选方式：" prop="checkType">
+        <el-form-item label="筛选方式：" prop="checkType" style="margin-top: -4px">
           <div class="style-tab-radio">
             <div class="style-item">
               <el-radio v-model="baseForm.checkType" label="1">标准筛选</el-radio>
@@ -34,7 +34,7 @@
 
         <template v-if="baseForm.checkType == 3">
           <el-form-item label="">
-            <div class="inputBox" @click.stop="cdpBoxShow = !cdpBoxShow">
+            <div class="inputBox" @click.stop="cdpBoxShow = !cdpBoxShow" style="margin-top: -10px">
               <div class="content">
                 <span v-if="checkListCdpShow.length == 0">请选择人群</span>
                 <template v-if="checkListCdpShow.length != 0">
@@ -127,7 +127,7 @@
         </template>
 
         <template v-if="baseForm.checkType == 1">
-          <el-form-item label="群发员工：" prop="members">
+          <el-form-item label="群发员工：" prop="members" style="margin-top: -12px">
             <!--          <i class="el-icon-circle-plus-outline"></i>-->
             <div style="width: 606px">
               <div class="add-custom">
@@ -200,7 +200,7 @@
                           @click="showFdata()"
                       ></el-button>-->
           </el-form-item>
-          <el-form-item label="选择客户：" prop="radioXz">
+          <el-form-item label="选择客户：" prop="radioXz" style="margin-top: -12.5px">
             <div class="style-tab-radio">
               <div class="style-item">
                 <el-radio v-model="baseForm.radioXz" label="1">全部客户</el-radio>
@@ -209,10 +209,10 @@
                 <el-radio v-model="baseForm.radioXz" label="2">指定客户</el-radio>
               </div>
             </div>
-            <condition ref="condition" v-show="baseForm.radioXz == 2"></condition>
+            <condition ref="condition" v-show="baseForm.radioXz == 2" style="margin-top: 15px"></condition>
             <!--          <div @click="$refs.condition.getData()">huoqu</div>-->
           </el-form-item>
-          <el-form-item label="排除客户：" prop="radioPc">
+          <el-form-item label="排除客户：" prop="radioPc" style="margin-top: -9.5px">
             <!--          <el-radio disabled v-model="baseForm.radioPc" label="1">否</el-radio>
                       <el-radio disabled v-model="baseForm.radioPc" label="2">是</el-radio>-->
             <div class="style-tab-radio">
@@ -223,12 +223,12 @@
                 <el-radio v-model="baseForm.radioPc" label="2">是</el-radio>
               </div>
             </div>
-            <condition ref="conditionPc" v-show="baseForm.radioPc == 2"></condition>
+            <condition ref="conditionPc" v-show="baseForm.radioPc == 2" style="margin-top: 15px"></condition>
           </el-form-item>
         </template>
 
 
-        <el-form-item>
+        <el-form-item style="margin-top: -19px">
           <div>
             <div class="inline num-text">预计发送客户数</div>
             <i class="el-icon-refresh num-refresh"
@@ -265,7 +265,7 @@
                   </div>
                 </div>
               </el-form-item>
-              <el-form-item label="文字消息：" required>
+              <el-form-item label="文字消息：" required style="margin-top: -5px">
                 <!--          <el-input v-model="setForm.text"
                                     type="textarea"
                                     maxlength="600"
@@ -344,6 +344,7 @@
             </div>
           </div>
           <el-date-picker v-show="setForm.radioFs == 2"
+                          style="margin-top: 20px"
                           v-model="postDataSet.weComMassTaskRequest.scheduleTime"
                           format="yyyy-MM-dd HH:mm:ss"
                           value-format="yyyy-MM-dd HH:mm:ss"
@@ -355,7 +356,7 @@
           <!--          <el-radio disabled v-model="setForm.radioFs" label="1">立即发送</el-radio>
                     <el-radio disabled v-model="setForm.radioFs" label="2">定时发送</el-radio>-->
         </el-form-item>
-        <div v-show="setForm.radioFs == 3">
+        <div v-show="setForm.radioFs == 3" style="margin-top: -5px">
           <el-form-item label="起止时间：">
             <el-date-picker
                 style="width: 372px"
@@ -1404,6 +1405,7 @@ export default {
       history.back()
     },
     async checkName() {
+      this.baseForm.name = this.baseForm.name.trim()
       if (!this.baseForm.name) {
         this.$message.error('请填写任务名称');
       }
@@ -1432,11 +1434,37 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep(.el-input__inner) {
+  font-size: 12px!important;
+}
+::v-deep(.el-radio__label) {
+  font-size: 12px!important;
+}
+::v-deep(.el-form-item__content) {
+  font-size: 12px!important;
+}
+::v-deep(.el-button) {
+  font-size: 12px!important;
+}
+::v-deep(.el-radio) {
+  font-size: 12px!important;
+  font-weight: 400!important;
+}
+
+.el-form-item {
+  margin-bottom: 20px;
+}
 .btn-del {
   position: absolute;
   top: 9px;
-  right: 25px;
+  //right: 25px;
+  right: -26px !important;
   cursor: pointer;
+}
+::v-deep(.EnclosureList){
+  .btn-del{
+    right: -26px !important;
+  }
 }
 .btn-add {
   //max-width: 605px;
@@ -1532,8 +1560,7 @@ export default {
   width: 609px;
   height: 30px;
   //border: 1px solid rgba(228, 228, 228, 1);
-  border-radius: 2px;
-  margin-bottom: 25px;
+  //margin-bottom: 25px;
   .style-item {
     width: auto;
     height: 30px;
@@ -1542,6 +1569,7 @@ export default {
     padding: 0 10px;
     margin-top: 5px;
     margin-right: 8px;
+    border-radius: 2px;
     .el-radio {
       line-height: 30px !important;
       vertical-align: top;
@@ -1740,7 +1768,7 @@ export default {
     .preview {
       //position: absolute;
       //left: 780px;
-      //top: 52px;
+      margin-top: 84px;
     }
   }
 }
