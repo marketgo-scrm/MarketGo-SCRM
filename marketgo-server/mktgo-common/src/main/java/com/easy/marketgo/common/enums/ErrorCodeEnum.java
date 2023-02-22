@@ -44,6 +44,7 @@ public enum ErrorCodeEnum {
     ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY(1114, "上传的文件中没有数据"),
     ERROR_WEB_OFFLINE_USER_GROUP_COMPUTE_FAILED(1115, "离线人群计算失败"),
     ERROR_WEB_UPLOAD_FILE_FAILED(1116, "上传文件失败"),
+    ERROR_WEB_MASS_TASK_REMIND_COUNT_IS_MAX(1117, "群发提醒的次数已经超过了3次"),
 
     ERROR_WEB_INTERNAL_SERVICE(1151, "服务内部出现异常，请检查相关服务是否运行正常"),
     ERROR_WEB_REQUEST_USER_GROUP_IS_EMPTY(1152, "数据库中没有查询到人群信息的记录"),
