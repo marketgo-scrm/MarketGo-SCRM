@@ -471,7 +471,8 @@ export default {
           console.log(res);
           if (res.code === 0) {
             this.chanelCodeList = res.data.infos || [];
-            this.total = res.total;
+          
+            this.total = res.data.total;
           }
         })
         .catch((err) => {
