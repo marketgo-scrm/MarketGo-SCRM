@@ -269,7 +269,7 @@ public class ContactsManagerServiceImpl implements ContactsManagerService {
             for (WeComGroupChatsEntity item : entities) {
                 WeComGroupChatsResponse.GroupChat msg = new WeComGroupChatsResponse.GroupChat();
                 msg.setGroupChatId(item.getGroupChatId());
-                msg.setGroupChatName(item.getGroupChatName());
+                msg.setGroupChatName(StringUtils.isEmpty(item.getGroupChatName()) ? "匿名" : item.getGroupChatName());
                 msg.setOwnerId(item.getOwner());
                 msg.setCreateTime(DateFormatUtils.formatDateTime(item.getChatCreateTime()));
                 groupChats.add(msg);

@@ -32,7 +32,7 @@ public class TestCallBackExternalUserEventService {
             byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue(), 256).getEncoded();
             String encode = Base64.encodeWithoutPadding(key);
             System.out.print("encode=" + encode + "\nkey=" + key);
-            weComcpt = new WXBizMsgCrypt("O6vWiv7Ox37LZW2i", "rnsf5eI+K2gE+WFomayitXr+Vw+VYbFmHCWvgFeulVI",
+            weComcpt = new WXBizMsgCrypt("6y0HZlpAkySE76YK", "1JI5LQ4lsJzENodLWTMvkCRZ/f6Wp7KFGwLrkCPFozE",
                     "wwa67b5f2bf5754641");
             Long currentTime = System.currentTimeMillis()/1000;
 
@@ -46,7 +46,7 @@ public class TestCallBackExternalUserEventService {
             weComXmlMessage.setUserID("WangWeiNing");
             weComXmlMessage.setExternalUserId("wmqPhANwAAwo75cqNEPOwfcN2zAM1kDQ");
             weComXmlMessage.setChangeType("add_external_contact");
-            weComXmlMessage.setState("xuofYOptav7cBMbNKV7UTz4l");
+            weComXmlMessage.setState("YfYDg6LbuUWV5qGKevtOCNf4");
             weComXmlMessage.setWelcomeCode("2GCAAAXtWyujaWJHDDGi0mAA");
             String eventMsg = WeComXmlMessage.toXml(weComXmlMessage);
             System.out.print("\neventMsg=" + eventMsg);
