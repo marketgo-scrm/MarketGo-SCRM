@@ -13,19 +13,14 @@ import java.util.List;
  */
 public interface WeComClientTaskCenterService {
 
-    BaseResponse listTaskCenter(List<String> type,
-                                List<String> taskTypes,
-                                Integer pageNum,
-                                Integer pageSize,
-                                String corpId,
-                                List<String> statuses,
-                                String keyword,
+    BaseResponse listTaskCenter(String corpId,
                                 String memberId,
-                                List<String> createUserIds,
-                                String sortKey,
-                                String sortOrder,
+                                List<String> taskTypes,
+                                List<String> statuses,
                                 String startTime,
-                                String endTime);
+                                String endTime,
+                                Integer pageNum,
+                                Integer pageSize);
 
     WeComTaskCenterDetailResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid);
 

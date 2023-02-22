@@ -198,7 +198,8 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
                 ZoneId.systemDefault());
         long seconds = ChronoUnit.SECONDS.between(currentDateTime, midnight);
 
-        weComMassTaskCacheService.setCacheContent(taskUuid, String.valueOf(Integer.valueOf(value) + 1), seconds);
+        weComMassTaskCacheService.setCacheContent(taskUuid,
+                String.valueOf(Integer.valueOf((StringUtils.isNotEmpty(value) ? value : "0")) + 1), seconds);
         weComMassTaskRepository.updateTaskRemindTime(DateUtil.date(), taskUuid);
         return BaseResponse.success();
     }

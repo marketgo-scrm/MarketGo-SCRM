@@ -6,6 +6,7 @@ import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComChangeStatusRequest;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterContentClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
+import com.easy.marketgo.gateway.wecom.sevice.QueryTaskCenterDetailService;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,27 +26,25 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class QueryTaskCenterDetailService {
+public class QueryTaskCenterDetailServiceImpl implements QueryTaskCenterDetailService {
 
     @Autowired
     private WeComClientTaskCenterService weComClientTaskCenterService;
 
-    public BaseResponse listTaskCenter(List<String> type,
-                                       List<String> taskTypes,
-                                       Integer pageNum,
-                                       Integer pageSize,
-                                       String corpId,
-                                       List<String> statuses,
-                                       String keyword,
+    @Override
+    public BaseResponse listTaskCenter(String corpId,
                                        String memberId,
-                                       List<String> createUserIds,
-                                       String sortKey,
-                                       String sortOrder,
+                                       List<String> taskTypes,
+                                       List<String> statuses,
                                        String startTime,
-                                       String endTime) {
-        return null;
+                                       String endTime,
+                                       Integer pageNum,
+                                       Integer pageSize) {
+        return weComClientTaskCenterService.listTaskCenter(corpId, memberId, taskTypes, statuses, startTime, endTime, pageNum,
+                pageSize);
     }
 
+    @Override
     public BaseResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid) {
         WeComTaskCenterDetailResponse response = weComClientTaskCenterService.getTaskCenterDetails(corpId, memberId,
                 taskUuid, uuid);
@@ -125,6 +124,7 @@ public class QueryTaskCenterDetailService {
         return BaseResponse.success(clientResponse);
     }
 
+    @Override
     public BaseResponse changeTaskCenterMemberStatus(String corpId, WeComChangeStatusRequest request) {
         if (request.getType().equalsIgnoreCase(WeComMassTaskMetricsType.MASS_TASK_MEMBER.getValue())) {
             weComClientTaskCenterService.changeTaskCenterMemberStatus(corpId, request.getMemberId(),
@@ -137,6 +137,7 @@ public class QueryTaskCenterDetailService {
         return BaseResponse.success();
     }
 
+    @Override
     public BaseResponse getTaskCenterContent(String corpId, String memberId, String taskUuid) {
         WeComTaskCenterDetailResponse response = weComClientTaskCenterService.getTaskCenterContent(corpId, memberId,
                 taskUuid);
@@ -189,5 +190,4 @@ public class QueryTaskCenterDetailService {
         clientResponse.setAttachments(attachmentsMessageList);
         return BaseResponse.success(clientResponse);
     }
-
 }

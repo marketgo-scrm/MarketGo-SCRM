@@ -8,6 +8,7 @@ import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberRepository;
 import com.easy.marketgo.core.service.taskcenter.SendTaskCenterBaseConsumer;
 import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
@@ -38,11 +39,13 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
     @Autowired
     private SendTaskCenterBaseConsumer sendTaskCenterBaseConsumer;
 
+    @Autowired
+    private WeComTaskCenterMemberRepository weComTaskCenterMemberRepository;
+
     @Override
-    public BaseResponse listTaskCenter(List<String> type, List<String> taskTypes, Integer pageNum, Integer pageSize,
-                                       String corpId, List<String> statuses, String keyword, String memberId,
-                                       List<String> createUserIds, String sortKey, String sortOrder, String startTime
-            , String endTime) {
+    public BaseResponse listTaskCenter(String corpId, String memberId, List<String> taskTypes, List<String> statuses,
+                                       String startTime, String endTime, Integer pageNum, Integer pageSize) {
+
         return null;
     }
 
