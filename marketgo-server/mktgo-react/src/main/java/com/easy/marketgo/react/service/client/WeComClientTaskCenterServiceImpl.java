@@ -8,16 +8,20 @@ import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberEntity;
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.core.model.taskcenter.QuerySubTaskCenterMemberBuildSqlParam;
 import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterMemberBuildSqlParam;
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberRepository;
 import com.easy.marketgo.core.service.taskcenter.SendTaskCenterBaseConsumer;
 import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
+import com.easy.marketgo.react.model.response.WeComMemberTaskCenterListResponse;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,8 +49,10 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
     private WeComTaskCenterMemberRepository weComTaskCenterMemberRepository;
 
     @Override
-    public BaseResponse listTaskCenter(String corpId, String memberId, List<String> taskTypes, List<String> statuses,
-                                       String startTime, String endTime, Integer pageNum, Integer pageSize) {
+    public WeComMemberTaskCenterListResponse listTaskCenter(String corpId, String memberId, List<String> taskTypes,
+                                                            List<String> statuses,
+                                                            String startTime, String endTime, Integer pageNum,
+                                                            Integer pageSize) {
 
         QueryTaskCenterMemberBuildSqlParam param =
                 QueryTaskCenterMemberBuildSqlParam.builder().corpId(corpId)
@@ -54,7 +60,59 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
                         .pageNum(pageNum).pageSize(pageSize).sortOrderKey("DESC").build();
         Integer count = weComTaskCenterMemberRepository.countByBuildSqlParam(param);
 
-        return null;
+        WeComMemberTaskCenterListResponse response = new WeComMemberTaskCenterListResponse();
+        if (count == null) {
+            response.setTotalCount(0);
+            return response;
+        }
+        response.setTotalCount(count);
+        List<WeComTaskCenterMemberEntity> entities = weComTaskCenterMemberRepository.listByBuildSqlParam(param);
+        if (CollectionUtils.isEmpty(entities)) {
+            return response;
+        }
+        List<WeComMemberTaskCenterListResponse.MemberTaskCenterDetail> list = new ArrayList<>();
+        for (WeComTaskCenterMemberEntity entity : entities) {
+            WeComMemberTaskCenterListResponse.MemberTaskCenterDetail detail =
+                    new WeComMemberTaskCenterListResponse.MemberTaskCenterDetail();
+            BeanUtils.copyProperties(entity, detail);
+            detail.setPlanTime(DateUtil.formatDateTime(entity.getPlanTime()));
+            list.add(detail);
+        }
+        response.setList(list);
+        return response;
+    }
+
+    @Override
+    public WeComMemberTaskCenterListResponse listSubTaskCenter(String corpId, String memberId, String taskUuid,
+                                                             Integer pageNum,
+                                          Integer pageSize) {
+
+        QuerySubTaskCenterMemberBuildSqlParam param =
+                QuerySubTaskCenterMemberBuildSqlParam.builder().corpId(corpId)
+                        .memberId(memberId).taskUuid(taskUuid)
+                        .pageNum(pageNum).pageSize(pageSize).sortOrderKey("DESC").build();
+        Integer count = weComTaskCenterMemberRepository.countSubTaskByParam(param);
+
+        WeComMemberTaskCenterListResponse response = new WeComMemberTaskCenterListResponse();
+        if (count == null) {
+            response.setTotalCount(0);
+            return response;
+        }
+        response.setTotalCount(count);
+        List<WeComTaskCenterMemberEntity> entities = weComTaskCenterMemberRepository.listSubTaskByParam(param);
+        if (CollectionUtils.isEmpty(entities)) {
+            return response;
+        }
+        List<WeComMemberTaskCenterListResponse.MemberTaskCenterDetail> list = new ArrayList<>();
+        for (WeComTaskCenterMemberEntity entity : entities) {
+            WeComMemberTaskCenterListResponse.MemberTaskCenterDetail detail =
+                    new WeComMemberTaskCenterListResponse.MemberTaskCenterDetail();
+            BeanUtils.copyProperties(entity, detail);
+            detail.setPlanTime(DateUtil.formatDateTime(entity.getPlanTime()));
+            list.add(detail);
+        }
+        response.setList(list);
+        return response;
     }
 
     @Override

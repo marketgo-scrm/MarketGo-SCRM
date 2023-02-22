@@ -23,6 +23,12 @@ public interface QueryTaskCenterDetailService {
                                 Integer pageNum,
                                 Integer pageSize);
 
+    BaseResponse listSubTaskCenter(String corpId,
+                                String memberId,
+                                String taskUuid,
+                                Integer pageNum,
+                                Integer pageSize);
+
     BaseResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid);
 
     BaseResponse changeTaskCenterMemberStatus(String corpId, WeComChangeStatusRequest request);

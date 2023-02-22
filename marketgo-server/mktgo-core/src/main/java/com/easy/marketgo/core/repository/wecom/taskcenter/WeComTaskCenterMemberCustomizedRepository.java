@@ -1,6 +1,7 @@
 package com.easy.marketgo.core.repository.wecom.taskcenter;
 
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberEntity;
+import com.easy.marketgo.core.model.taskcenter.QuerySubTaskCenterMemberBuildSqlParam;
 import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterMemberBuildSqlParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -24,6 +25,10 @@ public interface WeComTaskCenterMemberCustomizedRepository {
 
     Integer countByBuildSqlParam(QueryTaskCenterMemberBuildSqlParam param);
 
+    List<WeComTaskCenterMemberEntity> listSubTaskByParam(QuerySubTaskCenterMemberBuildSqlParam param);
+
+    Integer countSubTaskByParam(QuerySubTaskCenterMemberBuildSqlParam param);
+
     @Slf4j
     class WeComTaskCenterMemberCustomizedRepositoryImpl implements WeComTaskCenterMemberCustomizedRepository {
         @Resource
@@ -40,6 +45,21 @@ public interface WeComTaskCenterMemberCustomizedRepository {
         public Integer countByBuildSqlParam(QueryTaskCenterMemberBuildSqlParam param) {
             BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
             return new NamedParameterJdbcTemplate(this.dataSource).queryForObject(getSelectByCndSql(param,
+                    true),
+                    paramSource, Integer.class);
+        }
+
+        @Override
+        public List<WeComTaskCenterMemberEntity> listSubTaskByParam(QuerySubTaskCenterMemberBuildSqlParam param) {
+            BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
+            return new NamedParameterJdbcTemplate(this.dataSource).query(getSubTaskByCndSql(param, false),
+                    paramSource, new BeanPropertyRowMapper(WeComTaskCenterMemberEntity.class));
+        }
+
+        @Override
+        public Integer countSubTaskByParam(QuerySubTaskCenterMemberBuildSqlParam param) {
+            BeanPropertySqlParameterSource paramSource = new BeanPropertySqlParameterSource(param);
+            return new NamedParameterJdbcTemplate(this.dataSource).queryForObject(getSubTaskByCndSql(param,
                     true),
                     paramSource, Integer.class);
         }
@@ -67,12 +87,34 @@ public interface WeComTaskCenterMemberCustomizedRepository {
             if (param.getEndTime() != null) {
                 sql.append(" AND create_time < :endTime");
             }
+            sql.append(" group by task_uuid");
             if (!isCount) {
                 sql.append(String.format(" ORDER BY id %s", param.getSortOrderKey()));
                 sql.append(" LIMIT :startIndex,:pageSize");
             }
             String sqlStr = sql.toString();
             log.info("select by build sql param: sql={}", sqlStr);
+            return sqlStr;
+        }
+
+        private String getSubTaskByCndSql(QuerySubTaskCenterMemberBuildSqlParam param, boolean isCount) {
+            StringBuilder sql = new StringBuilder(
+                    String.format("SELECT %s FROM wecom_task_center_member WHERE corp_id = :corpId",
+                            isCount ?
+                                    "COUNT(*)" : "*"));
+
+            if (StringUtils.isNotEmpty(param.getMemberId())) {
+                sql.append(" AND member_id = :memberId");
+            }
+            if (StringUtils.isNotEmpty(param.getTaskUuid())) {
+                sql.append(" AND task_uuid = :taskUuid");
+            }
+            if (!isCount) {
+                sql.append(String.format(" ORDER BY id %s", param.getSortOrderKey()));
+                sql.append(" LIMIT :startIndex,:pageSize");
+            }
+            String sqlStr = sql.toString();
+            log.info("select sub task by build sql param: sql={}", sqlStr);
             return sqlStr;
         }
     }

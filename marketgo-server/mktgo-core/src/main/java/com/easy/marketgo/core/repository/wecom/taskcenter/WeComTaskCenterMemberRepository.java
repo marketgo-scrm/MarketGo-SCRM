@@ -83,10 +83,6 @@ public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTas
     List<WeComTaskCenterMemberEntity> getByTaskStatus(@Param("task_status") String taskStatus);
 
     @Modifying
-    @Query("UPDATE wecom_task_center_member SET version = version + 1  WHERE id = :id AND version = :version")
-    int updateTaskVersion(@Param("id") Integer id, @Param("version") Integer version);
-
-    @Modifying
     @Query("UPDATE wecom_task_center_member SET plan_time = :plan_time  WHERE uuid=:uuid")
     int updateTaskPlanTime(@Param("plan_time") Date remindTime, @Param("uuid") String uuid);
 

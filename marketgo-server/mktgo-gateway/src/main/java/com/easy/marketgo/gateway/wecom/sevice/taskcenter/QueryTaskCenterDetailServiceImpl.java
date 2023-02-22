@@ -4,9 +4,11 @@ import com.easy.marketgo.common.enums.WeComMassTaskMetricsType;
 import com.easy.marketgo.common.enums.WeComMediaTypeEnum;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComChangeStatusRequest;
+import com.easy.marketgo.gateway.wecom.request.client.WeComMemberTaskCenterListClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterContentClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
 import com.easy.marketgo.gateway.wecom.sevice.QueryTaskCenterDetailService;
+import com.easy.marketgo.react.model.response.WeComMemberTaskCenterListResponse;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +42,45 @@ public class QueryTaskCenterDetailServiceImpl implements QueryTaskCenterDetailSe
                                        String endTime,
                                        Integer pageNum,
                                        Integer pageSize) {
-        return weComClientTaskCenterService.listTaskCenter(corpId, memberId, taskTypes, statuses, startTime, endTime, pageNum,
+        WeComMemberTaskCenterListResponse response = weComClientTaskCenterService.listTaskCenter(corpId, memberId,
+                taskTypes,
+                statuses, startTime, endTime, pageNum,
                 pageSize);
+        WeComMemberTaskCenterListClientResponse clientResponse = new WeComMemberTaskCenterListClientResponse();
+        clientResponse.setTotalCount(response.getTotalCount());
+        if (response.getTotalCount() != 0) {
+            List<WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail> list = new ArrayList<>();
+            for (WeComMemberTaskCenterListResponse.MemberTaskCenterDetail item : response.getList()) {
+                WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail detail =
+                        new WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail();
+                BeanUtils.copyProperties(item, detail);
+                list.add(detail);
+            }
+            clientResponse.setList(list);
+        }
+
+        return BaseResponse.success(clientResponse);
+    }
+
+    @Override
+    public BaseResponse listSubTaskCenter(String corpId, String memberId, String taskUuid, Integer pageNum,
+                                          Integer pageSize) {
+        WeComMemberTaskCenterListResponse response = weComClientTaskCenterService.listSubTaskCenter(corpId, memberId,
+                taskUuid, pageNum, pageSize);
+        WeComMemberTaskCenterListClientResponse clientResponse = new WeComMemberTaskCenterListClientResponse();
+        clientResponse.setTotalCount(response.getTotalCount());
+        if (response.getTotalCount() != 0) {
+            List<WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail> list = new ArrayList<>();
+            for (WeComMemberTaskCenterListResponse.MemberTaskCenterDetail item : response.getList()) {
+                WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail detail =
+                        new WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail();
+                BeanUtils.copyProperties(item, detail);
+                list.add(detail);
+            }
+            clientResponse.setList(list);
+        }
+
+        return BaseResponse.success(clientResponse);
     }
 
     @Override
