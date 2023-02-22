@@ -68,7 +68,7 @@ public class WeComMassTaskController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
-    @ApiOperation(value = "提醒用户发送群发任务", nickname = "stopSendMassTask", notes = "", response = BaseResponse.class)
+    @ApiOperation(value = "停止发送群发任务", nickname = "stopSendMassTask", notes = "", response = BaseResponse.class)
     @RequestMapping(value = {"/stop"}, produces = {"application/json"}, method = RequestMethod.POST)
     public ResponseEntity stopSendMassTask(
             @ApiParam(value = "企微项目uuid", required = true) @NotNull @Valid @RequestParam(value = "project_id",
