@@ -1,5 +1,6 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import com.easy.marketgo.api.model.request.WeComSendAgentMessageClientRequest;
@@ -28,6 +29,7 @@ import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskExternalUse
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskMemberStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatisticRepository;
+import com.easy.marketgo.core.service.WeComMassTaskCacheService;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComMassTaskRequest;
 import com.easy.marketgo.web.model.response.masstask.*;
@@ -41,14 +43,16 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.easy.marketgo.biz.service.wecom.masstask.QueryMassTaskMetricsService.CREATE_MOMENT_STATUE_COMPLETE;
-import static com.easy.marketgo.common.enums.ErrorCodeEnum.ERROR_WEB_MASS_TASK_IS_EMPTY;
-import static com.easy.marketgo.common.enums.ErrorCodeEnum.ERROR_WEB_MASS_TASK_METRICS_TYPE_NOT_SUPPORT;
+import static com.easy.marketgo.common.enums.ErrorCodeEnum.*;
 import static java.util.Collections.emptyList;
 
 /**
@@ -90,6 +94,9 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
 
     @Autowired
     private XxlJobManualTriggerService xxlJobManualTriggerService;
+
+    @Autowired
+    private WeComMassTaskCacheService weComMassTaskCacheService;
 
     @Override
     public BaseResponse updateOrInsertMassTask(String projectId, String corpId, String taskType,
@@ -138,7 +145,13 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
         if (entity == null) {
             return BaseResponse.failure(ERROR_WEB_MASS_TASK_IS_EMPTY);
         }
-        WeComAgentMessageEntity agentMessageEntity = weComAgentMessageRepository.getWeComAgentByCorp(projectId, corpId);
+        String value = weComMassTaskCacheService.getCacheRemindCount(taskUuid);
+        if (StringUtils.isNotEmpty(value) && Integer.valueOf(value) > 2) {
+            return BaseResponse.failure(ERROR_WEB_MASS_TASK_REMIND_COUNT_IS_MAX);
+        }
+
+        WeComAgentMessageEntity agentMessageEntity = weComAgentMessageRepository.getWeComAgentByCorp(projectId,
+                corpId);
         log.info("mass task to remind send. weComMassTask={}", entity);
         String agentId = (agentMessageEntity != null) ? agentMessageEntity.getAgentId() : "";
 
@@ -176,6 +189,16 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
             }
         } while (offset > 0);
 
+        DateTime dateTime = new DateTime();
+        LocalDateTime midnight = LocalDateTime.ofInstant(dateTime.toInstant(),
+                ZoneId.systemDefault()).plusDays(1).withHour(0).withMinute(0)
+                .withSecond(0).withNano(0);
+
+        LocalDateTime currentDateTime = LocalDateTime.ofInstant(dateTime.toInstant(),
+                ZoneId.systemDefault());
+        long seconds = ChronoUnit.SECONDS.between(currentDateTime, midnight);
+
+        weComMassTaskCacheService.setCacheContent(taskUuid, String.valueOf(Integer.valueOf(value) + 1), seconds);
         weComMassTaskRepository.updateTaskRemindTime(DateUtil.date(), taskUuid);
         return BaseResponse.success();
     }
@@ -451,7 +474,10 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
                 entity.getTaskStatus().equals(WeComMassTaskStatus.UNSTART.getValue())) {
             return Boolean.FALSE;
         }
-
+        String value = weComMassTaskCacheService.getCacheRemindCount(entity.getUuid());
+        if (StringUtils.isNotEmpty(value) && Integer.valueOf(value) > 2) {
+            return Boolean.FALSE;
+        }
 //        String today = DateUtil.today();
 //        if (entity.getRemindTime() != null && DateUtil.formatDate(entity.getRemindTime()).equals(today)) {
 //            return Boolean.FALSE;
