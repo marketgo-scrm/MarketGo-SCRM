@@ -14,7 +14,7 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="发送范围：" prop="radioXz">
+        <el-form-item label="发送范围：" prop="radioXz" style="margin-top: -4px">
           <div class="style-tab-radio">
             <div class="style-item">
               <el-radio v-model="baseForm.radioXz" label="1">全部客户</el-radio>
@@ -23,7 +23,7 @@
               <el-radio v-model="baseForm.radioXz" label="2">按条件筛选客户</el-radio>
             </div>
           </div>
-          <div class="choiceKh" style="padding-top: 5px;padding-bottom: 10px" v-show="baseForm.radioXz == 2">
+          <div class="choiceKh" style="padding-top: 5px;padding-bottom: 10px;margin-top: 15px" v-show="baseForm.radioXz == 2">
             <el-form-item label="添加员工：" prop="">
               <!--          <i class="el-icon-circle-plus-outline"></i>-->
               <div style="width: 510px">
@@ -133,7 +133,7 @@
           <el-radio disabled v-model="baseForm.radioPc" label="2">是</el-radio>
         </el-form-item>-->
 
-        <el-form-item>
+        <el-form-item style="margin-top: -19px">
           <div>
             <div class="inline num-text">预计可见微信客户数（未去重）</div>
             <i class="el-icon-refresh num-refresh"
@@ -168,7 +168,7 @@
                 </div>
               </div>
             </el-form-item>
-            <el-form-item label="文字消息：" prop="text">
+            <el-form-item label="文字消息：" prop="text" style="margin-top: -5px">
 
               <div style="width: 100%">
                 <CustomMessageInput
@@ -258,6 +258,7 @@
             </div>
           </div>
           <el-date-picker v-show="setForm.radioFs == 2"
+                          style="margin-top: 20px"
                           v-model="postDataSet.weComMassTaskRequest.scheduleTime"
                           format="yyyy-MM-dd HH:mm:ss"
                           value-format="yyyy-MM-dd HH:mm:ss"
@@ -269,7 +270,7 @@
           <!--          <el-radio disabled v-model="setForm.radioFs" label="1">立即发送</el-radio>
                     <el-radio disabled v-model="setForm.radioFs" label="2">定时发送</el-radio>-->
         </el-form-item>
-        <div v-show="setForm.radioFs == 3">
+        <div v-show="setForm.radioFs == 3" style="margin-top: -5px">
           <el-form-item label="起止时间：">
             <el-date-picker
                 style="width: 372px"
@@ -1036,6 +1037,7 @@ export default {
       history.back()
     },
     async checkName() {
+      this.baseForm.name = this.baseForm.name.trim()
       if (!this.baseForm.name) {
         this.$message.error('请填写任务名称');
       }
@@ -1059,6 +1061,26 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep(.el-input__inner) {
+  font-size: 12px!important;
+}
+::v-deep(.el-radio__label) {
+  font-size: 12px!important;
+}
+::v-deep(.el-form-item__content) {
+  font-size: 12px!important;
+}
+::v-deep(.el-button) {
+  font-size: 12px!important;
+}
+::v-deep(.el-radio) {
+  font-size: 12px!important;
+  font-weight: 400!important;
+}
+
+.el-form-item {
+  margin-bottom: 20px;
+}
 .choiceKh {
   width: 606px;
   min-height: 50px;
@@ -1098,7 +1120,7 @@ export default {
   height: 30px;
   //border: 1px solid rgba(228, 228, 228, 1);
   border-radius: 2px;
-  margin-bottom: 25px;
+  //margin-bottom: 25px;
   .style-item {
     width: auto;
     height: 30px;
@@ -1107,6 +1129,7 @@ export default {
     padding: 0 10px;
     margin-top: 5px;
     margin-right: 8px;
+    border-radius: 2px;
     .el-radio {
       line-height: 30px !important;
       vertical-align: top;
@@ -1151,6 +1174,7 @@ export default {
       //position: absolute;
       //left: 780px;
       //top: 52px;
+      margin-top: 84px;
     }
   }
 }

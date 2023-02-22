@@ -14,7 +14,7 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="执行员工：" prop="members">
+        <el-form-item label="执行员工：" prop="members" style="margin-top: -6px">
           <div style="width: 606px">
             <div class="add-custom">
               <div class="add-custom-btn">
@@ -83,7 +83,7 @@
 
         </el-form-item>
 
-        <el-form-item label="选择客户群：" prop="radioXz">
+        <el-form-item label="选择客户群：" prop="radioXz" style="margin-top: -11px">
           <div class="style-tab-radio">
             <div class="style-item">
               <el-radio v-model="baseForm.radioXz" label="1">全部客户群</el-radio>
@@ -92,10 +92,10 @@
               <el-radio v-model="baseForm.radioXz" label="2">指定客户群</el-radio>
             </div>
           </div>
-          <condition ref="condition" v-show="baseForm.radioXz == 2"></condition>
+          <condition ref="condition" v-show="baseForm.radioXz == 2" style="margin-top: 15px"></condition>
           <!--          <div @click="$refs.condition.getData()">huoqu</div>-->
         </el-form-item>
-        <el-form-item label="排除客户群：" prop="radioPc">
+        <el-form-item label="排除客户群：" prop="radioPc" style="margin-top: -9.5px">
           <!--          <el-radio disabled v-model="baseForm.radioPc" label="1">否</el-radio>
                     <el-radio disabled v-model="baseForm.radioPc" label="2">是</el-radio>-->
           <div class="style-tab-radio">
@@ -106,10 +106,10 @@
               <el-radio v-model="baseForm.radioPc" label="2">是</el-radio>
             </div>
           </div>
-          <condition ref="conditionPc" v-show="baseForm.radioPc == 2"></condition>
+          <condition ref="conditionPc" v-show="baseForm.radioPc == 2" style="margin-top: 15px"></condition>
         </el-form-item>
 
-        <el-form-item>
+        <el-form-item style="margin-top: -19px">
           <div>
             <div class="inline num-text">预计发送群聊数</div>
             <i class="el-icon-refresh num-refresh"
@@ -144,7 +144,7 @@
                 </div>
               </div>
             </el-form-item>
-            <el-form-item label="文字消息：" prop="text">
+            <el-form-item label="文字消息：" prop="text" style="margin-top: -5px">
 <!--                <div style="width: 100%">
                   <CustomMessageInput
                       :value="
@@ -248,6 +248,7 @@
             </div>
           </div>
           <el-date-picker v-show="setForm.radioFs == 2"
+                          style="margin-top: 20px"
                           v-model="postDataSet.weComMassTaskRequest.scheduleTime"
                           format="yyyy-MM-dd HH:mm:ss"
                           value-format="yyyy-MM-dd HH:mm:ss"
@@ -259,7 +260,7 @@
           <!--          <el-radio disabled v-model="setForm.radioFs" label="1">立即发送</el-radio>
                     <el-radio disabled v-model="setForm.radioFs" label="2">定时发送</el-radio>-->
         </el-form-item>
-        <div v-show="setForm.radioFs == 3">
+        <div v-show="setForm.radioFs == 3" style="margin-top: -5px">
           <el-form-item label="起止时间：">
             <el-date-picker
                 style="width: 372px"
@@ -1071,6 +1072,7 @@ export default {
       history.back()
     },
     async checkName() {
+      this.baseForm.name = this.baseForm.name.trim()
       if (!this.baseForm.name) {
         this.$message.error('请填写任务名称');
       }
@@ -1099,11 +1101,37 @@ export default {
 </script>
 
 <style scoped lang="scss">
+::v-deep(.el-input__inner) {
+  font-size: 12px!important;
+}
+::v-deep(.el-radio__label) {
+  font-size: 12px!important;
+}
+::v-deep(.el-form-item__content) {
+  font-size: 12px!important;
+}
+::v-deep(.el-button) {
+  font-size: 12px!important;
+}
+::v-deep(.el-radio) {
+  font-size: 12px!important;
+  font-weight: 400!important;
+}
+
+.el-form-item {
+  margin-bottom: 20px;
+}
 .btn-del {
   position: absolute;
   top: 9px;
-  right: 25px;
+  //right: 25px;
+  right: -26px !important;
   cursor: pointer;
+}
+::v-deep(.EnclosureList){
+  .btn-del{
+    right: -26px !important;
+  }
 }
 .btn-add {
   //max-width: 605px;
@@ -1200,7 +1228,7 @@ export default {
   height: 30px;
   //border: 1px solid rgba(228, 228, 228, 1);
   border-radius: 2px;
-  margin-bottom: 25px;
+  //margin-bottom: 25px;
   .style-item {
     width: auto;
     height: 30px;
@@ -1209,6 +1237,7 @@ export default {
     padding: 0 10px;
     margin-top: 5px;
     margin-right: 8px;
+    border-radius: 2px;
     .el-radio {
       line-height: 30px !important;
       vertical-align: top;
@@ -1253,6 +1282,7 @@ export default {
       //position: absolute;
       //left: 780px;
       //top: 52px;
+      margin-top: 84px;
     }
   }
 }
