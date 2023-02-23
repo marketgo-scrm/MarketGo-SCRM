@@ -25,6 +25,7 @@ public class QuerySignatureResponse extends WeComBaseResponse {
         @JsonProperty("signature")
         private String signature = null;
 
+        private String nonceStr;
     }
 
     @Data
@@ -34,5 +35,7 @@ public class QuerySignatureResponse extends WeComBaseResponse {
 
         @JsonProperty("signature")
         private String signature = null;
+
+        private String nonceStr;
     }
 }

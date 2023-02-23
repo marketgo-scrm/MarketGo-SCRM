@@ -123,12 +123,15 @@ public class WeComClientVerifyService {
             QuerySignatureResponse.CorpSignatureMessage corp = new QuerySignatureResponse.CorpSignatureMessage();
             corp.setSignature(corpSignature);
             corp.setTimestamp(timestamp);
+            corp.setNonceStr(NONCESTR);
             querySignatureResponse.setCorpSignature(corp);
+
         }
         if (StringUtils.isNotBlank(agentSignature)) {
             QuerySignatureResponse.AgentSignatureMessage agent = new QuerySignatureResponse.AgentSignatureMessage();
             agent.setSignature(agentSignature);
             agent.setTimestamp(timestamp);
+            agent.setNonceStr(NONCESTR);
             querySignatureResponse.setAgentSignature(agent);
         }
         baseResponse.setData(querySignatureResponse);
