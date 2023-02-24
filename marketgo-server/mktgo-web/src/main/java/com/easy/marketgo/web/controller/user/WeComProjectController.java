@@ -50,17 +50,6 @@ public class WeComProjectController {
     @ApiResponses({
             @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
     })
-    @ApiOperation(value = "检查项目名称", nickname = "createProject", notes = "", response =
-            BaseResponse.class)
-    @RequestMapping(value = {"/check_name"}, produces = {"application/json"}, method = RequestMethod.POST)
-    public ResponseEntity checkProjectName(
-            @ApiParam(value = "项目创建请求", required = true) @RequestBody @Valid ProjectCreateRequest projectCreateRequest) {
-        return ResponseEntity.ok(projectService.createProject(projectCreateRequest));
-    }
-
-    @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
-    })
     @ApiOperation(value = "检查项目名称", nickname = "checkProjectName", notes = "", response =
             BaseResponse.class)
     @RequestMapping(value = {"/check_name"}, produces = {"application/json"}, method = RequestMethod.GET)
