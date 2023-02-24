@@ -85,8 +85,8 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
 
     @Override
     public WeComMemberTaskCenterListResponse listSubTaskCenter(String corpId, String memberId, String taskUuid,
-                                                             Integer pageNum,
-                                          Integer pageSize) {
+                                                               Integer pageNum,
+                                                               Integer pageSize) {
 
         QuerySubTaskCenterMemberBuildSqlParam param =
                 QuerySubTaskCenterMemberBuildSqlParam.builder().corpId(corpId)
@@ -185,11 +185,13 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
                 return list;
             }
             for (WeComTaskCenterMemberEntity entity : entities) {
-                WeComTaskCenterDetailResponse detailClientResponse  =
+                WeComTaskCenterDetailResponse detailClientResponse =
                         new WeComTaskCenterDetailResponse();
                 List<WeComTaskCenterDetailResponse.AttachmentsMessage> messages = JsonUtils.toArray(entity.getContent(),
                         WeComTaskCenterDetailResponse.AttachmentsMessage.class);
                 BeanUtils.copyProperties(entity, detailClientResponse);
+                detailClientResponse.setTaskName(entity.getName());
+                detailClientResponse.setPlanTime(DateUtil.formatTime(entity.getPlanTime()));
                 detailClientResponse.setAttachments(messages);
                 list.add(detailClientResponse);
             }
