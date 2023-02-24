@@ -22,7 +22,7 @@ public enum ErrorCodeEnum {
     ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME(1004, "企微活动重名，请修改名称"),
     ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME(1005, "企微群发任务名称检查失败"),
     ERROR_WECOM_PROJECT_DUPLICATE_CNAME(1006, "项目名称重名，请修改项目名称"),
-
+    ERROR_WEB_USER_IS_NOT_CREATE_PERMISSION(1007, "用户没有创建项目的权限，只有超级管理员有创建项目权限"),
 
     ERROR_WEB_WECOM_MASS_TASK_NOT_SUPPORT_CHANGE(1010, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),
     ERROR_WEB_WECOM_TASK_CENTER_NOT_SUPPORT_CHANGE(1011, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),

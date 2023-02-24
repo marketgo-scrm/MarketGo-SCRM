@@ -4,12 +4,12 @@ import cn.hutool.core.util.IdUtil;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.DateFormatUtils;
-import com.easy.marketgo.core.entity.ProjectConfigEntity;
-import com.easy.marketgo.core.entity.WeComSysUserEntity;
-import com.easy.marketgo.core.entity.WeComUserTenantLinkEntity;
+import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.core.entity.*;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.core.repository.user.WeComSysUserRepository;
 import com.easy.marketgo.core.repository.wecom.ProjectConfigRepository;
+import com.easy.marketgo.core.repository.wecom.WeComSysCropUserRoleLinkRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserTenantLinkRepository;
 import com.easy.marketgo.web.client.ClientRequestContextHolder;
 import com.easy.marketgo.web.model.request.ProjectCreateRequest;
@@ -37,10 +37,15 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Autowired
     private WeComSysUserRepository sysUserRepository;
+
     @Autowired
     private WeComUserTenantLinkRepository userTenantLinkRepository;
+
     @Autowired
     private ProjectConfigRepository projectConfigRepository;
+
+    @Autowired
+    private WeComSysCropUserRoleLinkRepository weComSysCropUserRoleLinkRepository;
 
     @Override
     public ProjectFetchResponse fetchProjects() {
@@ -64,6 +69,11 @@ public class ProjectServiceImpl implements IProjectService {
 
         response.setTenantUuid(linkEntity.getTenantUuid());
 
+        WeComSysCorpUserRoleLinkEntity entity =
+                weComSysCropUserRoleLinkRepository.findByCorpIdAndProjectUuidAndMemberId(linkEntity.getTenantUuid(),
+                        linkEntity.getTenantUuid(), userName);
+        response.setCanCreate(entity != null ? Boolean.TRUE : Boolean.FALSE);
+
         List<ProjectConfigEntity> configEntities = projectConfigRepository.findByTenantUuid(linkEntity.getTenantUuid());
         List<ProjectFetchResponse.ProjectInfo> projectInfos = configEntities
                 .stream()
@@ -82,12 +92,32 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Override
     public BaseResponse createProject(ProjectCreateRequest projectCreateRequest) {
+        String userName = ClientRequestContextHolder.current().getUserName();
+        log.info("begin to create project , userName={}, projectCreateRequest={}.", userName,
+                JsonUtils.toJSONString(projectCreateRequest));
+        WeComSysUserEntity userEntity = sysUserRepository.queryByUserName(userName);
+        if (Objects.isNull(userEntity)) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_USER_IS_NOT_EXISTS);
+        }
+        List<WeComUserTenantLinkEntity> linkEntities = userTenantLinkRepository.findByUserUuid(userEntity.getUuid());
+        if (CollectionUtils.isEmpty(linkEntities)) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_USER_IS_NOT_CREATE_PERMISSION);
+        }
 
+        WeComUserTenantLinkEntity linkEntity = linkEntities
+                .stream().findAny()
+                .orElseThrow((Supplier<RuntimeException>) () -> new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_EMPTY));
+        WeComSysCorpUserRoleLinkEntity entity =
+                weComSysCropUserRoleLinkRepository.findByCorpIdAndProjectUuidAndMemberId(linkEntity.getTenantUuid(),
+                        linkEntity.getTenantUuid(), userName);
+        if (entity == null) {
+            throw new CommonException(ErrorCodeEnum.ERROR_WEB_TENANT_IS_EMPTY);
+        }
         ProjectConfigEntity projectConfigEntity = new ProjectConfigEntity();
         projectConfigEntity.setDesc(projectCreateRequest.getDesc());
         projectConfigEntity.setName(projectCreateRequest.getName());
         projectConfigEntity.setUuid(IdUtil.simpleUUID());
-        projectConfigEntity.setTenantUuid(projectCreateRequest.getTenantUuid());
+        projectConfigEntity.setTenantUuid(linkEntity.getTenantUuid());
         projectConfigRepository.save(projectConfigEntity);
         return BaseResponse.success();
     }

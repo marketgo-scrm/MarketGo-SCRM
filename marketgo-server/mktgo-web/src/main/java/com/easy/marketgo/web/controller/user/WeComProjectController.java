@@ -26,8 +26,11 @@ public class WeComProjectController {
     @Autowired
     private IProjectService projectService;
 
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = ProjectFetchResponse.class)
+    })
     @ApiOperation(value = "项目列表", nickname = "projectList", notes = "", response =
-            BaseResponse.class)
+            ProjectFetchResponse.class)
     @PostMapping(value = {"list"}, produces = {"application/json"})
     public ResponseEntity<BaseResponse<ProjectFetchResponse>> projectList() {
 
@@ -44,6 +47,7 @@ public class WeComProjectController {
     @RequestMapping(value = {"/create"}, produces = {"application/json"}, method = RequestMethod.POST)
     public ResponseEntity createProject(
             @ApiParam(value = "项目创建请求", required = true) @RequestBody @Valid ProjectCreateRequest projectCreateRequest) {
+
         return ResponseEntity.ok(projectService.createProject(projectCreateRequest));
     }
 
