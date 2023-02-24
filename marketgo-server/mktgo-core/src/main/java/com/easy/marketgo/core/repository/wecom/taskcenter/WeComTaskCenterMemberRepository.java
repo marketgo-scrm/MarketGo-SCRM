@@ -16,44 +16,47 @@ import java.util.List;
  * @data : 12/24/22 9:20 PM
  * Describe:
  */
-public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTaskCenterMemberEntity, Long>{
+public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTaskCenterMemberEntity, Long> {
 
     @Query("SELECT * FROM wecom_task_center_member WHERE project_uuid = :project_uuid AND name = :name")
     WeComTaskCenterMemberEntity getTaskCenterByName(@Param("project_uuid") String projectUuid,
-                                              @Param("name") String name);
+                                                    @Param("name") String name);
 
     @Query("SELECT * FROM wecom_task_center_member WHERE id = :id")
     WeComTaskCenterMemberEntity queryById(@Param("id") Integer id);
 
-    @Query("SELECT * FROM wecom_task_center_member WHERE DATE_ADD(NOW(), INTERVAL :minute MINUTE) > schedule_time AND " +
+    @Query("SELECT * FROM wecom_task_center_member WHERE DATE_ADD(NOW(), INTERVAL :minute MINUTE) > schedule_time AND" +
+            " " +
             "task_type = :task_type AND task_status = :task_status AND schedule_type IN (:schedule_type)")
     List<WeComTaskCenterMemberEntity> getWeComMassTaskByScheduleTime(@Param("minute") int minute,
-                                                               @Param("task_type") String taskType,
-                                                               @Param("task_status") String taskStatus,
-                                                               @Param("schedule_type") List<String> scheduleType);
+                                                                     @Param("task_type") String taskType,
+                                                                     @Param("task_status") String taskStatus,
+                                                                     @Param("schedule_type") List<String> scheduleType);
 
-    @Query("SELECT * FROM wecom_task_center_member WHERE task_type = :task_type AND schedule_type IN (:schedule_type) AND ( " +
+    @Query("SELECT * FROM wecom_task_center_member WHERE task_type = :task_type AND schedule_type IN (:schedule_type)" +
+            " AND ( " +
             "plan_time is null OR DATE_ADD(plan_time, INTERVAL :hour HOUR) <  NOW())")
     List<WeComTaskCenterMemberEntity> getWeComMassTaskByScheduleType(@Param("hour") int hour,
-                                                               @Param("task_type") String taskType,
-                                                               @Param("schedule_type") List<String> scheduleType);
+                                                                     @Param("task_type") String taskType,
+                                                                     @Param("schedule_type") List<String> scheduleType);
 
-    @Query("SELECT * FROM wecom_task_center_member WHERE task_type = :task_type AND schedule_type IN (:schedule_type) AND ( " +
+    @Query("SELECT * FROM wecom_task_center_member WHERE task_type = :task_type AND schedule_type IN (:schedule_type)" +
+            " AND ( " +
             "plan_time is not null AND DATE_ADD(NOW(), INTERVAL :minute MINUTE) >plan_time)")
     List<WeComTaskCenterMemberEntity> getWeComMassTaskByPlanTime(@Param("minute") int minute,
-                                                           @Param("task_type") String taskType,
-                                                           @Param("schedule_type") List<String> scheduleType);
+                                                                 @Param("task_type") String taskType,
+                                                                 @Param("schedule_type") List<String> scheduleType);
 
-    @Query("SELECT * FROM wecom_task_center_member WHERE id = :id AND project_uuid = :project_uuid AND task_type = :task_type")
-    WeComTaskCenterMemberEntity getByProjectIdTypeAndId(@Param("project_uuid") String projectUuid,
-                                                  @Param("task_type") String taskType,
-                                                  @Param("id") Integer id);
+    @Query("SELECT * FROM wecom_task_center_member WHERE corp_id = :corpId AND member_id = :memberId AND task_status" +
+            " != :taskStatus")
+    List<WeComTaskCenterMemberEntity> getMemberTaskByStatus(String corpId, String memberId, String taskStatus);
 
-    @Query("SELECT * FROM wecom_task_center_member WHERE project_uuid = :project_uuid AND task_type = :task_type AND name = " +
+    @Query("SELECT * FROM wecom_task_center_member WHERE project_uuid = :project_uuid AND task_type = :task_type AND " +
+            "name = " +
             ":name")
     WeComTaskCenterMemberEntity getByProjectIdTypeAndName(@Param("project_uuid") String projectUuid,
-                                                    @Param("task_type") String taskType,
-                                                    @Param("name") String name);
+                                                          @Param("task_type") String taskType,
+                                                          @Param("name") String name);
 
     @Query("SELECT DISTINCT creator_id, creator_name FROM wecom_task_center_member WHERE project_uuid = :project_uuid" +
             " AND corp_id = :corp_id AND task_type = :task_type")
@@ -67,8 +70,8 @@ public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTas
     @Query("SELECT * FROM wecom_task_center_member WHERE task_type = :task_type AND task_status = :task_status and " +
             "schedule_time < :time")
     List<WeComTaskCenterMemberEntity> querytByStatusAndScheduleTime(@Param("task_type") String taskType,
-                                                              @Param("task_status") String taskStatus,
-                                                              @Param("time") String time);
+                                                                    @Param("task_status") String taskStatus,
+                                                                    @Param("time") String time);
 
     @Query("SELECT * FROM wecom_task_center_member WHERE  schedule_time < time")
     List<WeComTaskCenterMemberEntity> getByScheduleTime(@Param("time") String time);
@@ -105,12 +108,14 @@ public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTas
     int updateTaskStatusAndFinishTime(@Param("uuid") String uuid, @Param("task_status") String taskStatus, @Param(
             "finish_time") Date finishTime);
 
-    @Query("SELECT * FROM wecom_task_center_member WHERE schedule_time BETWEEN CONCAT(DATE_ADD(curdate(), INTERVAL 1 DAY), '" +
+    @Query("SELECT * FROM wecom_task_center_member WHERE schedule_time BETWEEN CONCAT(DATE_ADD(curdate(), INTERVAL 1 " +
+            "DAY), '" +
             " " +
             "00:00:00') AND CONCAT(DATE_ADD(curdate(), INTERVAL 1 DAY), ' 23:59:59')")
     List<WeComTaskCenterMemberEntity> findTomorrowTobeSentTaskList();
 
-    @Query("SELECT * FROM wecom_task_center_member WHERE project_uuid = :projectUuid AND task_type = :taskType AND uuid = " +
+    @Query("SELECT * FROM wecom_task_center_member WHERE project_uuid = :projectUuid AND task_type = :taskType AND " +
+            "uuid = " +
             ":uuid")
     WeComTaskCenterMemberEntity findByUuid(String projectUuid, String taskType, @Param("uuid") String uuid);
 }
