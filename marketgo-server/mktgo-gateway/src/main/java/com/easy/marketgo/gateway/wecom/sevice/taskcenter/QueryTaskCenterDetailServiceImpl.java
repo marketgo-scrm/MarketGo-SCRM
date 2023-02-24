@@ -94,37 +94,37 @@ public class QueryTaskCenterDetailServiceImpl implements QueryTaskCenterDetailSe
             WeComTaskCenterDetailClientResponse.AttachmentsMessage message =
                     new WeComTaskCenterDetailClientResponse.AttachmentsMessage();
             BeanUtils.copyProperties(item, message);
-            if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
+            if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
                 WeComTaskCenterDetailClientResponse.TextMessage textMessage =
                         new WeComTaskCenterDetailClientResponse.TextMessage();
                 BeanUtils.copyProperties(item.getText(), textMessage);
                 message.setText(textMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
                 WeComTaskCenterDetailClientResponse.ImageAttachmentsMessage imageMessage =
                         new WeComTaskCenterDetailClientResponse.ImageAttachmentsMessage();
                 BeanUtils.copyProperties(item.getImage(), imageMessage);
                 message.setImage(imageMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
                 WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage videoMessage =
                         new WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage();
                 BeanUtils.copyProperties(item.getVideo(), videoMessage);
                 message.setVideo(videoMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
                 WeComTaskCenterDetailClientResponse.FileAttachmentsMessage fileMessage =
                         new WeComTaskCenterDetailClientResponse.FileAttachmentsMessage();
                 BeanUtils.copyProperties(item.getFile(), fileMessage);
                 message.setFile(fileMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
                 WeComTaskCenterDetailClientResponse.MiniProgramAttachmentsMessage miniMessage =
                         new WeComTaskCenterDetailClientResponse.MiniProgramAttachmentsMessage();
                 BeanUtils.copyProperties(item.getMiniProgram(), miniMessage);
                 message.setMiniProgram(miniMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
                 WeComTaskCenterDetailClientResponse.LinkAttachmentsMessage linkMessage =
                         new WeComTaskCenterDetailClientResponse.LinkAttachmentsMessage();
                 BeanUtils.copyProperties(item.getLink(), linkMessage);
@@ -188,37 +188,37 @@ public class QueryTaskCenterDetailServiceImpl implements QueryTaskCenterDetailSe
             WeComTaskCenterContentClientResponse.AttachmentsMessage message =
                     new WeComTaskCenterContentClientResponse.AttachmentsMessage();
             BeanUtils.copyProperties(item, message);
-            if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
+            if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
                 WeComTaskCenterContentClientResponse.TextMessage textMessage =
                         new WeComTaskCenterContentClientResponse.TextMessage();
                 BeanUtils.copyProperties(item.getText(), textMessage);
                 message.setText(textMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
                 WeComTaskCenterContentClientResponse.ImageAttachmentsMessage imageMessage =
                         new WeComTaskCenterContentClientResponse.ImageAttachmentsMessage();
                 BeanUtils.copyProperties(item.getImage(), imageMessage);
                 message.setImage(imageMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
                 WeComTaskCenterContentClientResponse.VideoAttachmentsMessage videoMessage =
                         new WeComTaskCenterContentClientResponse.VideoAttachmentsMessage();
                 BeanUtils.copyProperties(item.getVideo(), videoMessage);
                 message.setVideo(videoMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
                 WeComTaskCenterContentClientResponse.FileAttachmentsMessage fileMessage =
                         new WeComTaskCenterContentClientResponse.FileAttachmentsMessage();
                 BeanUtils.copyProperties(item.getFile(), fileMessage);
                 message.setFile(fileMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
                 WeComTaskCenterContentClientResponse.MiniProgramAttachmentsMessage miniMessage =
                         new WeComTaskCenterContentClientResponse.MiniProgramAttachmentsMessage();
                 BeanUtils.copyProperties(item.getMiniProgram(), miniMessage);
                 message.setMiniProgram(miniMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
                 WeComTaskCenterContentClientResponse.LinkAttachmentsMessage linkMessage =
                         new WeComTaskCenterContentClientResponse.LinkAttachmentsMessage();
                 BeanUtils.copyProperties(item.getLink(), linkMessage);
