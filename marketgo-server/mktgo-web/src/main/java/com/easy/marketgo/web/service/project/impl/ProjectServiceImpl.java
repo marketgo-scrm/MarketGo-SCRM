@@ -90,4 +90,22 @@ public class ProjectServiceImpl implements IProjectService {
         projectConfigRepository.save(projectConfigEntity);
         return BaseResponse.success();
     }
+
+    @Override
+    public BaseResponse checkName(Integer projectId, String name) {
+        try {
+            log.info("begin to check project name, projectId={}, name={}.", projectId, name);
+            ProjectConfigEntity projectConfigEntity = projectConfigRepository.queryByName(projectId, name);
+            // 仅当非同一个项目且同名的情况，认为重名
+            if (projectConfigEntity != null && !projectConfigEntity.getId().equals(projectId)) {
+                log.info("failed to check project name, projectId={}, name={}.", projectId, name);
+                return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WECOM_PROJECT_DUPLICATE_CNAME.getCode()).message(ErrorCodeEnum.ERROR_WECOM_PROJECT_DUPLICATE_CNAME.getMessage()).build();
+            }
+            log.info("succeed to check project name, projectId={}, name={}.", projectId, name);
+            return BaseResponse.builder().code(ErrorCodeEnum.OK.getCode()).message(ErrorCodeEnum.OK.getMessage()).build();
+        } catch (Exception e) {
+            log.error("Failed to check weCom mass task cname, projectId={}, name={}.", projectId, name, e);
+        }
+        return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getCode()).message(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getMessage()).build();
+    }
 }

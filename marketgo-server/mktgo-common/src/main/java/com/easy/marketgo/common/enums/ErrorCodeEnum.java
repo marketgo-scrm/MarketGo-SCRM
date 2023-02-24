@@ -21,7 +21,7 @@ public enum ErrorCodeEnum {
     ERROR_NOT_SUPPORT_MASS_TASK(1003, "不支持的企微群发类型"),
     ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME(1004, "企微活动重名，请修改名称"),
     ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME(1005, "企微群发任务名称检查失败"),
-
+    ERROR_WECOM_PROJECT_DUPLICATE_CNAME(1006, "项目名称重名，请修改项目名称"),
 
 
     ERROR_WEB_WECOM_MASS_TASK_NOT_SUPPORT_CHANGE(1010, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),
