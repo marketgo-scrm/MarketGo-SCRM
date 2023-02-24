@@ -48,11 +48,10 @@ public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTas
                                                                  @Param("task_type") String taskType,
                                                                  @Param("schedule_type") List<String> scheduleType);
 
-    @Query("SELECT * FROM wecom_task_center_member WHERE id = :id AND project_uuid = :project_uuid AND task_type = " +
-            ":task_type")
-    WeComTaskCenterMemberEntity getByProjectIdTypeAndId(@Param("project_uuid") String projectUuid,
-                                                        @Param("task_type") String taskType,
-                                                        @Param("id") Integer id);
+
+    @Query("SELECT * FROM wecom_task_center_member WHERE corp_id = :corpId AND member_id = :memberId AND task_status" +
+            " != :taskStatus")
+    List<WeComTaskCenterMemberEntity> getMemberTaskByStatus(String corpId, String memberId, String taskStatus);
 
     @Query("SELECT * FROM wecom_task_center_member WHERE project_uuid = :project_uuid AND task_type = :task_type AND " +
             "name = " +

@@ -35,11 +35,15 @@ public class TaskCacheManagerService {
 
     public final static String CACHE_CUSTOMER_REPLACE_KEY = "task_center_customer_";
 
+    public final static String CACHE_MEMBER_READ_TASK_DETAIL_KEY = "task_center_member_read_detail_%s##%s";
+
     public final static String CACHE_KEY_SPLIT_CHARACTER = "##";
 
     private final static long CACHE_SAVE_TIME = 30 * 24 * 60 * 60;
 
     private final static long CACHE_CONTENT_SAVE_TIME = 3 * 24 * 60 * 60;
+
+    private final static long CACHE_MEMBER_READ_TASK_DETAIL_SAVE_TIME = 10 * 60;
 
     @Autowired
     private RedisService redisService;
@@ -50,6 +54,16 @@ public class TaskCacheManagerService {
 
     public String getCacheContent(String taskUuid) {
         String content = redisService.get(String.format(CACHE_CONTENT_KEY_NAME, taskUuid));
+        return (StringUtils.isNotBlank(content)) ? content : null;
+    }
+
+    public void setMemberReadDetailCache(String corpId, String taskUuid, String memberId) {
+        redisService.set(String.format(CACHE_MEMBER_READ_TASK_DETAIL_KEY, corpId, memberId), taskUuid,
+                CACHE_MEMBER_READ_TASK_DETAIL_SAVE_TIME);
+    }
+
+    public String getMemberReadDetailCache(String corpId, String memberId) {
+        String content = redisService.get(String.format(CACHE_MEMBER_READ_TASK_DETAIL_KEY, corpId, memberId));
         return (StringUtils.isNotBlank(content)) ? content : null;
     }
 

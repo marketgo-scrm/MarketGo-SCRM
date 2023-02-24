@@ -31,7 +31,7 @@ public interface WeComClientTaskCenterService {
 
     WeComTaskCenterDetailResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid);
 
-    WeComTaskCenterDetailResponse getTaskCenterContent(String corpId, String memberId, String taskUuid);
+    List<WeComTaskCenterDetailResponse> getTaskCenterContent(String corpId, String memberId, String taskUuid);
 
     BaseResponse changeTaskCenterMemberStatus(String corpId, String memberId, String taskUuid, String uuid,
                                               String sentTime, String status);

@@ -18,8 +18,6 @@ public class WeComTaskCenterContentClientResponse {
 
     @ApiModelProperty(value = "企业ID")
     private String corpId;
-    @ApiModelProperty(value = "应用ID")
-    private String agentId;
     @ApiModelProperty(value = "任务类型：SIGNLE 客户， GROUP 客户群， MOMENT 朋友圈")
     private String chatType;
     @ApiModelProperty(value = "发送的内容类型。【SEND_MESSAGE】发送内容 【ASSIGN_TASK】指派任务 ")

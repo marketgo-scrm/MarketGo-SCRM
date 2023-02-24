@@ -6,6 +6,7 @@ import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskExternalUserStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
+import com.easy.marketgo.common.enums.*;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberEntity;
@@ -156,6 +157,7 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
             message.setStatus(status);
             users.add(message);
         });
+        taskCacheManagerService.setMemberReadDetailCache(corpId, taskUuid, memberId);
         detailClientResponse.setUuid(uuid);
         detailClientResponse.setExternalUserId(users);
         log.info("finish to query task center detail. response={}", detailClientResponse);
@@ -163,16 +165,33 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
     }
 
     @Override
-    public WeComTaskCenterDetailResponse getTaskCenterContent(String corpId, String memberId, String taskUuid) {
+    public List<WeComTaskCenterDetailResponse> getTaskCenterContent(String corpId, String memberId, String taskUuid) {
         log.info("query task center cache content. corpId={}, taskUuid={}, memberId={}", corpId, taskUuid, memberId);
-        String content = taskCacheManagerService.getCacheContent(taskUuid);
-        if (StringUtils.isBlank(content)) {
-            throw new CommonException(ErrorCodeEnum.ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST);
+        String uuid = taskCacheManagerService.getMemberReadDetailCache(corpId, memberId);
+        List<WeComTaskCenterDetailResponse> list = new ArrayList<>();
+        if (StringUtils.isNotBlank(uuid)) {
+            String content = taskCacheManagerService.getCacheContent(taskUuid);
+            if (StringUtils.isBlank(content)) {
+                throw new CommonException(ErrorCodeEnum.ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST);
+            }
+            log.info("query content cache message. content={}", content);
+            WeComTaskCenterDetailResponse detailClientResponse = JsonUtils.toObject(content,
+                    WeComTaskCenterDetailResponse.class);
+            list.add(detailClientResponse);
+        } else {
+            List<WeComTaskCenterMemberEntity> entities = weComTaskCenterMemberRepository.getMemberTaskByStatus(corpId,
+                    memberId, WeComMassTaskStatus.FINISHED.getValue());
+            if (CollectionUtils.isEmpty(entities)) {
+                return list;
+            }
+            for (WeComTaskCenterMemberEntity entity : entities) {
+                WeComTaskCenterDetailResponse detailClientResponse = JsonUtils.toObject(entity.getContent(),
+                        WeComTaskCenterDetailResponse.class);
+                list.add(detailClientResponse);
+            }
         }
-        log.info("query content cache message. content={}", content);
-        WeComTaskCenterDetailResponse detailClientResponse = JsonUtils.toObject(content,
-                WeComTaskCenterDetailResponse.class);
-        return detailClientResponse;
+
+        return list;
     }
 
     @Override
