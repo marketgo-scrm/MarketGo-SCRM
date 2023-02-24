@@ -185,8 +185,12 @@ public class WeComClientTaskCenterServiceImpl implements WeComClientTaskCenterSe
                 return list;
             }
             for (WeComTaskCenterMemberEntity entity : entities) {
-                WeComTaskCenterDetailResponse detailClientResponse = JsonUtils.toObject(entity.getContent(),
-                        WeComTaskCenterDetailResponse.class);
+                WeComTaskCenterDetailResponse detailClientResponse  =
+                        new WeComTaskCenterDetailResponse();
+                List<WeComTaskCenterDetailResponse.AttachmentsMessage> messages = JsonUtils.toArray(entity.getContent(),
+                        WeComTaskCenterDetailResponse.AttachmentsMessage.class);
+                BeanUtils.copyProperties(entity, detailClientResponse);
+                detailClientResponse.setAttachments(messages);
                 list.add(detailClientResponse);
             }
         }
