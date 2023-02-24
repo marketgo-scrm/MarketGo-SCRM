@@ -87,6 +87,7 @@ public class ProjectServiceImpl implements IProjectService {
         projectConfigEntity.setDesc(projectCreateRequest.getDesc());
         projectConfigEntity.setName(projectCreateRequest.getName());
         projectConfigEntity.setUuid(IdUtil.simpleUUID());
+        projectConfigEntity.setTenantUuid(projectCreateRequest.getTenantUuid());
         projectConfigRepository.save(projectConfigEntity);
         return BaseResponse.success();
     }

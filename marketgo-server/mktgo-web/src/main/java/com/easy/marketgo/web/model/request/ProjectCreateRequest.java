@@ -15,8 +15,8 @@ import lombok.Data;
 public class ProjectCreateRequest {
     @ApiModelProperty(value = "任务id")
     private Integer id;
-    @ApiModelProperty(value = "任务uuid")
-    private String uuid;
+    @ApiModelProperty(value = "租户uuid")
+    private String tenantUuid;
     @ApiModelProperty(value = "项目名称", required = true)
     private String name;
     @ApiModelProperty(value = "项目描述", required = true)
