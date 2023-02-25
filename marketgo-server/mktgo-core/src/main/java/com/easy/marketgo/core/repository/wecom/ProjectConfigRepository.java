@@ -16,6 +16,7 @@ public interface ProjectConfigRepository extends CrudRepository<ProjectConfigEnt
 
     ProjectConfigEntity findByTenantUuidAndUuid(String tenantUuid, String uuid);
 
+    @Query("SELECT * FROM project_config WHERE uuid in (:uuids)")
     List<ProjectConfigEntity>  findByUuids(List<String> uuids);
 
     List<ProjectConfigEntity> findByTenantUuid(String tenantUuid);
