@@ -8,10 +8,10 @@
       <div class="navbar">
         <div class="nav">
           <div class="listone project">
-            {{ this.$store.state.project[0]?.projectName }}
+            {{ this.projectName }}
             <i class='el-icon-caret-bottom'> </i>
             <div class='menus'>
-              <div class='menulist' @click='gohome' v-for='(item, index) in $store.state.project' :key='index'>
+              <div class='menulist' @click='gopro(item)' v-for='(item, index) in $store.state.project' :key='index'>
                 {{ item?.projectName }}
               </div>
             </div>
@@ -96,8 +96,8 @@
                   <el-input v-model="corp.corpId" placeholder="请输入企业ID" clearable />
                 </el-form-item>
               </el-form>
-              <el-form label-position="left" v-show="nowtype == 2" :model="agent" size="small" ref="agent"
-                :rules="rules" label-width="80px">
+              <el-form label-position="left" v-show="nowtype == 2" :model="agent" size="small" ref="agent" :rules="rules"
+                label-width="80px">
                 <el-form-item label="应用ID" prop="agentId">
                   <el-input v-model="agent.agentId" placeholder="请输入应用ID" clearable />
                 </el-form-item>
@@ -178,8 +178,7 @@
                   <el-form-item label="EncodingAESKey" prop="encodingAesKey">
                     <!-- <el-row>
                     <el-col :span="10"> -->
-                    <el-input disabled v-model="externalUser.encodingAesKey" placeholder="请输入EncodingAESKey"
-                      clearable />
+                    <el-input disabled v-model="externalUser.encodingAesKey" placeholder="请输入EncodingAESKey" clearable />
                     <!-- </el-col>
                     <el-col :span="3" :offset="1"> -->
                     <el-button type="primary" round class='copys'
@@ -210,7 +209,7 @@
                     </el-upload>
                     <span style="display: inline">
                       <el-progress v-if="progressFlag" :percentage="loadProgress" color="#92E780"></el-progress>
-                      
+
                       <em v-if="!progressFlag && fileName.length">
                         <img style="width:12px;height:10px; margin-left: 10px" src="../assets/file_icon.png" alt="">
                         {{ fileName }}
@@ -230,10 +229,10 @@
                 <el-button size="small" round @click="prive" v-if="nowtype != 0">返回上一步</el-button>
                 <el-button round type="primary" size="small" @click="next" :loading="loading">{{
                   chosedata.formkey
-                    ? "保存并进入下一步"
-                    : nowtype != 9
-                      ? "下一步"
-                      : "完成"
+                  ? "保存并进入下一步"
+                  : nowtype != 9
+                    ? "下一步"
+                    : "完成"
                 }}</el-button>
               </div>
             </div>
@@ -247,7 +246,7 @@
 import constants from '@/constants/constants.js'
 export default {
   data() {
-    
+
     return {
       list: [
         // { name: "平台运营项目", path: "" },
@@ -512,14 +511,14 @@ export default {
                   imglist: [
                     require("../assets/step9/1-2.png"),
                   ],
-                 
+
                 },
                 {
                   dist: "请复制一下域名信息填写到上图中的相应位置，并选中【用于OAuth2回调的可信域名是否验证】，下载上图中的文件，然后通过下面的接口上传。",
                   imglist: [
                     require("../assets/step9/1-3.png"),
                   ],
-                 
+
                 },
               ],
             },
@@ -595,37 +594,65 @@ export default {
     };
   },
   mounted() {
-    this.project_id = this.$store.state.projectUuid
-
-    if (this.$route.params.configure) {
-      this.isdisabled = true
-      let configure = this.$route.params.configure
-      let idx = -1
-      for (let k in configure) {
-        if (configure[k]) {
-          this[k] = configure[k]
-          //alert(JSON.stringify(this[k]))
-          idx++
-        }
-      }
-
-      if (idx == this.activities.length - 1) {
-        this.lasttype = this.activities[idx].children[this.activities[idx].children.length - 1].type
-      } else {
-        this.lasttype = this.activities[idx + 1].children[0].type
-      }
-      this.nowtype = 0
-    }
-    this.getdata();
-    // 获取企微的可信域名
-    this.gethttps('domain/query');
+    this.initData()
   },
   methods: {
-    gohome() {
-      this.$router.push({
-        name: 'home'
-      })
+    initData() {
+      this.project_id = this.$store.state.projectUuid
+      this.projectName = this.$store.state.projectName
+
+      this.uploadUrl = `${this.$global.BASEURL}/mktgo/wecom/corp/cred/upload?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`
+
+      if (this.$route.params.configure) {
+        this.isdisabled = true
+        let configure = this.$route.params.configure
+        let idx = -1
+        for (let k in configure) {
+          if (configure[k]) {
+            this[k] = configure[k]
+            //alert(JSON.stringify(this[k]))
+            idx++
+          }
+        }
+
+        if (idx == this.activities.length - 1) {
+          this.lasttype = this.activities[idx].children[this.activities[idx].children.length - 1].type
+        } else {
+          this.lasttype = this.activities[idx + 1].children[0].type
+        }
+        this.nowtype = 0
+      }
+      this.getdata();
+      if (this.$store.state.corpId) {
+       // // 获取企微的可信域名
+       this.gethttps('domain/query');
+      }
+
     },
+    async gopro(val) {
+
+      this.loading = true
+      let data = await this.$http.get(
+        `mktgo/wecom/corp/config?project_id=${val.projectUuid}`
+      );
+      if (data.code === 0) {
+
+        if (data.data) {
+          this.$store.commit("SET_CORPID", data.data.configs[0].corp.corpId);
+          this.$store.commit("SET_PROID", val.projectUuid);
+          this.$store.commit("SET_PRONAME", val.projectName);
+          this.$router.push({
+            name: 'home'
+          });
+        } else {
+          this.project_id = val.projectUuid
+          this.projectName = val.projectName
+        }
+      }
+      this.loading = false
+    },
+
+
     copytext(val) {
       var cInput = document.createElement("input");
       cInput.value = val;
@@ -701,15 +728,15 @@ export default {
     },
     async deleteFilePost() {
       let data = await this.$http.post(
-            `/mktgo/wecom/corp/cred_file/delete?project_id=${this.project_id}&corp_id=${this.$store.state.corpId}&file_name=${this.fileName}`
-          );
-          if (data.code === 0) {
-            this.$message.success('删除成功')
-            this.fileName = ''
-            this.fileList = []
-            this.loadProgress = 0// 动态显示进度条
-            this.progressFlag = false
-          }
+        `/mktgo/wecom/corp/cred_file/delete?project_id=${this.project_id}&corp_id=${this.$store.state.corpId}&file_name=${this.fileName}`
+      );
+      if (data.code === 0) {
+        this.$message.success('删除成功')
+        this.fileName = ''
+        this.fileList = []
+        this.loadProgress = 0// 动态显示进度条
+        this.progressFlag = false
+      }
     },
     next() {
       if (this.nowtype == 9) {
@@ -762,6 +789,10 @@ export default {
             if (this.nowtype == 5 || this.nowtype == 7) {
               this.gethttps('config');
             }
+            else  if (this.nowtype == 8) {
+              // 获取企微的可信域名
+             this.gethttps('domain/query');
+            }
             this.getdata();
           }
           this.loading = false;
@@ -772,7 +803,9 @@ export default {
     },
 
     async gethttps(path) {
-
+      if (!this.$store.state.corpId) {
+        return
+      }
       let data = await this.$http.get(
         `mktgo/wecom/corp/${path}?project_id=${this.project_id}&corp_id=${this.$store.state.corpId}`
       );

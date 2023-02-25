@@ -89,12 +89,13 @@ export default {
     },
     // 校验项目名称是否存在
     checkProjectName() {
+      let _this = this
       this.$http.get(
         `/mktgo/wecom/project/check_name?name=${this.prejectData.name}`,
         {}).then(function (res) {
           console.log(res);
           if (res.code !== 0) {
-            this.$message.error(res.message);
+            _this.$message.error(res.message);
           }
         })
         .catch((err) => {
@@ -112,20 +113,24 @@ export default {
         return;
       }
       let _this = this
+      let params={
+        name:this.prejectData.name,
+        desc: this.prejectData.desc,
+      }
       this.$http.post(
-        `mktgo/wecom/project/create?name=${this.prejectData.name}&desc=${this.prejectData.desc}`,
-        {}).then(function (res) {
+        `mktgo/wecom/project/create`,
+        params).then(function (res) {
           console.log(res)
           if (res.code == 0) {
             _this.$message({
               message: '项目创建成功',
               type: 'success'
             });
-            this.dialogVisible = false
-            this.getlist();
+            _this.dialogVisible = false
+            _this.getlist();
           }
           else {
-            this.$message.error(res.message);
+            _this.$message.error(res.message);
           }
         });
     },
@@ -145,6 +150,8 @@ export default {
     },
     async gopro(val) {
       this.$store.commit("SET_PROID", val.projectUuid);
+      this.$store.commit("SET_PRONAME", val.projectName);
+      
       this.loading = true
       let data = await this.$http.get(
         `mktgo/wecom/corp/config?project_id=${val.projectUuid}`
