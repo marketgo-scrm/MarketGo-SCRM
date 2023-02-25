@@ -5,12 +5,16 @@ import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.DateFormatUtils;
 import com.easy.marketgo.common.utils.JsonUtils;
-import com.easy.marketgo.core.entity.*;
+import com.easy.marketgo.core.entity.ProjectConfigEntity;
+import com.easy.marketgo.core.entity.WeComSysCorpUserRoleLinkEntity;
+import com.easy.marketgo.core.entity.WeComSysUserEntity;
+import com.easy.marketgo.core.entity.WeComUserTenantLinkEntity;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.core.repository.user.WeComSysUserRepository;
 import com.easy.marketgo.core.repository.wecom.ProjectConfigRepository;
 import com.easy.marketgo.core.repository.wecom.WeComSysCropUserRoleLinkRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserTenantLinkRepository;
+import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.web.client.ClientRequestContextHolder;
 import com.easy.marketgo.web.model.request.ProjectCreateRequest;
 import com.easy.marketgo.web.model.response.ProjectFetchResponse;
@@ -48,6 +52,9 @@ public class ProjectServiceImpl implements IProjectService {
     @Autowired
     private WeComSysCropUserRoleLinkRepository weComSysCropUserRoleLinkRepository;
 
+    @Autowired
+    private WeComMemberMessageRepository weComMemberMessageRepository;
+
     @Override
     public ProjectFetchResponse fetchProjects() {
 
@@ -78,15 +85,16 @@ public class ProjectServiceImpl implements IProjectService {
         if (response.getCanCreate()) {
             configEntities = projectConfigRepository.findByTenantUuid(linkEntity.getTenantUuid());
         } else {
+            String memberId = weComMemberMessageRepository.queryMemberIdByMobile(userName);
             List<WeComSysCorpUserRoleLinkEntity> entities =
-                    weComSysCropUserRoleLinkRepository.findByMemberId(userName);
+                    weComSysCropUserRoleLinkRepository.findByMemberId(memberId);
             List<String> projectUuids = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(entities)) {
                 for (WeComSysCorpUserRoleLinkEntity item : entities) {
                     projectUuids.add(item.getProjectUuid());
                 }
             }
-            log.info("query to project list, userName={}, projectUuids={}.", userName,
+            log.info("query to project list, memberId={}, projectUuids={}.", memberId,
                     JsonUtils.toJSONString(projectUuids));
             configEntities = projectConfigRepository.findByUuids(projectUuids);
         }
