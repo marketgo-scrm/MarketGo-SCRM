@@ -10,7 +10,7 @@
         <p>选择一个项目，查看并开启它的管理页面</p>
         <div class="listin">
 
-          <div class="create" @click="showDialog()">
+          <div class="create" v-if= "this.canCreate" @click="showDialog()">
 
             <img src="../assets/create_progect.png" alt="" />
             <span>添加一个新项目</span>
@@ -75,6 +75,8 @@ export default {
         desc: "",
         name: "",
       },
+      // 是否有权限创建新的项目
+      canCreate:false
     };
   },
   mounted() {
@@ -136,6 +138,7 @@ export default {
       let data = await this.$http.post("mktgo/wecom/project/list", {});
       if (data.code === 0) {
         this.projects = data.data.projects;
+        this.canCreate  = data.data.canCreate || false;
         this.$store.commit('SET_TENANTUUID', data.data.tenantUuid)
         this.$store.commit('SET_PROJECT', data.data.projects)
       }
