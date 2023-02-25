@@ -118,6 +118,8 @@ public class ProjectServiceImpl implements IProjectService {
         projectConfigEntity.setName(projectCreateRequest.getName());
         projectConfigEntity.setUuid(IdUtil.simpleUUID());
         projectConfigEntity.setTenantUuid(linkEntity.getTenantUuid());
+        projectConfigEntity.setStatus("publish");
+        projectConfigEntity.setType("SCRM");
         projectConfigRepository.save(projectConfigEntity);
         return BaseResponse.success();
     }
