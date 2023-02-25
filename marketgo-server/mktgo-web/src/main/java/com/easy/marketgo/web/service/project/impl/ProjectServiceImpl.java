@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -73,8 +74,22 @@ public class ProjectServiceImpl implements IProjectService {
                 weComSysCropUserRoleLinkRepository.findByCorpIdAndProjectUuidAndMemberId(linkEntity.getTenantUuid(),
                         linkEntity.getTenantUuid(), userName);
         response.setCanCreate(entity != null ? Boolean.TRUE : Boolean.FALSE);
-
-        List<ProjectConfigEntity> configEntities = projectConfigRepository.findByTenantUuid(linkEntity.getTenantUuid());
+        List<ProjectConfigEntity> configEntities = new ArrayList<>();
+        if (response.getCanCreate()) {
+            configEntities = projectConfigRepository.findByTenantUuid(linkEntity.getTenantUuid());
+        } else {
+            List<WeComSysCorpUserRoleLinkEntity> entities =
+                    weComSysCropUserRoleLinkRepository.findByMemberId(userName);
+            List<String> projectUuids = new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(entities)) {
+                for (WeComSysCorpUserRoleLinkEntity item : entities) {
+                    projectUuids.add(item.getProjectUuid());
+                }
+            }
+            log.info("query to project list, userName={}, projectUuids={}.", userName,
+                    JsonUtils.toJSONString(projectUuids));
+            configEntities = projectConfigRepository.findByUuids(projectUuids);
+        }
         List<ProjectFetchResponse.ProjectInfo> projectInfos = configEntities
                 .stream()
                 .map(c -> ProjectFetchResponse

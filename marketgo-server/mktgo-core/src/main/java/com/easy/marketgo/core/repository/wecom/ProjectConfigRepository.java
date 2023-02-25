@@ -16,6 +16,8 @@ public interface ProjectConfigRepository extends CrudRepository<ProjectConfigEnt
 
     ProjectConfigEntity findByTenantUuidAndUuid(String tenantUuid, String uuid);
 
+    List<ProjectConfigEntity>  findByUuids(List<String> uuids);
+
     List<ProjectConfigEntity> findByTenantUuid(String tenantUuid);
 
     ProjectConfigEntity findAllByUuid(String uuid);
