@@ -31,6 +31,8 @@ public interface CorpMessageService {
 
     BaseResponse getForwardServer(String projectId, String corpId, String configType);
 
+    BaseResponse getSidebarServer(String projectId, String corpId);
+
     BaseResponse verifyCredFile(String projectId, String corpId, MultipartFile multipartFile);
 
     BaseResponse queryDomainUrl(String projectId, String corpId);

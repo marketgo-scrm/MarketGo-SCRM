@@ -1,15 +1,18 @@
 package com.easy.marketgo.web.service.project.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.DateFormatUtils;
 import com.easy.marketgo.core.entity.ProjectConfigEntity;
 import com.easy.marketgo.core.entity.WeComSysUserEntity;
 import com.easy.marketgo.core.entity.WeComUserTenantLinkEntity;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.core.repository.user.WeComSysUserRepository;
 import com.easy.marketgo.core.repository.wecom.ProjectConfigRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserTenantLinkRepository;
 import com.easy.marketgo.web.client.ClientRequestContextHolder;
+import com.easy.marketgo.web.model.request.ProjectCreateRequest;
 import com.easy.marketgo.web.model.response.ProjectFetchResponse;
 import com.easy.marketgo.web.service.project.IProjectService;
 import lombok.extern.log4j.Log4j2;
@@ -77,4 +80,14 @@ public class ProjectServiceImpl implements IProjectService {
         return response;
     }
 
+    @Override
+    public BaseResponse createProject(ProjectCreateRequest projectCreateRequest) {
+
+        ProjectConfigEntity projectConfigEntity = new ProjectConfigEntity();
+        projectConfigEntity.setDesc(projectCreateRequest.getDesc());
+        projectConfigEntity.setName(projectCreateRequest.getName());
+        projectConfigEntity.setUuid(IdUtil.simpleUUID());
+        projectConfigRepository.save(projectConfigEntity);
+        return BaseResponse.success();
+    }
 }

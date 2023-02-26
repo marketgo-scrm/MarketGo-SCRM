@@ -321,7 +321,10 @@ export default {
     blur(e) {
       console.log(e, this.$refs,this.getPosition(this.$refs.messageRef));
       this.onindex = this.getPosition(this.$refs.messageRef)
-      this.synchro(e.target.outerText);
+      let str = e.target.outerText.trim()
+      this.synchro(str);
+      this.$refs.messageRef.innerHTML = str;
+      this.val = str;
     },
     //开始拖动可选字段
     dragStart(event) {

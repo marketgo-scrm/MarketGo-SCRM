@@ -138,12 +138,13 @@ public class QueryTaskCenterDetailService {
     }
 
     public BaseResponse getTaskCenterContent(String corpId, String memberId, String taskUuid) {
-        WeComTaskCenterDetailResponse response = weComClientTaskCenterService.getTaskCenterContent(corpId, memberId,
+        List<WeComTaskCenterDetailResponse> responses = weComClientTaskCenterService.getTaskCenterContent(corpId,
+                memberId,
                 taskUuid);
         WeComTaskCenterContentClientResponse clientResponse = new WeComTaskCenterContentClientResponse();
-        BeanUtils.copyProperties(response, clientResponse);
+        BeanUtils.copyProperties(responses.get(0), clientResponse);
         List<WeComTaskCenterContentClientResponse.AttachmentsMessage> attachmentsMessageList = new ArrayList<>();
-        for (WeComTaskCenterDetailResponse.AttachmentsMessage item : response.getAttachments()) {
+        for (WeComTaskCenterDetailResponse.AttachmentsMessage item : responses.get(0).getAttachments()) {
             WeComTaskCenterContentClientResponse.AttachmentsMessage message =
                     new WeComTaskCenterContentClientResponse.AttachmentsMessage();
             BeanUtils.copyProperties(item, message);

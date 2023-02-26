@@ -65,6 +65,8 @@ public class ContentUpdateCacheService {
             taskCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(momentTaskCenterRequest));
         } else {
             WeComTaskCenterRequest request = sendBaseTaskCenterProducer.buildTaskCenterContent(entity);
+            log.info("update content for task center. taskUuid={}， content={}", entity.getUuid(),
+                    JsonUtils.toJSONString(request));
             taskCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
         }
         log.info("finish to update content for task center. taskUuid={}", entity.getUuid());

@@ -17,15 +17,15 @@ public enum WeComMassTaskTypeEnum {
     /**
      * 群发客户群
      */
-    GROUP("SINGLE", "客户群"),
+    GROUP("GROUP", "客户群"),
     /**
      * 群发朋友圈
      */
-    MOMENT("SINGLE", "朋友圈"),
+    MOMENT("MOMENT", "朋友圈"),
     /**
      * 活码
      */
-    LIVE_CODE("SINGLE", "活码");
+    LIVE_CODE("LIVE_CODE", "活码");
 
     private String name;
     private String cname;

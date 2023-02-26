@@ -25,7 +25,7 @@ public class TaskCacheManagerService {
 
     private final static String CACHE_MEMBER_KEY_NAME = "task_center_member_%s##%s##%s##%s";
 
-    private final static String CACHE_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s##%s##%s";
+    private final static String CACHE_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s##%s##%s##%s";
 
     private final static String CACHE_SCAN_CUSTOMER_KEY_NAME = "task_center_customer_%s##%s##%s##%s*";
 
@@ -35,11 +35,15 @@ public class TaskCacheManagerService {
 
     public final static String CACHE_CUSTOMER_REPLACE_KEY = "task_center_customer_";
 
+    public final static String CACHE_MEMBER_READ_TASK_DETAIL_KEY = "task_center_member_read_detail_%s##%s";
+
     public final static String CACHE_KEY_SPLIT_CHARACTER = "##";
 
     private final static long CACHE_SAVE_TIME = 30 * 24 * 60 * 60;
 
     private final static long CACHE_CONTENT_SAVE_TIME = 3 * 24 * 60 * 60;
+
+    private final static long CACHE_MEMBER_READ_TASK_DETAIL_SAVE_TIME = 10 * 60;
 
     @Autowired
     private RedisService redisService;
@@ -53,6 +57,16 @@ public class TaskCacheManagerService {
         return (StringUtils.isNotBlank(content)) ? content : null;
     }
 
+    public void setMemberReadDetailCache(String corpId, String taskUuid, String memberId) {
+        redisService.set(String.format(CACHE_MEMBER_READ_TASK_DETAIL_KEY, corpId, memberId), taskUuid,
+                CACHE_MEMBER_READ_TASK_DETAIL_SAVE_TIME);
+    }
+
+    public String getMemberReadDetailCache(String corpId, String memberId) {
+        String content = redisService.get(String.format(CACHE_MEMBER_READ_TASK_DETAIL_KEY, corpId, memberId));
+        return (StringUtils.isNotBlank(content)) ? content : null;
+    }
+
     public Long getCacheContentExpireTime(String taskUuid) {
         Long ExpireTime = redisService.getExpire(String.format(CACHE_CONTENT_KEY_NAME, taskUuid));
         return (ExpireTime != null) ? ExpireTime : null;
@@ -63,12 +77,13 @@ public class TaskCacheManagerService {
     }
 
     public void setCustomerCache(String corpId, String memberId, String taskUuid, String uuid, String externalUserId,
-                                 String externalUserName) {
+                                 String externalUserName, String avatar) {
         log.info("set external user message for task center to cache . corpId={}, memberId={}, taskUuid={}, uuid={}, " +
                         "externalUserId={}, externalUserName={}", corpId, memberId, taskUuid, uuid, externalUserId,
                 externalUserName);
         String key = String.format(CACHE_CUSTOMER_KEY_NAME, corpId, memberId, taskUuid, uuid,
-                externalUserId, Base64.encode(externalUserName));
+                externalUserId, Base64.encode(externalUserName), StringUtils.isNotBlank(avatar) ?
+                        Base64.encode(avatar) : "");
         log.info("save external user message for task center to cache . key={}", key);
         redisService.set(key, WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue(), CACHE_SAVE_TIME);
     }

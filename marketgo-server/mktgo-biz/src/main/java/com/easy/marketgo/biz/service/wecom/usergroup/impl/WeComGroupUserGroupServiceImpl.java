@@ -45,9 +45,6 @@ public class WeComGroupUserGroupServiceImpl implements WeComUserGroupService {
     private WeComCustomerService weComCustomerService;
 
     @Autowired
-    private WeComMemberMessageRepository weComMemberMessageRepository;
-
-    @Autowired
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
     @Autowired

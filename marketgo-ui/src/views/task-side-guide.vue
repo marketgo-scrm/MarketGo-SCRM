@@ -9,9 +9,9 @@
             <div class="section-one">
                 <el-form :model="callbackConfig" label-width="60px" label-position="left">
                     <el-form-item label="配置链接">
-                        <el-input readonly v-model="callbackConfig.callbackUrl"></el-input>
+                        <el-input readonly v-model="callbackConfig.sidebarUrl"></el-input>
                         <el-button style="margin-left: 20px" type="primary" size="small" round class="tag"
-                            @click="copy(callbackConfig.callbackUrl)">复制</el-button>
+                            @click="copy(callbackConfig.sidebarUrl)">复制</el-button>
                     </el-form-item>
 
                 </el-form>
@@ -39,37 +39,37 @@ export default {
     name: "callback",
     data() {
         return {
-            activeName: "CONTACTS",
             callbackConfig: {},
-            forwardServer: { list: [] },
-            forwardServerState: [],
             dicts: [
                 {
-                  dist: "1、登录企业微信后台，点击【客户与上下游-聊天工具】进入【聊天工具栏管理】",
-                  imglist: [require("../assets/step7/1.png")],
+                    dist: "1、登录<a target='_blank' class='acls' href='https://work.weixin.qq.com/wework_admin/loginpage_wx?from=myhome'>企业微信管理后台</a>，点击【客户与上下游-聊天工具】进入【聊天工具栏管理】",
+                    imglist: [require("../assets/taskStep/1.png")],
                 },
                 {
-                  dist: "2、在聊天工具栏管理页，点击【配置应用页面】",
-                  imglist: [
-                    require("../assets/step7/2.png")
-                  ],
+                    dist: "2、在聊天工具栏管理页，点击【配置应用页面】",
+                    imglist: [
+                        require("../assets/taskStep/2.png")
+                    ],
                 },
                 {
-                  dist: "3、填写【页面名称】-待办任务，选择页面内容【自定义】，粘贴配置链接，点击【确定】",
-                  imglist: [require("../assets/step7/3.png")],
+                    dist: "3、填写【页面名称】-待办任务，选择页面内容【自定义】，粘贴配置链接，点击【确定】",
+                    imglist: [require("../assets/taskStep/3.png")],
                 },
                 {
-                  dist: "4、在聊天工具栏管理页，可以通过拖拽配置新创建的聊天工具栏应用顺序，例如把待办任务放到第1位",
-                  imglist: [require("../assets/step7/3.png")],
+                    dist: "4、在聊天工具栏管理页，可以通过拖拽配置新创建的聊天工具栏应用顺序，例如把待办任务放到第1位",
+                    imglist: [require("../assets/taskStep/4.png")],
                 },
                 {
-                  dist: "5、完成配置后，【待办任务】工具即可在聊天工具栏使用",
-                  imglist: [],
+                    dist: "5、完成配置后，【待办任务】工具即可在聊天工具栏使用",
+                    imglist: [],
                 },
-              ],
+            ],
         };
     },
     created() { },
+    mounted() {
+        this.getForwardConfig()
+    },
     methods: {
         copy(data) {
             let clipboard = new Clipboard(".tag", {
@@ -96,17 +96,17 @@ export default {
         },
 
 
-        getCallback() {
+        getForwardConfig() {
             this.$http
                 .get(
-                    `/mktgo/wecom/corp/callback/config?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&config_type=${this.activeName}`,
+                    `/mktgo/wecom/corp/sidebar/config?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`,
                     {}
                 )
                 .then((res) => {
                     this.callbackConfig = res.data;
                 });
         },
-        
+
     },
 };
 </script>
@@ -141,14 +141,17 @@ export default {
             padding: 25px 0px 1px 25px;
             background-color: #f8f6f8;
             box-sizing: border-box;
+
             ::v-deep(.el-input) {
                 width: 530px;
             }
         }
     }
+
     .guide-wrapper {
         padding: 32px 0 32px 0px;
     }
+
     .dictlist {
         width: 720px;
     }
@@ -163,6 +166,10 @@ export default {
     .dictlist img {
         width: 720px;
         margin-bottom: 16px;
+    }
+    .finish {
+        width: 96px;
+        font-size: 12px;
     }
 }
 </style>

@@ -313,7 +313,7 @@
               <template v-else> 已关闭 </template>
             </el-descriptions-item>
             <el-descriptions-item label="渠道码欢迎语">
-              <CustomStretch :height="28" :standard="true">
+              <CustomStretch :height="28" :standard="true" :marginTop="-3">
                 <template v-if="details.welcomeContent.find((item) => {
                   return item.type === 'TEXT'
                 })?.text?.content">
@@ -471,7 +471,8 @@ export default {
           console.log(res);
           if (res.code === 0) {
             this.chanelCodeList = res.data.infos || [];
-            this.total = res.total;
+          
+            this.total = res.data.total;
           }
         })
         .catch((err) => {

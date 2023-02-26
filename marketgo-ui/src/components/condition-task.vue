@@ -84,7 +84,7 @@
             <el-input v-model="externalUsers.groupChatName" placeholder='请输入群名称或包含关键词' style="width: 374px"></el-input>
           </el-form-item>
 
-          <el-form-item label="创建时间：" v-show="checked3">
+          <el-form-item label="创建时间：" v-show="checked3" style="margin-top: 15px;margin-bottom: 16px">
             <el-date-picker
                 style="width: 374px"
                 type="daterange"

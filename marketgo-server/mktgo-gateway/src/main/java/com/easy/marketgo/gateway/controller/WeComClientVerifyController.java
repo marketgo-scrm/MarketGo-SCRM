@@ -3,6 +3,7 @@ package com.easy.marketgo.gateway.controller;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComUserVerifyRequest;
 import com.easy.marketgo.gateway.wecom.request.client.WeComVerifySdkConfigRequest;
+import com.easy.marketgo.react.model.QuerySignatureResponse;
 import com.easy.marketgo.react.service.client.WeComClientVerifyService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +52,7 @@ public class WeComClientVerifyController extends BaseController {
     }
 
     @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
+            @ApiResponse(code = 0, message = "ok", response = QuerySignatureResponse.class)
     })
     @ApiOperation(value = "用户登录验证code", nickname = "verifySdkConfig", notes = "", response =
             BaseResponse.class)
