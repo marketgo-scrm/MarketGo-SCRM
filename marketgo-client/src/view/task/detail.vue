@@ -4,8 +4,8 @@
         <van-cell-group style="background: transparent;">
             <div class="top">
                 <div>
-                    <span class="title">{{ detail.taskName }}</span><van-tag color=" #FF993C" plain
-                        class="status">未完成</van-tag>
+                    <span class="title">{{ detail.taskName ? detail.taskName : '' }}</span><van-tag color=" #FF993C"
+                        plain class="status">未完成</van-tag>
                 </div>
                 <div class="date"><span>今天8:30前完成</span></div>
             </div>
@@ -18,7 +18,7 @@
             </div>
         </van-cell-group>
         <van-cell-group class="receiver">
-            <van-cell is-link @click="sorry" size="large">
+            <van-cell is-link @click="toReceiver" size="large">
                 <template #title>
                     <span class="lbl">发送给:</span>
                     <span class="list" v-if="receiverList">{{ receiverList[0].name }}等{{ receiverList.length }}人</span>
@@ -26,15 +26,16 @@
             </van-cell>
         </van-cell-group>
         <van-action-bar class="bottom-bar">
-            <van-button type="primary" @click="sorry">标记为完成</van-button>
+            <van-button type="primary" @click="finish">标记为完成</van-button>
         </van-action-bar>
     </div>
 </template>
 
 <script>
-import { showToast } from 'vant';
+import { showSuccessToast } from 'vant';
 import 'vant/es/toast/style';
 import { welcom } from '../../api/welcom'
+import { welcomPinia } from '../../pinia/'
 export default {
     data() {
         return {
@@ -45,18 +46,38 @@ export default {
     created() {
         const query = this.$route.query
         welcom.taskDetail(query).then(res => {
-            this.detail = res.data
+            this.detail = res.data || {}
+            this.detail.query = query
+            const pinia = welcomPinia()
+            pinia.setDetail(this.detail)
         })
     },
 
     methods: {
-        onClickCart() {
-            this.$router.push('cart');
-        },
+        finish() {
+            const query = { corp_id }
+            const params = {
+                externalUserId: '',
+                memberId: this.detail.member_id,
+                sentTIme: Date.now(),
+                status: 'SENT',
+                taskUuid: this.detail.query.task_uuid,
+                type: 'MEMBER', // EXTERNAL_USER 客户
+                uuid: this.detail.query.uuid,
+            }
+            welcom.changeStatus({ query, params }).then(res => {
+                if (res.code === 0) {
+                    showSuccessToast('成功');
+                }
+            })
 
-        sorry() {
-            showToast('暂无后续逻辑~');
         },
+        toReceiver() {
+
+            this.$router.push({
+                name: 'receiverList'
+            })
+        }
     },
     computed: {
         receiverList() {
