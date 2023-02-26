@@ -44,6 +44,7 @@ public class WeComClientSidebarController {
                     "content_type", required = true, defaultValue = "TASK_CENTER_SEND_CONTENT") String contentType,
             @ApiParam(value = "员工ID", required = false) @Valid @RequestParam(value = "member_id", required = false) String memberId,
             @ApiParam(value = "任务ID", required = false) @RequestParam(value = "task_uuid", required = false) String taskUuid) {
+
         return ResponseEntity.ok(sidebarManagerService.getSidebarContent(corpId, contentType, memberId, taskUuid));
     }
 }

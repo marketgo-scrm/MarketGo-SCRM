@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHashHistory,createWebHistory } from 'vue-router';
 
 const routes = [
   {
@@ -21,47 +21,46 @@ const routes = [
       {
         name: 'list',
         path: 'list',
-        component: () => import('./view/user/index.vue'),
+        component: () => import('./view/task/list.vue'),
         meta: {
           title: '任务列表',
         },
       }, {
         name: 'detail',
         path: 'detail',
-        component: () => import('./view/welcom/detail.vue'),
+        component: () => import('./view/task/detail.vue'),
         meta: {
-          title: ' ',
+          title: '任务详情',
+        },
+      }, {
+        name: 'receiverList',
+        path: 'receiverList',
+        component: () => import('./view/task/receiverList.vue'),
+        meta: {
+          title: '接受客户列表',
+        },
+      }, 
+      {
+        name: 'todoDetail',
+        path: 'todoDetail',
+        component: () => import('./view/task/sidebarDetail.vue'),
+        meta: {
+          title: '代办任务详情',
         },
       },
     ]
-  },
-  {
-    name: 'user',
-    path: '/user',
-    component: () => import('./view/user/index.vue'),
-    meta: {
-      title: '会员中心',
-    },
-  },
-  {
-    name: 'cart',
-    path: '/cart',
-    component: () => import('./view/cart/index.vue'),
-    meta: {
-      title: '购物车',
-    },
   },
 ];
 
 const router = createRouter({
   routes,
-  history: createWebHashHistory(),
+  history: createWebHistory(),
 });
 
 router.beforeEach((to, from, next) => {
   const title = to.meta && to.meta.title;
   if (title) {
-    document.title = title;
+    document.title = ' '//title;
   }
   next();
 });

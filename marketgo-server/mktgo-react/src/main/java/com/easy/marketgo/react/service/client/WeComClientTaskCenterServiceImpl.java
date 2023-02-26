@@ -13,6 +13,7 @@ import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberEntity;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.core.model.taskcenter.QuerySubTaskCenterMemberBuildSqlParam;
 import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterMemberBuildSqlParam;
+
 import com.easy.marketgo.core.repository.wecom.taskcenter.WeComTaskCenterMemberRepository;
 import com.easy.marketgo.core.service.taskcenter.SendTaskCenterBaseConsumer;
 import com.easy.marketgo.core.service.taskcenter.TaskCacheManagerService;
