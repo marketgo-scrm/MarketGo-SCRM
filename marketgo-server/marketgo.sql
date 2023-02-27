@@ -777,3 +777,149 @@ ALTER TABLE wecom_corp_config ADD forward_address TEXT DEFAULT NULL COMMENT '回
 ALTER TABLE wecom_corp_config ADD forward_customer_address TEXT DEFAULT NULL COMMENT '客户回调转发服务器地址信息';
 
 INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`, `parent_name`, `title`,`parent_title`, `project_uuid`) VALUES  (MD5(uuid()) ,  'callbacksettings', 'settings', 'callbacksettings', 'settings', '回调配置','系统设置', (SELECT uuid FROM project_config));
+
+-- version 0.0.9
+
+INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`, `parent_name`, `title`,`parent_title`, `project_uuid`) VALUES  (MD5(uuid()) ,  'taskcenter', '', 'taskcenter', '', '任务中心', '', (SELECT uuid FROM project_config));
+
+ALTER TABLE wecom_sys_base_permissions ADD sort_order bigint(20) DEFAULT NULL COMMENT '菜单的排序id';
+
+UPDATE wecom_sys_base_permissions SET sort_order=100 WHERE code='home';
+UPDATE wecom_sys_base_permissions SET sort_order=200 WHERE code='channelcode';
+UPDATE wecom_sys_base_permissions SET sort_order=300 WHERE code='management';
+UPDATE wecom_sys_base_permissions SET sort_order=400 WHERE code='taskcenter';
+UPDATE wecom_sys_base_permissions SET sort_order=500 WHERE code='marketingplan';
+UPDATE wecom_sys_base_permissions SET sort_order=600 WHERE code='settings';
+
+UPDATE wecom_sys_base_permissions SET sort_order=610 WHERE code='membermanagement';
+UPDATE wecom_sys_base_permissions SET sort_order=620 WHERE code='permissionmanagement';
+UPDATE wecom_sys_base_permissions SET sort_order=630 WHERE code='callbacksettings';
+UPDATE wecom_sys_base_permissions SET sort_order=640 WHERE code='cdpsettings';
+
+
+UPDATE wecom_sys_base_permissions SET sort_order=510 WHERE code='masscustomer';
+UPDATE wecom_sys_base_permissions SET sort_order=520 WHERE code='masscustomerbase';
+UPDATE wecom_sys_base_permissions SET sort_order=530 WHERE code='sendgroupfriends';
+
+
+UPDATE wecom_sys_base_permissions SET sort_order=330 WHERE code='customerlist';
+UPDATE wecom_sys_base_permissions SET sort_order=340 WHERE code='customergrouplist';
+
+-- ----------------------------
+-- Table structure for wecom_task_center
+-- ----------------------------
+DROP TABLE IF EXISTS `wecom_task_center`;
+CREATE TABLE `wecom_task_center`
+(
+  `id`                       INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid`                     VARCHAR(64) NOT NULL COMMENT '业务主键',
+  `project_uuid`             VARCHAR(128) NOT NULL COMMENT '项目ID',
+  `corp_id`                  VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+  `name`                     VARCHAR(256)  DEFAULT NULL COMMENT '任务名称',
+  `task_type`                VARCHAR(50)   DEFAULT NULL COMMENT '任务类型:群发好友 SINGLE/群发客户群 GROUP/群发朋友圈 MOMENT',
+  `schedule_type`            VARCHAR(50)   DEFAULT NULL COMMENT '发送类型:立即发送 IMMEDIATE/定时发送 FIXED_TIME/周期发送 REPEAT_TIME',
+  `repeat_type`              VARCHAR(50)   DEFAULT NULL COMMENT '周期类型:每天 DAY/每周 WEEK/每月 MONTH',
+  `repeat_day`               VARCHAR(128)   DEFAULT NULL COMMENT '周期活动执行的日期，每天 0/每周 1-7/每月 1-31',
+  `schedule_time`            datetime     DEFAULT NULL  COMMENT '计划发送时间',
+  `repeat_start_time`        datetime     DEFAULT NULL  COMMENT '周期活动的开始时间',
+  `repeat_end_time`          datetime     DEFAULT NULL  COMMENT '周期活动的结束时间',
+  `user_group_uuid`          VARCHAR(64)   DEFAULT NULL COMMENT '关联人群预估UUID',
+  `message_type`           VARCHAR(64)   DEFAULT NULL COMMENT '消息类型：【SEND_MESSAGE】发送内容 【ASSIGN_TASK】指派任务',
+  `content`                  TEXT          DEFAULT NULL COMMENT '推送消息内容',
+  `task_status`           VARCHAR(50)   DEFAULT NULL COMMENT '任务状态:未开始 UNSTART; 人群计算中 COMPUTING; 计算完成 COMPUTED; 计算失败 COMPUTE_FAILED; 进行中 SENDING; 已结束 FINISHED; 执行失败 FAILED',
+  `creator_id`               VARCHAR(64) NOT NULL COMMENT '创建人ID',
+  `creator_name`            VARCHAR(50)   DEFAULT NULL COMMENT '创建人姓名',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+  `plan_time`                datetime  DEFAULT NULL COMMENT '计划执行时间',
+  `finish_time`              datetime  DEFAULT NULL COMMENT '任务完成时间',
+  `target_type`              VARCHAR(50)   DEFAULT NULL COMMENT '目标类型:天 DAY/小时 HOUR/分钟 MINUTE',
+  `target_time`              INT(11)   DEFAULT NULL COMMENT '目标时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_uniq_uuid` (`uuid`),
+  UNIQUE KEY `idx_uniq_project_uuid_corp_id_type_name` (`project_uuid`,`corp_id`, `task_type`,`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微的员工任务';
+
+-- ----------------------------
+-- Table structure for wecom_task_center_statistic_member
+-- ----------------------------
+DROP TABLE IF EXISTS `wecom_task_center_statistic_member`;
+CREATE TABLE `wecom_task_center_statistic_member` (
+  `id`                   INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid`                     VARCHAR(64) NOT NULL COMMENT '业务主键',
+  `project_uuid`         varchar(64) NOT NULL COMMENT '项目ID',
+  `task_uuid`            VARCHAR(64) NOT NULL COMMENT '任务uuid',
+  `member_id`              VARCHAR(128) NOT NULL COMMENT '员工的id',
+  `member_name`              VARCHAR(128) NOT NULL COMMENT '员工的名称',
+  `status`                varchar(32) DEFAULT NULL COMMENT  '员工的任务执行状态',
+  `external_user_count`    bigint(20) DEFAULT NULL COMMENT '员工的客户总数',
+  `delivered_count`    bigint(20) DEFAULT NULL COMMENT '员工的客户送达总数',
+  `non_friend_count`    bigint(20) DEFAULT NULL COMMENT '员工的客户非好友总数',
+  `plan_time`              datetime  DEFAULT NULL COMMENT '计划执行时间',
+  `sent_time`              datetime  DEFAULT NULL COMMENT '执行时间',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_task_uuid_member_id_sent_time` (`task_uuid`, `member_id`, `sent_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微任务中心的员工统计';
+
+-- ----------------------------
+-- Table structure for wecom_task_center_statistic_external_user
+-- ----------------------------
+DROP TABLE IF EXISTS `wecom_task_center_statistic_external_user`;
+CREATE TABLE `wecom_task_center_statistic_external_user` (
+  `id`                   INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid`                     VARCHAR(64) NOT NULL COMMENT '业务主键',
+  `project_uuid`         varchar(64) NOT NULL COMMENT '项目ID',
+  `task_uuid`            VARCHAR(64) NOT NULL COMMENT '群发的任务uuid',
+  `member_id`            VARCHAR(128) NOT NULL COMMENT '员工的id',
+  `external_user_id`     varchar(255) DEFAULT NULL COMMENT '客户的ID',
+  `external_user_name`     varchar(255) DEFAULT NULL COMMENT '客户的名称',
+  `external_user_type`   varchar(24) DEFAULT NULL COMMENT '客户的类型',
+  `status`                varchar(64) DEFAULT NULL COMMENT  '客户的任务执行状态',
+  `plan_time`              datetime  DEFAULT NULL COMMENT '计划执行时间',
+  `receive_time`              datetime     DEFAULT NULL COMMENT '客户的执行时间',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微任务中心的员工对应的客户统计';
+
+-- ----------------------------
+-- Table structure for wecom_task_center_member
+-- ----------------------------
+DROP TABLE IF EXISTS `wecom_task_center_member`;
+CREATE TABLE `wecom_task_center_member` (
+  `id`                       INT(11) NOT NULL AUTO_INCREMENT,
+  `uuid`                     VARCHAR(64) NOT NULL COMMENT '业务主键',
+  `project_uuid`             VARCHAR(128) NOT NULL COMMENT '项目ID',
+  `corp_id`                  VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+  `member_id`            VARCHAR(128) NOT NULL COMMENT '员工的id',
+  `type`                 varchar(64) DEFAULT NULL COMMENT '群发任务 MASS_TASK, 任务中心 TASK_CENTER',
+  `name`                     VARCHAR(256)  DEFAULT NULL COMMENT '任务名称',
+  `task_uuid`            VARCHAR(64) NOT NULL COMMENT '群发的任务uuid',
+  `task_type`                VARCHAR(50)   DEFAULT NULL COMMENT '任务类型:群发好友 SINGLE/群发客户群 GROUP/群发朋友圈 MOMENT',
+  `schedule_type`            VARCHAR(50)   DEFAULT NULL COMMENT '发送类型:立即发送 IMMEDIATE/定时发送 FIXED_TIME/周期发送 REPEAT_TIME',
+  `repeat_type`              VARCHAR(50)   DEFAULT NULL COMMENT '周期类型:每天 DAY/每周 WEEK/每月 MONTH',
+  `repeat_day`               VARCHAR(128)   DEFAULT NULL COMMENT '周期活动执行的日期，每天 0/每周 1-7/每月 1-31',
+  `schedule_time`            datetime     DEFAULT NULL  COMMENT '计划发送时间',
+  `repeat_start_time`        datetime     DEFAULT NULL  COMMENT '周期活动的开始时间',
+  `repeat_end_time`          datetime     DEFAULT NULL  COMMENT '周期活动的结束时间',
+  `user_group_uuid`          VARCHAR(64)   DEFAULT NULL COMMENT '关联人群预估UUID',
+  `message_type`           VARCHAR(64)   DEFAULT NULL COMMENT '消息类型：【SEND_MESSAGE】发送内容 【ASSIGN_TASK】指派任务',
+  `content`                  TEXT          DEFAULT NULL COMMENT '推送消息内容',
+  `task_status`           VARCHAR(50)   DEFAULT NULL COMMENT '任务状态:未开始 UNSTART; 人群计算中 COMPUTING; 计算完成 COMPUTED; 计算失败 COMPUTE_FAILED; 进行中 SENDING; 已结束 FINISHED; 执行失败 FAILED',
+  `creator_id`               VARCHAR(64) NOT NULL COMMENT '创建人ID',
+  `creator_name`            VARCHAR(50)   DEFAULT NULL COMMENT '创建人姓名',
+  `plan_time`              datetime  DEFAULT NULL COMMENT '提醒时间',
+  `target_type`              VARCHAR(50)   DEFAULT NULL COMMENT '目标类型:天 DAY/小时 HOUR/分钟 MINUTE',
+  `target_time`              INT(11)   DEFAULT NULL COMMENT '目标时间',
+  `create_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+  `update_time` timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='企微任务中心的员工对应的客户统计';
+
+ALTER TABLE wecom_group_chats ADD user_count INT(11) DEFAULT NULL COMMENT '客户群的人数';
+
+ALTER TABLE wecom_corp_config ADD cred_file_name VARCHAR(128) DEFAULT NULL COMMENT '可信文件名称';
+
+ALTER TABLE wecom_corp_config ADD cred_file_content VARCHAR(256) DEFAULT NULL COMMENT '可信文件内容';

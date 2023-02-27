@@ -170,7 +170,7 @@ export default {
         keyword: '',
         create_user_ids:[],
         times: ['',''],
-        statuses: '',
+        statuses: [],
       },
       pickerOptions: {
         shortcuts: [
@@ -241,6 +241,7 @@ export default {
               message: '删除成功',
               type: 'success'
             });
+            _this.searchData()
           } else {
             _this.$message(res.message);
           }
@@ -357,7 +358,7 @@ export default {
         keyword: '',
         create_user_ids:[],
         times: ['',''],
-        statuses: '',
+        statuses: [],
       }
       // this.getList()
     }

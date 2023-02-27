@@ -34,6 +34,8 @@ public class Constants {
 
     public final String WECOM_CALLBACK_CUSTOMER = "/mktgo/api/wecom/callback/customer?corp_id=";
 
+    public final String WECOM_SIDEBAR_MESSAGE = "/mktgo/client/wecom/sidebar/detail?corp_id=";
+
 
     public final String WECOM_CALLBACK_MESSAGE_TYPE_CREATE_USER = "create_user";
     public final String WECOM_CALLBACK_MESSAGE_TYPE_UPDATE_USER = "update_user";

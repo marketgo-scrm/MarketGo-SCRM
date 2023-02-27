@@ -22,6 +22,7 @@ public enum WeComMediaTypeEnum {
     VOICE("VOICE"),
     LOGO("LOGO"),
     QRCODE("QRCODE"),
+    TEXT("TEXT"),
     ;
 
     @Getter

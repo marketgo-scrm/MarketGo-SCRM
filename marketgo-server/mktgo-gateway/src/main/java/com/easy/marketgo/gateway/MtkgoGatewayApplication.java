@@ -6,7 +6,11 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import springfox.documentation.oas.annotations.EnableOpenApi;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+@EnableSwagger2
+@EnableOpenApi
 @SpringBootApplication(scanBasePackages = {"com.easy.marketgo"})
 @ImportResource(value = "classpath:dubbo-provider.xml")
 @EnableCaching

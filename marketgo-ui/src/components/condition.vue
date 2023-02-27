@@ -61,7 +61,7 @@
             </div>
           </el-form-item>
 
-          <el-form-item label="性别：" v-show="checked2" style="margin-top: 13px">
+          <el-form-item label="性别：" v-show="checked2" style="margin-top: 5px">
             <div class="style-tab-radio">
               <div class="style-item">
                 <el-radio v-model="genders" label="1">男</el-radio>
@@ -75,7 +75,7 @@
             </div>
           </el-form-item>
 
-          <el-form-item label="添加时间：" v-show="checked3">
+          <el-form-item label="添加时间：" v-show="checked3" style="margin-top: 0px;margin-bottom: 16px">
             <el-date-picker
                 style="width: 374px"
                 type="daterange"

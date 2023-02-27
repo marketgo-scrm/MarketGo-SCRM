@@ -1,6 +1,7 @@
 package com.easy.marketgo.core.repository.wecom;
 
 import com.easy.marketgo.core.entity.WeComSysBasePermissionsEntity;
+import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -13,5 +14,7 @@ import java.util.List;
  */
 
 public interface WeComSysBasePermissionsRepository extends CrudRepository<WeComSysBasePermissionsEntity, Long> {
+
+    @Query("SELECT * FROM wecom_sys_base_permissions WHERE project_uuid = :projectUuid order by sort_order ASC")
     List<WeComSysBasePermissionsEntity> findByProjectUuid(String projectUuid);
 }

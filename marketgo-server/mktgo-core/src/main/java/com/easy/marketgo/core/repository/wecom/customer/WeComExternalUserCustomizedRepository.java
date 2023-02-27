@@ -112,6 +112,7 @@ public interface WeComExternalUserCustomizedRepository {
 
         private String buildExternalUserSqlForParam(QueryUserGroupBuildSqlParam param, boolean countFlag,
                                                     boolean paging) {
+            log.info("build user group for external user param. param={}", param);
             StringBuilder sql = new StringBuilder(
                     String.format("SELECT %s FROM wecom_relation_member_external_user ", countFlag ? "COUNT(*)" : "*"));
             if (StringUtils.isNotBlank(param.getCorpId())) {

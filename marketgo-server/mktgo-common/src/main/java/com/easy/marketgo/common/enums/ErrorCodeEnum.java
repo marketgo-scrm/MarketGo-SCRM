@@ -25,6 +25,7 @@ public enum ErrorCodeEnum {
 
 
     ERROR_WEB_WECOM_MASS_TASK_NOT_SUPPORT_CHANGE(1010, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),
+    ERROR_WEB_WECOM_TASK_CENTER_NOT_SUPPORT_CHANGE(1011, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),
 
     ERROR_WEB_MEDIA_UNSUPPORTED_FILE_TYPE(1100, "不支持的文件类型"),
     ERROR_WEB_MEDIA_UPLOAD_FAILED(1101, "企业微信素材文件上传失败。"),
@@ -41,6 +42,8 @@ public enum ErrorCodeEnum {
     ERROR_WEB_QUERY_USER_GROUP_MESSAGE_IS_EMPTY(1112, "查询人群信息失败，人群信息不存在"),
     ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_NAME_EMPTY(1113, "上传的文件名称是空"),
     ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY(1114, "上传的文件中没有数据"),
+    ERROR_WEB_OFFLINE_USER_GROUP_COMPUTE_FAILED(1115, "离线人群计算失败"),
+    ERROR_WEB_UPLOAD_FILE_FAILED(1116, "上传文件失败"),
 
     ERROR_WEB_INTERNAL_SERVICE(1151, "服务内部出现异常，请检查相关服务是否运行正常"),
     ERROR_WEB_REQUEST_USER_GROUP_IS_EMPTY(1152, "数据库中没有查询到人群信息的记录"),
@@ -85,10 +88,21 @@ public enum ErrorCodeEnum {
      * 内部错误码定义
      * 模块-cdp
      * 命名方式 ERROR_CDP_错误描述
-     * 错误码范围6000-7999
+     * 错误码范围6000-6999
      */
     ERROR_CDP_RESPONSE_IS_EMPTY(6000, "请求CDP的接口返回的response是空"),
     ERROR_CDP_CROWD_LIST_IS_EMPTY(6001, "请求CDP的分群列表接口返回的列表为空"),
+
+    /**
+     * 内部错误码定义
+     * 模块-react
+     * 命名方式 ERROR_REACT_错误描述
+     * 错误码范围7000-7999
+     */
+    ERROR_REACT_SDK_CONFIG_VERIFY(7000, "sdk config 验证失败"),
+    ERROR_REACT_TASK_IS_NOT_EXIST(7001, "请求的任务列表不存在，请确认任务是否存在"),
+    ERROR_REACT_TASK_CONTENT_IS_NOT_EXIST(7002, "请求的任务的内容不存在，请确认任务是否存在"),
+    ERROR_REACT_TASK_CUSTOMER_LIST_IS_NOT_EXIST(7003, "请求的任务的客户列表不存在，请确认任务是否存在"),
     /**
      * 企微的错误码定义
      * 模块-WECOM
@@ -104,7 +118,6 @@ public enum ErrorCodeEnum {
     ERROR_WECOM_EDIT_TAG_IS_DENIED(81011, "调用企微接口提示：无权限标记标签。"),
     ERROR_WECOM_TAG_NAME_IS_SAME(40071, "调用企微接口提示：标签或标签组名称已经存在。"),
     ERROR_WECOM_INVALID_CONFIG_ID(41044, "调用企微接口提示：无效的活码ID"),
-    ;
     ;
 
 

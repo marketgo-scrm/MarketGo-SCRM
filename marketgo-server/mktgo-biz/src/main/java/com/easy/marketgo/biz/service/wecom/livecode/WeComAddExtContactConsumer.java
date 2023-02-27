@@ -16,7 +16,7 @@ import com.easy.marketgo.common.message.WeComXmlMessage;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.channellive.WeComChannelLiveCodeEntity;
 import com.easy.marketgo.core.entity.channellive.WeComChannelLiveCodeStatisticEntity;
-import com.easy.marketgo.core.model.bo.WeComUserGroupAudienceRule;
+import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.repository.wecom.channelLivecode.WeComChannelLiveCodeRepository;
 import com.easy.marketgo.core.repository.wecom.channelLivecode.WeComChannelLiveCodeStatisticRepository;
 import lombok.extern.log4j.Log4j2;

@@ -1,14 +1,14 @@
 package com.easy.marketgo.gateway.wecom.sevice;
 
-import com.easy.marketgo.api.model.response.*;
+import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.api.model.response.masstask.*;
+import com.easy.marketgo.common.constants.wecom.WeComHttpConstants;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
+import com.easy.marketgo.core.service.wecom.token.AccessTokenManagerService;
 import com.easy.marketgo.core.util.OkHttpUtils;
-import com.easy.marketgo.gateway.wecom.constants.WeComHttpConstants;
 import com.easy.marketgo.gateway.wecom.request.masstask.*;
 import com.easy.marketgo.gateway.wecom.response.masstask.*;
-import com.easy.marketgo.gateway.wecom.sevice.token.AccessTokenManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;

@@ -36,4 +36,8 @@ public class WeComCorpMessageEntity extends BaseEntity {
     private String forwardAddress;
 
     private String forwardCustomerAddress;
+
+    private String credFileName;
+
+    private String credFileContent;
 }

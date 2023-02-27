@@ -14,6 +14,7 @@ public enum WeComMassTaskMetricsType {
 
     MASS_TASK_EXTERNAL_USER("EXTERNAL_USER"),
     MASS_TASK_COMMENTS("COMMENTS"),
+    MASS_TASK_RATE("RATE"),
     ;
 
     private String value;

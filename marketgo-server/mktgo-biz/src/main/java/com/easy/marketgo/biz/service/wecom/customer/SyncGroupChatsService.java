@@ -75,7 +75,7 @@ public class SyncGroupChatsService {
 
     @Transactional(rollbackFor = Exception.class)
     public void queryGroupChat(final String corpId) {
-        log.info("query group chats message. corpId={}", corpId);
+        log.info("start to schedule task sync group chats message. corpId={}", corpId);
 
         String cursor = "";
         do {
@@ -88,20 +88,20 @@ public class SyncGroupChatsService {
                 request.setCursor(cursor);
             }
             request.setLimit(1000);
-            log.info("query group chats message request. request={}", request);
+            log.info("schedule task sync query group chats message request. request={}", request);
             RpcResponse<WeComQueryGroupChatClientResponse> rpcResponse =
                     weComGroupChatsRpcService.queryGroupChats(request);
-            log.info("get group chats  response. response={}", rpcResponse);
+            log.info("schedule task sync group chats response. response={}", rpcResponse);
 
             if (rpcResponse == null || !rpcResponse.getCode().equals(ErrorCodeEnum.OK.getCode()) || rpcResponse.getData()
                     == null) {
-                log.info("response WeComQueryGroupChatClientResponse is empty.");
+                log.info("schedule task sync response WeComQueryGroupChatClientResponse is empty.");
                 return;
             }
             List<WeComQueryGroupChatClientResponse.GroupChatListMessage> groupChatList =
                     rpcResponse.getData().getGroupChatList();
             if (CollectionUtils.isEmpty(groupChatList)) {
-                log.info("response group chats list is empty");
+                log.info("schedule task sync response group chats list is empty");
                 return;
             }
             cursor = rpcResponse.getData().getNextCursor();
@@ -144,17 +144,17 @@ public class SyncGroupChatsService {
                 request.setAgentId(agentId);
                 request.setCorpId(corpId);
                 request.setNeedName(1);
-                log.info("get group chats member list request. request={}", request);
+                log.info("schedule task sync group chats member list request. request={}", request);
                 RpcResponse<WeComQueryGroupChatMembersClientResponse> rpcResponse =
                         weComGroupChatsRpcService.queryGroupChatMembers(request);
                 if (rpcResponse == null || !rpcResponse.getCode().equals(ErrorCodeEnum.OK.getCode()) || rpcResponse.getData() == null) {
-                    log.info("response WeComQueryGroupChatMembersClientResponse is empty.");
+                    log.info("schedule task sync response WeComQueryGroupChatMembersClientResponse is empty.");
                     return;
                 }
-                log.info("get group chats member response. response={}", rpcResponse);
+                log.info("schedule task sync get group chats member response. response={}", rpcResponse);
                 WeComQueryGroupChatMembersClientResponse data = rpcResponse.getData();
                 if (data.getGroupChat() == null) {
-                    log.info("response group chats member list is empty.");
+                    log.info("schedule task sync response group chats member list is empty.");
                     return;
                 }
                 WeComGroupChatsEntity entity =
@@ -168,12 +168,13 @@ public class SyncGroupChatsService {
                 entity.setChatCreateTime(DateFormatUtils.parseDate(data.getGroupChat().getCreateTime() * 1000L,
                         DateFormatUtils.DATETIME));
                 entity.setOwner(data.getGroupChat().getOwner());
+                entity.setUserCount(data.getGroupChat().getMemberList().size());
                 if (CollectionUtils.isNotEmpty(data.getGroupChat().getAdminList())) {
                     entity.setAdminList(data.getGroupChat().getAdminList().stream().map(item -> {
                         return item.getUserId();
                     }).collect(Collectors.joining(",")));
                 }
-                log.info("save group chats message. entity={}", entity);
+                log.info("schedule task sync save group chats message. entity={}", entity);
                 weComGroupChatsRepository.save(entity);
                 weComGroupChatMembersRepository.deleteByCorpIdAndChatId(corpId, chatId);
                 List<WeComGroupChatMembersEntity> entities = new ArrayList<>();
@@ -193,10 +194,10 @@ public class SyncGroupChatsService {
                     entities.add(membersEntity);
 
                 }
-                log.info("save group chats message message. entities={}", entities);
+                log.info("schedule task sync save group chats message message. entities={}", entities);
                 weComGroupChatMembersRepository.saveAll(entities);
             } catch (Exception e) {
-                log.error("failed to save weCom sync group chats. ", e);
+                log.error("failed to schedule task sync save weCom sync group chats. ", e);
             }
         }
     }

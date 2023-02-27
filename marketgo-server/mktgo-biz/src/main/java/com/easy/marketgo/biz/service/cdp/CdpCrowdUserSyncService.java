@@ -1,8 +1,8 @@
 package com.easy.marketgo.biz.service.cdp;
 
 import cn.hutool.crypto.SecureUtil;
-import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
-import com.easy.marketgo.cdp.service.CdpManagerService;
+import com.easy.marketgo.core.model.cdp.CrowdUsersBaseRequest;
+import com.easy.marketgo.core.service.cdp.CdpManagerService;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
 import com.easy.marketgo.common.enums.cdp.CdpSyncCrowdUsersStatusEnum;

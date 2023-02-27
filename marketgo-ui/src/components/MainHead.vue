@@ -9,6 +9,8 @@
         circle
       ></el-button>
       <span>{{ title }}</span>
+
+      <el-button type="text" class="sub-title" v-if="subtitle" @click="send">{{ subtitle }}</el-button>
     </div>
     <div class="main-title-operation">
       <slot></slot>
@@ -22,6 +24,11 @@ export default {
   props: {
     // 标题
     title: {
+      type: String,
+      default: "",
+    },
+      // 子标题
+      subtitle: {
       type: String,
       default: "",
     },
@@ -39,6 +46,9 @@ export default {
     goback() {
       history.go(-1);
     },
+    send() {
+        this.$emit('ListenSubtitle', '');
+      }
   },
 };
 </script>
@@ -59,6 +69,12 @@ export default {
     .el-button {
       flex: none;
       margin-right: 6px;
+    }
+    .sub-title {
+      margin-left: 10px;
+       margin-top:3px;
+       font-size: 12px;
+       font-weight:normal;
     }
   }
   .main-title-operation {

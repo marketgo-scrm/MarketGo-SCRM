@@ -22,6 +22,11 @@ public interface WeComRelationMemberExternalUserRepository extends CrudRepositor
                                                                        @Param("member_id") String memberId,
                                                                        @Param("external_user_id") String externalUserId);
 
+    @Query("SELECT * FROM wecom_relation_member_external_user WHERE corp_id = :corp_id AND" +
+            " external_user_id IN (:external_user_id)")
+    List<WeComRelationMemberExternalUserEntity> queryExternalUserByCorpId(@Param("corp_id") String corpId,
+                                                                           @Param("external_user_id") List<String> externalUserId);
+
     @Modifying
     @Query("UPDATE wecom_relation_member_external_user SET tags = :tags WHERE corp_id = :corp_id AND member_id = " +
             ":member_id AND external_user_id = :external_user_id")

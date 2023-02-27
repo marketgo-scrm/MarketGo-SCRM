@@ -1,30 +1,28 @@
 package com.easy.marketgo.biz.service.wecom;
 
 import cn.hutool.crypto.SecureUtil;
-import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
-import com.easy.marketgo.cdp.model.CrowdUsersBaseRequest;
-import com.easy.marketgo.cdp.service.CdpManagerService;
 import com.easy.marketgo.common.enums.UserGroupAudienceTypeEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.common.utils.UuidUtils;
-import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
-import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
 import com.easy.marketgo.core.entity.customer.WeComRelationMemberExternalUserEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.entity.masstask.WeComUserGroupAudienceEntity;
-import com.easy.marketgo.core.model.bo.*;
+import com.easy.marketgo.core.model.cdp.CrowdUsersBaseRequest;
+import com.easy.marketgo.core.model.usergroup.CdpUserGroupAudienceRule;
+import com.easy.marketgo.core.model.usergroup.OfflineUserGroupAudienceRule;
+import com.easy.marketgo.core.model.usergroup.WeComUserGroupAudienceRule;
 import com.easy.marketgo.core.repository.usergroup.UserGroupOfflineRepository;
-import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
-import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
 import com.easy.marketgo.core.repository.wecom.WeComUserGroupAudienceRepository;
-import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
-import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
+import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskRepository;
+import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
+import com.easy.marketgo.core.service.cdp.CdpManagerService;
+import com.easy.marketgo.core.service.contacts.WeComCustomerService;
+import com.easy.marketgo.core.service.contacts.WeComMemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,15 +51,6 @@ public class QueryUserGroupDetailService {
     private WeComUserGroupAudienceRepository weComUserGroupAudienceRepository;
 
     @Autowired
-    private WeComRelationMemberExternalUserRepository weComRelationMemberExternalUserRepository;
-
-    @Autowired
-    private WeComDepartmentRepository weComDepartmentRepository;
-
-    @Autowired
-    private WeComMemberMessageRepository weComMemberMessageRepository;
-
-    @Autowired
     private WeComGroupChatsRepository weComGroupChatsRepository;
 
     @Autowired
@@ -72,6 +61,12 @@ public class QueryUserGroupDetailService {
 
     @Autowired
     private CdpManagerService cdpManagerService;
+
+    @Autowired
+    private WeComMemberService weComMemberService;
+
+    @Autowired
+    private WeComCustomerService weComCustomerService;
 
     public void queryWeComMassTaskUserGroup(String taskType) {
 //        Date date = DateUtil.date();
@@ -107,7 +102,7 @@ public class QueryUserGroupDetailService {
                 continue;
             }
 
-            if (weComUserGroupAudienceEntity.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.OFFLIEN_USER_GROUP.getValue())) {
+            if (weComUserGroupAudienceEntity.getUserGroupType().equalsIgnoreCase(UserGroupAudienceTypeEnum.OFFLINE_USER_GROUP.getValue())) {
                 String offlineConditions = weComUserGroupAudienceEntity.getOfflineConditions();
                 if (StringUtils.isBlank(offlineConditions)) {
                     log.error("query offline user group conditions is empty. weComUserGroupAudienceEntity={}",
@@ -165,13 +160,13 @@ public class QueryUserGroupDetailService {
                     } else if (entity.getTaskType().equals(WeComMassTaskTypeEnum.MOMENT.name())) {
                         queryMomentMassTaskUserGroup(entity.getCorpId(), entity.getUuid(), weComUserGroupAudienceRule);
                     } else {
-                        List<String> memberList = getMemberList(entity.getCorpId(), weComUserGroupAudienceRule);
+                        List<String> memberList = weComMemberService.getMemberList(entity.getCorpId(), weComUserGroupAudienceRule);
                         log.info("query user group for member. memberList={}", memberList);
                         memberList = memberList.stream().distinct().collect(Collectors.toList());
                         log.info("query user group for member remove duplicate. memberList={}", memberList);
                         for (String member : memberList) {
                             List<WeComRelationMemberExternalUserEntity> externalUserEntities =
-                                    getExternalUsers(entity.getCorpId(), Arrays.asList(member),
+                                    weComCustomerService.getExternalUsers(entity.getCorpId(), Arrays.asList(member),
                                             weComUserGroupAudienceRule);
                             log.info("user group for external user estimate total result. externalUserCount={}",
                                     externalUserEntities.size());
@@ -212,7 +207,7 @@ public class QueryUserGroupDetailService {
         }
     }
 
-    private void queryOfflineUserGroup(String corpId, String userGroupUuid, String taskUuid) {
+    public void queryOfflineUserGroup(String corpId, String userGroupUuid, String taskUuid) {
         try {
             List<String> memberIds = userGroupOfflineRepository.queryMemberByUuid(corpId, userGroupUuid);
             if (CollectionUtils.isEmpty(memberIds)) {
@@ -250,115 +245,9 @@ public class QueryUserGroupDetailService {
         }
     }
 
-    private List<String> getMemberList(String corpId, WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
-        List<Long> departmentList = new ArrayList<>();
-        List<String> memberList = new ArrayList<>();
-        if (!weComUserGroupAudienceRule.getMembers().getIsAll()) {
-            if (CollectionUtils.isNotEmpty(weComUserGroupAudienceRule.getMembers().getUsers())) {
-                weComUserGroupAudienceRule.getMembers().getUsers().forEach(user -> {
-                    memberList.add(user.getMemberId());
-                });
-            }
-
-            if (CollectionUtils.isNotEmpty(weComUserGroupAudienceRule.getMembers().getDepartments())) {
-                weComUserGroupAudienceRule.getMembers().getDepartments().forEach(department -> {
-                    departmentList.add(department.getId());
-                });
-
-                List<WeComDepartmentEntity> departmentEntities =
-                        weComDepartmentRepository.findByParentIdIn(departmentList);
-                while (CollectionUtils.isNotEmpty(departmentEntities)) {
-                    List<Long> tempDepartmentList = new ArrayList<>();
-                    departmentEntities.forEach(departmentEntity -> {
-                        tempDepartmentList.add(departmentEntity.getDepartmentId());
-                    });
-                    log.info("find department list. tempDepartmentList={}", tempDepartmentList);
-                    departmentList.addAll(tempDepartmentList);
-                    departmentEntities =
-                            weComDepartmentRepository.findByParentIdIn(tempDepartmentList);
-                }
-
-                QueryMemberBuildSqlParam queryMemberBuildSqlParam =
-                        QueryMemberBuildSqlParam.builder().corpId(corpId).departments(departmentList).build();
-                List<WeComMemberMessageEntity> memberTmp =
-                        weComMemberMessageRepository.listByParam(queryMemberBuildSqlParam);
-                log.info("query user group for member from db count. memberTmp={}", memberTmp.size());
-                if (CollectionUtils.isNotEmpty(memberTmp)) {
-                    log.info("user group for member estimate result. memberCount={}", memberTmp.size());
-                    memberTmp.forEach(item -> {
-                        memberList.add(item.getMemberId());
-                    });
-                }
-            }
-        } else {
-
-        }
-        return memberList.stream().distinct().collect(Collectors.toList());
-    }
-
-    private List<WeComRelationMemberExternalUserEntity> getExternalUsers(String corpId, List<String> memberList,
-                                                                         WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
-        int offset = 0;
-        int limitSize = 20000;
-        List<WeComRelationMemberExternalUserEntity> entities = new ArrayList<>();
-        do {
-            QueryUserGroupBuildSqlParam paramExternalUser =
-                    QueryUserGroupBuildSqlParam.builder().corpId(corpId).pageNum(offset).pageSize(limitSize).build();
-            paramExternalUser.setMemberIds(memberList);
-            WeComUserGroupAudienceRule.ExternalUserMessage externalUserMessage =
-                    weComUserGroupAudienceRule.getExternalUsers();
-            if (!externalUserMessage.getIsAll()) {
-
-                //添加时间的条件
-                if (externalUserMessage.isAddTimeSwitch()) {
-                    paramExternalUser.setStartTime(externalUserMessage.getStartTime());
-                    paramExternalUser.setEndTime(externalUserMessage.getEndTime());
-                }
-
-                //标签条件
-                if (externalUserMessage.isCorpTagSwitch()
-                        && externalUserMessage.getCorpTags() != null
-                        && CollectionUtils.isNotEmpty(externalUserMessage.getCorpTags().getTags())) {
-                    paramExternalUser.setTagRelation(externalUserMessage.getCorpTags().getRelation());
-                    List<String> tags = new ArrayList<>();
-                    externalUserMessage.getCorpTags().getTags().forEach(weComCorpTag -> {
-                        tags.add(weComCorpTag.getId());
-                    });
-
-                    paramExternalUser.setTags(tags);
-                }
-
-                //性别条件
-                if (externalUserMessage.isGenderSwitch() &&
-                        CollectionUtils.isNotEmpty(externalUserMessage.getGenders())) {
-                    paramExternalUser.setGenders(externalUserMessage.getGenders());
-                }
-
-                //客户群条件
-                if (externalUserMessage.isGroupChatsSwitch() &&
-                        CollectionUtils.isNotEmpty(externalUserMessage.getGroupChats())) {
-                    List<String> groups = new ArrayList<>();
-                    externalUserMessage.getGroupChats().forEach(group -> {
-                        groups.add(group.getChatId());
-                    });
-
-                    paramExternalUser.setGroupChats(groups);
-                }
-            }
-
-            List<WeComRelationMemberExternalUserEntity> externalUserEntities =
-                    weComRelationMemberExternalUserRepository.listByUserGroupCnd(paramExternalUser);
-            log.info("user group for external user estimate result. externalUserCount={}",
-                    externalUserEntities.size());
-            entities.addAll(externalUserEntities);
-            offset = (externalUserEntities.size() < limitSize) ? 0 : (offset + limitSize);
-        } while (offset > 0);
-        return entities;
-    }
-
-    private void queryGroupMassTaskUserGroup(String corpId, String taskUuid,
+    public void queryGroupMassTaskUserGroup(String corpId, String taskUuid,
                                              WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
-        List<String> memberList = getMemberList(corpId, weComUserGroupAudienceRule);
+        List<String> memberList = weComMemberService.getMemberList(corpId, weComUserGroupAudienceRule);
         memberList = memberList.stream().distinct().collect(Collectors.toList());
         List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities = new ArrayList<>();
         memberList.forEach(member -> {
@@ -374,11 +263,11 @@ public class QueryUserGroupDetailService {
         weComMassTaskSendQueueRepository.saveAll(weComMassTaskSendQueueEntities);
     }
 
-    private void queryMomentMassTaskUserGroup(String corpId, String taskUuid,
+    public void queryMomentMassTaskUserGroup(String corpId, String taskUuid,
                                               WeComUserGroupAudienceRule weComUserGroupAudienceRule) {
         List<String> memberList = new ArrayList<>();
         if (!weComUserGroupAudienceRule.getMembers().getIsAll()) {
-            memberList = getMemberList(corpId, weComUserGroupAudienceRule);
+            memberList = weComMemberService.getMemberList(corpId, weComUserGroupAudienceRule);
         } else {
             memberList = weComGroupChatsRepository.queryOwnersByCorpId(corpId);
         }

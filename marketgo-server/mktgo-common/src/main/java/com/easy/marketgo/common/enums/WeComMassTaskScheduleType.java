@@ -12,7 +12,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum WeComMassTaskScheduleType {
     IMMEDIATE("IMMEDIATE"),
 
-    FIXED_TIME("FIXED_TIME");
+    FIXED_TIME("FIXED_TIME"),
+
+    REPEAT_TIME("REPEAT_TIME");
 
     private String value;
 

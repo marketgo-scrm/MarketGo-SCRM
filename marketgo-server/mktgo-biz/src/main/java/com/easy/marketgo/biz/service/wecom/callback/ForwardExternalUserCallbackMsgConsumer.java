@@ -26,7 +26,7 @@ public class ForwardExternalUserCallbackMsgConsumer extends ForwardCallbackMsgBa
         try {
             log.info("consumer forward customer callback message. message={}", data);
             WeComForwardCallbackMsg sendData = JsonUtils.toObject(data, WeComForwardCallbackMsg.class);
-            sendWeComMemberCallbackMsg(sendData);
+            sendWeComCustomerCallbackMsg(sendData);
         } catch (Exception e) {
             log.error("failed to consumer forward customer callback message. message={}", data, e);
         }

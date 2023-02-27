@@ -100,4 +100,28 @@ public class RabbitMqConstants {
 
     public static final String ROUTING_KEY_WECOM_EXTERNAL_USER_FORWARD = "wecom.external_user.forward.routing.key";
     public static final String QUEUE_NAME_WECOM_EXTERNAL_USER_FORWARD = "wecom.external_user.forward.queue";
+
+
+    public static final String EXCHANGE_NAME_WECOM_TASK_CENTER_SINGLE = "wecom.task_center_single.exchange";
+
+    public static final String ROUTING_KEY_WECOM_TASK_CENTER_SINGLE = "wecom.task_center_single.routing.key";
+    public static final String QUEUE_NAME_WECOM_TASK_CENTER_SINGLE = "wecom.task_center_single.queue";
+
+
+    public static final String EXCHANGE_NAME_WECOM_TASK_CENTER_STATISTIC = "wecom.task_center_statistic.exchange";
+
+    public static final String ROUTING_KEY_WECOM_TASK_CENTER_STATISTIC = "wecom.task_center_statistic.routing.key";
+    public static final String QUEUE_NAME_WECOM_TASK_CENTER_STATISTIC = "wecom.task_center_statistic.queue";
+
+
+    public static final String EXCHANGE_NAME_WECOM_TASK_CENTER_GROUP = "wecom.task_center_group.exchange";
+
+    public static final String ROUTING_KEY_WECOM_TASK_CENTER_GROUP = "wecom.task_center_group.routing.key";
+    public static final String QUEUE_NAME_WECOM_TASK_CENTER_GROUP = "wecom.task_center_group.queue";
+
+
+    public static final String EXCHANGE_NAME_WECOM_TASK_CENTER_MOMENT = "wecom.task_center_moment.exchange";
+
+    public static final String ROUTING_KEY_WECOM_TASK_CENTER_MOMENT = "wecom.task_center_moment.routing.key";
+    public static final String QUEUE_NAME_WECOM_TASK_CENTER_MOMENT = "wecom.task_center_moment.queue";
 }

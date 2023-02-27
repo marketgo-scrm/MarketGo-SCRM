@@ -78,17 +78,13 @@ public class ExternalUserCallbackMsgConsumer extends SendMassTaskBaseConsumer {
         if (sendData.getChangeType().equals(Constants.WECOM_CALLBACK_MESSAGE_TYPE_ADD_CUSTOMER) ||
                 sendData.getChangeType().equals(Constants.WECOM_CALLBACK_MESSAGE_TYPE_EDIT_CUSTOMER)) {
             syncContactsService.syncExternalUserDetail(sendData.getCorpId(), sendData.getExternalUserId());
-
         } else if (sendData.getChangeType().equals(Constants.WECOM_CALLBACK_MESSAGE_TYPE_DELETE_CUSTOMER)) {
-
             weComRelationMemberExternalUserRepository.deleteRelationByExternalUserAndMemberId(sendData.getCorpId(),
                     sendData.getMemberId(), sendData.getExternalUserId(), WeComRelationType.MEMBER_DEL.ordinal());
         } else if (sendData.getChangeType().equals(Constants.WECOM_CALLBACK_MESSAGE_TYPE_DELETE_FOLLOW_USER)) {
-
             weComRelationMemberExternalUserRepository.deleteRelationByExternalUserAndMemberId(sendData.getCorpId(),
                     sendData.getMemberId(), sendData.getExternalUserId(),
                     WeComRelationType.EXTERNAL_USER_DEL.ordinal());
         }
-
     }
 }

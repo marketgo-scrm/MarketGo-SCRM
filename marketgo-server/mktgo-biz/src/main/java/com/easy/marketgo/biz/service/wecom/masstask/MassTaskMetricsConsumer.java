@@ -134,7 +134,7 @@ public class MassTaskMetricsConsumer {
 
 //    private void createMomentMassTask(final String taskUuid, WeComMassTaskMetricsBO.CreateMomentMessage message) {
 //        log.info("create moment mass task message. taskUuid={}, message={}", taskUuid, message);
-//        WeComMassTaskSyncStatisticEntity entity = new WeComMassTaskSyncStatisticEntity();
+//        WeComTaskCenterSyncStatisticEntity entity = new WeComTaskCenterSyncStatisticEntity();
 //        entity.setMediaUuid(UuidUtils.generateUuid());
 //        entity.setTaskUuid(taskUuid);
 //        entity.setSendIdType(WeComMassTaskSendIdType.JOB_ID);
@@ -152,9 +152,9 @@ public class MassTaskMetricsConsumer {
 //        }
 //        log.info("init publish member status for moment mass task message. taskUuid={}, message={}", taskUuid,
 //                message);
-//        List<WeComMassTaskMemberStatisticEntity> entityList = new ArrayList<>();
+//        List<WeComTaskCenterMemberStatisticEntity> entityList = new ArrayList<>();
 //        for (WeComMassTaskMetricsBO.MemberStatus item : message.getMemberState()) {
-//            WeComMassTaskMemberStatisticEntity entity = new WeComMassTaskMemberStatisticEntity();
+//            WeComTaskCenterMemberStatisticEntity entity = new WeComTaskCenterMemberStatisticEntity();
 //
 //            entity.setMemberId(item.getMemberId());
 //            entity.setProjectUuid(projectUuid);

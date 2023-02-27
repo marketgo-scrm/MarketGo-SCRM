@@ -14,7 +14,8 @@ import java.util.List;
  * @data : 7/16/22 10:52 PM
  * Describe:
  */
-public interface WeComGroupChatsRepository extends CrudRepository<WeComGroupChatsEntity, Long> {
+public interface WeComGroupChatsRepository extends CrudRepository<WeComGroupChatsEntity, Long>,
+        WeComGroupChatsCustomizedRepository {
     @Query("SELECT * FROM wecom_group_chats WHERE corp_id = :corp_id AND group_chat_id = :group_chat_id")
     WeComGroupChatsEntity queryByChatId(@Param("corp_id") String corpId,
                                         @Param("group_chat_id") String chatId);

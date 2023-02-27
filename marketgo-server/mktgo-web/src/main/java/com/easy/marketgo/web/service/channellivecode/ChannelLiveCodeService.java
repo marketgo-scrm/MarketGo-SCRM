@@ -1,7 +1,7 @@
 package com.easy.marketgo.web.service.channellivecode;
 
 import com.easy.marketgo.web.model.request.contactway.ChannelLiveCodeCreateRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.contactway.ChannelLiveCodeResponse;
 
 import javax.servlet.http.HttpServletResponse;

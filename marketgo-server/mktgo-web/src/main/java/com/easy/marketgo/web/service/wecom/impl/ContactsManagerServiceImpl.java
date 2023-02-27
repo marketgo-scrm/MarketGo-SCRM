@@ -11,7 +11,7 @@ import com.easy.marketgo.core.model.bo.QueryExternalUserBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.customer.*;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.customer.*;
 import com.easy.marketgo.web.service.wecom.ContactsManagerService;
 import lombok.extern.slf4j.Slf4j;
@@ -269,7 +269,7 @@ public class ContactsManagerServiceImpl implements ContactsManagerService {
             for (WeComGroupChatsEntity item : entities) {
                 WeComGroupChatsResponse.GroupChat msg = new WeComGroupChatsResponse.GroupChat();
                 msg.setGroupChatId(item.getGroupChatId());
-                msg.setGroupChatName(item.getGroupChatName());
+                msg.setGroupChatName(StringUtils.isEmpty(item.getGroupChatName()) ? "匿名" : item.getGroupChatName());
                 msg.setOwnerId(item.getOwner());
                 msg.setCreateTime(DateFormatUtils.formatDateTime(item.getChatCreateTime()));
                 groupChats.add(msg);

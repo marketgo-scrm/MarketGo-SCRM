@@ -46,6 +46,8 @@ export default {
   name: "CustomMessageInput",
   emits: ["change"],
   props: {
+    // index
+    index: Number,
     // 值
     value: {
       type: String,
@@ -305,7 +307,7 @@ export default {
       }, 50);
     },
     synchro(text) {
-      this.$emit("change", text);
+      this.$emit("change", text, this.index);
     },
     input(e) {
       if (e.target.innerHTML.length <= this.limit) {
@@ -319,7 +321,10 @@ export default {
     blur(e) {
       console.log(e, this.$refs,this.getPosition(this.$refs.messageRef));
       this.onindex = this.getPosition(this.$refs.messageRef)
-      this.synchro(e.target.outerText);
+      let str = e.target.outerText.trim()
+      this.synchro(str);
+      this.$refs.messageRef.innerHTML = str;
+      this.val = str;
     },
     //开始拖动可选字段
     dragStart(event) {

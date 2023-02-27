@@ -1,7 +1,7 @@
 package com.easy.marketgo.cdp.service;
 
-import com.easy.marketgo.cdp.model.CdpCrowdListMessage;
-import com.easy.marketgo.cdp.model.CrowdBaseRequest;
+import com.easy.marketgo.core.model.cdp.CdpCrowdListMessage;
+import com.easy.marketgo.core.model.cdp.CrowdBaseRequest;
 
 /**
  * @author : kevinwang

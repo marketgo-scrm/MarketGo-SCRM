@@ -33,7 +33,7 @@ import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatisticRepository;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComMassTaskRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.masstask.*;
 import com.easy.marketgo.web.service.wecom.WeComMassTaskService;
 import lombok.extern.slf4j.Slf4j;
@@ -396,12 +396,12 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
             detail.setMemberId(entity.getMemberId());
             if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNDELIVERED.getValue())) {
                 detail.setExternalUserCount(entity.getExternalUserCount() == null ? 0 : entity.getExternalUserCount());
-            } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.DELIVERED.getValue())) {
-                detail.setExternalUserCount(entity.getDeliveredCount() == null ? 0 : entity.getDeliveredCount());
             } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.UNFRIEND.getValue())) {
                 detail.setExternalUserCount(entity.getNonFriendCount() == null ? 0 : entity.getNonFriendCount());
             } else if (status.equalsIgnoreCase(WeComMassTaskExternalUserStatusEnum.EXCEED_LIMIT.getValue())) {
                 detail.setExternalUserCount(entity.getExceedLimitCount() == null ? 0 : entity.getExceedLimitCount());
+            } else {
+                detail.setExternalUserCount(entity.getDeliveredCount() == null ? 0 : entity.getDeliveredCount());
             }
             members.add(detail);
         });
@@ -635,7 +635,9 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
                         mediaUuidList.add(item.getLink().getMediaUuid());
                     }
                 });
-                weComMediaResourceRepository.deleteByUuids(mediaUuidList);
+                if (CollectionUtils.isNotEmpty(mediaUuidList)) {
+                    weComMediaResourceRepository.deleteByUuids(mediaUuidList);
+                }
             }
         }
         weComMassTaskRepository.deleteByIdAndTaskType(entity.getId(), taskType);

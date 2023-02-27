@@ -13,11 +13,13 @@
         v-if="stretch"
         size="mini"
         type="text"
+        :style="{marginTop:marginTop +'px'}"
       >
         展开
         <i class="el-icon-arrow-down" />
       </el-button>
       <el-button
+      :style="{marginTop:marginTop +'px'}"
         @click="stretch = true"
         v-if="!stretch"
         size="mini"
@@ -44,6 +46,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    marginTop: {
+      type: Number,
+      default: 0,
+    }
   },
   data() {
     return {
@@ -54,6 +60,7 @@ export default {
     goback() {
       this.$router.go(-1);
     },
+
   },
 };
 </script>

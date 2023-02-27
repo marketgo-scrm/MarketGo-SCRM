@@ -141,7 +141,7 @@
       <!--网页      -->
       <div v-show="radioFj == 2" class="wy" style="padding-top: 21px">
         <el-form ref="baseForm" class="demo-baseForm" label-width="80px">
-          <el-form-item label="活动信息" required>
+          <el-form-item label="标题" required>
             <el-input v-model="typeLink.title"
                       maxlength="30"
                       show-word-limit

@@ -1,14 +1,14 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
 import cn.hutool.core.util.IdUtil;
-import com.easy.marketgo.cdp.model.CdpTestSettingRequest;
-import com.easy.marketgo.cdp.service.CdpManagerService;
+import com.easy.marketgo.core.model.cdp.CdpTestSettingRequest;
+import com.easy.marketgo.core.service.cdp.CdpManagerService;
 import com.easy.marketgo.common.enums.cdp.CdpManufacturerTypeEnum;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
 import com.easy.marketgo.core.repository.cdp.CdpConfigRepository;
 import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
-import com.easy.marketgo.web.model.response.BaseResponse;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpManufactureListResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpManufacturerMessageResponse;
 import com.easy.marketgo.web.model.response.cdp.CdpSwitchStatusResponse;

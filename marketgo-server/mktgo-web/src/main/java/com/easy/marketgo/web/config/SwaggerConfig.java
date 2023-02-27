@@ -1,17 +1,13 @@
 package com.easy.marketgo.web.config;
 
-import com.google.common.collect.Lists;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
-import springfox.documentation.service.Parameter;
 import springfox.documentation.service.RequestParameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -39,7 +35,7 @@ public class SwaggerConfig {
                 .title("Swagger Test App Restful API")
                 .description("swagger test app restful api")
                 .termsOfServiceUrl("")
-                .contact(new Contact("ssk","http://127.0.0,1","shang.shi.kun@hotmail.com"))
+                .contact(new Contact("ssk","http://127.0.0.1","shang.shi.kun@hotmail.com"))
                 .version("1.0")
                 .build();
     }
@@ -55,7 +51,7 @@ public class SwaggerConfig {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
-                .groupName("SwaggerGroupOneAPI")
+                .groupName("WebOpenAPI")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.easy.marketgo.web"))
                 .paths(PathSelectors.any())
