@@ -147,17 +147,9 @@
 - Redis:7.0.2
 - Nginx: 1.12.2
 
-## 3、部署流程
+## 3、产品介绍
 
-[服务器配置](https://docs.qq.com/doc/DUkNMRmVadGpOT2hD)
-
-[端口配置](https://docs.qq.com/doc/DUnRKWGdIRlNkVU5z)
-
-[环境准备](https://docs.qq.com/doc/DUnlkcGlWY2l2VlJq)
-
-[前端部署](https://docs.qq.com/doc/DUmtMQllqQmVHTVpE)
-
-[后端部署](https://docs.qq.com/doc/DUnBnb0FpWUpPd0dT)
+[产品介绍](https://docs.qq.com/doc/DUlRoUGhLc3VRb1dU)
 
 ## 4、版本说明
 
@@ -171,7 +163,19 @@
 
 密码：123456
 
-## 6、定制开发
+## 6、部署流程
+
+[服务器配置](https://docs.qq.com/doc/DUkNMRmVadGpOT2hD)
+
+[端口配置](https://docs.qq.com/doc/DUnRKWGdIRlNkVU5z)
+
+[环境准备](https://docs.qq.com/doc/DUnlkcGlWY2l2VlJq)
+
+[前端部署](https://docs.qq.com/doc/DUmtMQllqQmVHTVpE)
+
+[后端部署](https://docs.qq.com/doc/DUnBnb0FpWUpPd0dT)
+
+## 7、定制开发
 
 需要基于MarketGo做定制业务需求，请将需求整理成文档和联系方式，发给邮箱：[kevinwangwn0209@gmail.com](kevinwangwn0209@gmail.com)
 
@@ -184,15 +188,12 @@
     <img src="WechatIMG15AddFriend1.jpeg" width="300"/>
 </center>
 
-## 7、开源说明
+## 8、开源说明
 
 MarketGo的源码100%开源，遵守GPL-3.0协议。
 
 开发者可以基于MarketGo做二次开发，源码完全免费。
 
-## 8、产品介绍
-
-[产品介绍](https://www.yuque.com/kevinwang-rantv/cv59zh/lgi6m9)
 
 ## 9、💪支持作者,捐赠
 
