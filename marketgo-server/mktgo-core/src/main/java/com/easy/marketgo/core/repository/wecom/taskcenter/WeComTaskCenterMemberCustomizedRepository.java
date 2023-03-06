@@ -68,7 +68,7 @@ public interface WeComTaskCenterMemberCustomizedRepository {
             StringBuilder sql = new StringBuilder(
                     String.format("SELECT %s FROM wecom_task_center_member WHERE corp_id = :corpId",
                             isCount ?
-                                    "COUNT(*)" : "*"));
+                                    "COUNT(DISTINCT task_uuid)" : "*"));
 
             if (StringUtils.isNotEmpty(param.getMemberId())) {
                 sql.append(" AND member_id = :memberId");
@@ -87,7 +87,6 @@ public interface WeComTaskCenterMemberCustomizedRepository {
             if (param.getEndTime() != null) {
                 sql.append(" AND create_time < :endTime");
             }
-            sql.append(" group by task_uuid");
             if (!isCount) {
                 sql.append(String.format(" ORDER BY id %s", param.getSortOrderKey()));
                 sql.append(" LIMIT :startIndex,:pageSize");
