@@ -52,8 +52,7 @@ public class WeComClientTaskCenterController {
             @ApiParam(value = "开始时间", required = false) @Valid @RequestParam(value = "start_time", required = false) String startTime,
             @ApiParam(value = "结束时间", required = false) @Valid @RequestParam(value = "end_time", required = false) String endTime) {
         return ResponseEntity.ok(queryTaskCenterDetailService.listTaskCenter(corpId, memberId, taskTypes, statuses,
-                startTime,
-                endTime, pageNum, pageSize));
+                startTime, endTime, pageNum, pageSize));
     }
 
     @ApiResponses({
