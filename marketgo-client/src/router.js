@@ -25,7 +25,16 @@ const routes = [
         meta: {
           title: '任务列表',
         },
-      }, {
+      }, 
+      {
+        name: 'subList',
+        path: 'subList',
+        component: () => import('./view/task/subList.vue'),
+        meta: {
+          title: '重复任务',
+        },
+      }, 
+      {
         name: 'detail',
         path: 'detail',
         component: () => import('./view/task/detail.vue'),

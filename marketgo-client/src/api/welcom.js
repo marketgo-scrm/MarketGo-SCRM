@@ -10,6 +10,12 @@ export const welcom = {
   },
   sidebarDetail: (query = {}) => {
     return xhr.get(`mktgo/client/wecom/sidebar/detail?${qs.stringify(query)}`)
+  },
+  taskList: (query = {}) => {
+    return xhr.get(`/mktgo/client/wecom/task_center/list?${qs.stringify(query)}`)
+  },
+  taskSubList: (query = {}) => {
+    return xhr.get(`/mktgo/client/wecom/task_center/sub_list?${qs.stringify(query)}`)
   }
 
 }

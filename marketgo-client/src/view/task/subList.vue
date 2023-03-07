@@ -1,21 +1,14 @@
 <template>
-    <div class="task-center">
-        <van-nav-bar title="全部任务" />
-        <van-cell-group style="background: transparent;">
-            <van-dropdown-menu>
-                <van-dropdown-item v-model="filter.statuses" :options="statusOptions" />
-                <van-dropdown-item v-model="filter.task_types" :options="typeOptions" />
-            </van-dropdown-menu>
-        </van-cell-group>
+    <div class="task-repeat-center">
+        <van-nav-bar title="重复任务列表" />
         <van-cell-group class="list">
             <van-cell is-link @click="toReceiver(task)" size="large" class="card" v-for="task of list" :key="task.id">
                 <template #title>
                     <span class="lbl">{{ task.name }}</span>
-                    <van-tag plain type="primary" class="tag">{{ getScheduleTypeName(task.scheduleType) }}</van-tag>
+                    <van-tag plain type="primary" class="tag">{{ task.taskStatus==='COMPUTED'?'已完成':'未完成' }}</van-tag>
                 </template>
                 <template #label>
                     <div>{{ task.planTime }}</div>
-                    <div>{{ getTaskTypeName(task.taskType) }} </div>
                 </template>
             </van-cell>
         </van-cell-group>
@@ -50,25 +43,12 @@ export default {
     created() {
         const query = this.$route.query
         this.query = qs.parse(query)
-        welcom.taskList(query).then(res => {
+        welcom.taskSubList(query).then(res => {
             this.list = res.data.list || []
         })
     },
 
     methods: {
-        getScheduleTypeName(type) {
-            const map = {
-                'IMMEDIATE': '单次',
-                'REPEAT_TIME': '定时重复'
-            }
-            return map[type]
-
-        },
-        getTaskTypeName(type) {
-
-            let find = this.typeOptions.find(item => item.value === type)
-            return find ? find.text : type
-        },
         toReceiver(task) {
 
             this.$router.push({
@@ -87,7 +67,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.task-center {
+.task-repeat-center {
     font-family: 'PingFang SC';
     background: #F5F7FA; //#D8D8D8;
     color: #333333;
@@ -102,7 +82,7 @@ export default {
     }
 
     .list {
-        margin-top: 20px;
+        margin-top: 10px;
         background: transparent;
 
         .card {
