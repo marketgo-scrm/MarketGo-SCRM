@@ -1,5 +1,5 @@
-import { createRouter, createWebHashHistory,createWebHistory } from 'vue-router';
-
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
+import qs from 'qs'
 const routes = [
   {
     path: '/',
@@ -25,7 +25,7 @@ const routes = [
         meta: {
           title: '任务列表',
         },
-      }, 
+      },
       {
         name: 'subList',
         path: 'subList',
@@ -33,7 +33,7 @@ const routes = [
         meta: {
           title: '重复任务',
         },
-      }, 
+      },
       {
         name: 'detail',
         path: 'detail',
@@ -48,7 +48,7 @@ const routes = [
         meta: {
           title: '接受客户列表',
         },
-      }, 
+      },
       {
         name: 'todoDetail',
         path: 'todoDetail',
@@ -71,7 +71,23 @@ router.beforeEach((to, from, next) => {
   if (title) {
     document.title = ' '//title;
   }
-  next();
+  if (to.query.corp_id && to.query.agent_id) {
+    next()
+  } else {
+    if (from.query.corp_id && from.query.agent_id) {
+      let toQuery = qs.parse(to.query)
+      toQuery.corp_id = from.query.corp_id
+      toQuery.agent_id = from.query.agent_id
+      next({
+        path: to.path,
+        query: toQuery
+      }
+      )
+    } else {
+      next()
+    }
+
+  }
 });
 
 export { router };
