@@ -85,13 +85,13 @@ export default {
 
   methods: {
     finish(task) {
-      const query = { corp_id };
+      const query = { corp_id:task.corpId };
       const params = {
         externalUserId: "", //sdk单独获取
         memberId: "",
         sentTIme: Date.now(),
         status: "DELIVERED",
-        taskUuid: task.task_uuid,
+        taskUuid: task.taskUuid,
         type: "EXTERNAL_USER", // EXTERNAL_USER 客户
         uuid: task.uuid,
       };
