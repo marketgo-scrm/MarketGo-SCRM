@@ -75,7 +75,7 @@ public class SendBaseTaskCenterProducer {
                         new WeComTaskCenterRequest.AttachmentsMessage();
                 WeComTaskCenterRequest.TextMessage textMessage = new WeComTaskCenterRequest.TextMessage();
                 textMessage.setContent(weComSendMassTaskContent.getText().getContent());
-                attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.TEXT.getValue().toLowerCase());
+                attachmentsMessage.setType(WeComSendMassTaskContent.TypeEnum.TEXT.getValue().toLowerCase());
                 attachmentsMessage.setText(textMessage);
                 attachments.add(attachmentsMessage);
             } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.IMAGE) {
@@ -87,7 +87,7 @@ public class SendBaseTaskCenterProducer {
                     imageAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getImage().getMediaUuid()));
                     imageAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getImage().getMediaUuid());
                     imageAttachmentsMessage.setImageContent(weComSendMassTaskContent.getImage().getImageContent());
-                    attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.IMAGE.getValue().toLowerCase());
+                    attachmentsMessage.setType(WeComSendMassTaskContent.TypeEnum.IMAGE.getValue().toLowerCase());
                     attachmentsMessage.setImage(imageAttachmentsMessage);
                     attachments.add(attachmentsMessage);
                 }
@@ -110,7 +110,7 @@ public class SendBaseTaskCenterProducer {
                         linkAttachmentsMessage.setPicUrl(queryMediaId(weComSendMassTaskContent.getLink().getMediaUuid()));
                     }
 
-                    attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.LINK.getValue().toLowerCase());
+                    attachmentsMessage.setType(WeComSendMassTaskContent.TypeEnum.LINK.getValue().toLowerCase());
                     attachmentsMessage.setLink(linkAttachmentsMessage);
                     attachments.add(attachmentsMessage);
                 }
@@ -127,7 +127,7 @@ public class SendBaseTaskCenterProducer {
                     miniProgramAttachmentsMessage.setPicMediaId(queryMediaId(weComSendMassTaskContent.getMiniProgram().getMediaUuid()));
                     miniProgramAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getMiniProgram().getMediaUuid());
                     miniProgramAttachmentsMessage.setImageContent(weComSendMassTaskContent.getMiniProgram().getImageContent());
-                    attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.MINIPROGRAM.getValue().toLowerCase());
+                    attachmentsMessage.setType(WeComSendMassTaskContent.TypeEnum.MINIPROGRAM.getValue().toLowerCase());
                     attachmentsMessage.setMiniProgram(miniProgramAttachmentsMessage);
                     attachments.add(attachmentsMessage);
                 }
@@ -140,7 +140,7 @@ public class SendBaseTaskCenterProducer {
                 videoAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getVideo().getMediaUuid()));
                 videoAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getVideo().getMediaUuid());
                 videoAttachmentsMessage.setImageContent(weComSendMassTaskContent.getVideo().getImageContent());
-                attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.VIDEO.getValue().toLowerCase());
+                attachmentsMessage.setType(WeComSendMassTaskContent.TypeEnum.VIDEO.getValue().toLowerCase());
                 attachmentsMessage.setVideo(videoAttachmentsMessage);
                 attachments.add(attachmentsMessage);
             } else if (weComSendMassTaskContent.getType() == WeComSendMassTaskContent.TypeEnum.FILE) {
@@ -150,7 +150,7 @@ public class SendBaseTaskCenterProducer {
                         new WeComTaskCenterRequest.FileAttachmentsMessage();
                 fileAttachmentsMessage.setMediaId(queryMediaId(weComSendMassTaskContent.getFile().getMediaUuid()));
                 fileAttachmentsMessage.setMediaUuid(weComSendMassTaskContent.getFile().getMediaUuid());
-                attachmentsMessage.setMsgType(WeComSendMassTaskContent.TypeEnum.FILE.getValue().toLowerCase());
+                attachmentsMessage.setType(WeComSendMassTaskContent.TypeEnum.FILE.getValue().toLowerCase());
                 attachmentsMessage.setFile(fileAttachmentsMessage);
                 attachments.add(attachmentsMessage);
             }

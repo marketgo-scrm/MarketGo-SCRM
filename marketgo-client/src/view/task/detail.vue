@@ -102,7 +102,7 @@ export default {
     contentTxt() {
       const txt =
         (this.detail.attachments &&
-          this.detail.attachments.filter((item) => item.msgType === "text")) ||
+          this.detail.attachments.filter((item) => item.msgType === "text"||item.type === "text")) ||
         [];
 
       return txt.length > 0 ? txt : false;
@@ -110,7 +110,7 @@ export default {
     imgList() {
       const imgList =
         (this.detail.attachments &&
-          this.detail.attachments.filter((item) => item.msgType === "image")) ||
+          this.detail.attachments.filter((item) => item.msgType === "image"||item.type === "image")) ||
         [];
       return imgList.length > 0 ? imgList : false;
     },

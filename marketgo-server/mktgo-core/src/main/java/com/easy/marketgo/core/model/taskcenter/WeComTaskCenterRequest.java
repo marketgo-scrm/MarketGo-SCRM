@@ -50,7 +50,7 @@ public class WeComTaskCenterRequest implements Serializable {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AttachmentsMessage implements Serializable {
-        private String msgType;
+        private String type;
         private ImageAttachmentsMessage image;
         private LinkAttachmentsMessage link;
         private MiniProgramAttachmentsMessage miniProgram;

@@ -50,8 +50,8 @@ const routes = [
         },
       },
       {
-        name: 'todoDetail',
-        path: 'todoDetail',
+        name: 'sidebarList',
+        path: 'sidebarList',
         component: () => import('./view/task/sidebarDetail.vue'),
         meta: {
           title: '代办任务详情',

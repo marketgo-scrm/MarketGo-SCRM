@@ -58,7 +58,7 @@ export default {
     toToDo(user) {
 
       this.$router.push({
-        name: 'todoDetail'
+        name: 'sidebarList'
       })
     }
   }
