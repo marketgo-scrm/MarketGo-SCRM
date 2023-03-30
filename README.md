@@ -176,7 +176,6 @@
 也可以添加如下微信好友
 
 <center class="half">
-    <img src="WechatIMG1067AddFriend2.png" width="300"/>
     <img src="WechatIMG15AddFriend1.jpeg" width="300"/>
 </center>
 
