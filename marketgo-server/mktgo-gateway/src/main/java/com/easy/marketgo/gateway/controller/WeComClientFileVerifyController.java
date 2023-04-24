@@ -39,8 +39,8 @@ public class WeComClientFileVerifyController extends BaseController {
             RequestMethod.GET)
     public ResponseEntity<byte[]> checkCredFile(
             @ApiParam(value = "可信文件名", required = true) @PathVariable("file_name") String fileName) {
+        log.info("weCom file verify. fileName={}", fileName);
         byte[] content = weComClientVerifyService.checkCredFile(fileName);
-
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-Disposition", String.format("attachment; filename=\"%s.txt\"", fileName));
         // 以二进制流形式读取文件
