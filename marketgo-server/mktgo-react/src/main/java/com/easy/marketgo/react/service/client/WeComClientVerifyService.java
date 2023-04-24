@@ -183,7 +183,7 @@ public class WeComClientVerifyService {
         String content = entity.getCredFileContent();
         log.info("weCom file verify content. content={}", content);
         httpServletResponse.setHeader("Content-Type", "application/octet-stream");
-        httpServletResponse.setHeader("Content-Disposition", String.format("attachment; filename=\"%s.txt\"",
+        httpServletResponse.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"",
                 fileName));
         OutputStream outputStream = null;
 

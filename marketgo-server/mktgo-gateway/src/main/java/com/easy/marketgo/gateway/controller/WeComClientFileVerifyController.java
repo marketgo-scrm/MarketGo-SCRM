@@ -33,7 +33,7 @@ public class WeComClientFileVerifyController extends BaseController {
     })
     @ApiOperation(value = "企业微信可信域名校验", nickname = "checkCredFile", notes = "", response =
             BaseResponse.class)
-    @RequestMapping(value = {"{file_name}.txt"}, produces = {"application/json"}, method =
+    @RequestMapping(value = {"{file_name}"}, produces = {"application/json"}, method =
             RequestMethod.GET)
     public ResponseEntity checkCredFile(
             @ApiParam(value = "可信文件名", required = true) @PathVariable("file_name") String fileName,
