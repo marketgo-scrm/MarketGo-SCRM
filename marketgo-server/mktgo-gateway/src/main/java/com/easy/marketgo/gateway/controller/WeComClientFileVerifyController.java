@@ -5,13 +5,15 @@ import com.easy.marketgo.react.service.client.WeComClientVerifyService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.amqp.support.AmqpHeaders.CONTENT_TYPE;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * @author : kevinwang
@@ -35,14 +37,24 @@ public class WeComClientFileVerifyController extends BaseController {
             BaseResponse.class)
     @RequestMapping(value = {"{file_name}.txt"}, produces = {"application/json"}, method =
             RequestMethod.GET)
-    public String checkCredFile(
-            @ApiParam(value = "可信文件名", required = true) @PathVariable("file_name") String fileName) {
+    public ResponseEntity checkCredFile(
+            @ApiParam(value = "可信文件名", required = true) @PathVariable("file_name") String fileName,
+            HttpServletResponse httpServletResponse) {
         log.info("weCom file verify. fileName={}", fileName);
         String content = weComClientVerifyService.checkCredFile(fileName);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Content-Disposition", String.format("attachment; filename=\"%s.txt\"", fileName));
-        // 以二进制流形式读取文件
-        httpHeaders.add(CONTENT_TYPE, "application/octet-stream");
-        return content;
+        httpServletResponse.setHeader("Content-Type", "application/octet-stream");
+        httpServletResponse.setHeader("Content-Disposition", String.format("attachment; filename=\"%s.txt\"",
+                fileName));
+        OutputStream outputStream = null;
+
+        try {
+            outputStream = httpServletResponse.getOutputStream();
+            outputStream.write(content.getBytes());
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok(null);
     }
 }
