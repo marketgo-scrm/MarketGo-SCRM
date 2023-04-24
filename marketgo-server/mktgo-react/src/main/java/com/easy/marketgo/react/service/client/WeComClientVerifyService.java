@@ -172,12 +172,11 @@ public class WeComClientVerifyService {
         return url.substring(0, index);
     }
 
-    public byte[] checkCredFile(String fileName) {
+    public String checkCredFile(String fileName) {
         WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCredFileName(fileName);
         if (entity == null) {
-            return new byte[0];
+            return null;
         }
-        byte[] data = entity.getCredFileContent().getBytes();
-        return data;
+        return entity.getCredFileContent();
     }
 }

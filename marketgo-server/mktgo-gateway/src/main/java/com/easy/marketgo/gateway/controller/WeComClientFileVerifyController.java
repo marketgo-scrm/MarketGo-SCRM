@@ -6,8 +6,6 @@ import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,14 +35,14 @@ public class WeComClientFileVerifyController extends BaseController {
             BaseResponse.class)
     @RequestMapping(value = {"{file_name}.txt"}, produces = {"application/json"}, method =
             RequestMethod.GET)
-    public ResponseEntity<byte[]> checkCredFile(
+    public String checkCredFile(
             @ApiParam(value = "可信文件名", required = true) @PathVariable("file_name") String fileName) {
         log.info("weCom file verify. fileName={}", fileName);
-        byte[] content = weComClientVerifyService.checkCredFile(fileName);
+        String content = weComClientVerifyService.checkCredFile(fileName);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-Disposition", String.format("attachment; filename=\"%s.txt\"", fileName));
         // 以二进制流形式读取文件
         httpHeaders.add(CONTENT_TYPE, "application/octet-stream");
-        return new ResponseEntity<>(content, httpHeaders, HttpStatus.OK);
+        return content;
     }
 }
