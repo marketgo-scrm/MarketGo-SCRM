@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 import static com.easy.marketgo.common.constants.wecom.WeComHttpConstants.NONCESTR;
@@ -172,11 +175,26 @@ public class WeComClientVerifyService {
         return url.substring(0, index);
     }
 
-    public String checkCredFile(String fileName) {
+    public BaseResponse checkCredFile(String fileName, HttpServletResponse httpServletResponse) {
         WeComCorpMessageEntity entity = weComCorpMessageRepository.getCorpConfigByCredFileName(fileName);
         if (entity == null) {
             return null;
         }
-        return entity.getCredFileContent();
+        String content = entity.getCredFileContent();
+        log.info("weCom file verify content. content={}", content);
+        httpServletResponse.setHeader("Content-Type", "application/octet-stream");
+        httpServletResponse.setHeader("Content-Disposition", String.format("attachment; filename=\"%s.txt\"",
+                fileName));
+        OutputStream outputStream = null;
+
+        try {
+            outputStream = httpServletResponse.getOutputStream();
+            outputStream.write(content.getBytes());
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

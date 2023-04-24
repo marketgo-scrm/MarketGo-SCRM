@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * @author : kevinwang
@@ -41,20 +39,7 @@ public class WeComClientFileVerifyController extends BaseController {
             @ApiParam(value = "可信文件名", required = true) @PathVariable("file_name") String fileName,
             HttpServletResponse httpServletResponse) {
         log.info("weCom file verify. fileName={}", fileName);
-        String content = weComClientVerifyService.checkCredFile(fileName);
-        httpServletResponse.setHeader("Content-Type", "application/octet-stream");
-        httpServletResponse.setHeader("Content-Disposition", String.format("attachment; filename=\"%s.txt\"",
-                fileName));
-        OutputStream outputStream = null;
 
-        try {
-            outputStream = httpServletResponse.getOutputStream();
-            outputStream.write(content.getBytes());
-            outputStream.flush();
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(weComClientVerifyService.checkCredFile(fileName, httpServletResponse));
     }
 }
