@@ -1,6 +1,6 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
-import cn.hutool.core.codec.Base64;
+import cn.hutool.core.codec.Base62;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import com.easy.marketgo.api.model.request.WeComCheckAgentMessageRequest;
@@ -94,60 +94,80 @@ public class CorpMessageServiceImpl implements CorpMessageService {
         log.info("updateOrInsertCorpMessage params. projectId={}, weComCorpMessageRequest={}", projectId,
                 weComCorpMessageRequest);
         BaseResponse response = BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_AGENT_PARAM);
+        WeComCorpMessageEntity weComCorpMessageEntity =
+                weComCorpMessageRepository.getCorpConfigByCorpId(weComCorpMessageRequest.getCorp().getCorpId());
         try {
             if (weComCorpMessageRequest.getConfigType().equalsIgnoreCase(WeComCorpConfigStepEnum.CONTACTS_MSG.getValue())) {
-                response = checkAgentParams(projectId, weComCorpMessageRequest.getCorp().getCorpId(),
-                        Constants.AGENT_KEY_FOR_CONTACTS,
-                        weComCorpMessageRequest.getContacts().getSecret());
-                if (response.getCode().equals(ErrorCodeEnum.OK.getCode())) {
-                    byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue(), 256).getEncoded();
-                    String encode = Base64.encodeWithoutPadding(key);
-                    weComCorpMessageRepository.updateSecretByCorpId(weComCorpMessageRequest.getCorp().getCorpId(),
-                            projectId,
-                            weComCorpMessageRequest.getContacts().getSecret(),
-                            RandomUtils.getRandomStr(16), encode);
+                if (weComCorpMessageEntity == null) {
+                    return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_AGENT_PARAM);
                 }
-            } else if (weComCorpMessageRequest.getConfigType().equalsIgnoreCase(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
-                response = checkAgentParams(projectId, weComCorpMessageRequest.getCorp().getCorpId(),
-                        Constants.AGENT_KEY_FOR_EXTERNALUSER,
-                        weComCorpMessageRequest.getExternalUser().getSecret());
-                if (response.getCode().equals(ErrorCodeEnum.OK.getCode())) {
-                    byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue(), 256).getEncoded();
-                    String encode = Base64.encodeWithoutPadding(key);
-                    weComCorpMessageRepository.updateExternalUserSecretByCorpId(weComCorpMessageRequest.getCorp().getCorpId(),
-                            projectId, weComCorpMessageRequest.getExternalUser().getSecret(),
-                            RandomUtils.getRandomStr(16), encode);
-                    xxlJobManualTriggerService.manualTriggerHandler("syncCorpTags");
-                    xxlJobManualTriggerService.manualTriggerHandler("syncMembers");
-                    xxlJobManualTriggerService.manualTriggerHandler("syncGroupChats");
-                }
-            } else if (weComCorpMessageRequest.getConfigType().equalsIgnoreCase(WeComCorpConfigStepEnum.AGENT_MSG.getValue())) {
-                response = checkAgentParams(projectId, weComCorpMessageRequest.getCorp().getCorpId(),
-                        weComCorpMessageRequest.getAgent().getAgentId(),
-                        weComCorpMessageRequest.getAgent().getSecret());
-                if (response.getCode().equals(ErrorCodeEnum.OK.getCode())) {
-                    WeComAgentMessageEntity weComAgentMessageEntity = new WeComAgentMessageEntity();
-                    weComAgentMessageEntity.setProjectUuid(projectId);
-                    weComAgentMessageEntity.setAgentId(weComCorpMessageRequest.getAgent().getAgentId());
-                    weComAgentMessageEntity.setCorpId(weComCorpMessageRequest.getCorp().getCorpId());
-                    weComAgentMessageEntity.setSecret(weComCorpMessageRequest.getAgent().getSecret());
-                    weComAgentMessageEntity.setIsChief(Boolean.TRUE);
-                    weComAgentMessageEntity.setName("营销助手");
-                    weComAgentMessageEntity.setEnableStatus("enable");
-                    weComAgentMessageEntity.setAuthStatus("auth");
-                    weComAgentMessageEntity.setHomePage("/home");
-                    weComAgentMessageRepository.save(weComAgentMessageEntity);
-
-                    WeComCorpMessageEntity entity =
-                            weComCorpMessageRepository.getCorpConfigByCorpId(weComCorpMessageRequest.getCorp().getCorpId());
-                    if (entity == null) {
-                        WeComCorpMessageEntity weComCorpMessageEntity = new WeComCorpMessageEntity();
-                        weComCorpMessageEntity.setProjectUuid(projectId);
-                        weComCorpMessageEntity.setCorpName(weComCorpMessageRequest.getCorp().getCorpName());
-                        weComCorpMessageEntity.setCorpId(weComCorpMessageRequest.getCorp().getCorpId());
-                        weComCorpMessageRepository.save(weComCorpMessageEntity);
+                if (StringUtils.isEmpty(weComCorpMessageEntity.getContactsSecret()) ||
+                        !weComCorpMessageEntity.getContactsSecret().equals(weComCorpMessageRequest.getContacts().getSecret())) {
+                    response = checkAgentParams(projectId, weComCorpMessageRequest.getCorp().getCorpId(),
+                            Constants.AGENT_KEY_FOR_CONTACTS, weComCorpMessageRequest.getContacts().getSecret());
+                    if (response.getCode().equals(ErrorCodeEnum.OK.getCode())) {
+                        byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue(), 256).getEncoded();
+                        String encode = Base62.encode(key);
+                        weComCorpMessageRepository.updateSecretByCorpId(weComCorpMessageRequest.getCorp().getCorpId(),
+                                projectId,
+                                weComCorpMessageRequest.getContacts().getSecret(),
+                                RandomUtils.getRandomStr(16), encode);
                     }
                 }
+            } else if (weComCorpMessageRequest.getConfigType().equalsIgnoreCase(WeComCorpConfigStepEnum.EXTERNAL_USER_MSG.getValue())) {
+                if (weComCorpMessageEntity == null) {
+                    return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_AGENT_PARAM);
+                }
+                if (StringUtils.isEmpty(weComCorpMessageEntity.getExternalUserSecret()) ||
+                        !weComCorpMessageEntity.getExternalUserSecret().equals(weComCorpMessageRequest.getExternalUser().getSecret())) {
+                    response = checkAgentParams(projectId, weComCorpMessageRequest.getCorp().getCorpId(),
+                            Constants.AGENT_KEY_FOR_EXTERNALUSER,
+                            weComCorpMessageRequest.getExternalUser().getSecret());
+                    if (response.getCode().equals(ErrorCodeEnum.OK.getCode())) {
+                        byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue(), 256).getEncoded();
+                        String encode = Base62.encode(key);
+                        weComCorpMessageRepository.updateExternalUserSecretByCorpId(weComCorpMessageRequest.getCorp().getCorpId(),
+                                projectId, weComCorpMessageRequest.getExternalUser().getSecret(),
+                                RandomUtils.getRandomStr(16), encode);
+                        xxlJobManualTriggerService.manualTriggerHandler("syncCorpTags");
+                        xxlJobManualTriggerService.manualTriggerHandler("syncMembers");
+                        xxlJobManualTriggerService.manualTriggerHandler("syncGroupChats");
+                    }
+                }
+            } else if (weComCorpMessageRequest.getConfigType().equalsIgnoreCase(WeComCorpConfigStepEnum.AGENT_MSG.getValue())) {
+                if (weComCorpMessageEntity == null) {
+                    return BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_AGENT_PARAM);
+                }
+
+                WeComAgentMessageEntity weComAgentMessageEntity =
+                        weComAgentMessageRepository.getAgentMessageByCorpId(weComCorpMessageEntity.getCorpId());
+                if (weComAgentMessageEntity == null || !weComCorpMessageRequest.getAgent().getAgentId().equals(weComAgentMessageEntity.getAgentId())) {
+                    weComAgentMessageEntity = (weComAgentMessageEntity == null ? new WeComAgentMessageEntity() :
+                            weComAgentMessageEntity);
+                    response = checkAgentParams(projectId, weComCorpMessageRequest.getCorp().getCorpId(),
+                            weComCorpMessageRequest.getAgent().getAgentId(),
+                            weComCorpMessageRequest.getAgent().getSecret());
+                    if (response.getCode().equals(ErrorCodeEnum.OK.getCode())) {
+                        weComAgentMessageEntity.setProjectUuid(projectId);
+                        weComAgentMessageEntity.setAgentId(weComCorpMessageRequest.getAgent().getAgentId());
+                        weComAgentMessageEntity.setCorpId(weComCorpMessageRequest.getCorp().getCorpId());
+                        weComAgentMessageEntity.setSecret(weComCorpMessageRequest.getAgent().getSecret());
+                        weComAgentMessageEntity.setIsChief(Boolean.TRUE);
+                        weComAgentMessageEntity.setName("营销助手");
+                        weComAgentMessageEntity.setEnableStatus("enable");
+                        weComAgentMessageEntity.setAuthStatus("auth");
+                        weComAgentMessageEntity.setHomePage("/home");
+                        weComAgentMessageRepository.save(weComAgentMessageEntity);
+                    }
+                }
+            } else if (weComCorpMessageRequest.getConfigType().equalsIgnoreCase(WeComCorpConfigStepEnum.CORP_MSG.getValue())) {
+                if (weComCorpMessageEntity == null) {
+                    weComCorpMessageEntity = new WeComCorpMessageEntity();
+                }
+                weComCorpMessageEntity.setProjectUuid(projectId);
+                weComCorpMessageEntity.setCorpName(weComCorpMessageRequest.getCorp().getCorpName());
+                weComCorpMessageEntity.setCorpId(weComCorpMessageRequest.getCorp().getCorpId());
+                weComCorpMessageRepository.save(weComCorpMessageEntity);
             } else {
                 log.info("not support config type.projectId={}, weComCorpMessageRequest={}", projectId,
                         weComCorpMessageRequest);
