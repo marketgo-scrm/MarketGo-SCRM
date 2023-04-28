@@ -149,7 +149,7 @@
 
 ## 5、演示环境
 
-[演示环境](http://101.34.88.187)
+[演示环境](http://demo.marketgo.cn/#/login))
 
 用户名：admin
 
