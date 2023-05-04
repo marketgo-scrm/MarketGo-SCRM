@@ -89,8 +89,8 @@ public class WeComAgentMessageService {
         String desc = String.format(TEXTCARD_DESCRIPTION,
                 LocalDateTime.parse(planTime, DATE_TIME_FORMATTER1).format(DATE_TIME_FORMATTER),
                 taskName, target);
-        String url = String.format("%s/mktgo/client/wecom/task_center/detail?corp_id=%s&member_id=%s&task_uuid=%s%s",
-                tenantConfigEntity.getServerAddress().replace("/api", "/client"), corpId, members.get(0), taskUuid,
+        String url = String.format("%s/marketgo/wecom/detail?corp_id=%s&member_id=%s&task_uuid=%s%s",
+                tenantConfigEntity.getServerAddress(), corpId, members.get(0), taskUuid,
                 StringUtils.isNotBlank(uuid) ? "&uuid=" + uuid : "");
 
         Map<String, String> textMessage = new HashMap<>();
