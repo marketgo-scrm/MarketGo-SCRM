@@ -31,7 +31,7 @@ import static com.easy.marketgo.common.constants.RabbitMqConstants.ROUTING_KEY_W
  */
 @Slf4j
 @Component
-public class  SendSingleMassTaskProducer extends SendBaseMassTaskProducer {
+public class SendSingleMassTaskProducer extends SendBaseMassTaskProducer {
 
     @Autowired
     private WeComMassTaskRepository weComMassTaskRepository;
@@ -46,17 +46,17 @@ public class  SendSingleMassTaskProducer extends SendBaseMassTaskProducer {
     private WeComAgentMessageRepository weComAgentMessageRepository;
 
     public void sendSingleMassTask() {
-        try {
-            List<WeComMassTaskEntity> entities =
-                    weComMassTaskRepository.getWeComMassTaskByScheduleTime(SEND_USER_GROUP_TIME_BEFORE,
-                            WeComMassTaskTypeEnum.SINGLE.name(), WeComMassTaskStatus.COMPUTED.getValue());
-            if (CollectionUtils.isEmpty(entities)) {
-                log.info("query single mass task is empty.");
-                return;
-            }
-            log.info("start query user group send queue for single mass task. entities={}", entities);
-            for (WeComMassTaskEntity entity : entities) {
 
+        List<WeComMassTaskEntity> entities =
+                weComMassTaskRepository.getWeComMassTaskByScheduleTime(SEND_USER_GROUP_TIME_BEFORE,
+                        WeComMassTaskTypeEnum.SINGLE.name(), WeComMassTaskStatus.COMPUTED.getValue());
+        if (CollectionUtils.isEmpty(entities)) {
+            log.info("query single mass task is empty.");
+            return;
+        }
+        log.info("start query user group send queue for single mass task. entities={}", entities);
+        for (WeComMassTaskEntity entity : entities) {
+            try {
                 WeComAgentMessageEntity weComAgentMessageEntity =
                         weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
                 String agentId = (weComAgentMessageEntity != null ? weComAgentMessageEntity.getAgentId() : "");
@@ -87,9 +87,12 @@ public class  SendSingleMassTaskProducer extends SendBaseMassTaskProducer {
                     weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
                             WeComMassTaskStatus.SENT.getValue());
                 }
+
+            } catch (Exception e) {
+                weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                        WeComMassTaskStatus.SEND_FAILED.getValue());
+                log.error("failed to send single mass task message to queue.", e);
             }
-        } catch (Exception e) {
-            log.error("failed to send single mass task message to queue.", e);
         }
     }
 
