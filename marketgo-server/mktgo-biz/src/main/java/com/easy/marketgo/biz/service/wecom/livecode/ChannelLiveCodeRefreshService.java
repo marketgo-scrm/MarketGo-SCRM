@@ -148,7 +148,7 @@ public class ChannelLiveCodeRefreshService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void refreshByCallBackMessage(WeComExternalUserMsg message, String liveCodeUuid) {
+    public void refreshByCallBackMsg(WeComExternalUserMsg message, String liveCodeUuid) {
 
         List<WeComChannelLiveCodeMembersEntity> liveCodeMembers =
                 weComChannelLiveCodeMembersRepository.queryByMemberId(liveCodeUuid, message.getMemberId());
