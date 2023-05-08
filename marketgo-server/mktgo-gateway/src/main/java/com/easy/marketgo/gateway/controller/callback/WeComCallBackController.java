@@ -254,7 +254,7 @@ public class WeComCallBackController extends BaseController {
                 corpId);
     }
 
-    @PostMapping(value = "/contacts", consumes = {"application/xml; charset=UTF-8"})
+    @PostMapping(value = "/contacts")
     @ResponseBody
     public String acceptContactsAuthEvent(@RequestParam("msg_signature") String msgSignature,
                                           @RequestParam String timestamp,
@@ -285,7 +285,7 @@ public class WeComCallBackController extends BaseController {
                 corpId);
     }
 
-    @PostMapping(value = "/customer", consumes = {"application/xml; charset=UTF-8"})
+    @PostMapping(value = "/customer")
     @ResponseBody
     public String acceptCustomerAuthEvent(@RequestParam("msg_signature") String msgSignature,
                                           @RequestParam String timestamp,
