@@ -56,39 +56,44 @@ public class SendMomentMassTaskProducer extends SendBaseMassTaskProducer {
         }
 
         for (WeComMassTaskEntity entity : entities) {
+            try {
+                WeComAgentMessageEntity agentMessageEntity =
+                        weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
+                log.info("query agent message for mass task. agentMessageEntity={}", agentMessageEntity);
+                String agentId = (agentMessageEntity == null) ? "" : agentMessageEntity.getAgentId();
 
-            WeComAgentMessageEntity agentMessageEntity =
-                    weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
-            log.info("query agent message for mass task. agentMessageEntity={}", agentMessageEntity);
-            String agentId = (agentMessageEntity == null) ? "" : agentMessageEntity.getAgentId();
-
-            String content = entity.getContent();
-            log.info("query send moment mass task content. content={}", content);
-            if (StringUtils.isNotBlank(content)) {
-                WeComMomentMassTaskClientRequest request = buildSendMomentMassTaskContent(content);
-                request.setCorpId(entity.getCorpId());
-                request.setAgentId(agentId);
-                request.setProjectUuid(entity.getProjectUuid());
-                List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
-                        weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),
-                                WeComMassTaskSendStatusEnum.UNSEND.name());
-                weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
-                        WeComMassTaskStatus.SENDING.getValue());
-                for (WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity : weComMassTaskSendQueueEntities) {
-                    WeComMomentMassTaskClientRequest.VisibleRangeMessage visibleRangeMessage =
-                            new WeComMomentMassTaskClientRequest.VisibleRangeMessage();
-                    WeComMomentMassTaskClientRequest.SenderListMessage senderListMessage =
-                            new WeComMomentMassTaskClientRequest.SenderListMessage();
-                    List<String> sendList = Arrays.asList(weComMassTaskSendQueueEntity.getMemberId().split(","));
-                    request.setTaskUuid(weComMassTaskSendQueueEntity.getTaskUuid());
-                    senderListMessage.setUserList(sendList);
-                    visibleRangeMessage.setSenderList(senderListMessage);
-                    request.setVisibleRange(visibleRangeMessage);
-                    log.info("send moment mass task to queue message. request={}", JsonUtils.toJSONString(request));
-                    produceRabbitMqMessage(request);
+                String content = entity.getContent();
+                log.info("query send moment mass task content. content={}", content);
+                if (StringUtils.isNotBlank(content)) {
+                    WeComMomentMassTaskClientRequest request = buildSendMomentMassTaskContent(content);
+                    request.setCorpId(entity.getCorpId());
+                    request.setAgentId(agentId);
+                    request.setProjectUuid(entity.getProjectUuid());
+                    List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
+                            weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),
+                                    WeComMassTaskSendStatusEnum.UNSEND.name());
+                    weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                            WeComMassTaskStatus.SENDING.getValue());
+                    for (WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity : weComMassTaskSendQueueEntities) {
+                        WeComMomentMassTaskClientRequest.VisibleRangeMessage visibleRangeMessage =
+                                new WeComMomentMassTaskClientRequest.VisibleRangeMessage();
+                        WeComMomentMassTaskClientRequest.SenderListMessage senderListMessage =
+                                new WeComMomentMassTaskClientRequest.SenderListMessage();
+                        List<String> sendList = Arrays.asList(weComMassTaskSendQueueEntity.getMemberId().split(","));
+                        request.setTaskUuid(weComMassTaskSendQueueEntity.getTaskUuid());
+                        senderListMessage.setUserList(sendList);
+                        visibleRangeMessage.setSenderList(senderListMessage);
+                        request.setVisibleRange(visibleRangeMessage);
+                        log.info("send moment mass task to queue message. request={}", JsonUtils.toJSONString(request));
+                        produceRabbitMqMessage(request);
+                    }
+                    weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                            WeComMassTaskStatus.SENT.getValue());
                 }
+            } catch (Exception e) {
                 weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
-                        WeComMassTaskStatus.SENT.getValue());
+                        WeComMassTaskStatus.SEND_FAILED.getValue());
+                log.error("failed to send single mass task message to queue.", e);
             }
         }
     }

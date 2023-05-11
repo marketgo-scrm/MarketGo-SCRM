@@ -1,9 +1,7 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
-import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
-import com.easy.marketgo.common.enums.WeComMassTaskStatus;
-import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
+import com.easy.marketgo.common.enums.*;
+import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
@@ -47,44 +45,45 @@ public class SendSingleTaskCenterProducer extends SendBaseTaskCenterProducer {
     private TaskCacheManagerService taskCacheManagerService;
 
     public void sendSingleTask() {
-        try {
-            List<WeComTaskCenterEntity> entities =
-                    weComTaskCenterRepository.getWeComTaskCenterByScheduleTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
-                            WeComMassTaskTypeEnum.SINGLE.name(), WeComMassTaskStatus.COMPUTED.getValue(),
-                            Arrays.asList(WeComMassTaskScheduleType.IMMEDIATE.getValue(),
-                                    WeComMassTaskScheduleType.FIXED_TIME.getValue()));
-            log.info("start to query user group send queue for single task center. entities={}", entities);
-            if (CollectionUtils.isNotEmpty(entities)) {
-                for (WeComTaskCenterEntity entity : entities) {
-                    sendSingleTask(entity);
-                }
-            }
 
-            List<WeComTaskCenterEntity> repeatEntities =
-                    weComTaskCenterRepository.getWeComTaskCenterByExecuteTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
-                            WeComMassTaskTypeEnum.SINGLE.name(),WeComMassTaskStatus.COMPUTED.getValue(),
-                            Arrays.asList(WeComMassTaskScheduleType.REPEAT_TIME.getValue()));
-            log.info("start to query user group send queue for single repeat task center. repeatEntities={}",
-                    repeatEntities);
-            if (CollectionUtils.isNotEmpty(repeatEntities)) {
-                for (WeComTaskCenterEntity entity : repeatEntities) {
-                    sendSingleTask(entity);
-                }
+        List<WeComTaskCenterEntity> entities =
+                weComTaskCenterRepository.getWeComTaskCenterByScheduleTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
+                        WeComMassTaskTypeEnum.SINGLE.name(), WeComMassTaskStatus.COMPUTED.getValue(),
+                        Arrays.asList(WeComMassTaskScheduleType.IMMEDIATE.getValue(),
+                                WeComMassTaskScheduleType.FIXED_TIME.getValue()));
+        log.info("start to query user group send queue for single task center. entities={}", entities);
+        if (CollectionUtils.isNotEmpty(entities)) {
+            for (WeComTaskCenterEntity entity : entities) {
+                sendSingleTask(entity);
             }
-
-        } catch (Exception e) {
-            log.error("failed to send single task center message to queue.", e);
         }
+
+        List<WeComTaskCenterEntity> repeatEntities =
+                weComTaskCenterRepository.getWeComTaskCenterByExecuteTime(TASK_CENTER_SEND_USER_GROUP_TIME_BEFORE,
+                        WeComMassTaskTypeEnum.SINGLE.name(), WeComMassTaskStatus.COMPUTED.getValue(),
+                        Arrays.asList(WeComMassTaskScheduleType.REPEAT_TIME.getValue()));
+        log.info("start to query user group send queue for single repeat task center. repeatEntities={}",
+                repeatEntities);
+        if (CollectionUtils.isNotEmpty(repeatEntities)) {
+            for (WeComTaskCenterEntity entity : repeatEntities) {
+                sendSingleTask(entity);
+            }
+        }
+
+
     }
 
     private void sendSingleTask(WeComTaskCenterEntity entity) {
-        if (StringUtils.isNotBlank(entity.getContent())) {
+        try {
+            if (StringUtils.isBlank(entity.getContent())) {
+                throw new CommonException(ErrorCodeEnum.ERROR_BIZ_CONTENT_IS_EMPTY);
+            }
+
             log.info("send content for single task center. content={}", entity.getContent());
             WeComTaskCenterRequest request =
                     buildTaskCenterContent(entity);
 
             taskCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
-            log.info("send WeComTaskCenterRequest for single task center. request={}", request);
             List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
                     weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),
                             WeComMassTaskSendStatusEnum.UNSEND.name());
@@ -102,6 +101,10 @@ public class SendSingleTaskCenterProducer extends SendBaseTaskCenterProducer {
             }
             weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
                     WeComMassTaskStatus.SENT.getValue());
+        } catch (Exception e) {
+            weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
+                    WeComMassTaskStatus.SEND_FAILED.getValue());
+            log.error("failed to send single task center message to queue.", e);
         }
     }
 

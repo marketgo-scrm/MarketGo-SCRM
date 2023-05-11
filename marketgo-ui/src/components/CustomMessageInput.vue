@@ -345,6 +345,7 @@ export default {
   .custom-message-input {
     padding: 8px 9px;
     line-height: 24px;
+    white-space: pre-wrap;
     &[contenteditable]:focus {
       outline: none;
     }

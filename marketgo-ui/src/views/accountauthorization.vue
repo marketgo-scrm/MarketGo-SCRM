@@ -8,10 +8,10 @@
       <div class="navbar">
         <div class="nav">
           <div class="listone project">
-            {{ this.$store.state.project[0]?.projectName }}
+            {{ this.projectName }}
             <i class='el-icon-caret-bottom'> </i>
             <div class='menus'>
-              <div class='menulist' @click='gohome' v-for='(item, index) in $store.state.project' :key='index'>
+              <div class='menulist' @click='gopro(item)' v-for='(item, index) in $store.state.project' :key='index'>
                 {{ item?.projectName }}
               </div>
             </div>
@@ -96,8 +96,8 @@
                   <el-input v-model="corp.corpId" placeholder="请输入企业ID" clearable />
                 </el-form-item>
               </el-form>
-              <el-form label-position="left" v-show="nowtype == 2" :model="agent" size="small" ref="agent"
-                :rules="rules" label-width="80px">
+              <el-form label-position="left" v-show="nowtype == 7" :model="agent" size="small" ref="agent" :rules="rules"
+                label-width="80px">
                 <el-form-item label="应用ID" prop="agentId">
                   <el-input v-model="agent.agentId" placeholder="请输入应用ID" clearable />
                 </el-form-item>
@@ -105,9 +105,9 @@
                   <el-input v-model="agent.secret" placeholder="请输入Secret" clearable />
                 </el-form-item>
               </el-form>
-              <el-form label-position="left" v-show="nowtype == 4 || nowtype == 5" :model="contacts" size="small"
+              <el-form label-position="left" v-show="nowtype == 1 || nowtype == 2" :model="contacts" size="small"
                 ref="contacts" :rules="contactsrules" label-width="110px">
-                <template v-if="nowtype == 4">
+                <template v-if="nowtype == 1">
                   <el-form-item label="通讯录Secret" prop="secret">
                     <el-input v-model="contacts.secret" placeholder="请输入通讯录Secret" clearable />
                   </el-form-item>
@@ -147,14 +147,14 @@
                 </template>
               </el-form>
               <!-- externalUser -->
-              <el-form label-position="left" v-show="nowtype == 6 || nowtype == 7 || nowtype == 8" :model="externalUser"
+              <el-form label-position="left" v-show="nowtype == 3 || nowtype == 4 || nowtype == 5" :model="externalUser"
                 size="small" ref="externalUser" :rules="externalUserrules" label-width="110px">
-                <template v-if="nowtype == 6">
+                <template v-if="nowtype == 3">
                   <el-form-item label="客户联系Secret" prop="secret">
                     <el-input v-model="externalUser.secret" placeholder="客户联系Secret" clearable />
                   </el-form-item>
                 </template>
-                <template v-else-if="nowtype == 7">
+                <template v-else-if="nowtype == 4">
                   <el-form-item label="URL" prop="url">
                     <!-- <el-row>
                     <el-col :span="10"> -->
@@ -178,8 +178,7 @@
                   <el-form-item label="EncodingAESKey" prop="encodingAesKey">
                     <!-- <el-row>
                     <el-col :span="10"> -->
-                    <el-input disabled v-model="externalUser.encodingAesKey" placeholder="请输入EncodingAESKey"
-                      clearable />
+                    <el-input disabled v-model="externalUser.encodingAesKey" placeholder="请输入EncodingAESKey" clearable />
                     <!-- </el-col>
                     <el-col :span="3" :offset="1"> -->
                     <el-button type="primary" round class='copys'
@@ -210,7 +209,7 @@
                     </el-upload>
                     <span style="display: inline">
                       <el-progress v-if="progressFlag" :percentage="loadProgress" color="#92E780"></el-progress>
-                      
+
                       <em v-if="!progressFlag && fileName.length">
                         <img style="width:12px;height:10px; margin-left: 10px" src="../assets/file_icon.png" alt="">
                         {{ fileName }}
@@ -230,10 +229,10 @@
                 <el-button size="small" round @click="prive" v-if="nowtype != 0">返回上一步</el-button>
                 <el-button round type="primary" size="small" @click="next" :loading="loading">{{
                   chosedata.formkey
-                    ? "保存并进入下一步"
-                    : nowtype != 9
-                      ? "下一步"
-                      : "完成"
+                  ? "保存并进入下一步"
+                  : nowtype != 9
+                    ? "下一步"
+                    : "完成"
                 }}</el-button>
               </div>
             </div>
@@ -247,7 +246,7 @@
 import constants from '@/constants/constants.js'
 export default {
   data() {
-    
+
     return {
       list: [
         // { name: "平台运营项目", path: "" },
@@ -264,6 +263,7 @@ export default {
             {
               name: "输入企业微信ID和企业名称",
               formkey: "corp",
+              configType: "CORP",
               type: 0,
               text: [
                 "配置企业微信ID和企业微信名称是使用本系统的必须条件，不配置本系统所有功能都无法正常使用。",
@@ -279,92 +279,13 @@ export default {
             },
           ],
         },
-        {
-          content: "配置自建应用",
-          children: [
-            {
-              name: "创建自建应用",
-              type: 1,
-              text: [
-                "配置自建应用后可以使用以下功能。",
-                "批量加好友：通过自建应用接收加好友的任务。",
-              ],
-              dicts: [
-                {
-                  dist: "登录成功后，在应用管理【自建应用模块】点击【创建应用】",
-                  imglist: [require("../assets/step1/1.png")],
-                },
-                {
-                  dist: "进入创建应用页面，上传【应用logo】和填写【应用名称】，并且一定选择应用可见范围+",
-                  imglist: [require("../assets/step1/2.png")],
-                },
-                {
-                  dist: "点击创建应用后，返回【应用管理】，就可以找到你刚才创建的应用了。",
-                  imglist: [require("../assets/step1/3.png")],
-                },
-                {
-                  dist: "点击应用图标进入详情，将服务器的外网IP配置到【企业可信IP】中",
-                  imglist: [require("../assets/step1/4.png")],
-                },
-              ],
-            },
-            {
-              name: "输入自建应用ID和Secret",
-              type: 2,
-              formkey: "agent",
-              configType: "AGENT",
-              text: [
-                "输入自建应用的ID和Secret后，系统才能调用自建应用的能力，同时API接口将调用失败。所以这一步一定要仔细配置，避免配置错，影响系统使用。",
-              ],
-              dicts: [
-                {
-                  dist: "在应用管理【自建应用模块】，找到刚刚创建的【自建应用】，点击进入应用详情页",
-                  imglist: [require("../assets/step2/1.png")],
-                },
-                {
-                  dist: "进入应用详情页面，将AgentId和Secret分别填入下方输入框，Secret点击查看后到企业微信上查看",
-                  imglist: [
-                    require("../assets/step2/2-1.png"),
-                    require("../assets/step2/2-2.png"),
-                    require("../assets/step2/2-3.png"),
-                    require("../assets/step2/2-4.png"),
-                  ],
-                },
-                {
-                  dist: "确认应用状态为【已启用】，否则API接口将调用失败，同时应用对所有员工不可见",
-                  imglist: [require("../assets/step2/3.png")],
-                },
-              ],
-            },
-            {
-              name: "配置可调用的应用",
-              type: 3,
-              text: [
-                "配置可调用的应用是指业自建应用可以调用可见范围内的外部联系人相关接口，实现更多丰富的交互功能。",
-              ],
-              dicts: [
-                {
-                  dist: "在【客户联系】页面上方点击【API】按钮，展开配置模块",
-                  imglist: [require("../assets/step3/1.png")],
-                },
-                {
-                  dist: "找到你刚才创建的【应用】，在后面选择，要确保已经选择应用，点击确定保存",
-                  imglist: [require("../assets/step3/2.png")],
-                },
-                {
-                  dist: "点击创建应用后，返回【应用管理】，就可以找到你刚才创建的应用了。",
-                  imglist: [require("../assets/step3/3.png")],
-                },
-              ],
-            },
-          ],
-        },
+   
         {
           content: "配置企业通讯录",
           children: [
             {
               name: "输入通讯录Secret",
-              type: 4,
+              type: 1,
               formkey: "contacts",
               configType: "CONTACTS",
               text: [
@@ -387,7 +308,7 @@ export default {
             },
             {
               name: "设置通讯录接收事件服务器",
-              type: 5,
+              type: 2,
               configType: "CONTACTS",
               formkey: "contacts",
               text: [
@@ -420,7 +341,7 @@ export default {
           children: [
             {
               name: "配置客户联系Secret",
-              type: 6,
+              type: 3,
               formkey: "externalUser",
               configType: "EXTERNAL_USER",
               text: [
@@ -444,7 +365,7 @@ export default {
             },
             {
               name: "设置客户联系接收事件服务器",
-              type: 7,
+              type: 4,
               formkey: "externalUser",
               configType: "EXTERNAL_USER",
               text: [
@@ -469,7 +390,7 @@ export default {
             },
             {
               name: "设置客户联系使用范围",
-              type: 8,
+              type: 5,
               text: [
                 "只有配置的客户联系使用权限范围的员工才能通外部客户沟通，并使用系统的的能力。",
               ],
@@ -485,6 +406,87 @@ export default {
                   dist: "在【我的企业】页面，点击左侧【外部沟通管理】，设置客户联系使用范围，点击确认，建议给所有人都有客户联系权限，避免一些因权限产生的意外问题",
                   imglist: [require("../assets/step8/2-1.png"), require("../assets/step8/2-2.png")],
                 }
+              ],
+            },
+          ],
+        },
+
+        {
+          content: "配置自建应用",
+          children: [
+            {
+              name: "创建自建应用",
+              type: 6,
+              text: [
+                "配置自建应用后可以使用以下功能。",
+                "批量加好友：通过自建应用接收加好友的任务。",
+              ],
+              dicts: [
+                {
+                  dist: "登录成功后，在应用管理【自建应用模块】点击【创建应用】",
+                  imglist: [require("../assets/step1/1.png")],
+                },
+                {
+                  dist: "进入创建应用页面，上传【应用logo】和填写【应用名称】，并且一定选择应用可见范围+",
+                  imglist: [require("../assets/step1/2.png")],
+                },
+                {
+                  dist: "点击创建应用后，返回【应用管理】，就可以找到你刚才创建的应用了。",
+                  imglist: [require("../assets/step1/3.png")],
+                },
+                {
+                  dist: "点击应用图标进入详情，将服务器的外网IP配置到【企业可信IP】中",
+                  imglist: [require("../assets/step1/4.png")],
+                },
+              ],
+            },
+            {
+              name: "输入自建应用ID和Secret",
+              type: 7,
+              formkey: "agent",
+              configType: "AGENT",
+              text: [
+                "输入自建应用的ID和Secret后，系统才能调用自建应用的能力，同时API接口将调用失败。所以这一步一定要仔细配置，避免配置错，影响系统使用。",
+              ],
+              dicts: [
+                {
+                  dist: "在应用管理【自建应用模块】，找到刚刚创建的【自建应用】，点击进入应用详情页",
+                  imglist: [require("../assets/step2/1.png")],
+                },
+                {
+                  dist: "进入应用详情页面，将AgentId和Secret分别填入下方输入框，Secret点击查看后到企业微信上查看",
+                  imglist: [
+                    require("../assets/step2/2-1.png"),
+                    require("../assets/step2/2-2.png"),
+                    require("../assets/step2/2-3.png"),
+                    require("../assets/step2/2-4.png"),
+                  ],
+                },
+                {
+                  dist: "确认应用状态为【已启用】，否则API接口将调用失败，同时应用对所有员工不可见",
+                  imglist: [require("../assets/step2/3.png")],
+                },
+              ],
+            },
+            {
+              name: "配置可调用的应用",
+              type: 8,
+              text: [
+                "配置可调用的应用是指业自建应用可以调用可见范围内的外部联系人相关接口，实现更多丰富的交互功能。",
+              ],
+              dicts: [
+                {
+                  dist: "在【客户联系】页面上方点击【API】按钮，展开配置模块",
+                  imglist: [require("../assets/step3/1.png")],
+                },
+                {
+                  dist: "找到你刚才创建的【应用】，在后面选择，要确保已经选择应用，点击确定保存",
+                  imglist: [require("../assets/step3/2.png")],
+                },
+                {
+                  dist: "点击创建应用后，返回【应用管理】，就可以找到你刚才创建的应用了。",
+                  imglist: [require("../assets/step3/3.png")],
+                },
               ],
             },
           ],
@@ -512,14 +514,14 @@ export default {
                   imglist: [
                     require("../assets/step9/1-2.png"),
                   ],
-                 
+
                 },
                 {
                   dist: "请复制一下域名信息填写到上图中的相应位置，并选中【用于OAuth2回调的可信域名是否验证】，下载上图中的文件，然后通过下面的接口上传。",
                   imglist: [
                     require("../assets/step9/1-3.png"),
                   ],
-                 
+
                 },
               ],
             },
@@ -595,37 +597,65 @@ export default {
     };
   },
   mounted() {
-    this.project_id = this.$store.state.projectUuid
-
-    if (this.$route.params.configure) {
-      this.isdisabled = true
-      let configure = this.$route.params.configure
-      let idx = -1
-      for (let k in configure) {
-        if (configure[k]) {
-          this[k] = configure[k]
-          //alert(JSON.stringify(this[k]))
-          idx++
-        }
-      }
-
-      if (idx == this.activities.length - 1) {
-        this.lasttype = this.activities[idx].children[this.activities[idx].children.length - 1].type
-      } else {
-        this.lasttype = this.activities[idx + 1].children[0].type
-      }
-      this.nowtype = 0
-    }
-    this.getdata();
-    // 获取企微的可信域名
-    this.gethttps('domain/query');
+    this.initData()
   },
   methods: {
-    gohome() {
-      this.$router.push({
-        name: 'home'
-      })
+    initData() {
+      this.project_id = this.$store.state.projectUuid
+      this.projectName = this.$store.state.projectName
+
+      this.uploadUrl = `${this.$global.BASEURL}/mktgo/wecom/corp/cred/upload?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}`
+
+      if (this.$route.params.configure) {
+        this.isdisabled = true
+        let configure = this.$route.params.configure
+        let idx = -1
+        for (let k in configure) {
+          if (configure[k]) {
+            this[k] = configure[k]
+            //alert(JSON.stringify(this[k]))
+            idx++
+          }
+        }
+
+        if (idx == this.activities.length - 1) {
+          this.lasttype = this.activities[idx].children[this.activities[idx].children.length - 1].type
+        } else {
+          this.lasttype = this.activities[idx + 1].children[0].type
+        }
+        this.nowtype = 0
+      }
+      this.getdata();
+      if (this.$store.state.corpId) {
+       // // 获取企微的可信域名
+       this.gethttps('domain/query');
+      }
+
     },
+    async gopro(val) {
+
+      this.loading = true
+      let data = await this.$http.get(
+        `mktgo/wecom/corp/config?project_id=${val.projectUuid}`
+      );
+      if (data.code === 0) {
+
+        if (data.data) {
+          this.$store.commit("SET_CORPID", data.data.configs[0].corp.corpId);
+          this.$store.commit("SET_PROID", val.projectUuid);
+          this.$store.commit("SET_PRONAME", val.projectName);
+          this.$router.push({
+            name: 'home'
+          });
+        } else {
+          this.project_id = val.projectUuid
+          this.projectName = val.projectName
+        }
+      }
+      this.loading = false
+    },
+
+
     copytext(val) {
       var cInput = document.createElement("input");
       cInput.value = val;
@@ -701,15 +731,15 @@ export default {
     },
     async deleteFilePost() {
       let data = await this.$http.post(
-            `/mktgo/wecom/corp/cred_file/delete?project_id=${this.project_id}&corp_id=${this.$store.state.corpId}&file_name=${this.fileName}`
-          );
-          if (data.code === 0) {
-            this.$message.success('删除成功')
-            this.fileName = ''
-            this.fileList = []
-            this.loadProgress = 0// 动态显示进度条
-            this.progressFlag = false
-          }
+        `/mktgo/wecom/corp/cred_file/delete?project_id=${this.project_id}&corp_id=${this.$store.state.corpId}&file_name=${this.fileName}`
+      );
+      if (data.code === 0) {
+        this.$message.success('删除成功')
+        this.fileName = ''
+        this.fileList = []
+        this.loadProgress = 0// 动态显示进度条
+        this.progressFlag = false
+      }
     },
     next() {
       if (this.nowtype == 9) {
@@ -729,38 +759,47 @@ export default {
         this.loading = false;
         return false;
       }
+    
       this.$refs[this.chosedata.formkey].validate(async (valid) => {
+     
         if (valid) {
           this.loading = true;
           let params = {
             corp: this.corp,
           };
-          if (this.nowtype == 0) {
-            this.isdisabled = true;
-            this.nowtype++;
-            if (this.lasttype < this.nowtype) {
-              this.lasttype++;
-            }
-            this.getdata();
-            this.loading = false;
-            return false;
-          } else {
-            params[this.chosedata.formkey] = this[this.chosedata.formkey];
+          // if (this.nowtype == 0) {
+         
+          //   this.isdisabled = true;
+          //   this.nowtype++;
+          //   if (this.lasttype < this.nowtype) {
+          //     this.lasttype++;
+          //   }
+          //   this.getdata();
+          //   this.loading = false;
+          //   return false;
+          // } else {
+          //   params[this.chosedata.formkey] = this[this.chosedata.formkey];
+          //   params.configType = this.chosedata.configType;
+          // }
+          params[this.chosedata.formkey] = this[this.chosedata.formkey];
             params.configType = this.chosedata.configType;
-          }
-
           let data = await this.$http.post(
             `mktgo/wecom/corp/save?project_id=${this.project_id}`,
             params
           );
+       
           //alert(JSON.stringify(params))
           if (data.code === 0) {
             this.nowtype++;
             if (this.lasttype < this.nowtype) {
               this.lasttype++;
             }
-            if (this.nowtype == 5 || this.nowtype == 7) {
+            if (this.nowtype == 2 || this.nowtype == 4) {
               this.gethttps('config');
+            }
+            else  if (this.nowtype == 5) {
+              // 获取企微的可信域名
+             this.gethttps('domain/query');
             }
             this.getdata();
           }
@@ -772,7 +811,9 @@ export default {
     },
 
     async gethttps(path) {
-
+      if (!this.$store.state.corpId) {
+        return
+      }
       let data = await this.$http.get(
         `mktgo/wecom/corp/${path}?project_id=${this.project_id}&corp_id=${this.$store.state.corpId}`
       );

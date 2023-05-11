@@ -1,9 +1,7 @@
 package com.easy.marketgo.biz.service.wecom.taskcenter;
 
-import com.easy.marketgo.common.enums.WeComMassTaskScheduleType;
-import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
-import com.easy.marketgo.common.enums.WeComMassTaskStatus;
-import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
+import com.easy.marketgo.common.enums.*;
+import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterEntity;
@@ -76,9 +74,12 @@ public class SendGroupTaskCenterProducer extends SendBaseTaskCenterProducer {
     }
 
     private void sendGroupTaskCenter(WeComTaskCenterEntity entity) {
-        log.info("send group task center. entity={}", entity);
+        try {
+            log.info("send group task center. entity={}", entity);
 
-        if (StringUtils.isNotBlank(entity.getContent())) {
+            if (StringUtils.isBlank(entity.getContent())) {
+                throw new CommonException(ErrorCodeEnum.ERROR_BIZ_CONTENT_IS_EMPTY);
+            }
             WeComTaskCenterRequest request =
                     buildTaskCenterContent(entity);
             taskCacheManagerService.setCacheContent(entity.getUuid(), JsonUtils.toJSONString(request));
@@ -98,6 +99,10 @@ public class SendGroupTaskCenterProducer extends SendBaseTaskCenterProducer {
             }
             weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
                     WeComMassTaskStatus.SENT.getValue());
+        } catch (Exception e) {
+            weComTaskCenterRepository.updateTaskStatusByUUID(entity.getUuid(),
+                    WeComMassTaskStatus.SEND_FAILED.getValue());
+            log.error("failed to send single task center message to queue.", e);
         }
     }
 

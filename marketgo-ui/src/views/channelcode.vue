@@ -317,9 +317,9 @@
                 <template v-if="details.welcomeContent.find((item) => {
                   return item.type === 'TEXT'
                 })?.text?.content">
-                <div v-html="details.welcomeContent.find((item) => {
+                <div style="white-space: pre-wrap;" v-html="details.welcomeContent.find((item) => {
                   return item.type === 'TEXT'
-                })?.text?.content.replace(/#{EXTERNAL_USER_NAME}#/g, '<span style=color:#409EFF;>客户昵称</span>')"></div>
+                })?.text?.content.replace(/%NICKNAME%/g, '<span style=color:#409EFF;>客户昵称</span>')"></div>
               </template>
               </CustomStretch>
               

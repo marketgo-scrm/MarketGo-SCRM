@@ -54,30 +54,36 @@ public class SendGroupMassTaskProducer extends SendBaseMassTaskProducer {
         }
         log.info("start query user group send queue for group mass task. entities={}", entities);
         for (WeComMassTaskEntity entity : entities) {
-            WeComAgentMessageEntity weComAgentMessageEntity =
-                    weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
-            String agentId = (weComAgentMessageEntity == null) ? "" : weComAgentMessageEntity.getAgentId();
-            String content = entity.getContent();
-            if (StringUtils.isNotBlank(content)) {
-                WeComMassTaskClientRequest request =
-                        buildSendMassTaskContent(WeComMassTaskTypeEnum.GROUP.name().toLowerCase(), content);
-                request.setProjectUuid(entity.getProjectUuid());
-                List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
-                        weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),
-                                WeComMassTaskSendStatusEnum.UNSEND.name());
-                weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
-                        WeComMassTaskStatus.SENDING.getValue());
-                for (WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity : weComMassTaskSendQueueEntities) {
-                    request.setSender(weComMassTaskSendQueueEntity.getMemberId());
-                    request.setTaskUuid(entity.getUuid());
-                    request.setCorpId(entity.getCorpId());
-                    request.setAgentId(agentId);
-                    log.info("send request to queue for group mass task. sendMessage={}",
-                            JsonUtils.toJSONString(request));
-                    produceRabbitMqMessage(request);
+            try {
+                WeComAgentMessageEntity weComAgentMessageEntity =
+                        weComAgentMessageRepository.getWeComAgentByCorp(entity.getProjectUuid(), entity.getCorpId());
+                String agentId = (weComAgentMessageEntity == null) ? "" : weComAgentMessageEntity.getAgentId();
+                String content = entity.getContent();
+                if (StringUtils.isNotBlank(content)) {
+                    WeComMassTaskClientRequest request =
+                            buildSendMassTaskContent(WeComMassTaskTypeEnum.GROUP.name().toLowerCase(), content);
+                    request.setProjectUuid(entity.getProjectUuid());
+                    List<WeComMassTaskSendQueueEntity> weComMassTaskSendQueueEntities =
+                            weComMassTaskSendQueueRepository.queryByTaskUuid(entity.getUuid(),
+                                    WeComMassTaskSendStatusEnum.UNSEND.name());
+                    weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                            WeComMassTaskStatus.SENDING.getValue());
+                    for (WeComMassTaskSendQueueEntity weComMassTaskSendQueueEntity : weComMassTaskSendQueueEntities) {
+                        request.setSender(weComMassTaskSendQueueEntity.getMemberId());
+                        request.setTaskUuid(entity.getUuid());
+                        request.setCorpId(entity.getCorpId());
+                        request.setAgentId(agentId);
+                        log.info("send request to queue for group mass task. sendMessage={}",
+                                JsonUtils.toJSONString(request));
+                        produceRabbitMqMessage(request);
+                    }
+                    weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                            WeComMassTaskStatus.SENT.getValue());
                 }
+            } catch (Exception e) {
                 weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
-                        WeComMassTaskStatus.SENT.getValue());
+                        WeComMassTaskStatus.SEND_FAILED.getValue());
+                log.error("failed to send single mass task message to queue.", e);
             }
         }
     }

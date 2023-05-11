@@ -240,6 +240,7 @@ public class WeComCallBackController extends BaseController {
     }
 
     @GetMapping(value = {"/contacts"})
+    @ResponseBody
     public String acceptContactsAuthForUrl(@RequestParam("msg_signature") String msgSignature,
                                            @RequestParam String timestamp,
                                            @RequestParam String nonce,
@@ -253,8 +254,8 @@ public class WeComCallBackController extends BaseController {
                 corpId);
     }
 
-    @PostMapping(value = "/contacts", consumes = {"application/xml; charset=UTF-8"}, produces = {"application/xml; " +
-            "charset=UTF-8"})
+    @PostMapping(value = "/contacts")
+    @ResponseBody
     public String acceptContactsAuthEvent(@RequestParam("msg_signature") String msgSignature,
                                           @RequestParam String timestamp,
                                           @RequestParam String nonce,
@@ -269,6 +270,7 @@ public class WeComCallBackController extends BaseController {
     }
 
     @GetMapping(value = {"/customer"})
+    @ResponseBody
     public String acceptCustomerAuthForUrl(@RequestParam("msg_signature") String msgSignature,
                                            @RequestParam String timestamp,
                                            @RequestParam String nonce,
@@ -283,8 +285,8 @@ public class WeComCallBackController extends BaseController {
                 corpId);
     }
 
-    @PostMapping(value = "/customer", consumes = {"application/xml; charset=UTF-8"}, produces = {"application/xml; " +
-            "charset=UTF-8"})
+    @PostMapping(value = "/customer")
+    @ResponseBody
     public String acceptCustomerAuthEvent(@RequestParam("msg_signature") String msgSignature,
                                           @RequestParam String timestamp,
                                           @RequestParam String nonce,
