@@ -213,7 +213,7 @@ font-size: 12px;
 line-height: 100%;width: 168px;word-wrap: break-word" v-if="item?.text">
         <div v-if="item.type === 'TEXT'">
           <template v-if="item?.text?.content">
-            <div
+            <div style="white-space: pre-wrap;"
                 v-html="
                   item?.text?.content?.replace(
                     /#{EXTERNAL_USER_NAME}#/g,
