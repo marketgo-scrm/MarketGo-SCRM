@@ -173,8 +173,24 @@
 
 也可以添加如下微信好友
 
-<center class="half">
-    <img src="WechatIMG15AddFriend1.jpeg" width="300"/>
+<center>
+ <img src="WechatIMG15AddFriend1.jpeg" width="300"/>
+ <br>
+ <div t style="color:orange; border-bottom: 1px solid #d9d9d9;
+ display: inline-block;
+ color: #999;
+ padding: 2px;">业务咨询</div>
+</center>
+
+
+
+<center>
+ <img align=righ src="livecode_qrcode.png" width="250"/>
+ <br>
+ <div t style="color:orange; border-bottom: 1px solid #d9d9d9;
+ display: inline-block;
+ color: #999;
+ padding: 2px;">开源社群</div>
 </center>
 
 ## 8、开源说明
