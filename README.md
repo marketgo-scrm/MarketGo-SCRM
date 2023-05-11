@@ -172,9 +172,19 @@
 如果需要技术支持的，请支持299元，并附上你的微信号，按照捐赠的方式支付，我们会联系您并提供项目和安装的相关技术支持。
 
 <div align="center">
-<img src="WechatIMG15AddFriend1.jpeg" width="300px" alt="业务咨询" >
-<img src="livecode_qrcode.png" width="300px" alt="开源社群" >
+<img src="WechatIMG15AddFriend1.jpeg" width="300px">
+<img src="live_code.png" width="300px" align=top>
 </div>
+
+开源社群：
+
+<img src="livecode_qrcode.png" width = "500" />
+
+|                              |                                    |
+| ---------------------------- | ---------------------------------- |
+| ![](live_code.png)  <br>业务咨询 | ![](livecode_qrcode.png)  <br>开源社群 |
+
+
 
 ## 8、开源说明
 
