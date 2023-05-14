@@ -93,7 +93,7 @@ public class CorpMessageServiceImpl implements CorpMessageService {
     public BaseResponse updateOrInsertCorpMessage(String projectId, WeComCorpMessageRequest weComCorpMessageRequest) {
         log.info("updateOrInsertCorpMessage params. projectId={}, weComCorpMessageRequest={}", projectId,
                 weComCorpMessageRequest);
-        BaseResponse response = BaseResponse.failure(ErrorCodeEnum.ERROR_WEB_AGENT_PARAM);
+        BaseResponse response = BaseResponse.success();
         WeComCorpMessageEntity weComCorpMessageEntity =
                 weComCorpMessageRepository.getCorpConfigByCorpId(weComCorpMessageRequest.getCorp().getCorpId());
         try {
