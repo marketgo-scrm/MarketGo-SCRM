@@ -3,21 +3,29 @@ import qs from 'qs'
 const routes = [
   {
     path: '/',
-    redirect: '/welcom/detail',
+    redirect:`/wecom/app`,
   },
   {
     name: 'notFound',
     path: '/:path(.*)+',
-    redirect: '/welcom/detail',
+    redirect: '/wecom/app',
   },
   {
-    name: 'welcom',
-    path: '/welcom',
+    name: 'wecom',
+    path: '/wecom',
     meta: {
       title: '任务列表',
     },
-    redirect: '/welcom/list',
+    redirect: '/wecom/app',
     children: [
+      {
+        name: 'mainEnter',
+        path: 'app',
+        component: () => import('./view/task/mainEnter.vue'),
+        meta: {
+          title: '应用',
+        },
+      },
       {
         name: 'list',
         path: 'list',
@@ -44,15 +52,15 @@ const routes = [
       }, {
         name: 'receiverList',
         path: 'receiverList',
-        component: () => import('./view/task/receiverList.vue'),
+        component: () => import('./view/task/mainSiderbar.vue'),
         meta: {
           title: '接受客户列表',
         },
       },
       {
-        name: 'sidebarList',
-        path: 'sidebarList',
-        component: () => import('./view/task/sidebarDetail.vue'),
+        name: 'sidebar',
+        path: 'sidebar',
+        component: () => import('./view/task/sidebar.vue'),
         meta: {
           title: '代办任务详情',
         },
@@ -63,7 +71,7 @@ const routes = [
 
 const router = createRouter({
   routes,
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL)
 });
 
 router.beforeEach((to, from, next) => {

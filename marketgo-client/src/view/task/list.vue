@@ -3,13 +3,21 @@
     <van-nav-bar title="全部任务" />
     <van-cell-group style="background: transparent">
       <van-dropdown-menu>
-        <van-dropdown-item v-model="filter.statuses" :options="statusOptions" />
-        <van-dropdown-item v-model="filter.task_types" :options="typeOptions" />
+        <van-dropdown-item
+          v-model="filter.statuses"
+          :options="statusOptions"
+          @change="getList"
+        />
+        <van-dropdown-item
+          v-model="filter.task_types"
+          :options="typeOptions"
+          @change="getList"
+        />
       </van-dropdown-menu>
     </van-cell-group>
     <van-cell-group class="list">
+      <van-loading color="#1989fa" v-if="loading" />
       <van-cell
-        is-link
         @click="toDetail(task)"
         size="large"
         class="card"
@@ -23,28 +31,36 @@
           }}</van-tag>
         </template>
         <template #label>
-          <div style="margin-top: 10px">{{ task.planTime }}</div>
+          <div style="margin-top: 10px">
+            {{ task.planTime ? task.planTime : "-" }}
+          </div>
           <div style="margin-top: 10px">
             {{ getTaskTypeName(task.taskType) }}
           </div>
         </template>
       </van-cell>
     </van-cell-group>
+    <listEmpty v-if="list && list.length <= 0"></listEmpty>
   </div>
 </template>
 
 <script>
 import "vant/es/toast/style";
-import { welcom } from "../../api/welcom";
+import { wecom } from "../../api/wecom";
 import qs from "qs";
+import listEmpty from "../components/listEmpty.vue";
 export default {
+  components: {
+    listEmpty,
+  },
   data() {
     return {
       list: [],
       query: "",
       statusOptions: [
         { value: "", text: "全部状态" },
-        { value: "todo", text: "未完成" },
+        { value: "UNSENT", text: "未完成" },
+        { value: "SENT", text: "已完成" },
       ],
       typeOptions: [
         { value: "", text: "全部类型" },
@@ -52,18 +68,17 @@ export default {
         { value: "GROUP", text: "客户群任务" },
         { value: "MOMENT", text: "朋友圈" },
       ],
+      loading: false,
       filter: {
         task_types: "",
-        statuses: "",
+        statuses: "UNSENT",
       },
     };
   },
   created() {
     const query = this.$route.query;
     this.query = qs.parse(query);
-    welcom.taskList(query).then((res) => {
-      this.list = res.data.list || [];
-    });
+    this.getList();
   },
 
   methods: {
@@ -78,6 +93,23 @@ export default {
       let find = this.typeOptions.find((item) => item.value === type);
       return find ? find.text : type;
     },
+    getList() {
+      this.loading = true;
+      const query = { ...this.query, ...this.filter };
+      if (localStorage.getItem("user")) {
+        query.member_id = JSON.parse(localStorage.getItem("user")).userId;
+      }
+
+      wecom
+        .taskList(query)
+        .then((res) => {
+          this.list = (res.data && res.data.list) || [];
+          this.loading = false;
+        })
+        .catch(() => {
+          this.loading = false;
+        });
+    },
     toDetail(task) {
       if (task.scheduleType === "IMMEDIATE") {
         this.$router.push({
@@ -86,7 +118,8 @@ export default {
             {
               task_uuid: task.taskUuid,
               uuid: task.uuid,
-              from:'list'
+              taskType:task.taskType,
+              from: "list",
             },
             this.query
           ),
@@ -114,8 +147,7 @@ export default {
   background: #f5f7fa; //#D8D8D8;
   color: #333333;
   margin-bottom: 100px;
-
-  /deep/.van-nav-bar__content {
+  :deep(.van-nav-bar__content) {
     background: #679bff;
 
     .van-nav-bar__title {
@@ -132,7 +164,7 @@ export default {
         margin-top: 10px;
       }
 
-      /deep/.van-cell__right-icon {
+      :deep(.van-cell__right-icon) {
         position: absolute;
         right: 10px;
         top: 50%;
@@ -146,6 +178,8 @@ export default {
         margin-left: 20px;
         color: #999;
         padding: 2px 4px;
+        position: absolute;
+        right: 20px;
       }
     }
   }

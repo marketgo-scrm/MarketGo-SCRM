@@ -1,1 +1,2 @@
-window.BASEURL = "http://82.156.75.63:8521/"
+window.BASEURL = "http://dev.marketgo.cn/"
+window.oAuth2=true  //是否走oAuth2认证

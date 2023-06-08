@@ -34,7 +34,7 @@
 
 <script>
 import "vant/es/toast/style";
-import { welcom } from "../../api/welcom";
+import { wecom } from "../../api/wecom";
 import qs from "qs";
 export default {
   data() {
@@ -60,7 +60,7 @@ export default {
   created() {
     const query = this.$route.query;
     this.query = qs.parse(query);
-    welcom.taskSubList(query).then((res) => {
+    wecom.taskSubList(query).then((res) => {
       this.list = res.data.list || [];
     });
   },
@@ -94,7 +94,7 @@ export default {
   color: #333333;
   margin-bottom: 100px;
 
-  /deep/.van-nav-bar__content {
+  :deep(.van-nav-bar__content) {
     background: #679bff;
 
     .van-nav-bar__title,
@@ -111,7 +111,7 @@ export default {
         margin-top: 10px;
       }
 
-      /deep/.van-cell__right-icon {
+      :deep(.van-cell__right-icon) {
         position: absolute;
         right: 10px;
         top: 50%;
