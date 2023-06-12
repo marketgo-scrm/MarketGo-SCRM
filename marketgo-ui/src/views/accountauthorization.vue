@@ -96,7 +96,7 @@
                   <el-input v-model="corp.corpId" placeholder="请输入企业ID" clearable />
                 </el-form-item>
               </el-form>
-              <el-form label-position="left" v-show="nowtype == 2" :model="agent" size="small" ref="agent" :rules="rules"
+              <el-form label-position="left" v-show="nowtype == 7" :model="agent" size="small" ref="agent" :rules="rules"
                 label-width="80px">
                 <el-form-item label="应用ID" prop="agentId">
                   <el-input v-model="agent.agentId" placeholder="请输入应用ID" clearable />
@@ -105,9 +105,9 @@
                   <el-input v-model="agent.secret" placeholder="请输入Secret" clearable />
                 </el-form-item>
               </el-form>
-              <el-form label-position="left" v-show="nowtype == 4 || nowtype == 5" :model="contacts" size="small"
+              <el-form label-position="left" v-show="nowtype == 1 || nowtype == 2" :model="contacts" size="small"
                 ref="contacts" :rules="contactsrules" label-width="110px">
-                <template v-if="nowtype == 4">
+                <template v-if="nowtype == 1">
                   <el-form-item label="通讯录Secret" prop="secret">
                     <el-input v-model="contacts.secret" placeholder="请输入通讯录Secret" clearable />
                   </el-form-item>
@@ -147,14 +147,14 @@
                 </template>
               </el-form>
               <!-- externalUser -->
-              <el-form label-position="left" v-show="nowtype == 6 || nowtype == 7 || nowtype == 8" :model="externalUser"
+              <el-form label-position="left" v-show="nowtype == 3 || nowtype == 4 || nowtype == 5" :model="externalUser"
                 size="small" ref="externalUser" :rules="externalUserrules" label-width="110px">
-                <template v-if="nowtype == 6">
+                <template v-if="nowtype == 3">
                   <el-form-item label="客户联系Secret" prop="secret">
                     <el-input v-model="externalUser.secret" placeholder="客户联系Secret" clearable />
                   </el-form-item>
                 </template>
-                <template v-else-if="nowtype == 7">
+                <template v-else-if="nowtype == 4">
                   <el-form-item label="URL" prop="url">
                     <!-- <el-row>
                     <el-col :span="10"> -->
@@ -263,6 +263,7 @@ export default {
             {
               name: "输入企业微信ID和企业名称",
               formkey: "corp",
+              configType: "CORP",
               type: 0,
               text: [
                 "配置企业微信ID和企业微信名称是使用本系统的必须条件，不配置本系统所有功能都无法正常使用。",
@@ -278,92 +279,13 @@ export default {
             },
           ],
         },
-        {
-          content: "配置自建应用",
-          children: [
-            {
-              name: "创建自建应用",
-              type: 1,
-              text: [
-                "配置自建应用后可以使用以下功能。",
-                "批量加好友：通过自建应用接收加好友的任务。",
-              ],
-              dicts: [
-                {
-                  dist: "登录成功后，在应用管理【自建应用模块】点击【创建应用】",
-                  imglist: [require("../assets/step1/1.png")],
-                },
-                {
-                  dist: "进入创建应用页面，上传【应用logo】和填写【应用名称】，并且一定选择应用可见范围+",
-                  imglist: [require("../assets/step1/2.png")],
-                },
-                {
-                  dist: "点击创建应用后，返回【应用管理】，就可以找到你刚才创建的应用了。",
-                  imglist: [require("../assets/step1/3.png")],
-                },
-                {
-                  dist: "点击应用图标进入详情，将服务器的外网IP配置到【企业可信IP】中",
-                  imglist: [require("../assets/step1/4.png")],
-                },
-              ],
-            },
-            {
-              name: "输入自建应用ID和Secret",
-              type: 2,
-              formkey: "agent",
-              configType: "AGENT",
-              text: [
-                "输入自建应用的ID和Secret后，系统才能调用自建应用的能力，同时API接口将调用失败。所以这一步一定要仔细配置，避免配置错，影响系统使用。",
-              ],
-              dicts: [
-                {
-                  dist: "在应用管理【自建应用模块】，找到刚刚创建的【自建应用】，点击进入应用详情页",
-                  imglist: [require("../assets/step2/1.png")],
-                },
-                {
-                  dist: "进入应用详情页面，将AgentId和Secret分别填入下方输入框，Secret点击查看后到企业微信上查看",
-                  imglist: [
-                    require("../assets/step2/2-1.png"),
-                    require("../assets/step2/2-2.png"),
-                    require("../assets/step2/2-3.png"),
-                    require("../assets/step2/2-4.png"),
-                  ],
-                },
-                {
-                  dist: "确认应用状态为【已启用】，否则API接口将调用失败，同时应用对所有员工不可见",
-                  imglist: [require("../assets/step2/3.png")],
-                },
-              ],
-            },
-            {
-              name: "配置可调用的应用",
-              type: 3,
-              text: [
-                "配置可调用的应用是指业自建应用可以调用可见范围内的外部联系人相关接口，实现更多丰富的交互功能。",
-              ],
-              dicts: [
-                {
-                  dist: "在【客户联系】页面上方点击【API】按钮，展开配置模块",
-                  imglist: [require("../assets/step3/1.png")],
-                },
-                {
-                  dist: "找到你刚才创建的【应用】，在后面选择，要确保已经选择应用，点击确定保存",
-                  imglist: [require("../assets/step3/2.png")],
-                },
-                {
-                  dist: "点击创建应用后，返回【应用管理】，就可以找到你刚才创建的应用了。",
-                  imglist: [require("../assets/step3/3.png")],
-                },
-              ],
-            },
-          ],
-        },
+   
         {
           content: "配置企业通讯录",
           children: [
             {
               name: "输入通讯录Secret",
-              type: 4,
+              type: 1,
               formkey: "contacts",
               configType: "CONTACTS",
               text: [
@@ -386,7 +308,7 @@ export default {
             },
             {
               name: "设置通讯录接收事件服务器",
-              type: 5,
+              type: 2,
               configType: "CONTACTS",
               formkey: "contacts",
               text: [
@@ -419,7 +341,7 @@ export default {
           children: [
             {
               name: "配置客户联系Secret",
-              type: 6,
+              type: 3,
               formkey: "externalUser",
               configType: "EXTERNAL_USER",
               text: [
@@ -443,7 +365,7 @@ export default {
             },
             {
               name: "设置客户联系接收事件服务器",
-              type: 7,
+              type: 4,
               formkey: "externalUser",
               configType: "EXTERNAL_USER",
               text: [
@@ -468,7 +390,7 @@ export default {
             },
             {
               name: "设置客户联系使用范围",
-              type: 8,
+              type: 5,
               text: [
                 "只有配置的客户联系使用权限范围的员工才能通外部客户沟通，并使用系统的的能力。",
               ],
@@ -484,6 +406,87 @@ export default {
                   dist: "在【我的企业】页面，点击左侧【外部沟通管理】，设置客户联系使用范围，点击确认，建议给所有人都有客户联系权限，避免一些因权限产生的意外问题",
                   imglist: [require("../assets/step8/2-1.png"), require("../assets/step8/2-2.png")],
                 }
+              ],
+            },
+          ],
+        },
+
+        {
+          content: "配置自建应用",
+          children: [
+            {
+              name: "创建自建应用",
+              type: 6,
+              text: [
+                "配置自建应用后可以使用以下功能。",
+                "批量加好友：通过自建应用接收加好友的任务。",
+              ],
+              dicts: [
+                {
+                  dist: "登录成功后，在应用管理【自建应用模块】点击【创建应用】",
+                  imglist: [require("../assets/step1/1.png")],
+                },
+                {
+                  dist: "进入创建应用页面，上传【应用logo】和填写【应用名称】，并且一定选择应用可见范围+",
+                  imglist: [require("../assets/step1/2.png")],
+                },
+                {
+                  dist: "点击创建应用后，返回【应用管理】，就可以找到你刚才创建的应用了。",
+                  imglist: [require("../assets/step1/3.png")],
+                },
+                {
+                  dist: "点击应用图标进入详情，将服务器的外网IP配置到【企业可信IP】中",
+                  imglist: [require("../assets/step1/4.png")],
+                },
+              ],
+            },
+            {
+              name: "输入自建应用ID和Secret",
+              type: 7,
+              formkey: "agent",
+              configType: "AGENT",
+              text: [
+                "输入自建应用的ID和Secret后，系统才能调用自建应用的能力，同时API接口将调用失败。所以这一步一定要仔细配置，避免配置错，影响系统使用。",
+              ],
+              dicts: [
+                {
+                  dist: "在应用管理【自建应用模块】，找到刚刚创建的【自建应用】，点击进入应用详情页",
+                  imglist: [require("../assets/step2/1.png")],
+                },
+                {
+                  dist: "进入应用详情页面，将AgentId和Secret分别填入下方输入框，Secret点击查看后到企业微信上查看",
+                  imglist: [
+                    require("../assets/step2/2-1.png"),
+                    require("../assets/step2/2-2.png"),
+                    require("../assets/step2/2-3.png"),
+                    require("../assets/step2/2-4.png"),
+                  ],
+                },
+                {
+                  dist: "确认应用状态为【已启用】，否则API接口将调用失败，同时应用对所有员工不可见",
+                  imglist: [require("../assets/step2/3.png")],
+                },
+              ],
+            },
+            {
+              name: "配置可调用的应用",
+              type: 8,
+              text: [
+                "配置可调用的应用是指业自建应用可以调用可见范围内的外部联系人相关接口，实现更多丰富的交互功能。",
+              ],
+              dicts: [
+                {
+                  dist: "在【客户联系】页面上方点击【API】按钮，展开配置模块",
+                  imglist: [require("../assets/step3/1.png")],
+                },
+                {
+                  dist: "找到你刚才创建的【应用】，在后面选择，要确保已经选择应用，点击确定保存",
+                  imglist: [require("../assets/step3/2.png")],
+                },
+                {
+                  dist: "点击创建应用后，返回【应用管理】，就可以找到你刚才创建的应用了。",
+                  imglist: [require("../assets/step3/3.png")],
+                },
               ],
             },
           ],
@@ -756,40 +759,45 @@ export default {
         this.loading = false;
         return false;
       }
+    
       this.$refs[this.chosedata.formkey].validate(async (valid) => {
+     
         if (valid) {
           this.loading = true;
           let params = {
             corp: this.corp,
           };
-          if (this.nowtype == 0) {
-            this.isdisabled = true;
-            this.nowtype++;
-            if (this.lasttype < this.nowtype) {
-              this.lasttype++;
-            }
-            this.getdata();
-            this.loading = false;
-            return false;
-          } else {
-            params[this.chosedata.formkey] = this[this.chosedata.formkey];
+          // if (this.nowtype == 0) {
+         
+          //   this.isdisabled = true;
+          //   this.nowtype++;
+          //   if (this.lasttype < this.nowtype) {
+          //     this.lasttype++;
+          //   }
+          //   this.getdata();
+          //   this.loading = false;
+          //   return false;
+          // } else {
+          //   params[this.chosedata.formkey] = this[this.chosedata.formkey];
+          //   params.configType = this.chosedata.configType;
+          // }
+          params[this.chosedata.formkey] = this[this.chosedata.formkey];
             params.configType = this.chosedata.configType;
-          }
-
           let data = await this.$http.post(
             `mktgo/wecom/corp/save?project_id=${this.project_id}`,
             params
           );
+       
           //alert(JSON.stringify(params))
           if (data.code === 0) {
             this.nowtype++;
             if (this.lasttype < this.nowtype) {
               this.lasttype++;
             }
-            if (this.nowtype == 5 || this.nowtype == 7) {
+            if (this.nowtype == 2 || this.nowtype == 4) {
               this.gethttps('config');
             }
-            else  if (this.nowtype == 8) {
+            else  if (this.nowtype == 5) {
               // 获取企微的可信域名
              this.gethttps('domain/query');
             }

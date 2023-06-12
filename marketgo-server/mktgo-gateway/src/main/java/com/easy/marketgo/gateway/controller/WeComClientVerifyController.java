@@ -8,16 +8,12 @@ import com.easy.marketgo.react.service.client.WeComClientVerifyService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import static org.springframework.amqp.support.AmqpHeaders.CONTENT_TYPE;
 
 /**
  * @author : kevinwang
@@ -65,23 +61,5 @@ public class WeComClientVerifyController extends BaseController {
 
         return ResponseEntity.ok(weComClientVerifyService.sdkConfigVerify(corpId, agentId, request.getType().getValue(),
                 request.getUrl()));
-    }
-
-    @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
-    })
-    @ApiOperation(value = "企业微信可信域名校验", nickname = "checkCredFile", notes = "", response =
-            BaseResponse.class)
-    @RequestMapping(value = {"/check/cred_file/{file_name}"}, produces = {"application/json"}, method =
-            RequestMethod.GET)
-    public ResponseEntity<byte[]> checkCredFile(
-            @ApiParam(value = "可信文件名", required = true) @PathVariable("file_name") String fileName) {
-        byte[] content = weComClientVerifyService.checkCredFile(fileName);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Content-Disposition", String.format("attachment; filename=\"%s.txt\"", fileName));
-        // 以二进制流形式读取文件
-        httpHeaders.add(CONTENT_TYPE, "application/octet-stream");
-        return new ResponseEntity<>(content, httpHeaders, HttpStatus.OK);
     }
 }

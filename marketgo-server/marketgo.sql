@@ -674,7 +674,7 @@ UPDATE wecom_sys_user SET auth_status=1;
 
 
 ALTER TABLE tenant_config ADD server_address varchar(1024) DEFAULT NULL COMMENT '服务器地址信息';
-UPDATE tenant_config SET server_address='${域名地址}';
+UPDATE tenant_config SET server_address='http://domain.com';
 
 
 -- version 0.0.3

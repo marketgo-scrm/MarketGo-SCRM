@@ -71,7 +71,7 @@ public enum ErrorCodeEnum {
      * 命名方式 ERROR_BIZ_错误描述
      * 错误码范围2000-4999
      */
-
+    ERROR_BIZ_CONTENT_IS_EMPTY(2001, "发送的内容为空"),
 
     /**
      * 内部错误码定义

@@ -17,10 +17,10 @@
             v-if="item.type === 'TEXT'"
           >
             <template v-if="item?.text?.content">
-              <div
+              <div style="white-space: pre-wrap;"
                 v-html="
                   item?.text?.content?.replace(
-                    /#{EXTERNAL_USER_NAME}#/g,
+                    /%NICKNAME%/g,
                     '<span style=color:#409EFF;>客户昵称</span>'
                   )
                 "
