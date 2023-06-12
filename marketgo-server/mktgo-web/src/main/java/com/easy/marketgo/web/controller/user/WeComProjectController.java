@@ -1,16 +1,17 @@
 package com.easy.marketgo.web.controller.user;
 
 import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.web.model.request.ProjectCreateRequest;
 import com.easy.marketgo.web.model.response.ProjectFetchResponse;
 import com.easy.marketgo.web.service.project.IProjectService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author : ssk
@@ -37,31 +38,5 @@ public class WeComProjectController {
         ProjectFetchResponse response = projectService.fetchProjects();
 
         return ResponseEntity.ok(BaseResponse.success(response));
-    }
-
-    @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
-    })
-    @ApiOperation(value = "创建项目", nickname = "createProject", notes = "", response =
-            BaseResponse.class)
-    @RequestMapping(value = {"/create"}, produces = {"application/json"}, method = RequestMethod.POST)
-    public ResponseEntity createProject(
-            @ApiParam(value = "项目创建请求", required = true) @RequestBody @Valid ProjectCreateRequest projectCreateRequest) {
-
-        return ResponseEntity.ok(projectService.createProject(projectCreateRequest));
-    }
-
-    @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
-    })
-    @ApiOperation(value = "检查项目名称", nickname = "checkProjectName", notes = "", response =
-            BaseResponse.class)
-    @RequestMapping(value = {"/check_name"}, produces = {"application/json"}, method = RequestMethod.GET)
-    public ResponseEntity checkProjectName(
-            @ApiParam(value = "企微项目uuid", required = false) @NotNull @Valid @RequestParam(value = "project_id",
-                    required = false) Integer projectId,
-            @ApiParam(value = "任务中文名", required = true) @NotNull @Valid @RequestParam(value = "name", required
-                    = true) String name) {
-        return ResponseEntity.ok(projectService.checkName(projectId, name));
     }
 }
