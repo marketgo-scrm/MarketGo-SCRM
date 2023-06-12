@@ -50,7 +50,7 @@ public class WeComTaskCenterDetailResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AttachmentsMessage {
-        private String msgType;
+        private String type;
         private ImageAttachmentsMessage image;
         private LinkAttachmentsMessage link;
         private MiniProgramAttachmentsMessage miniProgram;

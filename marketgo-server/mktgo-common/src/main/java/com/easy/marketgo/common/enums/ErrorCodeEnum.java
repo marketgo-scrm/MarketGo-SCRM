@@ -21,8 +21,8 @@ public enum ErrorCodeEnum {
     ERROR_NOT_SUPPORT_MASS_TASK(1003, "不支持的企微群发类型"),
     ERROR_WECOM_MASS_TASK_DUPLICATE_CNAME(1004, "企微活动重名，请修改名称"),
     ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME(1005, "企微群发任务名称检查失败"),
-
-
+    ERROR_WECOM_PROJECT_DUPLICATE_CNAME(1006, "项目名称重名，请修改项目名称"),
+    ERROR_WEB_USER_IS_NOT_CREATE_PERMISSION(1007, "用户没有创建项目的权限，只有超级管理员有创建项目权限"),
 
     ERROR_WEB_WECOM_MASS_TASK_NOT_SUPPORT_CHANGE(1010, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),
     ERROR_WEB_WECOM_TASK_CENTER_NOT_SUPPORT_CHANGE(1011, "企微群发任务只有在未开始状态可以修改，其他状态只可以查看"),
@@ -44,6 +44,7 @@ public enum ErrorCodeEnum {
     ERROR_WEB_UPLOAD_OFFLINE_USER_GROUP_FILE_SIZE_EMPTY(1114, "上传的文件中没有数据"),
     ERROR_WEB_OFFLINE_USER_GROUP_COMPUTE_FAILED(1115, "离线人群计算失败"),
     ERROR_WEB_UPLOAD_FILE_FAILED(1116, "上传文件失败"),
+    ERROR_WEB_MASS_TASK_REMIND_COUNT_IS_MAX(1117, "群发提醒的次数已经超过了3次"),
 
     ERROR_WEB_INTERNAL_SERVICE(1151, "服务内部出现异常，请检查相关服务是否运行正常"),
     ERROR_WEB_REQUEST_USER_GROUP_IS_EMPTY(1152, "数据库中没有查询到人群信息的记录"),

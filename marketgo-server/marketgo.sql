@@ -923,3 +923,7 @@ ALTER TABLE wecom_group_chats ADD user_count INT(11) DEFAULT NULL COMMENT '客�
 ALTER TABLE wecom_corp_config ADD cred_file_name VARCHAR(128) DEFAULT NULL COMMENT '可信文件名称';
 
 ALTER TABLE wecom_corp_config ADD cred_file_content VARCHAR(256) DEFAULT NULL COMMENT '可信文件内容';
+
+
+-- version 0.2.0
+INSERT INTO `wecom_sys_corp_user_role_link` ( `corp_id`, `role_uuid`, `member_id`,  `project_uuid`) VALUES ((select uuid from tenant_config) , (SELECT uuid FROM wecom_sys_base_role where code='super_administrator'), 'admin',(select uuid from tenant_config));

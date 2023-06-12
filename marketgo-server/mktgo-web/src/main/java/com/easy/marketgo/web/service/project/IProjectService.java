@@ -16,4 +16,5 @@ public interface IProjectService {
 
     BaseResponse createProject(ProjectCreateRequest projectCreateRequest);
 
+    BaseResponse checkName(Integer projectId, String name);
 }

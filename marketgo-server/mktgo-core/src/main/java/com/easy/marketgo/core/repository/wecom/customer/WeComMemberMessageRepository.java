@@ -25,6 +25,9 @@ public interface WeComMemberMessageRepository extends CrudRepository<WeComMember
     String queryNameByMemberId(@Param("corp_id") String corpId,
                                @Param("member_id") String memberId);
 
+    @Query("SELECT member_id FROM wecom_members WHERE mobile = :mobile")
+    String queryMemberIdByMobile(String mobile);
+
     @Query("SELECT * FROM wecom_members WHERE corp_id = :corpId AND member_id IN(:memberId)")
     List<WeComMemberMessageEntity> queryNameByMemberIds(String corpId, List<String> memberId);
 

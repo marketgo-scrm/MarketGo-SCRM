@@ -18,5 +18,7 @@ public interface WeComSysCropUserRoleLinkRepository extends CrudRepository<WeCom
 
     List<WeComSysCorpUserRoleLinkEntity>  findByCorpIdAndProjectUuidAndMemberIdIn(String corpId,String projectUuid,List<String> memberIds);
 
+    List<WeComSysCorpUserRoleLinkEntity>  findByMemberId(String memberId);
+
     WeComSysCorpUserRoleLinkEntity findByCorpIdAndProjectUuidAndMemberId(String corpId,String projectUuid,String memberIds);
 }

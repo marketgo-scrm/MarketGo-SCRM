@@ -16,7 +16,8 @@ import java.util.List;
  * @data : 12/24/22 9:20 PM
  * Describe:
  */
-public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTaskCenterMemberEntity, Long> {
+public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTaskCenterMemberEntity, Long>,
+        WeComTaskCenterMemberCustomizedRepository {
 
     @Query("SELECT * FROM wecom_task_center_member WHERE project_uuid = :project_uuid AND name = :name")
     WeComTaskCenterMemberEntity getTaskCenterByName(@Param("project_uuid") String projectUuid,
@@ -78,10 +79,6 @@ public interface WeComTaskCenterMemberRepository extends CrudRepository<WeComTas
 
     @Query("SELECT * FROM wecom_task_center_member WHERE task_status = :task_status")
     List<WeComTaskCenterMemberEntity> getByTaskStatus(@Param("task_status") String taskStatus);
-
-    @Modifying
-    @Query("UPDATE wecom_task_center_member SET version = version + 1  WHERE id = :id AND version = :version")
-    int updateTaskVersion(@Param("id") Integer id, @Param("version") Integer version);
 
     @Modifying
     @Query("UPDATE wecom_task_center_member SET plan_time = :plan_time  WHERE uuid=:uuid")

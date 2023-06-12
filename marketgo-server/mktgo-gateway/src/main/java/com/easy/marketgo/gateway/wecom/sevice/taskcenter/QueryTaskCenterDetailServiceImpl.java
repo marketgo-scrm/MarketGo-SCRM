@@ -4,8 +4,11 @@ import com.easy.marketgo.common.enums.WeComMassTaskMetricsType;
 import com.easy.marketgo.common.enums.WeComMediaTypeEnum;
 import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComChangeStatusRequest;
+import com.easy.marketgo.gateway.wecom.request.client.WeComMemberTaskCenterListClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterContentClientResponse;
 import com.easy.marketgo.gateway.wecom.request.client.WeComTaskCenterDetailClientResponse;
+import com.easy.marketgo.gateway.wecom.sevice.QueryTaskCenterDetailService;
+import com.easy.marketgo.react.model.response.WeComMemberTaskCenterListResponse;
 import com.easy.marketgo.react.model.response.WeComTaskCenterDetailResponse;
 import com.easy.marketgo.react.service.WeComClientTaskCenterService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,27 +28,62 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class QueryTaskCenterDetailService {
+public class QueryTaskCenterDetailServiceImpl implements QueryTaskCenterDetailService {
 
     @Autowired
     private WeComClientTaskCenterService weComClientTaskCenterService;
 
-    public BaseResponse listTaskCenter(List<String> type,
-                                       List<String> taskTypes,
-                                       Integer pageNum,
-                                       Integer pageSize,
-                                       String corpId,
-                                       List<String> statuses,
-                                       String keyword,
+    @Override
+    public BaseResponse listTaskCenter(String corpId,
                                        String memberId,
-                                       List<String> createUserIds,
-                                       String sortKey,
-                                       String sortOrder,
+                                       List<String> taskTypes,
+                                       List<String> statuses,
                                        String startTime,
-                                       String endTime) {
-        return null;
+                                       String endTime,
+                                       Integer pageNum,
+                                       Integer pageSize) {
+        WeComMemberTaskCenterListResponse response = weComClientTaskCenterService.listTaskCenter(corpId, memberId,
+                taskTypes,
+                statuses, startTime, endTime, pageNum,
+                pageSize);
+        WeComMemberTaskCenterListClientResponse clientResponse = new WeComMemberTaskCenterListClientResponse();
+        clientResponse.setTotalCount(response.getTotalCount());
+        if (response.getTotalCount() != 0) {
+            List<WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail> list = new ArrayList<>();
+            for (WeComMemberTaskCenterListResponse.MemberTaskCenterDetail item : response.getList()) {
+                WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail detail =
+                        new WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail();
+                BeanUtils.copyProperties(item, detail);
+                list.add(detail);
+            }
+            clientResponse.setList(list);
+        }
+
+        return BaseResponse.success(clientResponse);
     }
 
+    @Override
+    public BaseResponse listSubTaskCenter(String corpId, String memberId, String taskUuid, Integer pageNum,
+                                          Integer pageSize) {
+        WeComMemberTaskCenterListResponse response = weComClientTaskCenterService.listSubTaskCenter(corpId, memberId,
+                taskUuid, pageNum, pageSize);
+        WeComMemberTaskCenterListClientResponse clientResponse = new WeComMemberTaskCenterListClientResponse();
+        clientResponse.setTotalCount(response.getTotalCount());
+        if (response.getTotalCount() != 0) {
+            List<WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail> list = new ArrayList<>();
+            for (WeComMemberTaskCenterListResponse.MemberTaskCenterDetail item : response.getList()) {
+                WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail detail =
+                        new WeComMemberTaskCenterListClientResponse.MemberTaskCenterDetail();
+                BeanUtils.copyProperties(item, detail);
+                list.add(detail);
+            }
+            clientResponse.setList(list);
+        }
+
+        return BaseResponse.success(clientResponse);
+    }
+
+    @Override
     public BaseResponse getTaskCenterDetails(String corpId, String memberId, String taskUuid, String uuid) {
         WeComTaskCenterDetailResponse response = weComClientTaskCenterService.getTaskCenterDetails(corpId, memberId,
                 taskUuid, uuid);
@@ -56,37 +94,37 @@ public class QueryTaskCenterDetailService {
             WeComTaskCenterDetailClientResponse.AttachmentsMessage message =
                     new WeComTaskCenterDetailClientResponse.AttachmentsMessage();
             BeanUtils.copyProperties(item, message);
-            if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
+            if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
                 WeComTaskCenterDetailClientResponse.TextMessage textMessage =
                         new WeComTaskCenterDetailClientResponse.TextMessage();
                 BeanUtils.copyProperties(item.getText(), textMessage);
                 message.setText(textMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
                 WeComTaskCenterDetailClientResponse.ImageAttachmentsMessage imageMessage =
                         new WeComTaskCenterDetailClientResponse.ImageAttachmentsMessage();
                 BeanUtils.copyProperties(item.getImage(), imageMessage);
                 message.setImage(imageMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
                 WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage videoMessage =
                         new WeComTaskCenterDetailClientResponse.VideoAttachmentsMessage();
                 BeanUtils.copyProperties(item.getVideo(), videoMessage);
                 message.setVideo(videoMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
                 WeComTaskCenterDetailClientResponse.FileAttachmentsMessage fileMessage =
                         new WeComTaskCenterDetailClientResponse.FileAttachmentsMessage();
                 BeanUtils.copyProperties(item.getFile(), fileMessage);
                 message.setFile(fileMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
                 WeComTaskCenterDetailClientResponse.MiniProgramAttachmentsMessage miniMessage =
                         new WeComTaskCenterDetailClientResponse.MiniProgramAttachmentsMessage();
                 BeanUtils.copyProperties(item.getMiniProgram(), miniMessage);
                 message.setMiniProgram(miniMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
                 WeComTaskCenterDetailClientResponse.LinkAttachmentsMessage linkMessage =
                         new WeComTaskCenterDetailClientResponse.LinkAttachmentsMessage();
                 BeanUtils.copyProperties(item.getLink(), linkMessage);
@@ -125,6 +163,7 @@ public class QueryTaskCenterDetailService {
         return BaseResponse.success(clientResponse);
     }
 
+    @Override
     public BaseResponse changeTaskCenterMemberStatus(String corpId, WeComChangeStatusRequest request) {
         if (request.getType().equalsIgnoreCase(WeComMassTaskMetricsType.MASS_TASK_MEMBER.getValue())) {
             weComClientTaskCenterService.changeTaskCenterMemberStatus(corpId, request.getMemberId(),
@@ -137,6 +176,7 @@ public class QueryTaskCenterDetailService {
         return BaseResponse.success();
     }
 
+    @Override
     public BaseResponse getTaskCenterContent(String corpId, String memberId, String taskUuid) {
         List<WeComTaskCenterDetailResponse> responses = weComClientTaskCenterService.getTaskCenterContent(corpId,
                 memberId,
@@ -148,37 +188,37 @@ public class QueryTaskCenterDetailService {
             WeComTaskCenterContentClientResponse.AttachmentsMessage message =
                     new WeComTaskCenterContentClientResponse.AttachmentsMessage();
             BeanUtils.copyProperties(item, message);
-            if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
+            if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.TEXT.getType())) {
                 WeComTaskCenterContentClientResponse.TextMessage textMessage =
                         new WeComTaskCenterContentClientResponse.TextMessage();
                 BeanUtils.copyProperties(item.getText(), textMessage);
                 message.setText(textMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.IMAGE.getType())) {
                 WeComTaskCenterContentClientResponse.ImageAttachmentsMessage imageMessage =
                         new WeComTaskCenterContentClientResponse.ImageAttachmentsMessage();
                 BeanUtils.copyProperties(item.getImage(), imageMessage);
                 message.setImage(imageMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.VIDEO.getType())) {
                 WeComTaskCenterContentClientResponse.VideoAttachmentsMessage videoMessage =
                         new WeComTaskCenterContentClientResponse.VideoAttachmentsMessage();
                 BeanUtils.copyProperties(item.getVideo(), videoMessage);
                 message.setVideo(videoMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.FILE.getType())) {
                 WeComTaskCenterContentClientResponse.FileAttachmentsMessage fileMessage =
                         new WeComTaskCenterContentClientResponse.FileAttachmentsMessage();
                 BeanUtils.copyProperties(item.getFile(), fileMessage);
                 message.setFile(fileMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.MINIPROGRAM.getType())) {
                 WeComTaskCenterContentClientResponse.MiniProgramAttachmentsMessage miniMessage =
                         new WeComTaskCenterContentClientResponse.MiniProgramAttachmentsMessage();
                 BeanUtils.copyProperties(item.getMiniProgram(), miniMessage);
                 message.setMiniProgram(miniMessage);
 
-            } else if (item.getMsgType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
+            } else if (item.getType().equalsIgnoreCase(WeComMediaTypeEnum.LINK.getType())) {
                 WeComTaskCenterContentClientResponse.LinkAttachmentsMessage linkMessage =
                         new WeComTaskCenterContentClientResponse.LinkAttachmentsMessage();
                 BeanUtils.copyProperties(item.getLink(), linkMessage);
@@ -190,5 +230,4 @@ public class QueryTaskCenterDetailService {
         clientResponse.setAttachments(attachmentsMessageList);
         return BaseResponse.success(clientResponse);
     }
-
 }

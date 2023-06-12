@@ -12,15 +12,13 @@
           <div class="list" v-for="item in projects" :key="item.projectUuid">
             <h4>{{ item.projectName }}</h4>
             <p>
-              {{item.desc}}
+              {{ item.desc }}
             </p>
-            <span>类型：{{item.type}}</span>
-            <span>状态：{{item.status=='publish'?'已发布':"未发布"}}</span>
+            <span>类型：{{ item.type }}</span>
+            <span>状态：{{ item.status == 'publish' ? '已发布' : "未发布" }}</span>
             <div class="timeout">
-              <span>创建时间：{{item.createTime}}</span>
-              <el-button type="primary" round size="small" :loading='loading' @click="gopro(item)"
-                >进入项目</el-button
-              >
+              <span>创建时间：{{ item.createTime }}</span>
+              <el-button type="primary" round size="small" :loading='loading' @click="gopro(item)">进入项目</el-button>
             </div>
           </div>
           <div class="list vips">
@@ -33,16 +31,16 @@
       </div>
     </div>
     <div class="imgbom">
-     <div class='imgin'>
-       <div class="imgs">
-        <p>帮助文档</p>
-         <img  src="../assets/word.png" alt="" />
+      <div class='imgin'>
+        <div class="imgs">
+          <p>帮助文档</p>
+          <img src="../assets/word.png" alt="" />
+        </div>
+        <div>
+          <p>账号授权</p>
+          <img src="../assets/power.png" alt="" />
+        </div>
       </div>
-      <div>
-         <p>账号授权</p>
- <img src="../assets/power.png" alt="" />
-      </div>
-     </div>
     </div>
   </div>
 </template>
@@ -51,40 +49,69 @@ export default {
   data() {
     return {
       projects: [],
-      loading:false
+      loading: false,
+      // 显示创建项目的弹框
+      dialogVisible: false,
+      // 创建项目所需要的数据
+      prejectData: {
+        desc: "",
+        name: "",
+      },
+      // 是否有权限创建新的项目
+      canCreate:false
     };
   },
   mounted() {
     this.getlist();
   },
   methods: {
+    // 校验项目名称是否存在
+    checkProjectName() {
+      let _this = this
+      this.$http.get(
+        `/mktgo/wecom/project/check_name?name=${this.prejectData.name}`,
+        {}).then(function (res) {
+          console.log(res);
+          if (res.code !== 0) {
+            _this.$message.error(res.message);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    // 获取项目列表
     async getlist() {
       let data = await this.$http.post("mktgo/wecom/project/list", {});
       if (data.code === 0) {
         this.projects = data.data.projects;
-        this.$store.commit('SET_TENANTUUID',data.data.tenantUuid)
-         this.$store.commit('SET_PROJECT',data.data.projects)
+        this.canCreate  = data.data.canCreate || false;
+        this.$store.commit('SET_TENANTUUID', data.data.tenantUuid)
+        this.$store.commit('SET_PROJECT', data.data.projects)
       }
     },
-   async gopro(val) {
+    async gopro(val) {
       this.$store.commit("SET_PROID", val.projectUuid);
-      this.loading=true
-     let data = await this.$http.get(
+      this.$store.commit("SET_PRONAME", val.projectName);
+      
+      this.loading = true
+      let data = await this.$http.get(
         `mktgo/wecom/corp/config?project_id=${val.projectUuid}`
       );
       if (data.code === 0) {
-        if(data.data){
-           this.$store.commit("SET_CORPID", data.data.configs[0].corp.corpId);
-           this.$router.push({
+        if (data.data) {
+          this.$store.commit("SET_CORPID", data.data.configs[0].corp.corpId);
+          this.$router.push({
             path: "/index",
           });
-        }else{
-           this.$router.push({
+        } else {
+          this.$router.push({
             path: "/accountauthorization",
           });
         }
       }
-        this.loading=false
+      this.loading = false
     },
   },
 };
@@ -93,9 +120,10 @@ export default {
 .myout {
   width: 100%;
   height: 100vh;
-  min-width:1125px;
+  min-width: 1125px;
   background: #f5f8ff;
 }
+
 .mypro {
   width: 100%;
   min-height: 300px;
@@ -103,6 +131,7 @@ export default {
   background-size: 100%;
   position: relative;
 }
+
 .logon {
   width: 100%;
   height: 70px;
@@ -112,10 +141,12 @@ export default {
   padding: 0 24px;
   box-sizing: border-box;
 }
+
 .logon img {
   width: 26px;
   margin-right: 12px;
 }
+
 .listout {
   width: 100%;
   padding: 0 80px;
@@ -125,6 +156,7 @@ export default {
   box-sizing: border-box;
   margin-top: 40px;
 }
+
 .imgbom {
   /* position:fixed;
     left:0;
@@ -135,51 +167,59 @@ export default {
   margin-top: 70px;
   /* height:18vh */
 
-    /* justify-content: center; */
+  /* justify-content: center; */
 }
-.imgin{
-  width:90%;
+
+.imgin {
+  width: 90%;
   /* margin:0 auto; */
-    display:flex;
+  display: flex;
 }
-.imgbom p{
-  position:absolute;
-  left:20px;
-  top:20px;
+
+.imgbom p {
+  position: absolute;
+  left: 20px;
+  top: 20px;
   font-weight: 600;
-font-size: 14px;
-line-height: 20px;
+  font-size: 14px;
+  line-height: 20px;
 
 
-color: #999999;
+  color: #999999;
 }
+
 .imgin div {
-  position:relative;
+  position: relative;
   width: 75%;
   /* height:190px; */
 }
+
 .imgbom .imgs {
   width: 24%;
-   margin-right:1%;
+  margin-right: 1%;
   /* float: left; */
 }
-.imgbom img{
-  width:100%;
+
+.imgbom img {
+  width: 100%;
   /* height:100%; */
 }
-.listout > h3 {
+
+.listout>h3 {
   font-weight: 600;
   font-size: 24px;
   line-height: 34px;
   color: #ffffff;
 }
-.listout > p {
+
+.listout>p {
   font-weight: 400;
   font-size: 12px;
   line-height: 17px;
   color: #ffffff;
   margin: 16px 0;
 }
+
 .listin {
   width: 90%;
   /* margin:0 auto; */
@@ -187,6 +227,42 @@ color: #999999;
   flex-wrap: wrap;
   /* justify-content: center; */
 }
+
+.create {
+  justify-content: center;
+  align-items: center;
+
+
+  width: 24%;
+  height: 190px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  padding: 12px 20px;
+  box-sizing: border-box;
+  font-size: 12px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 24px rgba(0, 0, 0, 0.07);
+  margin-right: 1%;
+  margin-bottom: 20px;
+}
+
+.create img {
+  width: 36px;
+  height: 36px;
+}
+
+.create span {
+  margin-top: 17px;
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 17px;
+  color: #6E94F5;
+}
+
 .list {
   width: 24%;
   height: 190px;
@@ -202,20 +278,24 @@ color: #999999;
   margin-right: 1%;
   margin-bottom: 20px;
 }
+
 .timeout {
   display: flex;
   justify-content: space-between;
 }
+
 .vips {
   background: linear-gradient(158.17deg, #ffa654 11.03%, #eb55e5 118.34%);
   box-shadow: 0px 5px 24px rgba(148, 7, 142, 0.19);
   color: #fff;
 }
+
 .vips h4 {
   font-weight: 600;
   font-size: 30px;
   color: #ffffff;
 }
+
 .btns {
   width: 152px;
   height: 40px;
@@ -227,4 +307,7 @@ color: #999999;
   text-align: center;
   color: #ffffff;
 }
-</style>
+
+.btns_created {
+  width: 96px;
+}</style>

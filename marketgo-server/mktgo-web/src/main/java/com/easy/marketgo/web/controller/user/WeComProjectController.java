@@ -1,15 +1,17 @@
 package com.easy.marketgo.web.controller.user;
 
 import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.web.model.request.ProjectCreateRequest;
 import com.easy.marketgo.web.model.response.ProjectFetchResponse;
 import com.easy.marketgo.web.service.project.IProjectService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author : ssk
@@ -25,24 +27,16 @@ public class WeComProjectController {
     @Autowired
     private IProjectService projectService;
 
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = ProjectFetchResponse.class)
+    })
     @ApiOperation(value = "项目列表", nickname = "projectList", notes = "", response =
-            BaseResponse.class)
+            ProjectFetchResponse.class)
     @PostMapping(value = {"list"}, produces = {"application/json"})
     public ResponseEntity<BaseResponse<ProjectFetchResponse>> projectList() {
 
         ProjectFetchResponse response = projectService.fetchProjects();
 
         return ResponseEntity.ok(BaseResponse.success(response));
-    }
-
-    @ApiResponses({
-            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
-    })
-    @ApiOperation(value = "创建项目", nickname = "createProject", notes = "", response =
-            BaseResponse.class)
-    @RequestMapping(value = {"/create"}, produces = {"application/json"}, method = RequestMethod.POST)
-    public ResponseEntity updateOrInsertMassTask(
-            @ApiParam(value = "项目创建请求", required = true) @RequestBody @Valid ProjectCreateRequest projectCreateRequest) {
-        return ResponseEntity.ok(projectService.createProject(projectCreateRequest));
     }
 }

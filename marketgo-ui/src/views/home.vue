@@ -8,15 +8,10 @@
       <div class="navbar">
         <div class="nav">
           <div class="listone project">
-            {{ this.$store.state.project[0]?.projectName }}
+            {{ this.projectName }}
             <i class="el-icon-caret-bottom"> </i>
             <div class="menus">
-              <div
-                class="menulist"
-                @click="gohome"
-                v-for="(item, index) in $store.state.project"
-                :key="index"
-              >
+              <div class="menulist" @click='gopro(item)' v-for="(item, index) in $store.state.project" :key="index">
                 {{ item.projectName }}
               </div>
             </div>
@@ -26,10 +21,10 @@
           </div>
         </div>
         <div class="navbar-operation">
-          <div class="vips" @click="jumpUrl({name:'升级'})">
+          <div class="vips" @click="jumpUrl({ name: '升级' })">
             <span>
               升级至VIP尊享版
-          </span>
+            </span>
             <img src="../assets/imgs/Group.png" alt="" />
           </div>
           <div class="navbar-operation-userinfo">
@@ -43,31 +38,18 @@
         <img src="../assets/imgs/user.png" alt="" />
         <div class="usertext" @click="shows">
           <span class="title">{{ chosedata.corp.corpName }}</span>
-          <span class="curs"
-            >切换授权账号 <i class="el-icon-arrow-right"></i
-          ></span>
+          <span class="curs">切换授权账号 <i class="el-icon-arrow-right"></i></span>
         </div>
         <div class=""></div>
       </div>
       <div class="menuout">
-        <el-scrollbar style="height: 100%"
-          ><el-menu
-            :default-active="defaultactive"
-            class="el-menu-vertical-demo"
-            @select="handleSelect"
-            background-color="transparent"
-            text-color="#fff"
-            active-text-color="#fff"
-          >
+        <el-scrollbar style="height: 100%"><el-menu :default-active="defaultactive" class="el-menu-vertical-demo"
+            @select="handleSelect" background-color="transparent" text-color="#fff" active-text-color="#fff">
             <template v-for="item in constantRoutes">
               <template v-if="item.children">
                 <el-submenu :index="item.name" :key="item.name">
                   <template slot="title">{{ item.title }}</template>
-                  <el-menu-item
-                    :index="val.name"
-                    v-for="val in item.children"
-                    :key="val.name"
-                  >
+                  <el-menu-item :index="val.name" v-for="val in item.children" :key="val.name">
                     {{ val.title }}
                   </el-menu-item>
                 </el-submenu>
@@ -89,19 +71,12 @@
         </div>
       </el-scrollbar>
     </div>
-    <el-drawer
-      title="切换授权企业微信账号"
-      :visible.sync="drawer"
-      direction="ltr"
-      size="350px"
-    >
+    <el-drawer title="切换授权企业微信账号" :visible.sync="drawer" direction="ltr" size="350px">
       <div class="commonout">
         <div class="common" v-for="(item, index) in datalist" :key="index">
           <div>
             <span>{{ item.corp.corpName }}</span>
-            <el-button size="mini" type="text" @click="goset(item)"
-              >配置</el-button
-            >
+            <el-button size="mini" type="text" @click="goset(item)">配置</el-button>
           </div>
           <span>当前账号</span>
         </div>
@@ -140,6 +115,7 @@ export default {
       this.defaultactive = sessionStorage.getItem("defaultactive");
     }
     this.project_id = this.$store.state.projectUuid;
+    this.projectName = this.$store.state.projectName;
     await this.gethttps();
     this.getmenu();
   },
@@ -208,6 +184,33 @@ export default {
         this.chosedata = data.data.configs[0];
       }
     },
+    async gopro(val) {
+      this.$store.commit("SET_PROID", val.projectUuid);
+      this.$store.commit("SET_PRONAME", val.projectName);
+
+      this.loading = true
+      let data = await this.$http.get(
+        `mktgo/wecom/corp/config?project_id=${val.projectUuid}`
+      );
+      if (data.code === 0) {
+
+        if (data.data) {
+          this.$store.commit("SET_CORPID", data.data.configs[0].corp.corpId);
+          this.project_id = this.$store.state.projectUuid;
+          this.projectName = this.$store.state.projectName;
+          await this.gethttps();
+          this.getmenu();
+
+        } else {
+          this.$router.push({
+            path: "/accountauthorization",
+          });
+        }
+      }
+      this.loading = false
+    },
+
+
     shows() {
       this.drawer = true;
     },
@@ -229,13 +232,16 @@ export default {
   height: calc(100vh - 50px);
   background: #364066;
 }
-.el-drawer__wrapper{
+
+.el-drawer__wrapper {
   left: 206px;
 }
+
 .menuout {
   width: 100%;
   height: calc(100vh - 130px);
 }
+
 .conrrit {
   min-width: 700px;
   position: absolute;
@@ -245,12 +251,14 @@ export default {
   height: calc(100vh - 50px);
   background: #f0f2f6;
 }
+
 .contin {
   padding: 24px;
   width: 100%;
   /* height:100%; */
   box-sizing: border-box;
 }
+
 .user {
   width: 100%;
   height: 70px;
@@ -261,34 +269,41 @@ export default {
   font-size: 12px;
   border-bottom: 1px solid #535f80;
 }
+
 .user img {
   width: 46px;
   border-radius: 23px;
   margin-right: 5px;
 }
+
 .usertext {
   display: flex;
   height: 46px;
   flex-direction: column;
   justify-content: space-around;
 }
+
 .title {
   font-weight: 600;
   font-size: 14px;
 }
+
 ::v-deep(.el-menu-item:hover),
 ::v-deep(.el-submenu__title:hover) {
   background: #4f618c !important;
 }
+
 ::v-deep(.el-drawer__header) {
   font-size: 14px;
   font-weight: 600;
 }
+
 .commonout {
   width: 100%;
   padding: 0 24px;
   box-sizing: border-box;
 }
+
 .common {
   width: 100%;
   height: 40px;
@@ -300,9 +315,11 @@ export default {
   padding: 0 10px;
   box-sizing: border-box;
 }
+
 .common span {
   margin-right: 10px;
 }
+
 .top {
   position: absolute;
   top: 0;
@@ -311,6 +328,7 @@ export default {
   height: 50px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.07);
 }
+
 .logon {
   width: 206px;
   height: 50px;
@@ -319,10 +337,12 @@ export default {
   align-items: center;
   float: left;
 }
+
 .logon img {
   width: 26px;
   margin-right: 12px;
 }
+
 .navbar {
   font-size: 12px;
   width: calc(100% - 206px);
@@ -333,10 +353,12 @@ export default {
   padding: 0 28px;
   box-sizing: border-box;
 }
+
 .nav {
   width: 400px;
   display: flex;
 }
+
 .listone {
   padding: 0 6px;
   height: 50px;
@@ -346,9 +368,11 @@ export default {
   position: relative;
   cursor: pointer;
 }
+
 .navbar-operation {
   display: flex;
   align-items: center;
+
   .vips {
     width: 160px;
     height: 34px;
@@ -359,11 +383,13 @@ export default {
     background-image: linear-gradient(to right, #fd9d65, #ef65c9);
     font-size: 15px;
     color: #fff;
+
     img {
       width: 14px;
       margin-left: 6px;
     }
   }
+
   .navbar-operation-userinfo {
     margin-left: 20px;
   }
@@ -372,22 +398,27 @@ export default {
 ::v-deep(.el-scrollbar__view) {
   height: 100%;
 }
+
 ::v-deep(.el-scrollbar__wrap) {
   overflow-x: hidden;
 }
+
 ::v-deep(.el-submenu__title) {
   height: 40px;
   font-size: 12px;
   line-height: 40px;
 }
+
 ::v-deep(.el-menu-item) {
   height: 40px;
   font-size: 12px;
   line-height: 40px;
 }
+
 ::v-deep(.el-menu .el-menu) {
   background: #232f57 !important;
 }
+
 /* /deep/ .el-submenu__title,/deep/ .el-menu-item{
      margin-bottom:8px;
   } */
@@ -395,15 +426,19 @@ export default {
   background: #4f618c !important;
   font-weight: 600;
 }
+
 ::v-deep(.el-scrollbar__wrap) {
   margin-right: -18px !important;
 }
+
 .curs {
   cursor: pointer;
 }
+
 .project {
   position: relative;
 }
+
 .menus {
   width: 208px;
   padding: 8px 0;
@@ -417,9 +452,11 @@ export default {
   left: 0;
   z-index: 55;
 }
+
 .project:hover .menus {
   display: block;
 }
+
 .menulist {
   width: 208px;
   height: 30px;
@@ -429,5 +466,4 @@ export default {
   line-height: 30px;
   color: #333333;
   cursor: pointer;
-}
-</style>
+}</style>

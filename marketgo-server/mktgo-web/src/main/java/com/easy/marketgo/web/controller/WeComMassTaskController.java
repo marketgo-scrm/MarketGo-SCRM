@@ -66,6 +66,23 @@ public class WeComMassTaskController {
     }
 
     @ApiResponses({
+            @ApiResponse(code = 0, message = "ok", response = BaseResponse.class)
+    })
+    @ApiOperation(value = "停止发送群发任务", nickname = "stopSendMassTask", notes = "", response = BaseResponse.class)
+    @RequestMapping(value = {"/stop"}, produces = {"application/json"}, method = RequestMethod.POST)
+    public ResponseEntity stopSendMassTask(
+            @ApiParam(value = "企微项目uuid", required = true) @NotNull @Valid @RequestParam(value = "project_id",
+                    required = true) String projectId,
+            @ApiParam(value = "企业的企微ID", required = true) @NotNull @Valid @RequestParam(value = "corp_id", required =
+                    true) String corpId,
+            @ApiParam(value = "群发类型; SINGLE 群发好友; GROUP 群发客户群; MOMENT 群发朋友圈", required = true, allowableValues =
+                    "SINGLE, GROUP, MOMENT") @NotNull @Valid @RequestParam(value = "task_type", required = true) String taskType,
+            @ApiParam(value = "群发的任务的uuid", required = true) @NotNull @Valid @RequestParam(value = "task_uuid",
+                    required = true) String taskId) {
+        return ResponseEntity.ok(weComMassTaskService.stopMassTaskMessage(projectId, corpId, taskType, taskId));
+    }
+
+    @ApiResponses({
             @ApiResponse(code = 0, message = "ok", response = WeComGetMassTaskListResponse.class)
     })
     @ApiOperation(value = "获取群发任务列表", nickname = "listMassTasks", notes = "", response =

@@ -6,6 +6,7 @@ const store = new Vuex.Store({
     state:{
       user:{},
       projectUuid:'',
+      projectName:'',
       corpId:'',
       tenantUuid:'',
       project:[]
@@ -16,6 +17,9 @@ const store = new Vuex.Store({
       },
       SET_PROID:(state, data) => {
         state.projectUuid = data
+      },
+      SET_PRONAME:(state, data) => {
+        state.projectName = data
       },
       SET_CORPID:(state, data) => {
         state.corpId = data

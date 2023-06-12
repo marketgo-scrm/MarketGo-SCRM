@@ -1,11 +1,12 @@
 package com.easy.marketgo.web.service.wecom.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import com.easy.marketgo.api.model.request.WeComSendAgentMessageClientRequest;
-import com.easy.marketgo.api.model.request.masstask.WeComMomentMassTaskPublishResultClientRequest;
-import com.easy.marketgo.api.model.request.masstask.WeComQueryMemberResultClientRequest;
+import com.easy.marketgo.api.model.request.masstask.*;
 import com.easy.marketgo.api.model.response.RpcResponse;
+import com.easy.marketgo.api.model.response.masstask.WeComMassTaskForMomentCreateResponse;
 import com.easy.marketgo.api.model.response.masstask.WeComMomentMassTaskPublishResultClientResponse;
 import com.easy.marketgo.api.model.response.masstask.WeComQueryMemberResultClientResponse;
 import com.easy.marketgo.api.service.WeComMassTaskRpcService;
@@ -20,10 +21,7 @@ import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskExternalUserStatisticEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskMemberStatisticEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSyncStatisticEntity;
-import com.easy.marketgo.core.model.bo.QueryMassTaskBuildSqlParam;
-import com.easy.marketgo.core.model.bo.QueryMassTaskExternalUserMetricsBuildSqlParam;
-import com.easy.marketgo.core.model.bo.QueryMassTaskMemberMetricsBuildSqlParam;
-import com.easy.marketgo.core.model.bo.WeComMassTaskCreators;
+import com.easy.marketgo.core.model.bo.*;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
@@ -31,9 +29,9 @@ import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskExternalUse
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskMemberStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatisticRepository;
+import com.easy.marketgo.core.service.WeComMassTaskCacheService;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComMassTaskRequest;
-import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.masstask.*;
 import com.easy.marketgo.web.service.wecom.WeComMassTaskService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,13 +43,16 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.easy.marketgo.common.enums.ErrorCodeEnum.ERROR_WEB_MASS_TASK_IS_EMPTY;
-import static com.easy.marketgo.common.enums.ErrorCodeEnum.ERROR_WEB_MASS_TASK_METRICS_TYPE_NOT_SUPPORT;
+import static com.easy.marketgo.biz.service.wecom.masstask.QueryMassTaskMetricsService.CREATE_MOMENT_STATUE_COMPLETE;
+import static com.easy.marketgo.common.enums.ErrorCodeEnum.*;
 import static java.util.Collections.emptyList;
 
 /**
@@ -93,6 +94,9 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
 
     @Autowired
     private XxlJobManualTriggerService xxlJobManualTriggerService;
+
+    @Autowired
+    private WeComMassTaskCacheService weComMassTaskCacheService;
 
     @Override
     public BaseResponse updateOrInsertMassTask(String projectId, String corpId, String taskType,
@@ -141,7 +145,13 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
         if (entity == null) {
             return BaseResponse.failure(ERROR_WEB_MASS_TASK_IS_EMPTY);
         }
-        WeComAgentMessageEntity agentMessageEntity = weComAgentMessageRepository.getWeComAgentByCorp(projectId, corpId);
+        String value = weComMassTaskCacheService.getCacheRemindCount(taskUuid);
+        if (StringUtils.isNotEmpty(value) && Integer.valueOf(value) > 2) {
+            return BaseResponse.failure(ERROR_WEB_MASS_TASK_REMIND_COUNT_IS_MAX);
+        }
+
+        WeComAgentMessageEntity agentMessageEntity = weComAgentMessageRepository.getWeComAgentByCorp(projectId,
+                corpId);
         log.info("mass task to remind send. weComMassTask={}", entity);
         String agentId = (agentMessageEntity != null) ? agentMessageEntity.getAgentId() : "";
 
@@ -160,13 +170,12 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
                     if (entity.getTaskType().equals(WeComMassTaskTypeEnum.MOMENT.name())) {
                         memberList = queryMemberUnsentListForMoment(projectId,
                                 entity.getCorpId(), agentId, "", item.getSendId());
-                    } else if (entity.getTaskType().equals(WeComMassTaskTypeEnum.GROUP.name()) ||
-                            entity.getTaskType().equals(WeComMassTaskTypeEnum.SINGLE.name())) {
-                        memberList =
-                                queryMemberUnsentListForSingleOrGroup(projectId,
-                                        entity.getCorpId(), agentId, "", item.getSendId());
                     } else {
-                        log.info("not support task type.weComMassTask={}", entity);
+                        WeComRemindMemberMessageClientRequest request = new WeComRemindMemberMessageClientRequest();
+                        request.setAgentId(agentId);
+                        request.setCorpId(corpId);
+                        request.setMsgId(item.getSendId());
+                        weComMassTaskRpcService.remindMemberMessage(request);
                     }
                     unsentMembers.addAll(memberList);
                 }
@@ -180,6 +189,17 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
             }
         } while (offset > 0);
 
+        DateTime dateTime = new DateTime();
+        LocalDateTime midnight = LocalDateTime.ofInstant(dateTime.toInstant(),
+                ZoneId.systemDefault()).plusDays(1).withHour(0).withMinute(0)
+                .withSecond(0).withNano(0);
+
+        LocalDateTime currentDateTime = LocalDateTime.ofInstant(dateTime.toInstant(),
+                ZoneId.systemDefault());
+        long seconds = ChronoUnit.SECONDS.between(currentDateTime, midnight);
+
+        weComMassTaskCacheService.setCacheContent(taskUuid,
+                String.valueOf(Integer.valueOf((StringUtils.isNotEmpty(value) ? value : "0")) + 1), seconds);
         weComMassTaskRepository.updateTaskRemindTime(DateUtil.date(), taskUuid);
         return BaseResponse.success();
     }
@@ -304,6 +324,7 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
             detail.setCanRemind(canRemind(entity));
             String result = completeRateResult(entity);
             detail.setCompleteRate(result);
+            detail.setCanStop(checkCanStopTask(entity));
             if (result.equals("100%")) {
                 detail.setCanRemind(Boolean.FALSE);
             }
@@ -366,6 +387,14 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
         log.info("query mass task statistic for member response. corpId={}, response={}", corpId,
                 JsonUtils.toJSONString(response));
         return BaseResponse.success(response);
+    }
+
+    private Boolean checkCanStopTask(WeComMassTaskEntity entity) {
+        if (entity.getTaskStatus().equals(WeComMassTaskStatus.SENT.getValue())) {
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
     }
 
     private BaseResponse listMembersForExternalUser(String projectId, String corpId, String taskType,
@@ -446,7 +475,10 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
                 entity.getTaskStatus().equals(WeComMassTaskStatus.UNSTART.getValue())) {
             return Boolean.FALSE;
         }
-
+        String value = weComMassTaskCacheService.getCacheRemindCount(entity.getUuid());
+        if (StringUtils.isNotEmpty(value) && Integer.valueOf(value) > 2) {
+            return Boolean.FALSE;
+        }
 //        String today = DateUtil.today();
 //        if (entity.getRemindTime() != null && DateUtil.formatDate(entity.getRemindTime()).equals(today)) {
 //            return Boolean.FALSE;
@@ -669,5 +701,74 @@ public class WeComMassTaskServiceImpl implements WeComMassTaskService {
                     projectId, taskType, taskId, name, e);
         }
         return BaseResponse.builder().code(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getCode()).message(ErrorCodeEnum.ERROR_WEB_WECOM_MASS_TASK_CHECK_NAME.getMessage()).build();
+    }
+
+    @Override
+    public BaseResponse stopMassTaskMessage(String projectId, String corpId, String taskType, String taskUuid) {
+        WeComMassTaskEntity entity = weComMassTaskRepository.findByUuid(projectId, taskType, taskUuid);
+        if (entity == null) {
+            return BaseResponse.failure(ERROR_WEB_MASS_TASK_IS_EMPTY);
+        }
+
+        WeComAgentMessageEntity agentMessageEntity = weComAgentMessageRepository.getWeComAgentByCorp(projectId, corpId);
+        log.info("mass task to remind send. weComMassTask={}", entity);
+        String agentId = (agentMessageEntity != null) ? agentMessageEntity.getAgentId() : "";
+        int offset = 0;
+        int limitSize = 1000;
+        do {
+
+            log.info("start query mass task list.taskUuid={}, offset={}, limitSize={}", entity.getUuid(), offset,
+                    limitSize);
+            List<WeComMassTaskSyncStatisticEntity> messages =
+                    weComMassTaskSyncStatisticRepository.getWeComMassTaskResponseByTaskUuid(taskUuid, offset,
+                            limitSize);
+            if (CollectionUtils.isEmpty(messages)) {
+                log.info("not stop mass task.weComMassTask={}", entity);
+                return BaseResponse.success();
+            }
+
+            for (WeComMassTaskSyncStatisticEntity item : messages) {
+                if (taskType.equals(WeComMassTaskTypeEnum.MOMENT.name())) {
+                    WeComStopMomentMassTaskClientRequest request = new WeComStopMomentMassTaskClientRequest();
+                    request.setAgentId(agentId);
+                    request.setCorpId(corpId);
+                    request.setMomentId(item.getSendId());
+                    if (item.getSendIdType().equals(WeComMassTaskSendIdType.JOB_ID.name())) {
+                        WeComMomentMassTaskCreateResultClientRequest
+                                weComMomentMassTaskCreateResultClientRequest =
+                                new WeComMomentMassTaskCreateResultClientRequest();
+                        weComMomentMassTaskCreateResultClientRequest.setCorpId(corpId);
+                        weComMomentMassTaskCreateResultClientRequest.setAgentId(agentId);
+                        weComMomentMassTaskCreateResultClientRequest.setJobid(item.getSendId());
+                        RpcResponse<WeComMassTaskForMomentCreateResponse> response =
+                                weComMassTaskRpcService.queryMomentMassTaskForCreateResult(weComMomentMassTaskCreateResultClientRequest);
+                        log.info("query mass task from moment create result. jobId={}, response={}", item.getSendId()
+                                , response);
+                        if (response.getSuccess()) {
+                            WeComMassTaskForMomentCreateResponse weComMassTaskForMomentCreateResponse =
+                                    response.getData();
+                            if (weComMassTaskForMomentCreateResponse.getStatus() == CREATE_MOMENT_STATUE_COMPLETE &&
+                                    weComMassTaskForMomentCreateResponse.getResult().getCode().equals(ErrorCodeEnum.OK.getCode())) {
+                                String momentId = weComMassTaskForMomentCreateResponse.getResult().getMomentId();
+                                request.setMomentId(momentId);
+                            }
+                        }
+                    }
+                    weComMassTaskRpcService.stopMomentMassTask(request);
+                } else {
+                    WeComRemindMemberMessageClientRequest request = new WeComRemindMemberMessageClientRequest();
+                    request.setAgentId(agentId);
+                    request.setCorpId(corpId);
+                    request.setMsgId(item.getSendId());
+                    weComMassTaskRpcService.stopMassTask(request);
+                }
+            }
+            offset = (messages.size() < limitSize) ? 0 : (offset + limitSize);
+            log.info("query mass task is empty.taskUuid={}", taskUuid);
+        } while (offset > 0);
+
+        weComMassTaskRepository.updateTaskStatusByUUID(entity.getUuid(),
+                WeComMassTaskStatus.FINISHED.getValue());
+        return BaseResponse.success();
     }
 }
