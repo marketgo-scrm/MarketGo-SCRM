@@ -152,7 +152,7 @@ public class WeComClientVerifyService {
         String str =
                 SHA1.gen(String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%d&url=%s", jsapiTicket, nonceStr,
                         timestamp, url));
-        return SHA1.gen(str);
+        return str;
     }
 
     /**
