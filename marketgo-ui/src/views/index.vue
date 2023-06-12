@@ -9,12 +9,6 @@
         <h3>我的项目</h3>
         <p>选择一个项目，查看并开启它的管理页面</p>
         <div class="listin">
-
-          <div class="create" v-if= "this.canCreate" @click="showDialog()">
-
-            <img src="../assets/create_progect.png" alt="" />
-            <span>添加一个新项目</span>
-          </div>
           <div class="list" v-for="item in projects" :key="item.projectUuid">
             <h4>{{ item.projectName }}</h4>
             <p>
@@ -48,18 +42,6 @@
         </div>
       </div>
     </div>
-    <el-dialog title="创建项目" :visible.sync="dialogVisible" width="400px" :before-close="handleClose">
-
-      <el-input placeholder="请填写项目名称" style="margin-top: -10px;" v-model="prejectData.name" @blur="checkProjectName()"
-        maxlength="30"></el-input>
-      <el-input placeholder="请填写项目描述" type="textarea" style="margin-top: 20px;" :rows="8"
-        v-model="prejectData.desc"></el-input>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelCreated" class='btns_created' round size="small">取 消</el-button>
-        <el-button type="primary" size="small" round class='btns_created' @click="createProject()">确 定</el-button>
-      </div>
-
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -83,10 +65,6 @@ export default {
     this.getlist();
   },
   methods: {
-    showDialog() {
-      // alert(3)
-      this.dialogVisible = true
-    },
     // 校验项目名称是否存在
     checkProjectName() {
       let _this = this
@@ -102,42 +80,7 @@ export default {
           console.log(err);
         });
     },
-    //新建一个项目
-    createProject() {
-      if (!this.prejectData.name || this.prejectData.name.trim().length == 0) {
-        this.$message.info('请填写项目名称')
-        return;
-      }
-      if (!this.prejectData.desc || this.prejectData.desc.trim().length == 0) {
-        this.$message.info('请填写项目描述')
-        return;
-      }
-      let _this = this
-      let params={
-        name:this.prejectData.name,
-        desc: this.prejectData.desc,
-      }
-      this.$http.post(
-        `mktgo/wecom/project/create`,
-        params).then(function (res) {
-          console.log(res)
-          if (res.code == 0) {
-            _this.$message({
-              message: '项目创建成功',
-              type: 'success'
-            });
-            _this.dialogVisible = false
-            _this.getlist();
-          }
-          else {
-            _this.$message.error(res.message);
-          }
-        });
-    },
-    // 取消创建
-    cancelCreated() {
-      this.dialogVisible = false
-    },
+
     // 获取项目列表
     async getlist() {
       let data = await this.$http.post("mktgo/wecom/project/list", {});
