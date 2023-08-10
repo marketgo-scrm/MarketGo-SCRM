@@ -220,7 +220,21 @@ export const constantRoutes = [
                 name: 'callbacksettings',
                 title: '回调配置',
                 component: (resolve) => require(['@/views/callback'], resolve),
-            }
+            },
+            {
+                path: 'group_chat_welcome',
+                name: 'group_chat_welcome',
+                title: '入群欢迎语',
+                component: (resolve) => require(['@/views/customer-drainage/group-chat-welcome'], resolve),
+            },
+
+            {
+                path: 'add_group_chat_welcome',
+                name: 'add_group_chat_welcome',
+                title: '创建入群欢迎语',
+                component: (resolve) => require(['@/views/customer-drainage/add-group-chat-welcome'], resolve),
+            },
+
         ]
     },
     {

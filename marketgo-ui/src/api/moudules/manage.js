@@ -45,3 +45,7 @@ export const userSave = data => server.post(`mktgo/wecom/user/save?${qs.stringif
 // 修改授权状态
 export const userAuthStatus = data => server.post(`mktgo/wecom/user/auth_status?${qs.stringify(store.getters?.parseId)}`, qs.parse(data))
 
+// 客户群欢迎语详情
+export const groupWelcomeDetail = data => server.get(`mktgo/wecom/welcome/group_chat/detail?${qs.stringify({...store.getters?.parseId,...data})}`)
+
+
