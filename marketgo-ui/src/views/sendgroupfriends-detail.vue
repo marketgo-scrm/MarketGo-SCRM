@@ -1,6 +1,6 @@
 <template>
   <div class="masscustomer-detail">
-    <main-head title="群发客户详情" :back="true"></main-head>
+    <main-head title="群发朋友圈详情" :back="true"></main-head>
     <div class="top-content">
       <el-form label-width="100px" class="demo-baseForm" size="mini">
         <el-form-item label="创建人：" prop="name">
