@@ -17,9 +17,11 @@ import java.util.List;
 public interface WeComDepartmentRepository extends CrudRepository<WeComDepartmentEntity, Long> {
     @Modifying
     @Query("DELETE FROM wecom_departments WHERE corp_id = :corp_id")
-    int deleteByCorpId(@Param("corp_id") String corpId);
+    Integer deleteByCorpId(@Param("corp_id") String corpId);
 
     List<WeComDepartmentEntity> findByCorpId(String corpId);
 
-    List<WeComDepartmentEntity> findByParentIdIn(List<Long> parentId);
+    List<WeComDepartmentEntity> findByCorpIdAndParentIdIn(String corpId, List<Long> parentId);
+
+    List<WeComDepartmentEntity> findByCorpIdAndDepartmentIdIn(String corpId, List<Long> departmentId);
 }

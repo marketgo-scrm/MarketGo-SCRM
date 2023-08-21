@@ -1,13 +1,19 @@
 package com.easy.marketgo.gateway.rpc.impl;
 
+import com.easy.marketgo.api.model.request.WeComDeleteGroupChatWelcomeMsgClientRequest;
+import com.easy.marketgo.api.model.request.WeComGroupChatWelcomeMsgClientRequest;
 import com.easy.marketgo.api.model.request.WeComSendWelcomeMsgClientRequest;
 import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.api.service.WeComWelcomeMsgRpcService;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
-import com.easy.marketgo.gateway.wecom.request.SendWelcomeMsgRequest;
+import com.easy.marketgo.gateway.wecom.request.welcome.GroupChatAddWelcomeMsgRequest;
+import com.easy.marketgo.gateway.wecom.request.welcome.GroupChatDeleteWelcomeMsgRequest;
+import com.easy.marketgo.gateway.wecom.request.welcome.GroupChatEditWelcomeMsgRequest;
+import com.easy.marketgo.gateway.wecom.request.welcome.SendWelcomeMsgRequest;
 import com.easy.marketgo.gateway.wecom.sevice.SendWelcomeMsgService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
+import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +79,84 @@ public class WeComWelcomeMsgRpcServiceImpl implements WeComWelcomeMsgRpcService 
         sendWelcomeMsgRequest.setText(textMessage);
         sendWelcomeMsgRequest.setAttachments(attachments);
         return sendWelcomeMsgService.sendWelcomeMsg(request.getCorpId(), request.getAgentId(), sendWelcomeMsgRequest);
+    }
+
+    @Override
+    public RpcResponse groupChatWelcomeMsg(WeComGroupChatWelcomeMsgClientRequest request) {
+        if (request == null) {
+            return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_PARAM_IS_EMPTY);
+        }
+        log.info("add group chat welcome msg. request={}", request);
+        if (StringUtils.isEmpty(request.getTemplateId())) {
+            GroupChatAddWelcomeMsgRequest addRequest = new GroupChatAddWelcomeMsgRequest();
+
+            addRequest.setNotify(request.getNotify());
+            addRequest.setAgentid(Integer.valueOf(request.getAgentId()));
+            if (request.getText() != null) {
+                GroupChatAddWelcomeMsgRequest.TextMessage text = new GroupChatAddWelcomeMsgRequest.TextMessage();
+                BeanUtils.copyProperties(request.getText(), text);
+                addRequest.setText(text);
+            }
+            if (request.getImage() != null) {
+                GroupChatAddWelcomeMsgRequest.ImageAttachmentsMessage image =
+                        new GroupChatAddWelcomeMsgRequest.ImageAttachmentsMessage();
+                BeanUtils.copyProperties(request.getImage(), image);
+                addRequest.setImage(image);
+            }
+            if (request.getLink() != null) {
+                GroupChatAddWelcomeMsgRequest.LinkAttachmentsMessage link =
+                        new GroupChatAddWelcomeMsgRequest.LinkAttachmentsMessage();
+                BeanUtils.copyProperties(request.getLink(), link);
+                addRequest.setLink(link);
+            }
+            if (request.getMiniprogram() != null) {
+                GroupChatAddWelcomeMsgRequest.MiniProgramAttachmentsMessage mini =
+                        new GroupChatAddWelcomeMsgRequest.MiniProgramAttachmentsMessage();
+                BeanUtils.copyProperties(request.getMiniprogram(), mini);
+                addRequest.setMiniprogram(mini);
+            }
+            return sendWelcomeMsgService.groupChatWelcomeMsg(request.getCorpId(), request.getAgentId(), addRequest);
+        } else {
+            GroupChatEditWelcomeMsgRequest editRequest = new GroupChatEditWelcomeMsgRequest();
+            if (request.getText() != null) {
+                GroupChatAddWelcomeMsgRequest.TextMessage text = new GroupChatAddWelcomeMsgRequest.TextMessage();
+                BeanUtils.copyProperties(request.getText(), text);
+                editRequest.setText(text);
+            }
+            if (request.getImage() != null) {
+                GroupChatAddWelcomeMsgRequest.ImageAttachmentsMessage image =
+                        new GroupChatAddWelcomeMsgRequest.ImageAttachmentsMessage();
+                BeanUtils.copyProperties(request.getImage(), image);
+                editRequest.setImage(image);
+            }
+            if (request.getLink() != null) {
+                GroupChatAddWelcomeMsgRequest.LinkAttachmentsMessage link =
+                        new GroupChatAddWelcomeMsgRequest.LinkAttachmentsMessage();
+                BeanUtils.copyProperties(request.getLink(), link);
+                editRequest.setLink(link);
+            }
+            if (request.getMiniprogram() != null) {
+                GroupChatAddWelcomeMsgRequest.MiniProgramAttachmentsMessage mini =
+                        new GroupChatAddWelcomeMsgRequest.MiniProgramAttachmentsMessage();
+                BeanUtils.copyProperties(request.getMiniprogram(), mini);
+                editRequest.setMiniprogram(mini);
+            }
+            editRequest.setTemplateId(request.getTemplateId());
+            return sendWelcomeMsgService.groupChatEditWelcomeMsg(request.getCorpId(), request.getAgentId(),
+                    editRequest);
+        }
+    }
+
+    @Override
+    public RpcResponse deleteGroupChatWelcomeMsg(WeComDeleteGroupChatWelcomeMsgClientRequest request) {
+        if (request == null) {
+            return RpcResponse.failure(ErrorCodeEnum.ERROR_GATEWAY_PARAM_IS_EMPTY);
+        }
+
+        GroupChatDeleteWelcomeMsgRequest deleteRequest = new GroupChatDeleteWelcomeMsgRequest();
+        BeanUtils.copyProperties(request, deleteRequest);
+        deleteRequest.setAgentid(Integer.valueOf(request.getAgentId()));
+        return sendWelcomeMsgService.groupChatDeleteWelcomeMsg(request.getCorpId(), request.getAgentId(),
+                deleteRequest);
     }
 }

@@ -98,7 +98,7 @@ public class ChannelLiveCodeRefreshService {
             });
 
             List<WeComDepartmentEntity> departmentEntities =
-                    weComDepartmentRepository.findByParentIdIn(departmentList);
+                    weComDepartmentRepository.findByCorpIdAndParentIdIn(corpId, departmentList);
             while (CollectionUtils.isNotEmpty(departmentEntities)) {
                 List<Long> tempDepartmentList = new ArrayList<>();
                 departmentEntities.forEach(departmentEntity -> {
@@ -106,7 +106,7 @@ public class ChannelLiveCodeRefreshService {
                 });
                 log.info("find department list for channel live code. tempDepartmentList={}", tempDepartmentList);
                 departmentList.addAll(tempDepartmentList);
-                departmentEntities = weComDepartmentRepository.findByParentIdIn(tempDepartmentList);
+                departmentEntities = weComDepartmentRepository.findByCorpIdAndParentIdIn(corpId, tempDepartmentList);
             }
 
             QueryMemberBuildSqlParam queryMemberBuildSqlParam =
@@ -199,7 +199,7 @@ public class ChannelLiveCodeRefreshService {
                 backupMembers.add(item.getMemberId());
             }
         });
-        if(CollectionUtils.isEmpty(onlineMembers)) {
+        if (CollectionUtils.isEmpty(onlineMembers)) {
             weComChannelLiveCodeMembersRepository.updateOnlineStatusByUuidAndIsBackup(liveCodeUuid,
                     Boolean.TRUE, Boolean.TRUE);
         }

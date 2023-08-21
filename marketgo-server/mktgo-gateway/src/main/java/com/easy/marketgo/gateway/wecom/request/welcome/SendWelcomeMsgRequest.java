@@ -1,4 +1,4 @@
-package com.easy.marketgo.gateway.wecom.request;
+package com.easy.marketgo.gateway.wecom.request.welcome;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

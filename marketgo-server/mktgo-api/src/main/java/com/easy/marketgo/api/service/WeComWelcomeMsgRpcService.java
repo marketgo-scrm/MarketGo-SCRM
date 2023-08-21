@@ -1,5 +1,7 @@
 package com.easy.marketgo.api.service;
 
+import com.easy.marketgo.api.model.request.WeComDeleteGroupChatWelcomeMsgClientRequest;
+import com.easy.marketgo.api.model.request.WeComGroupChatWelcomeMsgClientRequest;
 import com.easy.marketgo.api.model.request.WeComSendWelcomeMsgClientRequest;
 import com.easy.marketgo.api.model.response.RpcResponse;
 
@@ -12,4 +14,8 @@ import com.easy.marketgo.api.model.response.RpcResponse;
 
 public interface WeComWelcomeMsgRpcService {
     RpcResponse sendWelcomeMsg(WeComSendWelcomeMsgClientRequest request);
+
+    RpcResponse groupChatWelcomeMsg(WeComGroupChatWelcomeMsgClientRequest request);
+
+    RpcResponse deleteGroupChatWelcomeMsg(WeComDeleteGroupChatWelcomeMsgClientRequest request);
 }
