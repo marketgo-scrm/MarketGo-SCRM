@@ -94,6 +94,7 @@ export default {
   },
   data() {
     return {
+      projectName:'',
       constantRoutes: [],
       drawer: false,
       project_id: "",

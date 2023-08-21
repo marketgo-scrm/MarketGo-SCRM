@@ -103,4 +103,21 @@ public class WeComAgentMessageService {
         log.info("send text card massage to member for task center. request={}", appMsgRequest);
         weComSendAgentMessageRpcService.sendAgentMessage(appMsgRequest);
     }
+
+    public void sendWelcomeMsgRemindMessage(String corpId, String agentId, String uuid, List<String> memberList) {
+        WeComSendAgentMessageClientRequest appMsgRequest = new WeComSendAgentMessageClientRequest();
+
+        appMsgRequest.setAgentId(agentId);
+        appMsgRequest.setCorpId(corpId);
+        appMsgRequest.setMsgType(WeComSendAgentMessageClientRequest.MsgTypeEnum.TEXT);
+        appMsgRequest.setMsgId(uuid);
+        Map<String, String> textMessage = new HashMap<>();
+
+        textMessage.put("content", "【入群欢迎语提醒】有新的入群欢迎语啦！\n"
+                + "请前往客户群中【群设置-入群欢迎语】中配置新的欢迎语，记得及时配置欢迎语哦～");
+        appMsgRequest.setContent(JsonUtils.toJSONString(textMessage));
+        appMsgRequest.setToUser(memberList);
+        log.info("send text massage to member for remind. request={}", appMsgRequest);
+        weComSendAgentMessageRpcService.sendAgentMessage(appMsgRequest);
+    }
 }

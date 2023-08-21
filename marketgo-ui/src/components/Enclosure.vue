@@ -430,14 +430,16 @@ export default {
           let objList = n.objList
           let tmpList = []
           let fileList = newData
-          for (let i = 0; i < fileList.length; i++) {
-            for (let o = 0; o < objList.length; o++) {
+          for (let i = 0; i < fileList?.length; i++) {
+            for (let o = 0; o < objList?.length; o++) {
               if (fileList[i].mediaUuid == objList[o].mediaUuid) {
                 tmpList.push(objList[o])
               }
             }
           }
           n.objList = tmpList
+          console.log(JSON.stringify(n))
+         // alert(JSON.stringify(n))
 
           this.callback({
             typeImg: n
@@ -504,9 +506,20 @@ export default {
       console.log(file);
       console.log(this.typeImg.fileList)
       if (!this.isPyq) {
-        _this.$http.get(`mktgo/wecom/media/delete?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&media_uuid=${this.typeImg.obj.mediaUuid}`,
+        let mediaUuid = ''
+          if (this.typeImg.objList.length > 0) {
+            mediaUuid = this.typeImg.objList[/*file.*/index].mediaUuid
+          }
+          else {
+            mediaUuid = file.mediaUuid
+          }
+
+        _this.$http.get(`mktgo/wecom/media/delete?corp_id=${this.$store.state.corpId}&project_id=${this.$store.state.projectUuid}&media_uuid=${mediaUuid}`,
             {});
         _this.typeImg.fileList = []
+        _this.typeImg.objList = []
+        _this.typeImg.dialogImageUrl = ''
+        _this.typeImg.dataInImg = null
         _this.typeImg.obj = {
           imageContent: null,
           mediaUuid: null,

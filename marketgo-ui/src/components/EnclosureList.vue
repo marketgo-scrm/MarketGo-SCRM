@@ -1,26 +1,12 @@
 <template>
   <div class="EnclosureList">
     <div v-if="show">
-      <div
-        v-for="(v, k) in arr"
-        :key="k"
-        style="position: relative;width: 100%;"
-      >
+      <div v-for="(v, k) in arr" :key="k" style="position: relative;width: 100%;">
         <div v-show="k != 0" style="width: 100px; height: 15px"></div>
-        <enclosure
-          :ref="'enclosure' + k"
-          :index="k"
-          :dataIn="v"
-          :callback="itemCallback"
-          :type="type"
-          :isPyq="isPyq"
-        ></enclosure>
-        <div
-          v-show="arr.length > 1"
-          :style="k != 0 ? 'top: 24px;' : ''"
-          class="btn-del el-icon-circle-close"
-          @click="del(k)"
-        ></div>
+        <enclosure :ref="'enclosure' + k" :index="k" :dataIn="v" :callback="itemCallback" :type="type" :isPyq="isPyq">
+        </enclosure>
+        <div v-show="arr.length > 1" :style="k != 0 ? 'top: 24px;' : ''" class="btn-del el-icon-circle-close"
+          @click="del(k)"></div>
       </div>
     </div>
 
@@ -59,11 +45,11 @@ export default {
             disabled: false,
             fileList: [],
             objList: [],
-            obj:{
-              imageContent:'',
-              mediaUuid:'',
+            obj: {
+              imageContent: '',
+              mediaUuid: '',
             },
-            dataInImg:'',
+            dataInImg: '',
             iconHide: false
           },
         },
@@ -78,6 +64,7 @@ export default {
   // },
   methods: {
     getsync() {
+    //  alert(isRefresh)
       if (this.dataIn?.length > 0) {
         for (let i = 0; i < this.dataIn.length; i++) {
           if (this.dataIn[i].image) {
@@ -157,7 +144,13 @@ export default {
             };
           }
         }
+        // if (isRefresh) {
+        //   for (let i = 0; i < this.arr?.length; i++) {
+        //     this.$refs["enclosure" + i][0].init(this.arr[i]);
+        //   }
+        // }
       }
+
     },
     add() {
       this.arr.push({
@@ -227,10 +220,10 @@ export default {
             type: "IMAGE",
           });
         } else if (this.arr[i].typeLink && (
-            (this.arr[i].typeLink.obj && this.arr[i].typeLink.obj.imageContent) ||
-            this.arr[i].typeLink.title ||
-            this.arr[i].typeLink.des ||
-            this.arr[i].typeLink.url
+          (this.arr[i].typeLink.obj && this.arr[i].typeLink.obj.imageContent) ||
+          this.arr[i].typeLink.title ||
+          this.arr[i].typeLink.des ||
+          this.arr[i].typeLink.url
         )) {
           content.push({
             link: {
@@ -247,10 +240,10 @@ export default {
             type: "LINK",
           });
         } else if (this.arr[i].miniApp && (
-            (this.arr[i].miniApp.obj && this.arr[i].miniApp.obj.imageContent) ||
-            this.arr[i].miniApp.title ||
-            this.arr[i].miniApp.appid ||
-            this.arr[i].miniApp.path
+          (this.arr[i].miniApp.obj && this.arr[i].miniApp.obj.imageContent) ||
+          this.arr[i].miniApp.title ||
+          this.arr[i].miniApp.appid ||
+          this.arr[i].miniApp.path
         )) {
           content.push({
             miniProgram: {
@@ -294,6 +287,7 @@ export default {
     font-family: PingFang SC;
     font-size: 12px;
   }
+
   .btn-del {
     position: absolute;
     top: 9px;

@@ -200,7 +200,7 @@ public class ContactsManagerServiceImpl implements ContactsManagerService {
             //获取人群条件中的部门列表
             departments.add(departmentId);
             List<WeComDepartmentEntity> departmentEntities =
-                    weComDepartmentRepository.findByParentIdIn(departments);
+                    weComDepartmentRepository.findByCorpIdAndParentIdIn(corpId, departments);
             while (CollectionUtils.isNotEmpty(departmentEntities)) {
                 List<Long> departmentList = new ArrayList<>();
                 departmentEntities.forEach(entity -> {
@@ -209,7 +209,7 @@ public class ContactsManagerServiceImpl implements ContactsManagerService {
                 log.info("user group find department list. departmentList={}", departmentList);
                 departments.addAll(departmentList);
                 departmentEntities =
-                        weComDepartmentRepository.findByParentIdIn(departmentList);
+                        weComDepartmentRepository.findByCorpIdAndParentIdIn(corpId, departmentList);
             }
             param.setDepartments(departments);
         }

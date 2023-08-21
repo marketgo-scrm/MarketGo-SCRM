@@ -927,3 +927,42 @@ ALTER TABLE wecom_corp_config ADD cred_file_content VARCHAR(256) DEFAULT NULL CO
 
 -- version 0.2.0
 INSERT INTO `wecom_sys_corp_user_role_link` ( `corp_id`, `role_uuid`, `member_id`,  `project_uuid`) VALUES ((select uuid from tenant_config) , (SELECT uuid FROM wecom_sys_base_role where code='super_administrator'), 'admin',(select uuid from tenant_config));
+
+
+-- version 2.0.0
+INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`, `parent_name`, `title`,
+`parent_title`, `sort_order`) VALUES  (MD5(uuid()) ,  'customer_link', '', 'customer_link', '',
+'客户引流', '', 200 );
+
+UPDATE wecom_sys_base_permissions SET sort_order=210, parent_code='customer_link', parent_name='parent_name',
+parent_title='客户引流' WHERE code='channelcode';
+
+
+INSERT INTO `wecom_sys_base_permissions` ( `uuid`, `code`, `parent_code`, `name`, `parent_name`, `title`,
+`parent_title`, `sort_order`) VALUES  (MD5(uuid()) ,  'group_chat_welcome', 'customer_link',
+'group_chat_welcome', 'customer_link', '入群欢迎语','客户引流', 225);
+
+
+-- ----------------------------
+-- Table structure for wecom_welcome_msg_group_chat
+-- ----------------------------
+DROP TABLE IF EXISTS `wecom_welcome_msg_group_chat`;
+CREATE TABLE `wecom_welcome_msg_group_chat` (
+    `id`               INT(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `uuid`             VARCHAR(64)  NOT NULL COMMENT '业务主键',
+    `project_uuid`     varchar(64) NOT NULL COMMENT '关联项目ID',
+    `corp_id`          VARCHAR(128) NOT NULL COMMENT '企微CORP ID',
+    `name`             varchar(512) NOT NULL COMMENT '欢迎语名称',
+    `notify_type`      tinyint(2)  NOT NULL COMMENT '通知类型， 1 全部；  2 部分  0 不通知',
+    `members`          text DEFAULT NULL  COMMENT '群主列表',
+    `creator_id`       VARCHAR(64) NOT NULL COMMENT '创建人ID',
+    `creator_name`     VARCHAR(128)   NOT NULL COMMENT '创建人姓名',
+    `welcome_content`  MEDIUMTEXT NOT NULL COMMENT '欢迎语内容',
+    `template_id`      varchar(64) DEFAULT NULL COMMENT '欢迎语素材id',
+    `create_time`      timestamp(3) NOT NULL DEFAULT current_timestamp(3) COMMENT '创建时间',
+    `update_time`      timestamp(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3) COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_project_id` (`project_uuid`),
+    UNIQUE KEY `idx_uniq_uuid` (`uuid`),
+    UNIQUE KEY `idx_uniq_project_uuid_corp_id_name` (`project_uuid`,`corp_id`, `name`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COMMENT='客户群欢迎语基本信息表';

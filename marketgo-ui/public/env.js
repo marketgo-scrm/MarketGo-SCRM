@@ -1,1 +1,1 @@
-window.BASEURL = "http://82.156.75.63/web/"
+window.BASEURL = "http://dev.marketgo.cn/web/"

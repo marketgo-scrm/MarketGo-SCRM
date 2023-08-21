@@ -125,6 +125,15 @@ public class WeComHttpConstants {
     public final String STOP_MOMENT_MASS_TASK_MESSAGE_URL = REQUEST_PREFIX_URL + "cgi-bin/externalcontact" +
             "/cancel_moment_task";
 
+    public final String GROUP_CHAT_WELCOME_MSG_URL = REQUEST_PREFIX_URL + "cgi-bin/externalcontact" +
+            "/group_welcome_template/add";
+
+    public final String EDIT_GROUP_CHAT_WELCOME_MSG_URL = REQUEST_PREFIX_URL + "cgi-bin/externalcontact" +
+            "/group_welcome_template/edit";
+
+    public final String DELETE_GROUP_CHAT_WELCOME_MSG_URL = REQUEST_PREFIX_URL + "cgi-bin/externalcontact" +
+            "/group_welcome_template/del";
+
     /**
      *
      */
