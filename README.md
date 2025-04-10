@@ -1,4 +1,4 @@
-<div align=center><img src="https://z1.ax1x.com/2023/09/18/pPhyzi6.png" width="700"  align=center /></div>
+<div align=center><img src="https://marketgo-1312848085.cos.ap-guangzhou.myqcloud.com/WechatIMG2981.jpg" width="700"  align=center /></div>
 
 &emsp;
 
@@ -68,7 +68,7 @@ MarketGo 作为领域的产品新秀，也需要一步一个脚印逐步向前�
 
 # 二、产品功能
 
-<div align=center><img src="https://z1.ax1x.com/2023/09/25/pP7tqmR.jpg" width="700"  align=center /></div>
+<div align=center><img src="https://marketgo-1312848085.cos.ap-guangzhou.myqcloud.com/1695622223416.jpg" width="700"  align=center /></div>
 
 MarketGo的优势：
 
