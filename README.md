@@ -15,13 +15,9 @@
 
 ---
 
-****商业版新发布release 2.9.0的版本，说明如下：****
+****商业版新发布release 3.0.0的版本，说明如下：****
 
-1、【新增功能】企微场景-新增门店活码
-
-2、【新增功能】发布SaaS版本；
-
-3、【功能优化】FIX BUG；
+1、【功能优化】升级组件库，springboot 升级到3.4.0, mysql 8.0
 
 ---
 
@@ -149,22 +145,22 @@ MarketGo的优势：
 
 ### 3.2、技术框架
 
-- 核心框架：SpringBoot 2.7.0
+- 核心框架：SpringBoot 3.4.0
 - 日志管理：SLF4J 1.7
 - 持久层框架：spring-data-jpa   2.7.0
-- RPC框架：dubbo 2.7.13
+- RPC框架：dubbo 3.3.0
 - 项目管理框架: Maven 3.6.0
 - 前端框架：Vue 2.6.11
 - UI框架: element-ui 2.15.9
 
 ### 3.3、开发环境
 
-- IDE: IntelliJ IDEA 2019.2+
-- DB: Mysql 5.7.37
-- JDK: JDK 1.8
+- IDE: IntelliJ IDEA  2024.3.4+
+- DB: Mysql 8.0.2
+- JDK: JDK 17
 - Maven: Maven 3.6.1
-- Redis:7.0.2
-- Nginx: 1.12.2
+- Redis:7.2.4
+- Nginx: 1.20.1
 
 ## 3.4、部署流程
 
