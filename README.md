@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[官方网站](http://www.marketgo.cn/#/)  |  [版本发布](https://docs.qq.com/doc/DUk9hSlhxUlRXb0RV)  |  [获取演示demo](https://docs.qq.com/doc/DUkZmZ0lsbGdNU0dU)
+[官方网站](http://www.marketgo.cn?channel=gitee)  |  [版本发布](https://docs.qq.com/doc/DUk9hSlhxUlRXb0RV)  |  [获取演示demo](https://docs.qq.com/doc/DUkZmZ0lsbGdNU0dU)
 
 </div>
 
