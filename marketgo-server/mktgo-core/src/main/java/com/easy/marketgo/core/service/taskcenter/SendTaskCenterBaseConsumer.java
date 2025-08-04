@@ -6,13 +6,13 @@ import com.easy.marketgo.common.enums.WeComMassTaskMemberStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
 import com.easy.marketgo.core.model.taskcenter.WeComTaskCenterMetrics;
 import com.easy.marketgo.core.service.WeComAgentMessageService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

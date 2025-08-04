@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration xmlns:xi="http://www.w3.org/2001/XInclude"
-               status="warn" name="XInclude">
+<Configuration
+        status="warn" name="XInclude">
     <Properties>
         <Property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%t] %-40.40c{1.} : %m%n"/>
     </Properties>

@@ -12,12 +12,12 @@ import com.easy.marketgo.core.model.wecom.QueryTokenBaseRequest;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.WeComCorpMessageRepository;
 import com.easy.marketgo.core.util.OkHttpUtils;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 
 /**

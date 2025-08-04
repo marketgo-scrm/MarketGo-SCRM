@@ -6,7 +6,6 @@ import com.easy.marketgo.react.bean.WeChatCropEventCallBack;
 import com.easy.marketgo.react.service.callback.CallbackForwardService;
 import com.easy.marketgo.react.service.callback.CallbackParserMessageService;
 import lombok.extern.log4j.Log4j2;
-import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -1,9 +1,9 @@
 package com.easy.marketgo.web.validator;
 
 import cn.hutool.core.lang.Validator;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 /**
  * @author : ssk
  * @version : v1.0
@@ -16,5 +16,4 @@ public class PhoneNumValidator implements ConstraintValidator<PhoneNum, String> 
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         return Validator.isMobile(s);
     }
-
 }

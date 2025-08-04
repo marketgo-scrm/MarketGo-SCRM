@@ -29,6 +29,7 @@ import com.easy.marketgo.web.model.response.WeComCreateTaskBaseResponse;
 import com.easy.marketgo.web.model.response.welcomemsg.WelcomeMsgGroupChatDetailResponse;
 import com.easy.marketgo.web.model.response.welcomemsg.WelcomeMsgGroupChatListResponse;
 import com.easy.marketgo.web.service.welcomemsg.GroupChatWelcomeMsgService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +37,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 

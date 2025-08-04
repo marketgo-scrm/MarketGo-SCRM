@@ -1,19 +1,19 @@
 package com.easy.marketgo.web.controller;
 
-import com.easy.marketgo.web.model.request.WeComMassTaskRequest;
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import com.easy.marketgo.web.model.request.WeComMassTaskRequest;
 import com.easy.marketgo.web.model.response.masstask.*;
 import com.easy.marketgo.web.service.wecom.WeComMassTaskService;
 import io.swagger.annotations.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**

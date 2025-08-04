@@ -1,10 +1,10 @@
 package com.easy.marketgo.core.entity.channellive;
 
 import com.easy.marketgo.core.entity.BaseEntity;
+import jakarta.persistence.Column;
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.Column;
 
 /**
  * @author : ssk
@@ -28,6 +28,4 @@ public class WeComChannelLiveCodeTagEntity extends BaseEntity {
 
     @Column(name = "tag_id")
     private String tagId;
-
-
 }

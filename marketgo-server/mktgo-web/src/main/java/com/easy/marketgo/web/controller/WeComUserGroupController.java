@@ -1,21 +1,20 @@
 package com.easy.marketgo.web.controller;
 
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.annotation.TokenIgnore;
 import com.easy.marketgo.web.model.request.UserGroupAudienceRules;
-import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.web.model.response.cdp.CdpCrowdListResponse;
 import com.easy.marketgo.web.model.response.UserGroupEstimateResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpCrowdListResponse;
 import com.easy.marketgo.web.service.wecom.WeComUserGroupService;
 import io.swagger.annotations.*;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author : kevinwang

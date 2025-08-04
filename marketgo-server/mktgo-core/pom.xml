@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
-            <version>2.7.0</version>
+            <version>3.4.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
@@ -56,12 +56,6 @@
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>5.2.8.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -96,8 +90,8 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

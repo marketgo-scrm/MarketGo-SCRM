@@ -1,12 +1,12 @@
 package com.easy.marketgo.core.entity;
 
 import com.easy.marketgo.common.enums.PermissionsEnum;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 /**
  * @author : ssk
  * @version : v1.0

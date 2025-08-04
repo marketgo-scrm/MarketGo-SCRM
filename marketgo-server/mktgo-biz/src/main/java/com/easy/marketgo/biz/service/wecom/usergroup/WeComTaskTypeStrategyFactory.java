@@ -1,12 +1,14 @@
 package com.easy.marketgo.biz.service.wecom.usergroup;
 
+import com.easy.marketgo.biz.service.wecom.usergroup.impl.WeComGroupUserGroupServiceImpl;
+import com.easy.marketgo.biz.service.wecom.usergroup.impl.WeComMomentUserGroupServiceImpl;
+import com.easy.marketgo.biz.service.wecom.usergroup.impl.WeComSingleUserGroupServiceImpl;
 import com.easy.marketgo.common.enums.WeComMassTaskTypeEnum;
-import com.easy.marketgo.biz.service.wecom.usergroup.impl.*;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**

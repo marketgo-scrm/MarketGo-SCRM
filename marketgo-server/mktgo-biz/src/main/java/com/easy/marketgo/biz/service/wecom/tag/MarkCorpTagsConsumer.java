@@ -8,13 +8,13 @@ import com.easy.marketgo.common.constants.RabbitMqConstants;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.model.bo.WeComMarkCorpTagsMessage;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 
 /**
  * @author : kevinwang

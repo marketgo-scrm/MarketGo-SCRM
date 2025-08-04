@@ -1,18 +1,13 @@
 package com.easy.marketgo.web.model.request.user;
 
-import com.easy.marketgo.common.enums.PermissionsEnum;
-import com.easy.marketgo.web.model.response.user.RolePermissionsResponse;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
-
-import static io.lettuce.core.pubsub.PubSubOutput.Type.message;
 
 /**
  * @author : ssk
@@ -50,9 +45,5 @@ public class RolePermissionsAuthorizationRequest {
         private String title;
         private Boolean status;
         private List<RolePermissionsInfo> children = Lists.newArrayList();
-
-
     }
-
-
 }

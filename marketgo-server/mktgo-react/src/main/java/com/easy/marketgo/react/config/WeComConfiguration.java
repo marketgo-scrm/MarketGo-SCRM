@@ -7,12 +7,11 @@ import com.easy.marketgo.react.message.handler.externalcontact.WeComAddExternalC
 import com.easy.marketgo.react.message.handler.externalcontact.WeComAddExternalContactHandler;
 import com.easy.marketgo.react.message.handler.externalcontact.WeComDelExternalContactHandler;
 import com.easy.marketgo.react.message.handler.externalcontact.WeComDelFollowUserHandler;
+import jakarta.annotation.PostConstruct;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
-import javax.annotation.PostConstruct;
 
 /**
  * @author : ssk

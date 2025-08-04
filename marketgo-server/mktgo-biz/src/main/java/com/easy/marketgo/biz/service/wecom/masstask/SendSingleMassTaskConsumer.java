@@ -11,6 +11,7 @@ import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
 import com.google.common.collect.Lists;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
@@ -19,7 +20,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

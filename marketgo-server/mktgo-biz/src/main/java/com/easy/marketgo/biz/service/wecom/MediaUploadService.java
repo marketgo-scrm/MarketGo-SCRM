@@ -11,12 +11,12 @@ import com.easy.marketgo.core.entity.WeComAgentMessageEntity;
 import com.easy.marketgo.core.entity.WeComMediaResourceEntity;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**

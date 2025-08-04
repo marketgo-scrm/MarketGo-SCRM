@@ -1,7 +1,7 @@
 package com.easy.marketgo.biz.service.wecom.masstask;
 
 import com.easy.marketgo.api.model.request.masstask.*;
-import com.easy.marketgo.api.model.response.*;
+import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.api.model.response.masstask.*;
 import com.easy.marketgo.api.service.WeComMassTaskRpcService;
 import com.easy.marketgo.common.constants.Constants;
@@ -12,11 +12,13 @@ import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSyncStatisticEntity;
 import com.easy.marketgo.core.model.bo.WeComMassTaskMetricsBO;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskMemberStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskRepository;
+import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSyncStatisticRepository;
 import com.google.common.util.concurrent.RateLimiter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -25,8 +27,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

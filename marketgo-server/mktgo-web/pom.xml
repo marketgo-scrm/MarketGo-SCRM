@@ -14,9 +14,6 @@
 
     <name>mktgo-web</name>
     <description>Demo project for Spring Boot</description>
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -62,7 +59,7 @@
         <!-- zookeeper依赖 -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-dependencies-zookeeper</artifactId>
+            <artifactId>dubbo-zookeeper-spring-boot-starter</artifactId>
             <type>pom</type>
         </dependency>
         <!--            Spring Data JPA-->
@@ -77,11 +74,13 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -127,7 +126,42 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <scope>test</scope>
+            <version>6.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>6.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>6.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>6.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>6.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>6.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -138,18 +172,18 @@
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
-            <version>0.4.8</version>
+            <version>0.4.19</version>
         </dependency>
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
-            <version>3.3.3</version>
+            <version>3.5.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
-            <version>3.3.3</version>
+            <version>3.5.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

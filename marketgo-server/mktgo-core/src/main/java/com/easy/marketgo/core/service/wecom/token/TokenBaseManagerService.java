@@ -2,10 +2,10 @@ package com.easy.marketgo.core.service.wecom.token;
 
 import com.easy.marketgo.core.model.wecom.QueryTokenBaseRequest;
 import com.easy.marketgo.core.redis.RedisService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

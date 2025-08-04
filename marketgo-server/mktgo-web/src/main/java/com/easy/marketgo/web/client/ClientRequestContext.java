@@ -1,10 +1,10 @@
 package com.easy.marketgo.web.client;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
 /**
@@ -17,9 +17,7 @@ public class ClientRequestContext implements Serializable {
 
     private static final long serialVersionUID = 4760019112497309861L;
 
-
     private String userName;
-
 
     public HttpServletRequest getRequest() {
 
@@ -31,7 +29,6 @@ public class ClientRequestContext implements Serializable {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
     }
 
-
     public String getUserName() {
 
         return this.userName;
@@ -41,5 +38,4 @@ public class ClientRequestContext implements Serializable {
 
         this.userName = userName;
     }
-
 }

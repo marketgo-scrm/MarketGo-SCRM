@@ -1,20 +1,19 @@
 package com.easy.marketgo.web.controller;
 
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.request.tags.WeComAddCorpTagRequest;
 import com.easy.marketgo.web.model.request.tags.WeComDeleteCorpTagRequest;
 import com.easy.marketgo.web.model.request.tags.WeComEditCorpTagRequest;
 import com.easy.marketgo.web.model.request.tags.WeComMarkCorpTagsRequest;
-import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.WeComCoreTagsResponse;
 import com.easy.marketgo.web.service.wecom.CorpTagsManagerService;
 import io.swagger.annotations.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author : kevinwang

@@ -13,13 +13,13 @@ import com.easy.marketgo.core.util.OkHttpUtils;
 import com.easy.marketgo.react.model.QuerySignatureResponse;
 import com.easy.marketgo.react.model.WeComAuth2VerifyResponse;
 import com.google.common.collect.Maps;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;

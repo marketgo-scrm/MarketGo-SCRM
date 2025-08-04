@@ -2,6 +2,7 @@ package com.easy.marketgo.core.repository.wecom.masstask;
 
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskEntity;
 import com.easy.marketgo.core.model.bo.QueryMassTaskBuildSqlParam;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +10,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.List;
 

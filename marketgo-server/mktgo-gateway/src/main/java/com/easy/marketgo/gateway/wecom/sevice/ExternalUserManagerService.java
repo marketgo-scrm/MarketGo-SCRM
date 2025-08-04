@@ -1,6 +1,6 @@
 package com.easy.marketgo.gateway.wecom.sevice;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.json.JSONUtil;
 import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.api.model.response.WeComQueryExternalUsersForMemberClientResponse;
 import com.easy.marketgo.api.model.response.customer.WeComQueryExternalUserDetailClientResponse;
@@ -168,7 +168,7 @@ public class ExternalUserManagerService {
             Map<String, String> params = Maps.newHashMap();
             params.put(WeComHttpConstants.AGENT_ACCESS_TOKEN, accessToken);
             String requestBody = JsonUtils.toJSONString(request);
-            log.info("mark external user corp tag. headerParams={}, requestBody={}", JSON.toJSONString(params),
+            log.info("mark external user corp tag. headerParams={}, requestBody={}", JSONUtil.toJsonStr(params),
                     requestBody);
             String response = null;
             response = OkHttpUtils.getInstance().postJsonSync(WeComHttpConstants.EDIT_EXTERNAL_USER_CORP_TAGS_URL,

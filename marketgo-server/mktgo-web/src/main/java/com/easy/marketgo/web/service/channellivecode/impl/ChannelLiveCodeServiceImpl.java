@@ -16,6 +16,7 @@ import com.easy.marketgo.core.entity.channellive.WeComChannelLiveCodeEntity;
 import com.easy.marketgo.core.entity.channellive.WeComChannelLiveCodeMembersEntity;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.core.model.bo.QueryChannelLiveCodeBuildSqlParam;
 import com.easy.marketgo.core.model.bo.QueryMemberBuildSqlParam;
 import com.easy.marketgo.core.repository.media.WeComMediaResourceRepository;
@@ -28,7 +29,6 @@ import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageReposi
 import com.easy.marketgo.web.model.bo.WeComCorpTag;
 import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.contactway.ChannelLiveCodeCreateRequest;
-import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.response.contactway.ChannelLiveCodeDetailResponse;
 import com.easy.marketgo.web.model.response.contactway.ChannelLiveCodeResponse;
 import com.easy.marketgo.web.model.response.media.MediaUploadResponse;
@@ -40,6 +40,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.collections.CollectionUtils;
@@ -50,17 +52,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**

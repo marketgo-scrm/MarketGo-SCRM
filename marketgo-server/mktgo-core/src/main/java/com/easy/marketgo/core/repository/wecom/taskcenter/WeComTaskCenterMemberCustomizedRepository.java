@@ -3,6 +3,7 @@ package com.easy.marketgo.core.repository.wecom.taskcenter;
 import com.easy.marketgo.core.entity.taskcenter.WeComTaskCenterMemberEntity;
 import com.easy.marketgo.core.model.taskcenter.QuerySubTaskCenterMemberBuildSqlParam;
 import com.easy.marketgo.core.model.taskcenter.QueryTaskCenterMemberBuildSqlParam;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +11,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.List;
 

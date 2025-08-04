@@ -1,6 +1,7 @@
 package com.easy.marketgo.gateway.wecom.sevice;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
 import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.api.model.response.masstask.*;
 import com.easy.marketgo.common.constants.wecom.WeComHttpConstants;
@@ -546,7 +547,7 @@ public class MassTaskManagerService {
             Map<String, String> params = Maps.newHashMap();
             params.put(WeComHttpConstants.AGENT_ACCESS_TOKEN, accessToken);
             String requestBody = JsonUtils.toJSONString(request);
-            log.info("send remind message. headerParams={}, requestBody={}", JSON.toJSONString(params), requestBody);
+            log.info("send remind message. headerParams={}, requestBody={}", JSONUtil.toJsonStr(params), requestBody);
             String response = null;
             response = OkHttpUtils.getInstance().postJsonSync(WeComHttpConstants.REMIND_MESSAGE_URL, params,
                     requestBody);
