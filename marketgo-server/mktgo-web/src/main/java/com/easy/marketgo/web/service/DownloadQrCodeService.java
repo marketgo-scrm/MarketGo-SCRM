@@ -1,15 +1,11 @@
 package com.easy.marketgo.web.service;
 
 import com.easy.marketgo.common.exception.CommonException;
-import lombok.extern.log4j.Log4j;
-import lombok.extern.log4j.Log4j2;
-import org.checkerframework.checker.units.qual.C;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -22,7 +18,7 @@ import java.net.URLEncoder;
  * @description : 二维码下载
  */
 @Component
-@Log4j2
+@Slf4j
 public class DownloadQrCodeService {
 
     private static final String FILE_PREFIX = "二维码下载";

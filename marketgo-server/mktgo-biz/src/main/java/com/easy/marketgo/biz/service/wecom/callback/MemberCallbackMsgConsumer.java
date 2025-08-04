@@ -15,6 +15,7 @@ import com.easy.marketgo.core.model.callback.WeComMemberMsg;
 import com.easy.marketgo.core.repository.wecom.WeComAgentMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComRelationMemberExternalUserRepository;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
@@ -23,7 +24,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.stream.Collectors;
 
 /**

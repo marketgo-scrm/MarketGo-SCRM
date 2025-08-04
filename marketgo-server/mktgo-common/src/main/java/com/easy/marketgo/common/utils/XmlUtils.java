@@ -3,13 +3,9 @@ package com.easy.marketgo.common.utils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.sun.org.apache.xerces.internal.impl.xs.opti.DefaultText;
-import org.dom4j.CDATA;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.Node;
+import org.dom4j.*;
 import org.dom4j.io.SAXReader;
+import org.dom4j.tree.DefaultText;
 import org.xml.sax.SAXException;
 
 import java.io.StringReader;

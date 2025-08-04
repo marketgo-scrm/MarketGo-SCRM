@@ -6,13 +6,13 @@ import com.easy.marketgo.core.redis.RedisService;
 import com.easy.marketgo.core.util.OkHttpUtils;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

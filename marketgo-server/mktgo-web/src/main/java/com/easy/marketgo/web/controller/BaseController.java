@@ -1,15 +1,12 @@
 package com.easy.marketgo.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author : ssk
@@ -18,12 +15,6 @@ import javax.servlet.http.HttpServletResponse;
  * @description : BaseController.java
  */
 public abstract class BaseController {
-
-    /**
-     * 日志类
-     */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
     /**
      * 空串
      */
@@ -38,7 +29,6 @@ public abstract class BaseController {
      * @return
      */
     protected HttpServletRequest getRequest() {
-
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     }
 
@@ -48,7 +38,6 @@ public abstract class BaseController {
      * @return
      */
     protected HttpServletResponse getResponse() {
-
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
     }
 

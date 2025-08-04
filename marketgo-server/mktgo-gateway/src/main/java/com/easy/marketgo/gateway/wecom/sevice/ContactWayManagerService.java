@@ -1,6 +1,7 @@
 package com.easy.marketgo.gateway.wecom.sevice;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
 import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.api.model.response.WeComAddContactWayClientResponse;
 import com.easy.marketgo.common.constants.wecom.WeComHttpConstants;
@@ -42,7 +43,7 @@ public class ContactWayManagerService {
             Map<String, String> params = Maps.newHashMap();
             params.put(WeComHttpConstants.AGENT_ACCESS_TOKEN, accessToken);
             String requestBody = JsonUtils.toJSONString(request);
-            log.info("get qrCode for add contact way. headerParams={}, requestBody={}", JSON.toJSONString(params),
+            log.info("get qrCode for add contact way. headerParams={}, requestBody={}", JSONUtil.toJsonStr(params),
                     requestBody);
             String response = null;
             response = OkHttpUtils.getInstance().postJsonSync(WeComHttpConstants.ADD_CONTACT_WAY_URL, params,

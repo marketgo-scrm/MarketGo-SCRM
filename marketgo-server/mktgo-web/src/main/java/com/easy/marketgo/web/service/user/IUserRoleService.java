@@ -1,12 +1,7 @@
 package com.easy.marketgo.web.service.user;
 
-import com.easy.marketgo.web.model.request.user.UserRoleAddRequest;
-import com.easy.marketgo.web.model.request.user.UserRoleAuthorizationRequest;
-import com.easy.marketgo.web.model.request.user.UserRoleInfoRequest;
-import com.easy.marketgo.web.model.request.user.UserRoleListQueryRequest;
-import com.easy.marketgo.web.model.request.user.UserRoleListRequest;
+import com.easy.marketgo.web.model.request.user.*;
 import com.easy.marketgo.web.model.response.user.RolePermissionsResponse;
-import com.easy.marketgo.web.model.response.user.UserRoleInfo;
 import com.easy.marketgo.web.model.response.user.UserRoleListQueryResponse;
 import com.easy.marketgo.web.model.response.user.UserRoleListResponse;
 

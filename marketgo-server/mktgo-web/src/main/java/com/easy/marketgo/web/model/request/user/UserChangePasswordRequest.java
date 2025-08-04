@@ -1,10 +1,9 @@
 package com.easy.marketgo.web.model.request.user;
 
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.NotEmpty;
 
 /**
  * @author : ssk
@@ -22,7 +21,7 @@ public class UserChangePasswordRequest {
     private String userName;
     @ApiModelProperty(name = "passWord", notes = "密码", example = "")
     @NotEmpty(message = "密码不能为空")
-    private String passWord = "123456";
+    private String passWord = "";
     @ApiModelProperty(name = "changePassWord", notes = "修改后密码", example = "")
     @NotEmpty(message = "修改后密码不能为空")
     private String changePassWord;

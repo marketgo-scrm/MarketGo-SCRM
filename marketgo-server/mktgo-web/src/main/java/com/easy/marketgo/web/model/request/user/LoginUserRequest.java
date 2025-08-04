@@ -1,11 +1,7 @@
 package com.easy.marketgo.web.model.request.user;
 
-import com.easy.marketgo.web.validator.PhoneNum;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
-
-import static io.lettuce.core.pubsub.PubSubOutput.Type.message;
 
 /**
  * @author : ssk

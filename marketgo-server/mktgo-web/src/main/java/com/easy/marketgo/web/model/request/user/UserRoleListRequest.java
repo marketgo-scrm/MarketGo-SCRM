@@ -2,12 +2,9 @@ package com.easy.marketgo.web.model.request.user;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.NotEmpty;
-
-import static io.lettuce.core.pubsub.PubSubOutput.Type.message;
 
 /**
  * @author : ssk

@@ -1,11 +1,11 @@
 package com.easy.marketgo.web.service.user.impl;
 
 import cn.hutool.core.util.ArrayUtil;
+import com.easy.marketgo.core.entity.WeComSysBaseRoleEntity;
+import com.easy.marketgo.core.entity.WeComSysCorpUserRoleLinkEntity;
 import com.easy.marketgo.core.entity.WeComSysUserEntity;
 import com.easy.marketgo.core.entity.customer.WeComDepartmentEntity;
 import com.easy.marketgo.core.entity.customer.WeComMemberMessageEntity;
-import com.easy.marketgo.core.entity.WeComSysBaseRoleEntity;
-import com.easy.marketgo.core.entity.WeComSysCorpUserRoleLinkEntity;
 import com.easy.marketgo.core.repository.user.WeComSysUserRepository;
 import com.easy.marketgo.core.repository.wecom.WeComDepartmentRepository;
 import com.easy.marketgo.core.repository.wecom.WeComSysBaseRoleRepository;

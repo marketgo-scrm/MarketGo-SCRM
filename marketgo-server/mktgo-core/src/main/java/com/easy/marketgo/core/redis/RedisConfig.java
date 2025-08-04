@@ -1,5 +1,6 @@
 package com.easy.marketgo.core.redis;
 
+import jakarta.annotation.Resource;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,6 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
 
-import javax.annotation.Resource;
 
 /**
  * @author : kevinwang

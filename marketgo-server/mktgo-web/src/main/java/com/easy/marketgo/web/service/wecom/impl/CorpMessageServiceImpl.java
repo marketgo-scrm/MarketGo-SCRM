@@ -30,6 +30,7 @@ import com.easy.marketgo.web.model.request.WeComCorpMessageRequest;
 import com.easy.marketgo.web.model.request.WeComForwardServerMessageRequest;
 import com.easy.marketgo.web.model.response.corp.*;
 import com.easy.marketgo.web.service.wecom.CorpMessageService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
@@ -37,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

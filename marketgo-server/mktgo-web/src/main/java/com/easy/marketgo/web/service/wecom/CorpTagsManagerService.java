@@ -1,10 +1,10 @@
 package com.easy.marketgo.web.service.wecom;
 
+import com.easy.marketgo.core.model.bo.BaseResponse;
 import com.easy.marketgo.web.model.request.tags.WeComAddCorpTagRequest;
 import com.easy.marketgo.web.model.request.tags.WeComDeleteCorpTagRequest;
 import com.easy.marketgo.web.model.request.tags.WeComEditCorpTagRequest;
 import com.easy.marketgo.web.model.request.tags.WeComMarkCorpTagsRequest;
-import com.easy.marketgo.core.model.bo.BaseResponse;
 
 /**
  * @author : kevinwang

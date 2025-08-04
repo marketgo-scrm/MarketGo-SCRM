@@ -1,6 +1,6 @@
 package com.easy.marketgo.gateway.wecom.sevice;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.json.JSONUtil;
 import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.common.constants.wecom.WeComHttpConstants;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
@@ -38,7 +38,7 @@ public class SendAgentMessageService {
             Map<String, String> params = Maps.newHashMap();
             params.put(WeComHttpConstants.AGENT_ACCESS_TOKEN, accessToken);
             String requestBody = JsonUtils.toJSONString(request);
-            log.info("send agent message. headerParams={}, requestBody={}", JSON.toJSONString(params), requestBody);
+            log.info("send agent message. headerParams={}, requestBody={}", JSONUtil.toJsonStr(params), requestBody);
             String response = null;
             response = OkHttpUtils.getInstance().postJsonSync(WeComHttpConstants.SEND_AGNET_MESSAGE_URL, params,
                     requestBody);
@@ -62,5 +62,4 @@ public class SendAgentMessageService {
         log.info("return send welcome msg rpc result. rpcResponse={}", rpcResponse);
         return rpcResponse;
     }
-
 }

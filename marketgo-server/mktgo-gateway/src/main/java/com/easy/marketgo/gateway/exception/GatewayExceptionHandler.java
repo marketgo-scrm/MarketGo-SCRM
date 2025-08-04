@@ -3,6 +3,8 @@ package com.easy.marketgo.gateway.exception;
 import com.easy.marketgo.common.enums.ErrorCodeEnum;
 import com.easy.marketgo.common.exception.CommonException;
 import com.easy.marketgo.core.model.bo.BaseResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +15,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 /**
  * @author : kevinwang

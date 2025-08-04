@@ -1,7 +1,9 @@
 package com.easy.marketgo.web.interceptor;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+
+import cn.hutool.json.JSONUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -17,8 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -63,12 +63,12 @@ public class WebLogAop {
         Stream<?> stream = args == null ? Stream.empty() : Arrays.stream(args);
         List<Object> logArgs = stream.filter(arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)))
                                      .collect(Collectors.toList());
-        log.info("请求url:{}, {} ,参数:{}", pair.left, pair.right, JSON.toJSONString(logArgs, SerializerFeature.IgnoreNonFieldGetter));
+        log.info("请求url:{}, {} ,参数:{}", pair.left, pair.right, JSONUtil.toJsonStr(logArgs));
         stopWatch.stop();
         stopWatch.start("执行业务逻辑");
         Object result = joinPoint.proceed(joinPoint.getArgs());
         stopWatch.stop();
-        String retStr = JSON.toJSONString(result, SerializerFeature.IgnoreNonFieldGetter);
+        String retStr = JSONUtil.toJsonStr(result);
         log.info("\n------请求url-------: {}, -------返回结果-------： \n{}, " +
                 "\n-------耗时-------: \n{}", pair.left, retStr, stopWatch.prettyPrint());
         return result;

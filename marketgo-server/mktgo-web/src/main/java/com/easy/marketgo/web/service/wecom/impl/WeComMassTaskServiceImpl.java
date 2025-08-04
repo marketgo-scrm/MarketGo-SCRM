@@ -34,6 +34,7 @@ import com.easy.marketgo.web.model.bo.WeComMassTaskSendMsg;
 import com.easy.marketgo.web.model.request.WeComMassTaskRequest;
 import com.easy.marketgo.web.model.response.masstask.*;
 import com.easy.marketgo.web.service.wecom.WeComMassTaskService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.StringUtils;
@@ -41,7 +42,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

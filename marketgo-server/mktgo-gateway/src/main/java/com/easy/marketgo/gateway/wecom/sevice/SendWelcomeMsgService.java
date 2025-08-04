@@ -1,6 +1,7 @@
 package com.easy.marketgo.gateway.wecom.sevice;
 
-import com.alibaba.fastjson.JSON;
+
+import com.alibaba.fastjson2.JSON;
 import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.api.model.response.WeComGroupChatWelcomeMsgClientResponse;
 import com.easy.marketgo.common.constants.wecom.WeComHttpConstants;

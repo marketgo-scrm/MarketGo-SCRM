@@ -3,9 +3,9 @@ package com.easy.marketgo.web.model.request.contactway;
 import com.easy.marketgo.common.enums.ChannelContactWayStatisticsEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
 
 /**
  * @author : ssk

@@ -9,8 +9,9 @@ import com.easy.marketgo.common.enums.*;
 import com.easy.marketgo.common.utils.JsonUtils;
 import com.easy.marketgo.core.entity.customer.WeComGroupChatsEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
-import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComGroupChatsRepository;
+import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.core.Message;
@@ -18,7 +19,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 

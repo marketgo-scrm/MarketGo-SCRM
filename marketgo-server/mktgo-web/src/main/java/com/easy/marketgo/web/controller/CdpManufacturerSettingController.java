@@ -1,17 +1,19 @@
 package com.easy.marketgo.web.controller;
 
-import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
 import com.easy.marketgo.core.model.bo.BaseResponse;
-import com.easy.marketgo.web.model.response.cdp.*;
+import com.easy.marketgo.web.model.request.CdpManufacturerMessageRequest;
+import com.easy.marketgo.web.model.response.cdp.CdpManufactureListResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpManufacturerMessageResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpSettingTestStatusResponse;
+import com.easy.marketgo.web.model.response.cdp.CdpSwitchStatusResponse;
 import com.easy.marketgo.web.service.wecom.CdpManufacturerSettingService;
 import io.swagger.annotations.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author : kevinwang

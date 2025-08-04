@@ -62,6 +62,4 @@ public class WebConfig implements WebMvcConfigurer {
                 //超时时长设置
                 .maxAge(3600 * 24);
     }
-
-
 }

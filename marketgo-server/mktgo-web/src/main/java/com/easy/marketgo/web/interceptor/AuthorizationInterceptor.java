@@ -9,6 +9,8 @@ import com.easy.marketgo.core.repository.user.WeComSysUserRepository;
 import com.easy.marketgo.web.annotation.TokenIgnore;
 import com.easy.marketgo.web.client.ClientRequestContextHolder;
 import com.easy.marketgo.web.util.JwtUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -18,8 +20,6 @@ import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +42,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     @Autowired
     private RedisService redisService;
     private static  final  String USER_TOKEN_KEY="marketgo_user_token_%s";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 初始化

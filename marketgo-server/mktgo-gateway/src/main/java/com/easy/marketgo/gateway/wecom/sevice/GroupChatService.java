@@ -1,6 +1,7 @@
 package com.easy.marketgo.gateway.wecom.sevice;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
 import com.easy.marketgo.api.model.response.RpcResponse;
 import com.easy.marketgo.api.model.response.chats.WeComQueryGroupChatClientResponse;
 import com.easy.marketgo.api.model.response.chats.WeComQueryGroupChatMembersClientResponse;
@@ -57,7 +58,7 @@ public class GroupChatService {
             Map<String, String> params = Maps.newHashMap();
             params.put(WeComHttpConstants.AGENT_ACCESS_TOKEN, accessToken);
 
-            log.info("query group chat list.headerParams={}, body={}", JSON.toJSONString(params),
+            log.info("query group chat list.headerParams={}, body={}", JSONUtil.toJsonStr(params),
                     JsonUtils.toJSONString(request));
             String response = null;
             response = OkHttpUtils.getInstance().postJsonSync(WeComHttpConstants.QUERY_GROUP_CHAT_URL, params,

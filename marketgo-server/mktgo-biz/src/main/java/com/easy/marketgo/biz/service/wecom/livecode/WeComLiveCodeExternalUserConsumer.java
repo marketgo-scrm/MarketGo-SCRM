@@ -22,6 +22,7 @@ import com.easy.marketgo.core.repository.wecom.channelLivecode.WeComChannelLiveC
 import com.easy.marketgo.core.repository.wecom.channelLivecode.WeComChannelLiveCodeStatisticRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComEventExternalUserRepository;
 import com.easy.marketgo.core.repository.wecom.customer.WeComMemberMessageRepository;
+import jakarta.annotation.Resource;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -32,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

@@ -1,8 +1,6 @@
 package com.easy.marketgo.biz.service.cdp;
 
 import cn.hutool.crypto.SecureUtil;
-import com.easy.marketgo.core.model.cdp.CrowdUsersBaseRequest;
-import com.easy.marketgo.core.service.cdp.CdpManagerService;
 import com.easy.marketgo.common.enums.WeComMassTaskSendStatusEnum;
 import com.easy.marketgo.common.enums.WeComMassTaskStatus;
 import com.easy.marketgo.common.enums.cdp.CdpSyncCrowdUsersStatusEnum;
@@ -10,19 +8,21 @@ import com.easy.marketgo.common.utils.UuidUtils;
 import com.easy.marketgo.core.entity.cdp.CdpConfigEntity;
 import com.easy.marketgo.core.entity.cdp.CdpCrowdUsersSyncEntity;
 import com.easy.marketgo.core.entity.masstask.WeComMassTaskSendQueueEntity;
+import com.easy.marketgo.core.model.cdp.CrowdUsersBaseRequest;
 import com.easy.marketgo.core.repository.cdp.CdpConfigRepository;
 import com.easy.marketgo.core.repository.cdp.CdpCrowdUsersSyncRepository;
 import com.easy.marketgo.core.repository.usergroup.UserGroupCdpRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskRepository;
 import com.easy.marketgo.core.repository.wecom.masstask.WeComMassTaskSendQueueRepository;
+import com.easy.marketgo.core.service.cdp.CdpManagerService;
 import com.google.common.util.concurrent.RateLimiter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
