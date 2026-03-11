@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[官方网站](http://www.marketgo.cn/#/?channel=gitee)  |  [版本发布](https://docs.qq.com/doc/DUk9hSlhxUlRXb0RV)  |  [获取演示demo](https://docs.qq.com/doc/DUkZmZ0lsbGdNU0dU)
+[官方网站](https://www.marketgo.cn/#/?channel=gitee)  |  [版本发布](https://docs.qq.com/doc/DUk9hSlhxUlRXb0RV)  |  [获取演示demo](https://docs.qq.com/doc/DUkZmZ0lsbGdNU0dU)
 
 </div>
 
@@ -15,11 +15,13 @@
 
 ---
 
-****商业版新发布release 3.4.0的版本，说明如下：****
+****商业版新发布release 3.5.0的版本，说明如下：****
 
  ****【企微运营】****
 
-1、【新增功能】互动雷达素材，帮助企业精准定位客户需求和问题；
+1、【新增功能】支持用户事件的注册和事件上报；
+
+2、【新增功能】增加标签的自动化运营场景，下个版本上线营销自动化功能；
 
 # 一、概述
 
